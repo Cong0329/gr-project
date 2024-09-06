@@ -1,7 +1,10 @@
+
 nav {
-    background-color: transparent; 
+    background: linear-gradient(to bottom, #2563eb, #3b82f6);
     background-image: url('../../assets/backgound.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-color: transparent;
 }
+
