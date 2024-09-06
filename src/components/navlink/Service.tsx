@@ -12,13 +12,17 @@ export const Service = ({
     const [isHovered, setIsHovered] = useState(false);
 
     const handleMouseEnter = () => {
-        setIsHovered(true);
-        setIsServiceHovered(true);
+        if (item.id !== 6) {
+            setIsHovered(true);
+            setIsServiceHovered(true);
+        }
     };
 
     const handleMouseLeave = () => {
-        setIsHovered(false);
-        setIsServiceHovered(false);
+        if (item.id !== 6) {
+            setIsHovered(false);
+            setIsServiceHovered(false);
+        }
     };
 
     return (
