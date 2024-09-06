@@ -1,0 +1,56 @@
+.full-home {
+    background-image: linear-gradient(
+        to bottom,
+        white,
+        #eaeffa
+    );
+}
+
+.home-specialty {
+    height: 380px;
+    padding-top: 50px;
+  }
+  
+  .home-specialty .slick-list {
+    /* background: #fff; */
+    margin: 0 auto;
+    width: 90%;
+  }
+  
+  .home-specialty .slick-prev {
+    /* background: red !important; */
+    /* position: relative !important; */
+    left: 0 !important;
+    z-index: 200;
+  }
+
+  .slick-prev {
+    width: 11%;
+  }
+
+  .slick-next {
+    width: 11%;
+  }
+  
+  .home-specialty .slick-prev::before {
+    color: black !important;
+    font-size: 25px;
+  }
+  
+  .home-specialty .slick-next {
+    /* background: red !important; */
+    right: 0 !important;
+    z-index: 200;
+  }
+  
+  .home-specialty .slick-next::before {
+    color: black !important;
+    font-size: 25px;
+  }
+
+  
+  .home-specialty .card-img {
+    border-radius: 20px;
+    padding: 5px;
+  }
+  
