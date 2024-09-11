@@ -2,6 +2,8 @@ import HomeBooking from "../home_booking/booking"
 import { Footer } from "../footer/Footer"
 import { Header } from "../header/Header"
 import Specialty from "../home_booking/sections/specialty"
+import OnlEx from "../home_booking/sections/onl_ex"
+
 
 
 export const HomeBookingCare = () => {
@@ -10,6 +12,7 @@ export const HomeBookingCare = () => {
             <Header />
             <HomeBooking />
             <Specialty />
+            <OnlEx />
             <Footer />
         </div>
     )
