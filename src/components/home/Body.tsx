@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink } from '../navlink/NavLink';
-import { Banner } from "./Banner";
+import { Banner } from "./banner/Banner";
 
 export const Body = () => {
     const [isServiceHovered, setIsServiceHovered] = useState(false);

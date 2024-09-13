@@ -19,7 +19,7 @@ export const Navbar = () => {
   ];
 
   return (
-    <nav className="text-white pb-5">
+    <nav className="text-white pb-5 ">
       <div className="container mx-auto flex justify-between items-center w-4/5 ">
         <div className='flex'>
           <Link to="/" className='flex items-center hover:text-white'>
