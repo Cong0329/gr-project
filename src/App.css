@@ -40,3 +40,17 @@
 .read-the-docs {
   color: #888;
 }
+
+.container-lite {
+  min-width: 769px;
+  width: var(--w-container-content, 1280px);
+  padding-inline: 32px;
+  overflow-x: visible;
+}
+
+.container-fix-spe {
+  min-width: 769px;
+  width: var(--w-container-content, 1460px);
+  padding-inline: 32px;
+  overflow-x: visible;
+}
