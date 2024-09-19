@@ -3,6 +3,7 @@ import { Footer } from "../footer/Footer"
 import { Header } from "../header/Header"
 import Specialty from "../home_booking/sections/specialty"
 import OnlEx from "../home_booking/sections/onl_ex"
+import GeneralEx from "../home_booking/sections/general_ex"
 
 
 
@@ -13,6 +14,7 @@ export const HomeBookingCare = () => {
             <HomeBooking />
             <Specialty />
             <OnlEx />
+            <GeneralEx />
             <Footer />
         </div>
     )
