@@ -31,7 +31,7 @@ const GeneralEx = () => {
         const truncatedTextChild = truncateText(sampleTextChild, 55);
 
         return (
-            <div key={index} className="w-1/2 px-2 mb-4">
+            <div key={index} id="general-ex-section" className="w-1/2 px-2 mb-4">
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
                     <div className="flex">
                         <div className="w-1/3">

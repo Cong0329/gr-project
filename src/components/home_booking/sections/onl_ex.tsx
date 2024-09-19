@@ -31,7 +31,7 @@ const OnlEx = () => {
     const filteredDoctors = activeOption === 0 ? doctors : doctors.filter(doctor => doctor.department === options[activeOption]);
 
     return (
-        <div className="w-full full-onl">
+        <div id="onlex-section" className="w-full full-onl">
             <div className="container-lite mx-auto px-4 py-8">
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-xl font-bold">Tư vấn Online qua Video</h3>

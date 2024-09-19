@@ -50,7 +50,7 @@ const MedicalTest = () => {
     const medicalFacilities = ["Bệnh viện công", "Bệnh viện tư", "Phòng khám đa khoa", "Trung tâm xét nghiệm"];
 
     return (
-        <div className="medical-test w-full">
+        <div id="medical-test-section" className="medical-test w-full">
             <div className="container-lite mx-auto px-4 py-8">
                 <div className="bg-white rounded-xl shadow-md p-6">
                     <h3 className="text-xl font-bold mb-4">Xét nghiệm y học</h3>
