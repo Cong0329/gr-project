@@ -70,7 +70,7 @@ const HomeBooking = () => {
                   <div className="icon-child mb-2 p-4 rounded-full bg-white flex items-center justify-center" style={{height: "50px", width:'50px'}}>
                     <i className={`fas ${option.icon} text-blue-500 text-3xl`} />
                   </div>
-                  <div className="text-child text-lg font-medium">{option.text}</div>
+                  <div className="text-child text-base font-medium">{option.text}</div>
                 </div>
               ))}
             </div>

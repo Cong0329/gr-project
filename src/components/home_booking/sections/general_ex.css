@@ -2,15 +2,15 @@
     background-color: rgb(248, 249, 252);
 }
 
-.slick-slide {
+.general-ex .slick-slide {
     transform: scale(0.8); 
     opacity: 0.5; 
     transition: all 0.3s ease; 
-  }
+}
   
-  .slick-center {
+.general-ex .slick-center {
     transform: scale(1);
     opacity: 1;
-  }
+}
   
   

@@ -4,6 +4,7 @@ import { Header } from "../header/Header"
 import Specialty from "../home_booking/sections/specialty"
 import OnlEx from "../home_booking/sections/onl_ex"
 import GeneralEx from "../home_booking/sections/general_ex"
+import MedicalTest from "../home_booking/sections/medical_test"
 
 
 
@@ -15,6 +16,7 @@ export const HomeBookingCare = () => {
             <Specialty />
             <OnlEx />
             <GeneralEx />
+            <MedicalTest />
             <Footer />
         </div>
     )

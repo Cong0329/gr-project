@@ -144,8 +144,9 @@ const GeneralEx = () => {
                         </div>
                         <div className="w-full md:w-2/3 px-4">
                             <div className="bg-slate-100 rounded-lg shadow-md p-4">
-                                <div className="flex mb-4">
-                                    <h5 className="text-xl font-bold">Danh mục</h5>
+                                <div className="flex mb-4 justify-between items-center">
+                                    <h3 className="text-xl font-bold">Danh mục</h3>
+                                    <button className="text-[rgb(45,135,243)] font-semibold">Xem tất cả<span className="ml-1">&gt;</span></button>
                                 </div>
                                 <div className="flex flex-wrap -mx-2">
                                     {renderCards()}
