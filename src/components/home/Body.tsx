@@ -10,8 +10,13 @@ export const Body = () => {
             <div className="container mx-auto">
                 <NavLink setIsServiceHovered={setIsServiceHovered} />
             </div>
-            <div className={`container mx-auto relative ${isServiceHovered ? 'bg-blue-950 bg-opacity-30 z-5' : ''}`}>
-                <Banner />
+            <div className={`relative`}>
+                <div className="container mx-auto relative">
+                    <Banner />
+                </div>
+                {isServiceHovered && (
+                    <div className="absolute inset-0 bg-blue-950 bg-opacity-30 z-5"></div>
+                )}
             </div>
         </main>
     )
