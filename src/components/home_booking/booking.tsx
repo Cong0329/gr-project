@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import "./booking.css";
 
-
-
 const HomeBooking = () => { 
   const placeholders = React.useMemo(() => [
     "Tìm chuyên khoa khám bệnh...",
@@ -26,22 +24,54 @@ const HomeBooking = () => {
     return () => clearInterval(interval);
   },[placeholders]);
 
+  const handleSpecialtyClick = () => {
+    const specialtySection = document.getElementById('specialty-section');
+    if (specialtySection) {
+      specialtySection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleOnlExClick = () => {
+    const OnlExSection = document.getElementById('onlex-section');
+    if (OnlExSection) {
+      OnlExSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleGeneralExClick = () => {
+    const generalExSection = document.getElementById('general-ex-section');
+    if (generalExSection) {
+      generalExSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleMedicalTestClick = () => {
+    const medicalTestSection = document.getElementById('medical-test-section');
+    if (medicalTestSection) {
+      medicalTestSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const options = [
     {
       icon: "fa-hospital",
       text: "Khám Chuyên Khoa",
+      onClick: handleSpecialtyClick,
     },
     {
       icon: "fa-mobile-alt",
       text: "Khám Online",
+      onClick: handleOnlExClick,
     },
     {
       icon: "fa-procedures",
       text: "Khám Tổng Quát",
+      onClick: handleGeneralExClick,
     },
     {
       icon: "fa-vial",
       text: "Xét Nghiệm Y Học",
+      onClick: handleMedicalTestClick,
     },
   ];
 
@@ -66,11 +96,15 @@ const HomeBooking = () => {
           <div className="content-option p-4 flex flex-col items-center absolute bottom-0 w-full">
             <div className="option grid grid-cols-2 sm:grid-cols-4 gap-4">
               {options.map((option, index) => (
-                <div key={index} className="option-child flex flex-col items-center text-center rounded-lg cursor-pointer">
+                <div 
+                  key={index} 
+                  className="option-child flex flex-col items-center text-center rounded-lg cursor-pointer"
+                  onClick={option.onClick}
+                >
                   <div className="icon-child mb-2 p-4 rounded-full bg-white flex items-center justify-center" style={{height: "50px", width:'50px'}}>
                     <i className={`fas ${option.icon} text-blue-500 text-3xl`} />
                   </div>
-                  <div className="text-child text-lg font-medium">{option.text}</div>
+                  <div className="text-child text-base font-medium">{option.text}</div>
                 </div>
               ))}
             </div>

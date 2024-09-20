@@ -52,11 +52,11 @@ const Specialty = () => {
 
   return (
     <>
-      <div className="full-home w-full">
+      <div id="specialty-section" className="full-home w-full">
         <div className="home-specialty container-fix-spe mx-auto">
           <div className="home-content">
             <div className="home-title text-center items-center">
-                <h3 className="text-3xl font-bold mb-4">
+                <h3 className="text-xl font-bold mb-4">
                   Chuyên khoa phổ biến
                 </h3>
             </div>
