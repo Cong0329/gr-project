@@ -17,7 +17,7 @@ const medicines: CategoryProductProps[] = [
     },
     {
         id: 2,
-        name: "Cetirizine",
+        name: "Thuốc Telfor 60 DHG điều trị các triệu chứng viêm mũi dị ứng (2 vỉ x 10 viên)",
         image: medicine,
         price: 100000
     },
@@ -65,7 +65,7 @@ export const CategoryProduct = () => {
                         </div>
 
                         <div className='flex'>
-                            <span className="mt-1 font-bold text-blue-700">{medicine.price.toLocaleString()} đ</span>
+                            <span className="mt-1 font-bold text-blue-700 mr-1">{medicine.price.toLocaleString()} đ</span>
                             <span className='text-blue-700 mt-1 text-sm'>/ hộp</span>
                         </div>
                     </div>

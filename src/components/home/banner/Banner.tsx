@@ -4,7 +4,7 @@ import { BannerChild } from "./BannerChild";
 
 export const Banner = () => {
   return (
-    <div className="w-4/5 m-auto h-[1000px] pt-3">
+    <div className="w-4/5 m-auto  pt-3">
       <div className="">
         <div className="w-full flex justify-center items-center h-[245px]">
           <Slide />

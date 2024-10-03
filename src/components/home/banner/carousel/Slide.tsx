@@ -67,7 +67,7 @@ export const Slide = () => {
       >
         {images.map((image, index) => (
           <div key={index} className="w-full h-full">
-            <img src={image.image} alt='' className="w-full h-full object-cover rounded-2xl" />
+            <img src={image.image} alt='' loading='lazy' className="w-full h-full object-cover rounded-2xl" />
           </div>
         ))}
       </Carousel>
