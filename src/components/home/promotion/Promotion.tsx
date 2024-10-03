@@ -8,6 +8,7 @@ interface PromotionProps {
 import { useState, useEffect } from "react";
 import { PromotionChild } from "./PromotionChild";
 
+
 export const Promotion = () => {
 
     const medicines: PromotionProps[] = [
@@ -23,20 +24,20 @@ export const Promotion = () => {
         // Đặt giá trị mặc định cho loại đầu tiên của mỗi sản phẩm
         const defaultTypes: Record<string, string> = {};
         medicines.forEach(product => {
-          defaultTypes[product.id] = product.type[0]; // Chọn loại đầu tiên
+            defaultTypes[product.id] = product.type[0]; // Chọn loại đầu tiên
         });
         setSelectedTypes(defaultTypes);
-      }, []);
-    
+    }, []);
+
     const handleTypeClick = (type: string, id: string) => {
         // Cập nhật loại được chọn cho sản phẩm tương ứng
         setSelectedTypes((prev) => ({ ...prev, [id]: type }));
-      };
+    };
     return (
-        <div className="w-full m-auto mt-10 bg-blue-600 h-[700px] flex flex-col justify-center items-center">
-            <div className="grid grid-cols-5 gap-5    mx-auto w-4/5">
+        <div className="w-full bg-blue-600 mt-10  h-[700px] flex flex-col justify-center items-center">
+            <div className="container  grid grid-cols-5 gap-5    mx-auto w-4/5">
                 {medicines.slice(0, 5).map((medicine) => (
-                    <PromotionChild key={medicine.id} medicine={medicine} handleTypeClick={handleTypeClick} selectedType={selectedTypes}  />
+                    <PromotionChild key={medicine.id} medicine={medicine} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
                 ))}
             </div>
         </div>
