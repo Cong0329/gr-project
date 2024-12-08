@@ -33,7 +33,7 @@ export const Promotion = () => {
         // Cập nhật loại được chọn cho sản phẩm tương ứng
         setSelectedTypes((prev) => ({ ...prev, [id]: type }));
     };
-    return (
+    return (~~
         <div className="w-full bg-blue-600 mt-10  h-[700px] flex flex-col justify-center items-center">
             <div className="container  grid grid-cols-5 gap-5    mx-auto w-4/5">
                 {medicines.slice(0, 5).map((medicine) => (

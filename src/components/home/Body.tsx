@@ -12,7 +12,7 @@ export const Body = () => {
                 <NavLink setIsServiceHovered={setIsServiceHovered} />
             </div>
             <div className='relative'>
-                <div className=" mx-auto relative">
+                <div className="mx-auto relative">
                     <Banner />
                     <Promotion/>
                     <div className='h-[1000px]'></div>

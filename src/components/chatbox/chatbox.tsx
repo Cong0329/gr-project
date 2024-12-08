@@ -1,4 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import { reset, uploadImage } from '../../redux/imageSlice';
 
 interface Message {
   text: string;
@@ -13,6 +16,31 @@ const ChatBox = () => {
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const dispatch: AppDispatch = useDispatch();
+  const { className } = useSelector((state: RootState) => state.image);
+
+  const diseaseInfo: { [key: string]: { description: string, treatment: string } } = {
+    "Acne": {
+      description: "Acne (mụn trứng cá) là một bệnh da liễu phổ biến, thường xuất hiện khi các lỗ chân lông bị tắc nghẽn bởi dầu, tế bào chết và vi khuẩn. Mụn có thể xuất hiện trên mặt, cổ, lưng, ngực và các vùng da khác. Mặc dù acne chủ yếu ảnh hưởng đến thanh thiếu niên, nhưng người trưởng thành cũng có thể mắc phải. Acne có thể gây ra các vết sẹo và ảnh hưởng đến tâm lý của người bệnh.",
+      treatment: "Sử dụng sữa rửa mặt và chăm sóc da: Sữa rửa mặt nhẹ nhàng: Dùng sữa rửa mặt không chứa dầu và phù hợp với loại da của bạn để làm sạch da hàng ngày, giúp loại bỏ dầu thừa và bụi bẩn. Tránh sử dụng xà phòng mạnh vì có thể làm da khô và kích ứng. Sử dụng các sản phẩm trị mụn, Chế độ ăn uống và lối sống lành mạnh"
+    },
+    "Actinic Keratosis": {
+      description: "Bệnh Actinic Keratosis còn được gọi là Bệnh Keratosis Ánh Sáng hoặc Bệnh Tăng Sừng Ánh Sáng là một tình trạng da phổ biến do tiếp xúc lâu dài với ánh sáng mặt trời, dẫn đến sự phát triển của các mảng da thô ráp, khô và có vảy. Mặc dù thường không phải ung thư, nhưng nếu không điều trị, AK có thể tiến triển thành ung thư tế bào đáy hoặc ung thư tế bào vảy.",
+      treatment: "Sử dụng Kem hoặc gel chứa fluorouracil (5-FU), Imiquimod, Ingenol mebutate, Liệu pháp ánh sáng (Photodynamic Therapy - PDT), Cryotherapy (Điều trị bằng lạnh), Phẫu thuật cắt bỏ(trường hợp không thể điều trị bằng các phương pháp khác), Điều trị bằng Retinoids (Vitamin A)."
+    },
+    "Basal Cell Carcinoma": {
+      description: "Basal Cell Carcinoma (BCC) là một loại ung thư da phổ biến, phát sinh từ các tế bào đáy của lớp biểu bì da. Mặc dù BCC phát triển chậm và ít khi di căn, nhưng nếu không được điều trị, nó có thể lan rộng và gây tổn thương nghiêm trọng cho mô xung quanh. ",
+      treatment: "Phẫu thuật cắt bỏ (Excision Surgery), Phẫu thuật Mohs, Điều trị bằng laser, Xạ trị (Radiation Therapy), Điều trị bằng thuốc (Hóa trị, thuốc ức chế mạch máu)."
+    },
+    "Eczema": {
+      description: "Eczema (hay còn gọi là Viêm da cơ địa) là một bệnh da liễu mãn tính gây viêm, ngứa và đỏ da. Nó có thể ảnh hưởng đến bất kỳ phần nào trên cơ thể và có xu hướng tái phát. Eczema thường xuất hiện từ thời thơ ấu, nhưng cũng có thể phát triển ở người lớn. Mặc dù không lây, eczema có thể gây khó chịu và ảnh hưởng đến chất lượng cuộc sống.",
+      treatment: "Sử dụng kem dưỡng ẩm dày hoặc thuốc mỡ để giữ cho da mềm mại và không bị khô, Hạn chế tắm nước nóng, Bôi thuốc corticosteroid, Thuốc ức chế miễn dịch như tacrolimus và pimecrolimus để giảm hoạt động của hệ miễn dịch và giảm viêm. Uống thuốc kháng histamine giúp giảm ngứa và làm dịu các triệu chứng eczema, đặc biệt là vào ban đêm. "
+    },
+    "Rosacea": {
+      description: "Rosacea là một bệnh lý da liễu mãn tính, chủ yếu ảnh hưởng đến vùng da mặt, gây đỏ da, nổi mụn và các mạch máu li ti (mụn trứng cá đỏ). Mặc dù nguyên nhân chính xác của rosacea vẫn chưa rõ ràng, nhưng nó thường xuất hiện ở người trưởng thành, đặc biệt là phụ nữ trong độ tuổi 30-50. Bệnh có thể gây ảnh hưởng đến ngoại hình và tâm lý của người bệnh, nhưng may mắn là có thể kiểm soát được bằng các phương pháp điều trị thích hợp.",
+      treatment: "Điều trị bằng thuốc bôi Metronidazole: Là thuốc bôi kháng khuẩn, thường được sử dụng để giảm viêm và ngứa do rosacea.Azelic acid: Là một dạng axit nhẹ giúp giảm mụn và viêm.Ivermectin: Một loại kem bôi giúp giảm các triệu chứng viêm nhiễm và mụn trên da."
+    },
+  };
 
   const handleOpenChat = () => {
     if (!isOpen) {
@@ -25,13 +53,23 @@ const ChatBox = () => {
       ]);
     }
     setIsOpen(!isOpen);
+    dispatch(reset());
   };
 
   const handleSendMessage = () => {
-    if (input.trim()) {
-      setMessages((prevMessages) => [...prevMessages, { text: input, fromUser: true, type: 'text' }]);
-      setInput('');
+    if (input.toLocaleLowerCase().includes('cách chữa bệnh')) {
+      if (className) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: input, fromUser: true, type: 'text' },
+          { text: diseaseInfo[className].treatment, fromUser: false, type: 'text' }
+        ]);
+      }
+    } else if (input.trim()) {
+      setMessages((prevMessages) => [...prevMessages, { text: input, fromUser: true, type:'text' }]);  
     }
+    setInput('');
+    
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -57,12 +95,42 @@ const ChatBox = () => {
       }
     }
   };
-
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; // Lấy file đầu tiên từ danh sách files
+    if (file) {
+      dispatch(uploadImage(file));
+    } else {
+      // Nếu không có file, hiển thị cảnh báo
+      alert("Vui lòng chọn một ảnh!");
+    }
+  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleUpload(e);  // Gọi handleUpload để upload ảnh
+    handleSendImage(e);  // Gọi handleSendImage để gửi ảnh
+  };
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
+  // Định nghĩa kiểu cho diseaseInfo
+  
+
+
+  useEffect(() => {
+    if (className) {
+      // Kiểm tra nếu className có trong đối tượng diseaseInfo
+      if (diseaseInfo[className]) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: `Đây là bệnh ${className}`, fromUser: false, type: 'text' },
+          { text: diseaseInfo[className].description, fromUser: false, type: 'text' }
+        ]);
+      }
+    }
+  }, [className]);
+
+
 
   return (
     <div className="fixed bottom-4 right-4 flex flex-col items-end z-[9999]">
@@ -87,9 +155,8 @@ const ChatBox = () => {
               >
                 {msg.type === 'text' && (
                   <span
-                    className={`inline-block px-4 py-2 rounded-lg ${
-                      msg.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
-                    }`}
+                    className={`inline-block px-4 py-2 rounded-lg ${msg.fromUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
+                      }`}
                   >
                     {msg.text}
                   </span>
@@ -101,6 +168,7 @@ const ChatBox = () => {
                     className="inline-block max-w-[200px] rounded-lg shadow-md"
                   />
                 )}
+
               </div>
             ))}
             <div ref={messagesEndRef}></div>
@@ -119,7 +187,7 @@ const ChatBox = () => {
                 accept="image/*"
                 ref={fileInputRef}
                 className="hidden"
-                onChange={handleSendImage}
+                onChange={handleChange}
               />
             </div>
 
