@@ -5,6 +5,7 @@ import Specialty from "../home_booking/sections/specialty"
 import OnlEx from "../home_booking/sections/onl_ex"
 import GeneralEx from "../home_booking/sections/general_ex"
 import MedicalTest from "../home_booking/sections/medical_test"
+import ChatBox from "../chatbox/chatbox"
 
 
 
@@ -18,6 +19,7 @@ export const HomeBookingCare = () => {
             <GeneralEx />
             <MedicalTest />
             <Footer />
+            <ChatBox />
         </div>
     )
 }
