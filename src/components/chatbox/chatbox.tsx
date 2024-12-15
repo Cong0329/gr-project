@@ -57,7 +57,7 @@ const ChatBox = () => {
   };
 
   const handleSendMessage = () => {
-    if (input.toLocaleLowerCase().includes('cách chữa bệnh')) {
+    if (input.toLocaleLowerCase().includes('cách')) {
       if (className) {
         setMessages((prevMessages) => [
           ...prevMessages,
