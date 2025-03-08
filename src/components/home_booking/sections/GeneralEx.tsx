@@ -1,4 +1,4 @@
-import "./general_ex.css";
+import "./GeneralEx.css";
 import img from "../../../assets/logo.png";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";

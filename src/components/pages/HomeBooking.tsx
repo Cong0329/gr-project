@@ -1,10 +1,10 @@
-import HomeBooking from "../home_booking/booking"
+import HomeBooking from "../home_booking/Booking"
 import { Footer } from "../footer/Footer"
 import { Header } from "../header/Header"
-import Specialty from "../home_booking/sections/specialty"
-import OnlEx from "../home_booking/sections/onl_ex"
-import GeneralEx from "../home_booking/sections/general_ex"
-import MedicalTest from "../home_booking/sections/medical_test"
+import Specialty from "../home_booking/sections/Specialty"
+import OnlEx from "../home_booking/sections/OnlEx"
+import GeneralEx from "../home_booking/sections/GeneralEx"
+import MedicalTest from "../home_booking/sections/MedicalTest"
 import ChatBox from "../chatbox/chatbox"
 
 

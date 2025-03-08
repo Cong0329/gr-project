@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./onl_ex.css";
+import "./OnlEx.css";
 import imgDt from "../../../assets/sections/doctor.jpg";
 
 const OnlEx = () => {
