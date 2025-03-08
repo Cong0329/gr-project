@@ -1,14 +1,15 @@
+require('dotenv').config(); // Load biến môi trường từ .env
 const mysql = require('mysql2');
 
-// Cấu hình kết nối tương tự Spring Boot
+// Cấu hình kết nối MySQL sử dụng biến môi trường
 const connection = mysql.createConnection({
-    host: '34.58.238.108',  // Địa chỉ IP máy chủ MySQL
-    user: 'root',           // Tên người dùng
-    password: '23476985HUbK', // Mật khẩu
-    database: 'booking_db', // Tên database
-    port: 3306,             // Cổng mặc định MySQL
-    timezone: 'Z',          // Tương đương với `serverTimezone=UTC` trong Spring Boot
-    ssl: false              // Tương đương với `useSSL=false`
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT,
+    timezone: process.env.DB_TIMEZONE,
+    ssl: process.env.DB_SSL === 'true' // Chuyển đổi chuỗi thành boolean
 });
 
 // Kết nối với MySQL
@@ -20,5 +21,4 @@ connection.connect((err) => {
     console.log('✅ Kết nối MySQL thành công!');
 });
 
-// Xuất kết nối để dùng trong các file khác
 module.exports = connection;
