@@ -6,11 +6,9 @@ interface PromotionProps {
     type: string[];
 }
 import { useState, useEffect } from "react";
-import { PromotionChild } from "./PromotionChild";
-import CountdownTimer from "../time/CountTime";
+import { Medicine } from "./medicine";
 
-
-export const Promotion = () => {
+export const Medicines = () => {
 
     const medicines: PromotionProps[] = [
         { id: '1', name: 'Thuốc Telfor 60 DHG điều trị các triệu chứng viêm mũi dị ứng (2 vỉ x 10 viên)', image: 'https://i.imgur.com/v5hrLHF.png', price: 1000000, type: ['hộp', 'vỉ', 'viên'] },
@@ -19,6 +17,12 @@ export const Promotion = () => {
         { id: '4', name: 'Viên uống Glucosamine And Chondroitin Jpanwell hỗ trợ bổ sung chất nhờn dịch khớp (120 viên)', image: 'https://i.imgur.com/v5hrLHF.png', price: 3000000, type: ['hộp', 'vỉ', 'viên'] },
         { id: '5', name: 'Thuốc Telfor 60 DHG điều trị các triệu chứng viêm mũi dị ứng (2 vỉ x 10 viên)', image: 'https://i.imgur.com/HXN77Ev.png', price: 300000, type: ['hộp', 'vỉ'] },
         { id: '6', name: 'Medicine 3', image: 'https://i.imgur.com/HXN77Ev.png', price: 30, type: ['hộp', 'vỉ', 'viên'] },
+        { id: '7', name: 'Medicine 3', image: 'https://i.imgur.com/HXN77Ev.png', price: 30, type: ['hộp', 'vỉ', 'viên'] },
+        { id: '8', name: 'Medicine 3', image: 'https://i.imgur.com/HXN77Ev.png', price: 30, type: ['hộp', 'vỉ', 'viên'] },
+        { id: '9', name: 'Medicine 3', image: 'https://i.imgur.com/HXN77Ev.png', price: 30, type: ['hộp', 'vỉ', 'viên'] },
+        { id: '10', name: 'Medicine 3', image: 'https://i.imgur.com/HXN77Ev.png', price: 30, type: ['hộp', 'vỉ', 'viên'] },
+        { id: '11', name: 'Medicine 3', image: 'https://i.imgur.com/HXN77Ev.png', price: 30, type: ['hộp', 'vỉ', 'viên'] },
+        { id: '12', name: 'Medicine 3', image: 'https://i.imgur.com/HXN77Ev.png', price: 30, type: ['hộp', 'vỉ', 'viên'] },
     ]
     const [selectedTypes, setSelectedTypes] = useState({});
     useEffect(() => {
@@ -35,23 +39,24 @@ export const Promotion = () => {
         setSelectedTypes((prev) => ({ ...prev, [id]: type }));
     };
     return (
-        <div className="w-4/5 container mx-auto bg-blue-600 mt-10 pb-4 flex flex-col rounded-lg">
-            <div className="bg-blue-500 h-28 rounded-t-lg relative">
-                <div className="w-[150px] h-[150px] absolute top-2 right-5">
-                    <img className="w-full h-full object-fit" loading="lazy" src="https://i.imgur.com/s3csRn5.png" alt="sale" />
+        <div className="w-4/5 container mx-auto  mt-5 pb-4 flex flex-col rounded-lg">
+            <div className="flex justify-center items-center mb-3">
+                <div className="relative">
+                    <img
+                        src="https://i.imgur.com/SSiYmTR.png"
+                        alt="medicines"
+                        loading="lazy"
+                        className="w-[350px]"
+                    />
+                    <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white font-bold text-lg ">
+                        Sản phẩm bán chạy
+                    </p>
                 </div>
-                <div className="bg-blue-600 rounded-t-lg h-16 absolute left-3 bottom-0 w-[200px] font-bold  text-white flex items-center justify-center text-center">
-                    <div>
-                        <p>16:00 - 22:00, 10/5</p>
-                        <p>Đang diễn ra</p>
-                    </div>
-                </div>
-
             </div>
-            <CountdownTimer/>
+
             <div className="container grid grid-cols-6 gap-5 px-3">
-                {medicines.slice(0, 6).map((medicine) => (
-                    <PromotionChild key={medicine.id} medicine={medicine} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
+                {medicines.slice(0, 12).map((medicine) => (
+                    <Medicine key={medicine.id} medicine={medicine} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
                 ))}
             </div>
         </div>

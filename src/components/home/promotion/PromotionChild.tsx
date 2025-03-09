@@ -40,9 +40,9 @@ export const PromotionChild: React.FC<PromotionChildProps> = ({ medicine, handle
                 <span className='text-blue-700 mt-1.5 text-sm capitalize'>/ hộp</span>
             </div>
             <div className="w-full flex items-start">
-                <p className=" bg-gray-300 p-2 rounded-lg text-[13px] font-semibold text-gray-600">Hộp 3 Hộp lẻ x 5 Gói x 70ml</p>
+                <p className=" bg-gray-300 p-2 rounded-lg text-[13px] font-semibold text-gray-600">Hộp lẻ x 5 Gói x 70ml</p>
             </div>
-            <button className="bg-blue-700 text-white font-bold py-2 px-10 rounded-full w-full">
+            <button className="bg-blue-700 text-white font-bold py-2 px-10 rounded-full w-full text-sm">
                 Chọn mua
             </button>
         </div>
