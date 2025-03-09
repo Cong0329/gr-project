@@ -13,10 +13,7 @@
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@reduxjs/toolkit": "^2.4.0",
     "axios": "^1.7.9",
-<<<<<<< HEAD
     "framer-motion": "^12.4.10",
-=======
->>>>>>> fbb2c4e14cef1762d4967c5d99c0308c73dc0425
     "lucide-react": "^0.479.0",
     "pharma-app": "file:",
     "react": "^18.3.1",

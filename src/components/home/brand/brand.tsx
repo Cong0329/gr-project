@@ -7,19 +7,20 @@ interface Product {
     id: number;
     name: string;
     image: string;
+    logo: string;
 }
 
 const specialties: Product[] = [
-    { id: 1, name: "Sản phẩm 1", image: "https://i.imgur.com/v5hrLHF.png" },
-    { id: 2, name: "Sản phẩm 2", image: "https://i.imgur.com/v5hrLHF.png" },
-    { id: 3, name: "Sản phẩm 3", image: "https://i.imgur.com/v5hrLHF.png" },
-    { id: 4, name: "Sản phẩm 4", image: "https://i.imgur.com/v5hrLHF.png" },
-    { id: 5, name: "Sản phẩm 5", image: "https://i.imgur.com/v5hrLHF.png" },
-    { id: 6, name: "Sản phẩm 6", image: "https://i.imgur.com/v5hrLHF.png" },
-    { id: 7, name: "Sản phẩm 7", image: "https://i.imgur.com/v5hrLHF.png" },
-    { id: 8, name: "Sản phẩm 8", image: "https://i.imgur.com/v5hrLHF.png" },
-    { id: 9, name: "Sản phẩm 9", image: "https://i.imgur.com/v5hrLHF.png" },
-    { id: 10, name: "Sản phẩm 10", image: "https://i.imgur.com/v5hrLHF.png" },
+    { id: 1, name: "Sản phẩm 1", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
+    { id: 2, name: "Sản phẩm 2", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
+    { id: 3, name: "Sản phẩm 3", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
+    { id: 4, name: "Sản phẩm 4", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
+    { id: 5, name: "Sản phẩm 5", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
+    { id: 6, name: "Sản phẩm 6", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
+    { id: 7, name: "Sản phẩm 7", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
+    { id: 8, name: "Sản phẩm 8", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
+    { id: 9, name: "Sản phẩm 9", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
+    { id: 10, name: "Sản phẩm 10", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
 ];
 
 // Định nghĩa kiểu dữ liệu cho nút Prev & Next
@@ -72,15 +73,18 @@ export default function ProductSlider() {
                     <div key={specialty.id} className="p-2">
                         <div className="border-2 border-transparent hover:border-blue-500 rounded-lg transition-all duration-300">
                             <div className="flex flex-col justify-center items-center">
-                                <div className="w-full h-48 bg-white flex flex-col items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                                <div className="w-full  bg-white flex flex-col items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                                     <img
                                         src={specialty.image}
-                                        className="w-24 h-24 object-cover mb-2"
+                                        className="w-40  object-cover"
                                         alt={specialty.name}
                                     />
-                                    <div className="text-lg font-semibold">{specialty.name}</div>
+                                    <div className="border-2 rounded-lg border-gray-200 py-2 px-3">
+                                        <img src={specialty.logo} alt="logo" className="w-[150px]" />
+                                    </div>
+                                    <div className="text-lg font-semibold text-blue-700 my-5">Giảm đến 20%</div>
                                 </div>
-                            </div>                                             
+                            </div>
                         </div>
                     </div>
                 ))}
