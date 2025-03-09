@@ -1,5 +1,5 @@
 
-nav {
+.navbar {
     background-image: url('../../assets/backgound.png');
     background-size: cover;
     background-position: center;
@@ -7,4 +7,7 @@ nav {
     background-color: #2563eb;
 }
 
-   
+/* h1 {
+    font-size: 3.2em;
+    line-height: 1.1;
+  } */
