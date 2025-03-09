@@ -47,13 +47,13 @@ const SpecialtyDetail = () => {
                 tại Đại học Y khoa Hà Nội
               </li>
               <li>
-                Các bác sĩ đã, đang công tác tại các bệnh viện hàng đầu Khoa Cơ
-                Xương Khớp - Bệnh viện Bạch Mai, Bệnh viện Hữu nghị Việt
-                Đức,Bệnh Viện E.
+                Các bác sĩ đã, đang công tác tại các bệnh viện hàng đầu Khoa{" "}
+                {decodeURIComponent(name || "Chuyên khoa")} - Bệnh viện Bạch
+                Mai, Bệnh viện Hữu nghị Việt Đức,Bệnh Viện E.
               </li>
               <li>
-                Là thành viên hoặc lãnh đạo các tổ chức chuyên môn như: Hiệp hội
-                Cơ Xương Khớp, Hội Thấp khớp học,...
+                Là thành viên hoặc lãnh đạo các tổ chức chuyên môn như: Hiệp hội{" "}
+                {decodeURIComponent(name || "Chuyên khoa")},...
               </li>
               <li>
                 Được nhà nước công nhận các danh hiệu Thầy thuốc Nhân dân, Thầy
