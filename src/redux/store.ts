@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import imageReducer from './imageSlice';
+import scheduleReducer from './scheduleSlice';
 
 
 // Cấu hình store
 const store = configureStore({
   reducer: {
     image: imageReducer,
+    schedule: scheduleReducer,
   },
 });
 export type AppDispatch = typeof store.dispatch;

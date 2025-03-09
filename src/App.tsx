@@ -10,13 +10,13 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/booking_home" element={<HomeBookingCare />} />
+        <Route path="/booking-home" element={<HomeBookingCare />} />
         <Route
-          path="/booking_home/specialty_list"
+          path="/booking-home/specialty-list"
           element={<BookingSpecialty />}
         />
         <Route
-          path="/booking_home/specialty_detail/:name"
+          path="/booking-home/specialty-detail/:name"
           element={<BookingSpecialtyDetail />}
         />
       </Routes>

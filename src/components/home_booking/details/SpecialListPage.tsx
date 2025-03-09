@@ -57,7 +57,7 @@ const SpecialistPage = () => {
                   className="flex flex-col items-center p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition cursor-pointer py-6"
                   onClick={() =>
                     navigate(
-                      `/booking_home/specialty_detail/${encodeURIComponent(
+                      `/booking-home/specialty-detail/${encodeURIComponent(
                         category.name
                       )}`
                     )
