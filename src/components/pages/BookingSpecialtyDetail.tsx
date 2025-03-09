@@ -1,12 +1,12 @@
 import { Footer } from "../footer/Footer";
 import { Header } from "../header/Header";
-import SpecialistPage from "../home_booking/details/SpecialListPage";
+import SpecialtyDetail from "../home_booking/details/SpecialtyDetail";
 
-export const BookingSpecialty = () => {
+export const BookingSpecialtyDetail = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <SpecialistPage />
+      <SpecialtyDetail />
       <Footer />
     </div>
   );
