@@ -25,8 +25,7 @@ interface Category {
       <div className="w-4/5 mx-auto bg-gray-100 mt-5 rounded-xl">
         {/* Tiêu đề */}
         <div className="flex items-center gap-2 mb-4 text-black font-bold text-lg">
-          <span className="text-blue-600 text-2xl">🏆</span>
-          Danh mục nổi bật
+          <span className="text-blue-600 text-2xl">🏆</span> Danh mục nổi bật
         </div>
   
         {/* Danh sách danh mục */}
