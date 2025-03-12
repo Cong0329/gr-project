@@ -5,6 +5,9 @@ import { Promotion } from './promotion/Promotion';
 import { Medicines } from './medicines/medicines';
 import ProductSlider from './brand/brand';
 import HealthSection from './healthy/healthy';
+import CategoriesSection from './feature/categories';
+import ProductForAge from './product_for_age/product_for_age';
+import ProductList from './product_for_age/product_section';
 
 export const Body = () => {
     const [isServiceHovered, setIsServiceHovered] = useState(false);
@@ -21,6 +24,9 @@ export const Body = () => {
                     <Medicines/>
                     <ProductSlider/>
                     <HealthSection/>
+                    <CategoriesSection/>
+                    <ProductForAge/>
+                    <ProductList/>
                     <div className='h-[1000px]'></div>
                 </div>
                 {isServiceHovered && (
