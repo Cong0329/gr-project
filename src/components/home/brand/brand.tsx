@@ -66,11 +66,13 @@ export default function ProductSlider() {
     };
 
     return (
-        <div className="relative w-4/5 mx-auto">
-            <div className="text-black font-bold text-lg mb-4">Thương hiệu yêu thích</div>
+        <div className="relative container w-4/5 m-auto">
+            <div className="flex items-center gap-2 mb-4 text-black font-bold text-lg">
+                <span className="text-blue-600 text-2xl">💊</span> Thương hiệu yêu thích
+            </div>
             <Slider {...settings}>
                 {specialties.map((specialty) => (
-                    <div key={specialty.id} className="p-2">
+                    <div key={specialty.id} className="pr-2">
                         <div className="border-2 border-transparent hover:border-blue-500 rounded-lg transition-all duration-300">
                             <div className="flex flex-col justify-center items-center">
                                 <div className="w-full  bg-white flex flex-col items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">

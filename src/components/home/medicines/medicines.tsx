@@ -54,7 +54,7 @@ export const Medicines = () => {
                 </div>
             </div>
 
-            <div className="container grid grid-cols-6 gap-5 px-3">
+            <div className="container grid grid-cols-6 gap-5">
                 {medicines.slice(0, 12).map((medicine) => (
                     <Medicine key={medicine.id} medicine={medicine} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
                 ))}
