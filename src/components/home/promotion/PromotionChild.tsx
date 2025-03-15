@@ -22,12 +22,12 @@ export const PromotionChild: React.FC<PromotionChildProps> = ({ medicine, handle
                     {medicine.name}
                 </p>
             </div>
-            <div className={`grid grid-cols-${columns} gap-2 bg-gray-300 rounded-lg w-full h-9`}>
+            <div className={`grid grid-cols-${columns} bg-gray-300 rounded-lg w-full h-9`}>
                 {medicine.type.map((type) => (
                     <button
                         key={type}
                         onClick={() => handleTypeClick(type, medicine.id)}
-                        className={`p-1.5 capitalize text-[13px] font-semibold ${selectedType[medicine.id] === type
+                        className={` capitalize text-[13px] font-semibold ${selectedType[medicine.id] === type
                             ? 'text-blue-700 border border-blue-700 rounded-lg' // Thêm border và đổi màu khi được chọn
                             : 'text-gray-600'}`}
                     >
@@ -36,13 +36,13 @@ export const PromotionChild: React.FC<PromotionChildProps> = ({ medicine, handle
                 ))}
             </div>
             <div className='flex items-start  w-full'>
-                <span className="mt-1 font-bold text-blue-700 mr-1">{medicine.price.toLocaleString()} đ </span>
-                <span className='text-blue-700 mt-1.5 text-sm capitalize'>/ hộp</span>
+                <span className="md-lg:text-[10px] font-bold text-blue-700 mr-1">{medicine.price.toLocaleString()} đ </span>
+                <span className='text-blue-700 md-lg:text-[10px]  text-sm capitalize'>/ hộp</span>
             </div>
             <div className="w-full flex items-start">
                 <p className=" bg-gray-300 p-2 rounded-lg text-[13px] font-semibold text-gray-600">Hộp lẻ x 5 Gói x 70ml</p>
             </div>
-            <button className="bg-blue-700 text-white font-bold py-2 px-10 rounded-full w-full text-sm">
+            <button className="bg-blue-700 text-white font-bold py-2 items-center rounded-full w-full text-sm ">
                 Chọn mua
             </button>
         </div>

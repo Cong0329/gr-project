@@ -36,7 +36,7 @@ const GeneralEx = () => {
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
                     <div className="flex">
                         <div className="w-1/3">
-                            <img src={img} alt="/#" className="w-full h-full object-cover" />
+                            <img src={img} alt="/#" className="w-full h-full object-cover" loading="lazy"/>
                         </div>
                         <div className="w-2/3 p-4">
                             <a href="#/" className="text-lg font-bold text-gray-800 hover:text-blue-600">
@@ -102,6 +102,7 @@ const GeneralEx = () => {
                                                             src={pkg.image}
                                                             className="w-20 h-20 rounded-full object-cover mb-2"
                                                             alt={pkg.name}
+                                                            loading="lazy"
                                                         />
                                                         <div className="text-sm font-semibold text-center mb-2">
                                                             {pkg.name}
@@ -127,6 +128,7 @@ const GeneralEx = () => {
                                                             src={pkg.image}
                                                             className="w-20 h-20 rounded-full object-cover mb-2"
                                                             alt={pkg.name}
+                                                            loading="lazy"
                                                         />
                                                         <div className="text-sm font-semibold text-center mb-2">
                                                             {pkg.name}

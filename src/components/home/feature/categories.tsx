@@ -22,14 +22,14 @@ interface Category {
   
   export default function CategoriesSection(): JSX.Element {
     return (
-      <div className="w-4/5 mx-auto bg-gray-100 mt-5 rounded-xl">
+      <div className="w-4/5 md-lg:w-11/12 container mx-auto bg-gray-100 mt-5 rounded-xl">
         {/* Tiêu đề */}
         <div className="flex items-center gap-2 mb-4 text-black font-bold text-lg">
           <span className="text-blue-600 text-2xl">🏆</span> Danh mục nổi bật
         </div>
   
         {/* Danh sách danh mục */}
-        <div className="grid grid-cols-6 gap-4">
+        <div className="grid grid-cols-6 tb:grid-cols-2 gap-4">
           {categories.map((category: Category) => (
             <div
               key={category.id}

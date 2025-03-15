@@ -120,10 +120,20 @@ export default function ProductForAge() {
         arrows: true,
         nextArrow: <NextArrow />,
         prevArrow: <PrevArrow />,
+        responsive: [
+            {
+                breakpoint: 800,  // Dưới 768px
+                settings: {
+                    slidesToShow: Math.min(4, productList.length),
+                    slidesToScroll: 4,
+                    arrows:false,
+                }
+            },
+        ]
     };
 
     return (
-        <div className="w-4/5 mx-auto bg-gray-100 mt-5 rounded-xl relative">
+        <div className="w-4/5 md-lg:w-11/12 mx-auto container bg-gray-100 mt-5 rounded-xl relative">
             {/* Tiêu đề */}
             <div className="flex items-center gap-2 mb-4 text-black font-bold text-lg">
                 <span className="text-blue-600 text-2xl">👨‍👩‍👧‍👦</span> Sản phẩm theo đối tượng
@@ -145,19 +155,20 @@ export default function ProductForAge() {
             </div>
 
             {/* Hiển thị ảnh danh mục được chọn */}
-            <div className="flex mb-4 h-[475px]">
-                <div className="w-1/6 h-full">
+            <div className="flex tb:flex-col mb-4 h-[475px] tb:h-full">
+                <div className="w-1/6 tb:w-full h-full tb:h-[235px]">
                     {categories.find((c) => c.id === selectedCategory) && (
                         <img
                             src={categories.find((c) => c.id === selectedCategory)?.image}
                             alt={selectedCategory}
-                            className="w-full h-full object-contain rounded-lg"
+                            loading="lazy"
+                            className="w-full h-full object-cover rounded-lg"
                         />
                     )}
                 </div>
 
                 {/* Slider hiển thị sản phẩm */}
-                <div className="w-5/6 relative h-full">
+                <div className="w-5/6 tb:w-full tb:mt-5 relative h-full">
                     <Slider {...settings}>
                         {productList.map((product) => (
                             <div key={product.id} className="px-2 h-[475px]">
@@ -170,6 +181,7 @@ export default function ProductForAge() {
                                     <img
                                         src={product.image}
                                         alt='age'
+                                        loading="lazy"
                                         className="w-full h-44 object-contain"
                                     />
                                     <div className="w-full mt-2 h-16 text-black font-semibold text-sm overflow-hidden text-ellipsis">

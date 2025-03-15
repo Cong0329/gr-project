@@ -108,14 +108,25 @@ export default function HealthSection() {
         dots: false,
         infinite: false,
         speed: 500,
-        slidesToShow: 3,
+        slidesToShow: 3,  // Mặc định hiển thị 3 slide
         slidesToScroll: 3,
         nextArrow: <NextArrow />,
         prevArrow: <PrevArrow />,
+        responsive: [
+            {
+                breakpoint: 800,  // Khi màn hình dưới 768px
+                settings: {
+                    slidesToShow: 2,  // Giảm xuống còn 2 slide
+                    slidesToScroll: 2,
+                    arrows:false,
+                }
+            }
+        ]
     };
+    
 
     return (
-        <div className="w-4/5 mx-auto bg-gradient-to-r from-blue-500 to-blue-600 text-white p-8 rounded-xl relative mt-7">
+        <div className="w-4/5 md-lg:w-11/12 container mx-auto bg-gradient-to-r from-blue-500 to-blue-600 text-white p-8 rounded-xl relative mt-7">
             <div>
                 <h2 className="text-2xl font-bold">Chuyên trang bệnh & sức khỏe</h2>
                 <p className="text-sm opacity-80">
@@ -133,10 +144,11 @@ export default function HealthSection() {
                 <Slider {...settings}>
                     {doctors.map((doctor) => (
                         <div key={doctor.id} className="p-2">
-                            <div className="bg-white rounded-xl p-4 shadow-md flex items-center gap-3">
+                            <div className="bg-white rounded-xl p-4 shadow-md flex items-center gap-3 tb:h-32">
                                 <img
-                                    src={doctor.image}
+                                    src='https://i.imgur.com/TamqnIu.png'
                                     alt={doctor.name}
+                                    loading="lazy"
                                     className="w-16 h-16 rounded-full object-cover"
                                 />
                                 <div>

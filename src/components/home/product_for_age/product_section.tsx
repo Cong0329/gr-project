@@ -36,17 +36,17 @@ export default function ProductList() {
     setSelectedTypes((prev) => ({ ...prev, [id]: type }));
   };
   return (
-    <div className="w-4/5 mx-auto bg-gray-100 mt-5  rounded-xl">
+    <div className="w-4/5 md-lg:w-11/12 container mx-auto bg-gray-100 mt-5  rounded-xl">
       {/* Tiêu đề */}
       <div className="flex items-center gap-2 mb-4 text-black font-bold text-lg">
         <span className="text-blue-600 text-2xl">⏰</span> Gợi ý hôm nay
       </div>
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 bg-white p-3 rounded-lg">
+      <div className="flex flex-wrap gap-2 mb-6 bg-white p-3 rounded-lg">
         {categories.map((category) => (
           <button
             key={category.id}
-            className={`px-4 py-2 rounded-full border ${selectedCategory === category.id
+            className={`px-4 py-2 md-lg:text-sm md-lg:px-3 tb: rounded-full border ${selectedCategory === category.id
               ? "bg-blue-600 text-white"
               : "bg-gray-200 text-black"
               }`}
@@ -58,7 +58,7 @@ export default function ProductList() {
       </div>
 
       {/* Danh sách sản phẩm */}
-      <div className="grid grid-cols-6 gap-4">
+      <div className="grid grid-cols-6 gap-4 tb:grid-cols-2">
         {products[selectedCategory]?.slice(0,12).map((product) => (
           <Medicine key={product.id} medicine={product} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
         ))}

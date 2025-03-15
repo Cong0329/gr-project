@@ -62,7 +62,7 @@ const MedicalTest = () => {
                                         <div key={index} className="px-2">
                                             <div className="flex flex-col justify-center items-center">
                                                 <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-md">
-                                                    <img src={img} alt={option.name} className="w-16 h-16 object-contain" />
+                                                    <img src={img} alt={option.name} className="w-16 h-16 object-contain" loading='lazy' />
                                                 </div>
                                                 <div className="text-center mt-2">
                                                     <div className="text-sm font-semibold">

@@ -165,6 +165,7 @@ const ChatBox = () => {
                   <img
                     src={msg.imageUrl}
                     alt={`Message ${index}`}
+                    loading='lazy'
                     className="inline-block max-w-[200px] rounded-lg shadow-md"
                   />
                 )}

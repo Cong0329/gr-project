@@ -78,6 +78,7 @@ const Specialty = () => {
                           src={specialty.image}
                           className="w-24 h-24 rounded-full object-cover mb-2"
                           alt={specialty.name}
+                          loading="lazy"
                         />
                         <div className="text-lg font-semibold">
                           {specialty.name}
