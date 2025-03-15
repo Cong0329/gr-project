@@ -24,7 +24,7 @@ const images: SlideProps[] = [
 
 export const Slide = () => {
   return (
-    <div className='w-8/12 h-full'>
+    <div className='w-8/12 tb:w-full h-full'>
       <Carousel 
         showThumbs={false} 
         infiniteLoop={true} 
@@ -67,7 +67,7 @@ export const Slide = () => {
       >
         {images.map((image, index) => (
           <div key={index} className="w-full h-full">
-            <img src={image.image} alt='' loading='lazy' className="w-full h-full object-cover rounded-2xl" />
+            <img src={image.image} alt='' loading='lazy' className="w-full h-full object-fit rounded-2xl" />
           </div>
         ))}
       </Carousel>

@@ -43,16 +43,19 @@ const child: BannerChildProps[] = [
 ]
 
 export const BannerChild = () => {
-  return (
-    <div className="flex justify-between">
-        {child.map((child) => (
-            <div className='flex rounded-lg bg-white p-4 items-center' key={child.title}>
-                <img src={child.image} alt={child.title} className='w-1/3 h-full'/>
-                <div>
-                    <p className='font-bold pl-2'>{child.title}</p>
+    return (
+        <div className="flex justify-between md-lg:space-x-4">
+            {child.map((child) => (
+                <div className='flex tb:flex-col rounded-lg bg-white p-4 items-center' key={child.title}>
+                    <img src={child.image} alt={child.title} loading='lazy' className='w-1/3 h-full tb:h-[40px] object-fit' />
+                    <div className='tb:hidden'>
+                        <p className='font-bold pl-2 tb:text-sm'>{child.title}</p>
+                    </div>
+                    <div className='hidden tb:block items-center'>
+                        <p className='text-center font-bold pl-2 tb:text-sm'>{child.title}</p>
+                    </div>
                 </div>
-            </div>
-        ))}
-    </div>
-  )
+            ))}
+        </div>
+    )
 }

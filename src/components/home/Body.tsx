@@ -10,12 +10,13 @@ import ProductForAge from './product_for_age/product_for_age';
 import ProductList from './product_for_age/product_section';
 import DiseaseList from './sick/sick';
 
+
 export const Body = () => {
     const [isServiceHovered, setIsServiceHovered] = useState(false);
 
     return (
         <main className="flex-1 bg-gray-100 ">
-            <div className="container mx-auto">
+            <div className="mx-auto">
                 <NavLink setIsServiceHovered={setIsServiceHovered} />
             </div>
             <div className='relative'>

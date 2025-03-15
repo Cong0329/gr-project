@@ -38,7 +38,7 @@ export const CategoryList = () => {
                         to={`/`}
                         data-id={category.id}
                     >
-                        <img src={category.image} alt={category.name} />
+                        <img src={category.image} alt={category.name} loading="lazy"/>
                         <span>{category.name}</span>
                     </Link>
                 </div>

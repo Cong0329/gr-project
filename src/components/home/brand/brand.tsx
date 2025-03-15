@@ -63,10 +63,18 @@ export default function ProductSlider() {
         slidesToScroll: 5, // Cuộn 5 sản phẩm mỗi lần
         nextArrow: <NextArrow />, // Custom nút next
         prevArrow: <PrevArrow />, // Custom nút prev
+        responsive: [
+            {
+                breakpoint: 800,  // Dưới 768px
+                settings: {
+                   arrows:false,
+                }
+            },
+        ]
     };
 
     return (
-        <div className="relative container w-4/5 m-auto">
+        <div className="relative container w-4/5 md-lg:w-11/12 m-auto">
             <div className="flex items-center gap-2 mb-4 text-black font-bold text-lg">
                 <span className="text-blue-600 text-2xl">💊</span> Thương hiệu yêu thích
             </div>
@@ -78,13 +86,14 @@ export default function ProductSlider() {
                                 <div className="w-full  bg-white flex flex-col items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                                     <img
                                         src={specialty.image}
-                                        className="w-40  object-cover"
+                                        className="w-40 h-auto tb:w-24 object-fit"
+                                        loading="lazy"
                                         alt={specialty.name}
                                     />
                                     <div className="border-2 rounded-lg border-gray-200 py-2 px-3">
-                                        <img src={specialty.logo} alt="logo" className="w-[150px]" />
+                                        <img src={specialty.logo} alt="logo" className="w-36 tb:w-20 object-fit" loading="lazy" />
                                     </div>
-                                    <div className="text-lg font-semibold text-blue-700 my-5">Giảm đến 20%</div>
+                                    <div className="text-lg font-semibold text-blue-700 my-5 tb:text-sm">Giảm đến 20%</div>
                                 </div>
                             </div>
                         </div>

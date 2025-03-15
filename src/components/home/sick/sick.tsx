@@ -105,10 +105,20 @@ export default function DiseaseList() {
         arrows: true,
         nextArrow: <NextArrow />,
         prevArrow: <PrevArrow />,
+        responsive: [
+            {
+                breakpoint: 800,  // Dưới 768px
+                settings: {
+                    slidesToShow: 2,
+                    slidesToScroll: 2,
+                    arrows:false,
+                }
+            },
+        ]
     };
 
     return (
-        <div className="w-4/5 mx-auto my-5 bg-gray-100 rounded-lg">
+        <div className="w-4/5 md-lg:w-11/12 container mx-auto my-5 bg-gray-100 rounded-lg">
             {/* Header */}
             <div className="flex items-center gap-4 mb-4">
                 <h2 className="text-xl font-semibold">🩺 Bệnh</h2>
@@ -137,8 +147,8 @@ export default function DiseaseList() {
                     {diseases.map((disease) => (
                         <div key={disease.id} className=" px-3 h-[335px] ">
                             <div className="p-4 bg-white rounded-lg shadow-md">
-                                <img src={disease.image} alt={disease.name} className="w-full h-40 object-cover rounded-lg mb-4" />
-                                <h3 className="text-lg font-semibold">{disease.name}</h3>
+                                <img src={disease.image} alt={disease.name} loading="lazy" className="w-full h-40 object-cover rounded-lg mb-4" />
+                                <h3 className="text-lg font-semibold md-lg:text-[15px] ">{disease.name}</h3>
                                 <div className="w-full h-16 text-black font-semibold text-sm overflow-hidden text-ellipsis">
                                     <p className="text-gray-600 text-sm mb-3">{disease.description}</p>
                                 </div>

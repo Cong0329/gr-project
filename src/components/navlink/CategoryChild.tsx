@@ -36,7 +36,7 @@ export const CategoryChild = () => {
         <div className="grid grid-cols-3 gap-2 w-full border-b-2 border-gray-300 pb-4">
             {medicines.map((medicine: ServiceHoverProps) => (           
                 <div className="flex items-center bg-white rounded-lg p-4 h-16" key={medicine.id}>
-                    <img src={medicine.image} alt={medicine.name} className="w-6 h-6 mr-2" />
+                    <img src={medicine.image} alt={medicine.name} className="w-6 h-6 mr-2" loading="lazy" />
                     <span>{medicine.name}</span>
                 </div>
             ))}

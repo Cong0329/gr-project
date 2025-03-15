@@ -57,7 +57,7 @@ export const CategoryProduct = () => {
             <div className="grid grid-cols-5 gap-2 w-full">
                 {medicines.map((medicine: CategoryProductProps) => (
                     <div className="flex flex-col items-start" key={medicine.id}>
-                        <img src={medicine.image} alt={medicine.name} className="w-32 h-32 bg-white rounded-lg p-4" />
+                        <img src={medicine.image} alt={medicine.name} loading='lazy' className="w-32 h-32 bg-white rounded-lg p-4" />
                         <div className="w-full mt-2 h-16 text-sm overflow-hidden text-ellipsis">
                             <p className="line-clamp-3">
                             {medicine.name}

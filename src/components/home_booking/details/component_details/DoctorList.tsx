@@ -53,6 +53,7 @@ const DoctorList = () => {
                   src={doctor.avatar || "https://via.placeholder.com/80"}
                   alt={doctor.name}
                   className="w-20 h-20 rounded-full object-cover"
+                  loading="lazy"
                 />
                 <h2 className="text-blue-500 font-bold text-lg text-center mt-2">
                   {doctor.name}
