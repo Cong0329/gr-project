@@ -6,6 +6,10 @@ import { BookingSpecialty } from "./components/pages/BookingSpecialty";
 import { BookingSpecialtyDetail } from "./components/pages/BookingSpecialtyDetail";
 import { BookingOnlEx } from "./components/pages/BookingOnlEx";
 import { BookingOnlExDetail } from "./components/pages/BookingOnlExDetail";
+import { BookingGeneralEx } from "./components/pages/BookingGeneralEx";
+import { BookingGeneralExDetail } from "./components/pages/BookingGeneralExDetail";
+import { BookingMedicalTest } from "./components/pages/BookingMedicalTest";
+import { BookingMedicalTestDetail } from "./components/pages/BookingMedicalTestDetail";
 
 function App() {
   return (
@@ -25,6 +29,22 @@ function App() {
         <Route
           path="/booking-home/onlex-detail/:name"
           element={<BookingOnlExDetail />}
+        />
+        <Route
+          path="/booking-home/generalex-list"
+          element={<BookingGeneralEx />}
+        />
+        <Route
+          path="/booking-home/generalex-detail/:name"
+          element={<BookingGeneralExDetail />}
+        />
+        <Route
+          path="/booking-home/medicaltest-list"
+          element={<BookingMedicalTest />}
+        />
+        <Route
+          path="/booking-home/medicaltest-detail/:name"
+          element={<BookingMedicalTestDetail />}
         />
       </Routes>
     </Router>
