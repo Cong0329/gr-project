@@ -1,13 +1,13 @@
 import { Footer } from "../footer/Footer";
 import { Header } from "../header/Header";
-import SpecialistPage from "../home_booking/details/SpecialListPage";
+import OnlExListPage from "../home_booking/details/OnlExListPage";
 
-export const BookingSpecialty = () => {
+export const BookingOnlEx = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <div className="flex-grow">
-        <SpecialistPage />
+        <OnlExListPage />
       </div>
       <Footer />
     </div>

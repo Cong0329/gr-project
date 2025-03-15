@@ -3,6 +3,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import "./Specialty.css";
 import CoXuongKhop from "../../../assets/sections/Co_Xuong_Khop.webp";
+import { Link } from "react-router-dom";
 
 const Specialty = () => {
   const settings = {
@@ -55,13 +56,19 @@ const Specialty = () => {
       <div id="specialty-section" className="full-home w-full">
         <div className="home-specialty container-fix-spe mx-auto">
           <div className="home-content">
-            <div className="home-title text-center items-center">
-                <h3 className="text-xl font-bold mb-4">
-                  Chuyên khoa phổ biến
-                </h3>
+            <div className="home-title relative flex justify-center items-center mb-4">
+              <h3 className="text-xl font-bold ">Chuyên khoa phổ biến</h3>
+              <Link
+                to="/booking-home/specialty-list"
+                className="absolute right-20"
+              >
+                <button className="text-[rgb(45,135,243)] font-semibold">
+                  Xem tất cả<span className="ml-1">&gt;</span>
+                </button>
+              </Link>
             </div>
 
-            <div className="home-body">
+            <div className="home-body pt-5">
               <Slider {...settings}>
                 {specialties.map((specialty, index) => (
                   <div key={index} className="px-2">

@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Thunk để fetch lịch khám
 export const fetchSchedule = createAsyncThunk("schedule/fetch", async () => {
-  const response = await axios.get("https://run.mocky.io/v3/f09bc285-5b09-48ef-b4c1-ebacd39bced0");
+  const response = await axios.get("https://run.mocky.io/v3/897765ac-ca3b-43a1-bd8f-cf6711389704");
   return response.data; // Đảm bảo API trả về **mảng**
 });
 

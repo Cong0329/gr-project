@@ -4,6 +4,8 @@ import { Home } from "./components/pages/Home";
 import { HomeBookingCare } from "./components/pages/HomeBooking";
 import { BookingSpecialty } from "./components/pages/BookingSpecialty";
 import { BookingSpecialtyDetail } from "./components/pages/BookingSpecialtyDetail";
+import { BookingOnlEx } from "./components/pages/BookingOnlEx";
+import { BookingOnlExDetail } from "./components/pages/BookingOnlExDetail";
 
 function App() {
   return (
@@ -18,6 +20,11 @@ function App() {
         <Route
           path="/booking-home/specialty-detail/:name"
           element={<BookingSpecialtyDetail />}
+        />
+        <Route path="/booking-home/onlex-list" element={<BookingOnlEx />} />
+        <Route
+          path="/booking-home/onlex-detail/:name"
+          element={<BookingOnlExDetail />}
         />
       </Routes>
     </Router>

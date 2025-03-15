@@ -1,14 +1,16 @@
 import { Footer } from "../footer/Footer";
 import { Header } from "../header/Header";
 import DoctorList from "../home_booking/details/component_details/DoctorList";
-import SpecialtyDetail from "../home_booking/details/SpecialtyDetail";
+import OnlExDetail from "../home_booking/details/OnlExDetail";
 
-export const BookingSpecialtyDetail = () => {
+export const BookingOnlExDetail = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <SpecialtyDetail />
-      <DoctorList />
+      <div className="flex-grow">
+        <OnlExDetail />
+        <DoctorList />
+      </div>
       <Footer />
     </div>
   );
