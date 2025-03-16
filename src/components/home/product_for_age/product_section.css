@@ -1,0 +1,4 @@
+.section-slider .slick-slide {
+    width: auto !important; /* Gỡ bỏ width cố định */
+    display: inline-block !important; /* Giữ đúng kích thước nội dung */
+}

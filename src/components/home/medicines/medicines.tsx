@@ -39,7 +39,7 @@ export const Medicines = () => {
         setSelectedTypes((prev) => ({ ...prev, [id]: type }));
     };
     return (
-        <div className="w-4/5 md-lg:w-11/12 container mx-auto  mt-5 pb-4 flex flex-col rounded-lg">
+        <div className="w-4/5 md-lg:w-11/12 tb:w-11/12 container mx-auto  mt-5 pb-4 flex flex-col rounded-lg">
             <div className="flex justify-center items-center mb-3">
                 <div className="relative">
                     <img

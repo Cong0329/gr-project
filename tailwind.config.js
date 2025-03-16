@@ -7,8 +7,9 @@ export default {
   theme: {
     extend: {
       screens: {
-        'md-lg': { 'min': '768px', 'max': '1410px' }, // Chỉ từ 768px đến 1024px
-        'tb': { 'min': '320px', 'max': '768px' },
+        'md-lg': { 'min': '768px', 'max': '1410px' },
+        'tb': { 'raw': '(max-width: 768px)' },
+        'ml': { 'raw': '(max-width: 450px)' },
       }
     },
   },

@@ -36,7 +36,7 @@ interface Category {
               className="bg-white p-4 rounded-lg shadow-md flex flex-col items-center hover:shadow-lg transition-shadow duration-300"
             >
               <div className="text-3xl text-blue-600">{category.icon}</div>
-              <p className="font-bold text-black">{category.name}</p>
+              <p className="font-bold text-black text-center">{category.name}</p>
               <p className="text-gray-500 text-sm">{category.products} sản phẩm</p>
             </div>
           ))}

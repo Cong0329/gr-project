@@ -35,7 +35,7 @@ export const Promotion = () => {
         setSelectedTypes((prev) => ({ ...prev, [id]: type }));
     };
     return (
-        <div className="w-4/5 md-lg:w-11/12 container mx-auto bg-blue-600 mt-10 pb-4 flex flex-col rounded-lg">
+        <div className="w-4/5 md-lg:w-11/12 tb:w-11/12 container mx-auto bg-blue-600 mt-10 pb-4 flex flex-col rounded-lg">
             <div className="bg-blue-500 h-28 rounded-t-lg relative">
                 <div className="w-[150px] h-[150px] absolute top-2 right-5">
                     <img className="w-full h-full object-fit" loading="lazy" src="https://i.imgur.com/s3csRn5.png" alt="sale" />

@@ -118,7 +118,7 @@ export default function DiseaseList() {
     };
 
     return (
-        <div className="w-4/5 md-lg:w-11/12 container mx-auto my-5 bg-gray-100 rounded-lg">
+        <div className="w-4/5 md-lg:w-11/12 tb:w-11/12 container mx-auto my-5 bg-gray-100 rounded-lg">
             {/* Header */}
             <div className="flex items-center gap-4 mb-4">
                 <h2 className="text-xl font-semibold">🩺 Bệnh</h2>
@@ -145,14 +145,14 @@ export default function DiseaseList() {
             <div className="">
                 <Slider {...settings}>
                     {diseases.map((disease) => (
-                        <div key={disease.id} className=" px-3 h-[335px] ">
-                            <div className="p-4 bg-white rounded-lg shadow-md">
-                                <img src={disease.image} alt={disease.name} loading="lazy" className="w-full h-40 object-cover rounded-lg mb-4" />
-                                <h3 className="text-lg font-semibold md-lg:text-[15px] ">{disease.name}</h3>
-                                <div className="w-full h-16 text-black font-semibold text-sm overflow-hidden text-ellipsis">
+                        <div key={disease.id} className=" px-3 ml:px-1 h-[335px] ml:h-[310px] ">
+                            <div className=" bg-white rounded-lg shadow-md h-full">
+                                <img src={disease.image} alt={disease.name} loading="lazy" className="w-full h-40 ml:h-32 object-cover rounded-t-lg mb-4" />
+                                <h3 className="text-lg font-semibold md-lg:text-[15px] ml:h-14 px-2 ">{disease.name}</h3>
+                                <div className="px-2 w-full h-16 text-black font-semibold text-sm overflow-hidden text-ellipsis">
                                     <p className="text-gray-600 text-sm mb-3">{disease.description}</p>
                                 </div>
-                                <button className="text-blue-500 font-medium">Tìm hiểu thêm &gt;</button>
+                                <button className="text-blue-500 font-medium px-2 ml:mt-3">Tìm hiểu thêm &gt;</button>
                             </div>
                         </div>
                     ))}

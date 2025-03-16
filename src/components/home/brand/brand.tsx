@@ -65,16 +65,24 @@ export default function ProductSlider() {
         prevArrow: <PrevArrow />, // Custom nút prev
         responsive: [
             {
-                breakpoint: 800,  // Dưới 768px
+                breakpoint: 800, 
                 settings: {
                    arrows:false,
+                }
+            },
+            {
+                breakpoint: 500, 
+                settings: {
+                   arrows:false,
+                   slidesToShow: 2.25, 
+                   slidesToScroll: 2,
                 }
             },
         ]
     };
 
     return (
-        <div className="relative container w-4/5 md-lg:w-11/12 m-auto">
+        <div className="relative container w-4/5 md-lg:w-11/12 tb:w-11/12 m-auto">
             <div className="flex items-center gap-2 mb-4 text-black font-bold text-lg">
                 <span className="text-blue-600 text-2xl">💊</span> Thương hiệu yêu thích
             </div>

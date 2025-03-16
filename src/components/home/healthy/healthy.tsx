@@ -114,10 +114,18 @@ export default function HealthSection() {
         prevArrow: <PrevArrow />,
         responsive: [
             {
-                breakpoint: 800,  // Khi màn hình dưới 768px
+                breakpoint: 800,  
                 settings: {
                     slidesToShow: 2,  // Giảm xuống còn 2 slide
                     slidesToScroll: 2,
+                    arrows:false,
+                }
+            },
+            {
+                breakpoint: 500,
+                settings: {
+                    slidesToShow: 1.25,  
+                    slidesToScroll: 1,
                     arrows:false,
                 }
             }
@@ -126,7 +134,7 @@ export default function HealthSection() {
     
 
     return (
-        <div className="w-4/5 md-lg:w-11/12 container mx-auto bg-gradient-to-r from-blue-500 to-blue-600 text-white p-8 rounded-xl relative mt-7">
+        <div className="w-4/5 md-lg:w-11/12 tb:w-11/12 container mx-auto bg-gradient-to-r from-blue-500 to-blue-600 text-white p-8 rounded-xl relative mt-7">
             <div>
                 <h2 className="text-2xl font-bold">Chuyên trang bệnh & sức khỏe</h2>
                 <p className="text-sm opacity-80">

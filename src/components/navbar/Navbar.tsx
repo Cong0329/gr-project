@@ -22,9 +22,9 @@ export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="text-white pb-5 navbar">
-      <div className="container mx-auto flex tb:flex-col justify-between items-center w-4/5 md-lg:w-11/12 ">
-        <div className='flex tb:justify-between tb:w-full tb:mt-2'>
+    <nav className="text-white pb-5 navbar ">
+      <div className="container mx-auto flex tb:flex-col justify-between items-center w-4/5 md-lg:w-11/12 tb:w-11/12 ">
+        <div className='flex tb:justify-between items-center tb:w-full tb:mt-2'>
           <div className="items-center gap-4 hidden tb:block">
             <button
               className="text-white"
@@ -34,10 +34,10 @@ export const Navbar = () => {
             </button>
           </div>
           <Link to="/" className='flex items-center hover:text-white'>
-            <img src={logo} alt="logo" className='w-14 h-14 md-lg:w-10 md-lg:h-10' loading='lazy' />
+            <img src={logo} alt="logo" className='w-14 h-14 md-lg:w-10 md-lg:h-10 ml:w-10 ml:h-10' loading='lazy' />
             <div className='m-auto ml-2 '>
-              <h1 className='text-2xl font-bold md-lg:text-sm '>Health Pharmacy</h1>
-              <p className='text-sm md-lg:text-[10px]'>Your Health, Our Priority</p>
+              <h1 className='text-2xl font-bold md-lg:text-sm ml:text-[17px] '>Health Pharmacy</h1>
+              <p className='text-sm md-lg:text-[10px] ml:text-[10px]'>Your Health, Our Priority</p>
             </div>
           </Link>
           <div className='tb:block hidden'>

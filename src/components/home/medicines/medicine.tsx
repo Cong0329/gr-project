@@ -17,7 +17,7 @@ interface Medicine {
       return (
           <div key={medicine.id} className="item-box border-2 rounded-lg bg-white flex flex-col items-center p-4 space-y-2 order-transparent hover:border-blue-500  transition-all duration-300">
               <img src={medicine.image} alt={medicine.name} loading="lazy" className="h-40" />
-              <div className="w-full mt-2 h-16 text-black font-semibold text-sm overflow-hidden text-ellipsis">
+              <div className="w-full mt-2 h-16 tb:h-11 text-black font-semibold text-sm overflow-hidden text-ellipsis">
                   <p className="line-clamp-3">
                       {medicine.name}
                   </p>

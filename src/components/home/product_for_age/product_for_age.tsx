@@ -129,17 +129,25 @@ export default function ProductForAge() {
                     arrows:false,
                 }
             },
+            {
+                breakpoint: 500,  // Dưới 768px
+                settings: {
+                    slidesToShow: Math.min(2.25, productList.length),
+                    slidesToScroll: 2,
+                    arrows:false,
+                }
+            },
         ]
     };
 
     return (
-        <div className="w-4/5 md-lg:w-11/12 mx-auto container bg-gray-100 mt-5 rounded-xl relative">
+        <div className="w-4/5 md-lg:w-11/12 tb:w-11/12 mx-auto container bg-gray-100 mt-5 rounded-xl relative">
             {/* Tiêu đề */}
             <div className="flex items-center gap-2 mb-4 text-black font-bold text-lg">
                 <span className="text-blue-600 text-2xl">👨‍👩‍👧‍👦</span> Sản phẩm theo đối tượng
             </div>
             {/* Tabs chọn danh mục */}
-            <div className="flex gap-2 mb-6">
+            <div className="flex gap-2 mb-6 tb:flex-wrap">
                 {categories.map((category) => (
                     <button
                         key={category.id}
