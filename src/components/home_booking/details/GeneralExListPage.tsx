@@ -54,7 +54,7 @@ const GeneralExListPage = () => {
                   <img
                     src={category.image}
                     alt={category.name}
-                    className="w-12 h-12 mb-2"
+                    className="w-16 h-16 mb-2"
                   />
                   <p className="text-gray-700 text-sm font-medium text-center">
                     {category.name}
