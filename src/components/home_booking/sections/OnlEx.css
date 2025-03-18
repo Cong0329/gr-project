@@ -1,3 +1,8 @@
 .full-onl {
     background-color: rgb(248, 249, 252);
 }
+  @media (max-width: 768px) {
+    .onl-title a {
+        font-size: 14px;
+    }
+  }

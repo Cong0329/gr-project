@@ -53,17 +53,17 @@ const Specialty = () => {
 
   return (
     <>
-      <div id="specialty-section" className="full-home w-full">
+      <div id="specialty-section" className="full-home w-full overflow-hidden">
         <div className="home-specialty container-fix-spe mx-auto">
           <div className="home-content">
-            <div className="home-title relative flex justify-center items-center mb-4">
-              <h3 className="text-2xl font-bold ">Chuyên khoa phổ biến</h3>
+            <div className="home-title relative flex justify-between items-center mb-4 md:px-20">
+              <h3 className="text-xl font-bold ">Chuyên khoa phổ biến</h3>
               <Link
                 to="/booking-home/specialty-list"
                 className="absolute right-20"
               >
                 <button className="text-[rgb(45,135,243)] font-semibold">
-                  Xem tất cả<span className="ml-1">&gt;</span>
+                  Xem thêm<span className="ml-1">&gt;</span>
                 </button>
               </Link>
             </div>
@@ -80,7 +80,7 @@ const Specialty = () => {
                           alt={specialty.name}
                           loading="lazy"
                         />
-                        <div className="text-lg font-semibold">
+                        <div className="text-base font-semibold">
                           {specialty.name}
                         </div>
                       </div>

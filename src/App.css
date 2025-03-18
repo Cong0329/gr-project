@@ -44,15 +44,14 @@
 }
 
 .container-lite {
-  min-width: 769px;
-  width: var(--w-container-content, 1280px);
-  padding-inline: 32px;
-  overflow-x: visible;
+  max-width: 1280px;
+  padding-inline: 16px;
+  overflow-x: hidden;
 }
 
 .container-fix-spe {
-  min-width: 769px;
-  width: var(--w-container-content, 1460px);
-  padding-inline: 32px;
-  overflow-x: visible;
+  width: 100%;
+  max-width: 1460px;
+  padding-inline: 16px;
+  overflow-x: hidden;
 }

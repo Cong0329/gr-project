@@ -12,14 +12,11 @@
   }
   
   .home-specialty .slick-list {
-    /* background: #fff; */
     margin: 0 auto;
     width: 90%;
   }
   
   .home-specialty .slick-prev {
-    /* background: red !important; */
-    /* position: relative !important; */
     left: 0 !important;
     z-index: 200;
   }
@@ -38,7 +35,6 @@
   }
   
   .home-specialty .slick-next {
-    /* background: red !important; */
     right: 0 !important;
     z-index: 200;
   }
@@ -48,9 +44,37 @@
     font-size: 25px;
   }
 
-  
   .home-specialty .card-img {
     border-radius: 20px;
     padding: 5px;
+  }
+  .home-title {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+  }
+  
+  .home-title h3 {
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .home-title a {
+    text-decoration: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  @media (max-width: 768px) {
+    .home-title a {
+      right: 15px;
+      font-size: 14px;
+    }
+  }
+  
+  .home-title a:hover {
+    text-decoration: underline;
   }
   

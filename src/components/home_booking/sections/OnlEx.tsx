@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./OnlEx.css";
 import imgDt from "../../../assets/sections/doctor.jpg";
 import { Link } from "react-router-dom";
@@ -76,20 +76,38 @@ const OnlEx = () => {
   ];
 
   const [activeOption, setActiveOption] = useState(0);
+  const [visibleDoctors, setVisibleDoctors] = useState(doctors);
+
+  useEffect(() => {
+    const updateDoctorsList = () => {
+      if (window.innerWidth <= 768) {
+        setVisibleDoctors(doctors.slice(0, 4));
+      } else {
+        setVisibleDoctors(doctors);
+      }
+    };
+
+    updateDoctorsList();
+    window.addEventListener("resize", updateDoctorsList);
+
+    return () => window.removeEventListener("resize", updateDoctorsList);
+  }, [doctors]);
 
   const filteredDoctors =
     activeOption === 0
-      ? doctors
-      : doctors.filter((doctor) => doctor.department === options[activeOption]);
+      ? visibleDoctors
+      : visibleDoctors.filter(
+          (doctor) => doctor.department === options[activeOption]
+        );
 
   return (
     <div id="onlex-section" className="w-full full-onl">
       <div className="container-lite mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-2xl font-bold">Tư vấn Online qua Video</h3>
+        <div className="onl-title flex justify-between items-center mb-6">
+          <h3 className="text-xl font-bold">Tư vấn Online qua Video</h3>
           <Link to="/booking-home/onlex-list">
             <button className="text-[rgb(45,135,243)] font-semibold">
-              Xem tất cả<span className="ml-1">&gt;</span>
+              Xem thêm<span className="ml-1">&gt;</span>
             </button>
           </Link>
         </div>

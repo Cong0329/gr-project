@@ -95,7 +95,7 @@ const GeneralEx = () => {
           <div className="flex flex-wrap -mx-4">
             <div className="w-full md:w-1/3 px-4">
               <div className="bg-slate-100 rounded-lg shadow-md p-4 h-full">
-                <h3 className="text-2xl font-bold mb-4">Gói nổi bật</h3>
+                <h3 className="text-xl font-bold mb-4">Gói nổi bật</h3>
                 <div className="relative mb-4">
                   <Slider {...sliderSettings}>
                     {featuredPackages.map((pkg, index) => (
@@ -122,7 +122,7 @@ const GeneralEx = () => {
                     ))}
                   </Slider>
                 </div>
-                <h3 className="text-2xl font-bold my-4 mt-8">Gói đề xuất</h3>
+                <h3 className="text-xl font-bold my-4 mt-8">Gói đề xuất</h3>
                 <div className="relative">
                   <Slider {...sliderSettings}>
                     {featuredPackages.map((pkg, index) => (
@@ -154,10 +154,10 @@ const GeneralEx = () => {
             <div className="w-full md:w-2/3 px-4">
               <div className="bg-slate-100 rounded-lg shadow-md p-4">
                 <div className="flex mb-4 justify-between items-center">
-                  <h3 className="text-2xl font-bold">Danh mục</h3>
+                  <h3 className="text-xl font-bold">Danh mục</h3>
                   <Link to="/booking-home/generalex-list">
                     <button className="text-[rgb(45,135,243)] font-semibold">
-                      Xem tất cả<span className="ml-1">&gt;</span>
+                      Xem thêm<span className="ml-1">&gt;</span>
                     </button>
                   </Link>
                 </div>
