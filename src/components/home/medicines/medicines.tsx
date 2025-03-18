@@ -48,13 +48,13 @@ export const Medicines = () => {
                         loading="lazy"
                         className="w-[350px]"
                     />
-                    <p className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white font-bold text-lg ">
+                    <p className="absolute top-1/2 left-1/2 transform mm:text-sm -translate-x-1/2 -translate-y-1/2 text-white font-bold text-lg ">
                         Sản phẩm bán chạy
                     </p>
                 </div>
             </div>
 
-            <div className="container grid grid-cols-6 gap-5 tb:grid-cols-2">
+            <div className="container grid grid-cols-6 gap-5 ms:gap-2 tb:grid-cols-2">
                 {medicines.slice(0, 12).map((medicine) => (
                     <Medicine key={medicine.id} medicine={medicine} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
                 ))}

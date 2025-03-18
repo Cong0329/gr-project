@@ -7,9 +7,11 @@ export default {
   theme: {
     extend: {
       screens: {
-        'md-lg': { 'min': '768px', 'max': '1410px' },
-        'tb': { 'raw': '(max-width: 768px)' },
+        'md-lg': { 'min': '950px', 'max': '1410px' },
+        'tb': { 'raw': '(max-width: 949px)' },
         'ml': { 'raw': '(max-width: 450px)' },
+        'ms': { 'raw': '(max-width: 420px)' },
+        'mm': { 'raw': '(max-width: 350px)' },
       }
     },
   },

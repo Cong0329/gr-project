@@ -126,7 +126,7 @@ export default function DiseaseList() {
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-4 mb-6">
+            <div className="flex gap-4 ms:gap-2 ms:text-[13px] mb-6">
                 <button
                     className={`px-4 py-2 rounded-full border transition ${selectedTab === "seasonal" ? "bg-blue-600 text-white" : "bg-gray-200"}`}
                     onClick={() => setSelectedTab("seasonal")}

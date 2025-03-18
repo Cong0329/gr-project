@@ -28,29 +28,8 @@ export default function ProductList() {
     dots: false,            // Ẩn chấm điều hướng
     infinite: false,        // Không lặp lại khi hết danh mục
     speed: 500,             // Tốc độ chuyển slide
-    slidesToShow: 4, 
+    slidesToShow: 1, 
     swipeToSlide: true,       
-    responsive: [
-      {
-        breakpoint: 1024,    // Khi màn hình dưới 1024px
-        settings: {
-          slidesToShow: 3,   // Hiển thị 3 danh mục
-        }
-      },
-      {
-        breakpoint: 768,     // Khi màn hình dưới 768px
-        settings: {
-          slidesToShow: 2,   // Hiển thị 2 danh mục
-        }
-      },
-      {
-        breakpoint: 480,     // Khi màn hình dưới 480px
-        settings: {
-          slidesToShow: 2.25,
-          arrows: false,     // Ẩn nút điều hướng
-        }
-      }
-    ]
   };
 
 
@@ -91,7 +70,7 @@ export default function ProductList() {
         ))}
       </div>
       {/* Slider */}
-      <div className="bg-white p-3 rounded-lg hidden ml:block">
+      <div className="bg-white p-3 rounded-lg hidden ml:block ms:mb-2">
         <Slider {...settings} className="section-slider">
           {categories.map((category) => (
             <div key={category.id}
@@ -114,7 +93,7 @@ export default function ProductList() {
 
       </div>
       {/* Danh sách sản phẩm */}
-      <div className="grid grid-cols-6 gap-4 tb:grid-cols-2">
+      <div className="grid grid-cols-6 gap-4 ms:gap-2 tb:grid-cols-2">
         {products[selectedCategory]?.slice(0, 12).map((product) => (
           <Medicine key={product.id} medicine={product} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
         ))}

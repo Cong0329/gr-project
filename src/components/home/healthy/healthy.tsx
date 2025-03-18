@@ -124,7 +124,7 @@ export default function HealthSection() {
             {
                 breakpoint: 500,
                 settings: {
-                    slidesToShow: 1.25,  
+                    slidesToShow: 1.1,  
                     slidesToScroll: 1,
                     arrows:false,
                 }
@@ -134,9 +134,9 @@ export default function HealthSection() {
     
 
     return (
-        <div className="w-4/5 md-lg:w-11/12 tb:w-11/12 container mx-auto bg-gradient-to-r from-blue-500 to-blue-600 text-white p-8 rounded-xl relative mt-7">
+        <div className="w-4/5 md-lg:w-11/12 tb:w-11/12 container mx-auto bg-gradient-to-r from-blue-500 to-blue-600 text-white p-8 ms:p-4 rounded-xl relative mt-7">
             <div>
-                <h2 className="text-2xl font-bold">Chuyên trang bệnh & sức khỏe</h2>
+                <h2 className="text-2xl font-bold ms:text-lg">Chuyên trang bệnh & sức khỏe</h2>
                 <p className="text-sm opacity-80">
                     Tổng hợp thông tin và kiến thức chuyên sâu về các lĩnh vực sức khỏe
                 </p>
@@ -148,11 +148,11 @@ export default function HealthSection() {
                 
             </div>
             {/* Slider danh sách bác sĩ */}
-            <div className="mt-6">
+            <div className="mt-6 ms:mt-2">
                 <Slider {...settings}>
                     {doctors.map((doctor) => (
-                        <div key={doctor.id} className="p-2">
-                            <div className="bg-white rounded-xl p-4 shadow-md flex items-center gap-3 tb:h-32">
+                        <div key={doctor.id} className="p-2 ms:p-0">
+                            <div className="bg-white rounded-xl p-4 ms:p-0 shadow-md flex items-center gap-3 tb:h-32 mm:h-[100px] mm:w-[230px] ms:h-[100px] ms:w-[270px]">
                                 <img
                                     src='https://i.imgur.com/TamqnIu.png'
                                     alt={doctor.name}

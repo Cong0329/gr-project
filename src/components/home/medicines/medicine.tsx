@@ -36,11 +36,11 @@ interface Medicine {
                   ))}
               </div>
               <div className='flex items-start  w-full'>
-                  <span className="md-lg:text-[10px] font-bold text-blue-700 mr-1">{medicine.price.toLocaleString()} đ </span>
-                  <span className='text-blue-700 md-lg:text-[10px] text-sm capitalize'>/ hộp</span>
+                  <span className="md-lg:text-[10px] font-bold text-blue-700 mr-1 ms:text-[12px]">{medicine.price.toLocaleString()} đ </span>
+                  <span className='text-blue-700 md-lg:text-[10px] text-sm capitalize ms:text-[12px]'>/ hộp</span>
               </div>
               <div className="w-full flex items-start">
-                  <p className=" bg-gray-300 p-2 rounded-lg text-[13px] font-semibold text-gray-600">Hộp lẻ x 5 Gói x 70ml</p>
+                  <p className=" bg-gray-300 p-2 rounded-lg text-[13px] font-semibold text-gray-600 ">Hộp lẻ x 5 Gói x 70ml</p>
               </div>
               <button className="bg-blue-700 text-white font-bold py-2 items-center rounded-full w-full text-sm">
                   Chọn mua

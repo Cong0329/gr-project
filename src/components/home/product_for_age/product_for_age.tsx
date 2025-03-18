@@ -137,6 +137,14 @@ export default function ProductForAge() {
                     arrows:false,
                 }
             },
+            {
+                breakpoint: 400,  // Dưới 768px
+                settings: {
+                    slidesToShow: Math.min(1.75, productList.length),
+                    slidesToScroll: 2,
+                    arrows:false,
+                }
+            },
         ]
     };
 
@@ -147,7 +155,7 @@ export default function ProductForAge() {
                 <span className="text-blue-600 text-2xl">👨‍👩‍👧‍👦</span> Sản phẩm theo đối tượng
             </div>
             {/* Tabs chọn danh mục */}
-            <div className="flex gap-2 mb-6 tb:flex-wrap">
+            <div className="flex gap-2 mb-6 tb:flex-wrap ms:text-[10px] ms:font-semibold">
                 {categories.map((category) => (
                     <button
                         key={category.id}
@@ -164,7 +172,7 @@ export default function ProductForAge() {
 
             {/* Hiển thị ảnh danh mục được chọn */}
             <div className="flex tb:flex-col mb-4 h-[475px] tb:h-full">
-                <div className="w-1/6 tb:w-full h-full tb:h-[235px]">
+                <div className="w-1/6 tb:w-full h-full tb:h-[235px] ">
                     {categories.find((c) => c.id === selectedCategory) && (
                         <img
                             src={categories.find((c) => c.id === selectedCategory)?.image}
@@ -179,7 +187,7 @@ export default function ProductForAge() {
                 <div className="w-5/6 tb:w-full tb:mt-5 relative h-full">
                     <Slider {...settings}>
                         {productList.map((product) => (
-                            <div key={product.id} className="px-2 h-[475px]">
+                            <div key={product.id} className="px-2 ms:px-1 h-[475px] ms:h-[400px]">
                                 <div className="bg-white p-4 rounded-lg  hover:shadow-lg transition-shadow duration-300 h-full">
                                     {product.discount && (
                                         <span className="absolute bg-red-500 text-white text-xs px-2 py-1 rounded-tl-lg">
@@ -192,13 +200,13 @@ export default function ProductForAge() {
                                         loading="lazy"
                                         className="w-full h-44 object-contain"
                                     />
-                                    <div className="w-full mt-2 h-16 text-black font-semibold text-sm overflow-hidden text-ellipsis">
+                                    <div className="w-full mt-2 h-16 ms:h-10 text-black font-semibold text-sm overflow-hidden text-ellipsis">
                                         <p className="line-clamp-3">
                                             {product.name}
                                         </p>
                                     </div>
-                                    <div className="h-36">
-                                        <p className="text-blue-600 text-lg font-semibold">
+                                    <div className="h-36 ms:h-24 ">
+                                        <p className="text-blue-600 text-lg font-semibold ms:text-sm">
                                             {product.price.toLocaleString()}đ / Hộp
                                         </p>
                                         {product.oldPrice && (
