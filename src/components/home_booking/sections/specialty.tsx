@@ -57,7 +57,7 @@ const Specialty = () => {
         <div className="home-specialty container-fix-spe mx-auto">
           <div className="home-content">
             <div className="home-title relative flex justify-center items-center mb-4">
-              <h3 className="text-xl font-bold ">Chuyên khoa phổ biến</h3>
+              <h3 className="text-2xl font-bold ">Chuyên khoa phổ biến</h3>
               <Link
                 to="/booking-home/specialty-list"
                 className="absolute right-20"

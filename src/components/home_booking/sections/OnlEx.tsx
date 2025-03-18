@@ -86,7 +86,7 @@ const OnlEx = () => {
     <div id="onlex-section" className="w-full full-onl">
       <div className="container-lite mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold">Tư vấn Online qua Video</h3>
+          <h3 className="text-2xl font-bold">Tư vấn Online qua Video</h3>
           <Link to="/booking-home/onlex-list">
             <button className="text-[rgb(45,135,243)] font-semibold">
               Xem tất cả<span className="ml-1">&gt;</span>
