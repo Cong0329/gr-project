@@ -10,12 +10,14 @@ import { BookingGeneralEx } from "./components/pages/BookingGeneralEx";
 import { BookingGeneralExDetail } from "./components/pages/BookingGeneralExDetail";
 import { BookingMedicalTest } from "./components/pages/BookingMedicalTest";
 import { BookingMedicalTestDetail } from "./components/pages/BookingMedicalTestDetail";
+import { MedicineDetail } from "./components/pages/MedicineDetail";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/medicine-detail" element={<MedicineDetail />} />
         <Route path="/booking-home" element={<HomeBookingCare />} />
         <Route
           path="/booking-home/specialty-list"

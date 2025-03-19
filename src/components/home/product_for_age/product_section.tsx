@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import products from "./medical";
-import { Medicine } from "../medicines/medicine";
+import products from "./Medical";
+import { Medicine } from "../medicines/Medicine";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";

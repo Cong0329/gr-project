@@ -6,7 +6,7 @@ interface PromotionProps {
     type: string[];
 }
 import { useState, useEffect } from "react";
-import { Medicine } from "./medicine";
+import { Medicine } from "./Medicine";
 
 export const Medicines = () => {
 
