@@ -1,3 +1,8 @@
 .medical-test {
     background-color: rgb(248, 249, 252);
 }
+@media (max-width: 768px) {
+    .medical-tilte a {
+        font-size: 14px;
+    }
+  }

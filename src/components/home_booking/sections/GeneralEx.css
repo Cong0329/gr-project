@@ -12,5 +12,20 @@
     transform: scale(1);
     opacity: 1;
 }
-  
-  
+@media screen and (max-width: 768px) {
+    .general-ex .slick-slide {
+        transform: scale(0.9); 
+        opacity: 0.8;
+    }
+
+    .general-ex .slick-center {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .general-tilte a {
+        font-size: 14px;
+    }
+  }

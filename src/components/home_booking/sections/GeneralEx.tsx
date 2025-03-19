@@ -7,14 +7,6 @@ import { FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const GeneralEx = () => {
-  const truncateText = (text: string, limit: number) => {
-    if (text.length <= limit) {
-      return text;
-    } else {
-      return text.slice(0, limit) + "...";
-    }
-  };
-
   const renderCard = (index: number) => {
     const packages = [
       "Gói cơ bản",
@@ -25,26 +17,42 @@ const GeneralEx = () => {
       "Gói khám cho trẻ em",
     ];
     const sampleText = packages[index % packages.length];
-    const truncatedText = truncateText(sampleText, 41);
 
     const sampleTextChild = `Phòng khám Bệnh viện Đại học Y Dược NHMC`;
-    const truncatedTextChild = truncateText(sampleTextChild, 55);
 
     return (
-      <div key={index} id="general-ex-section" className="w-1/2 px-2 mb-4">
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="flex">
-            <div className="w-1/3">
-              <img src={img} alt="/#" className="w-full h-full object-cover" />
+      <div
+        key={index}
+        id="general-ex-section"
+        className="w-full sm:w-1/2 px-2 mb-4"
+      >
+        <div className="bg-white rounded-lg shadow-md overflow-hidden p-2">
+          <div className="block sm:hidden">
+            <img
+              src={img}
+              alt="Gói khám"
+              className="w-full h-32 object-cover rounded-lg"
+            />
+          </div>
+
+          <div className="flex sm:flex-row flex-col items-center sm:items-start">
+            <div className="hidden sm:block w-1/3">
+              <img
+                src={img}
+                alt="Gói khám"
+                className="w-full h-full object-cover"
+              />
             </div>
-            <div className="w-2/3 p-4">
-              <a
-                href="#/"
+
+            <div className="w-full sm:w-2/3 p-4">
+              <Link
+                to="/package-detail"
                 className="text-lg font-bold text-gray-800 hover:text-blue-600"
               >
-                {truncatedText}
-              </a>
-              <p className="text-sm text-gray-600 mt-2">{truncatedTextChild}</p>
+                {sampleText}
+              </Link>
+              <p className="text-sm text-gray-600 mt-2">{sampleTextChild}</p>
+
               <div className="flex items-center justify-between mt-4">
                 <p className="text-xs text-gray-500">Giá:</p>
                 <p className="price px-2 py-1 text-xs font-semibold bg-slate-100 rounded-lg float-right">
@@ -82,10 +90,18 @@ const GeneralEx = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     centerMode: true,
-    centerPadding: "20%",
+    centerPadding: "15%",
     arrows: false,
     autoplay: true,
     autoplaySpeed: 1500,
+    responsive: [
+      {
+        breakpoint: 768,
+        settings: {
+          centerPadding: "5%",
+        },
+      },
+    ],
   };
 
   return (
@@ -96,7 +112,7 @@ const GeneralEx = () => {
             <div className="w-full md:w-1/3 px-4">
               <div className="bg-slate-100 rounded-lg shadow-md p-4 h-full">
                 <h3 className="text-xl font-bold mb-4">Gói nổi bật</h3>
-                <div className="relative mb-4">
+                <div className="relative my-6">
                   <Slider {...sliderSettings}>
                     {featuredPackages.map((pkg, index) => (
                       <div key={index} className="px-2">
@@ -122,8 +138,8 @@ const GeneralEx = () => {
                     ))}
                   </Slider>
                 </div>
-                <h3 className="text-xl font-bold my-4 mt-8">Gói đề xuất</h3>
-                <div className="relative">
+                <h3 className="text-xl font-bold my-4 mt-10">Gói đề xuất</h3>
+                <div className="relative my-6">
                   <Slider {...sliderSettings}>
                     {featuredPackages.map((pkg, index) => (
                       <div key={index} className="px-2">
@@ -153,7 +169,7 @@ const GeneralEx = () => {
             </div>
             <div className="w-full md:w-2/3 px-4">
               <div className="bg-slate-100 rounded-lg shadow-md p-4">
-                <div className="flex mb-4 justify-between items-center">
+                <div className="flex mb-4 justify-between items-center general-tilte">
                   <h3 className="text-xl font-bold">Danh mục</h3>
                   <Link to="/booking-home/generalex-list">
                     <button className="text-[rgb(45,135,243)] font-semibold">
