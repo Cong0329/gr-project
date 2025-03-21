@@ -70,7 +70,7 @@ const MedicalTest = () => {
         <div className="bg-white rounded-xl shadow-md p-6">
           <div className="flex justify-between items-center mb-4 medical-tilte">
             <h3 className="text-xl font-bold">Xét nghiệm y học</h3>
-            <Link to="/booking-home/generalex-list">
+            <Link to="/booking-home/medicaltest-list">
               <button className="text-[rgb(45,135,243)] font-semibold">
                 Xem thêm<span className="ml-1">&gt;</span>
               </button>
