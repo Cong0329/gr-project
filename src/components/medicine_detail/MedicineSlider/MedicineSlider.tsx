@@ -11,13 +11,28 @@ interface ProductImageSliderProps {
 export default function ProductImageSlider({ images }: ProductImageSliderProps) {
   const [showModal, setShowModal] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [modalIndex, setModalIndex] = useState(0);
   const mainSwiperRef = useRef<SwiperType>(null);
+  const modalSwiperRef = useRef<SwiperType>(null);
 
   // Mở modal và thiết lập ảnh đầu tiên hiển thị
-  const openModal = (index: number) => {
+  const openModal = (index: number, isFromMainSlider = true) => {
+    if (isFromMainSlider) {
+      setCurrentIndex(index); // Chỉ cập nhật nếu mở từ slider chính
+    }
+    
+    setModalIndex(index);
     setShowModal(true);
-    setCurrentIndex(index);
+  
+    setTimeout(() => {
+      if (modalSwiperRef.current) {
+        modalSwiperRef.current.slideTo(index, 0);
+      }
+    }, 100); // Đợi modal render xong mới cập nhật slide
   };
+  
+  
+  
 
   return (
     <div className="w-full max-w-lg mx-auto">
@@ -41,7 +56,7 @@ export default function ProductImageSlider({ images }: ProductImageSliderProps) 
       {showModal && (
         <ImageModal
           images={images}
-          currentIndex={currentIndex}
+          indexModal={modalIndex}
           setShowModal={setShowModal}
         />
       )}

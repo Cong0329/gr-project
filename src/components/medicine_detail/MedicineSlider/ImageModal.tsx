@@ -8,12 +8,12 @@ import "swiper/css/thumbs";
 
 interface ImageModalProps {
     images: string[];
-    currentIndex: number;
+    indexModal: number;
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function ImageModal({ images, currentIndex, setShowModal }: ImageModalProps) {
-    const [modalIndex, setModalIndex] = useState(currentIndex);
+export default function ImageModal({ images, indexModal, setShowModal }: ImageModalProps) {
+    const [modalIndex, setModalIndex] = useState(indexModal);
     const [isZoomed, setIsZoomed] = useState(false);
     const modalSwiperRef = useRef<SwiperType | null>(null);
     const [modalThumbsSwiper, setModalThumbsSwiper] = useState<SwiperType | null>(null);
@@ -54,22 +54,27 @@ export default function ImageModal({ images, currentIndex, setShowModal }: Image
                     spaceBetween={10}
                     navigation
                     modules={[Navigation, Thumbs]}
-                    onSwiper={(swiper) => (modalSwiperRef.current = swiper)}
+                    onSwiper={(swiper) => {
+                        modalSwiperRef.current = swiper;
+                        setTimeout(() => {
+                            swiper.slideTo(modalIndex, 0); // Đảm bảo Swiper cập nhật vị trí ảnh đúng
+                        }, 50);
+                    }}
                     onSlideChange={(swiper) => setModalIndex(swiper.activeIndex)}
                     thumbs={{ swiper: modalThumbsSwiper }}
-                    className="rounded-lg overflow-hidden relative"
+                    className="rounded-lg overflow-hidden relative mt-10"
                 >
                     {images.map((src, index) => (
-                        <SwiperSlide key={index}>
+                        <SwiperSlide key={index} className="flex justify-center items-center">
                             <img
                                 src={src}
                                 alt={`Product Full ${index}`}
-                                className={`w-full object-cover transition-transform ${isZoomed ? "scale-150 cursor-zoom-out" : "cursor-zoom-in"
-                                    }`}
+                                className={`object-cover ${isZoomed ? "w-full h-[500px]" : "w-3/5"}`}
                             />
                         </SwiperSlide>
                     ))}
                 </Swiper>
+
 
                 {/* Thumbnail trong Modal */}
                 <div className="mt-4">
@@ -79,7 +84,7 @@ export default function ImageModal({ images, currentIndex, setShowModal }: Image
                         slidesPerView={5}
                         watchSlidesProgress
                         modules={[Thumbs]}
-                        className="max-w-full"
+                        className={`max-w-full ${isZoomed ? "hidden" : "block"}`}
                     >
                         {images.map((src, index) => (
                             <SwiperSlide key={index}>

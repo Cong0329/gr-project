@@ -8,7 +8,7 @@ interface PromotionProps {
 import { useState, useEffect } from "react";
 import { PromotionChild } from "./PromotionChild";
 import CountdownTimer from "../time/CountTime";
-import { Link } from "react-router-dom";
+
 
 
 export const Promotion = () => {
@@ -52,9 +52,13 @@ export const Promotion = () => {
             <CountdownTimer />
             <div className="container grid grid-cols-6 gap-5 px-3 tb:grid-cols-2 ms:gap-2">
                 {medicines.slice(0, 6).map((medicine) => (
-                    <Link to={'/medicine-detail'}>
-                        <PromotionChild key={medicine.id} medicine={medicine} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
-                    </Link>
+                 
+                        <a href="/medicine-detail">
+                            <PromotionChild key={medicine.id} medicine={medicine} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
+                        </a>
+                  
+
+
                 ))}
             </div>
         </div>

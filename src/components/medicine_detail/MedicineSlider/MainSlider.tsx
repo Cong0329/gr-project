@@ -27,13 +27,13 @@ export default function MainSlider({
       className="rounded-lg overflow-hidden"
     >
       {images.map((src, index) => (
-        <SwiperSlide key={index}>
-          <img
-            src={src}
-            alt={`Product ${index}`}
-            className="w-full cursor-pointer object-cover"
-            onClick={() => onImageClick(index)}
-          />
+        <SwiperSlide key={index} className="flex justify-center items-center">
+            <img
+              src={src}
+              alt={`Product ${index}`}
+              className="w-4/5 cursor-pointer object-cover"
+              onClick={() => onImageClick(index)}
+            />
         </SwiperSlide>
       ))}
     </Swiper>
