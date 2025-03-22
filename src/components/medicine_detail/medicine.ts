@@ -27,6 +27,27 @@ export interface ProductOption {
   }
 
 
+export const policies = [
+  {
+    icon: "📬", // Thay bằng icon phù hợp (có thể dùng Font Awesome hoặc hình ảnh)
+    title: "Đổi trả trong 30 ngày",
+    description: "kể từ ngày mua hàng",
+  },
+  {
+    icon: "📪", // Thay bằng icon phù hợp
+    title: "Miễn phí 100%",
+    description: "đổi thuốc",
+  },
+  {
+    icon: "✈️", // Thay bằng icon phù hợp
+    title: "Miễn phí vận chuyển",
+    description: "theo chính sách giao hàng",
+  },
+];
+ 
+  
+
+
 
 export const productData: Product[] = [{
     name: "Hỗn dịch uống men vi sinh Enterogermina Gut Defense Sanofi tăng cường tiêu hóa, hỗ trợ bảo vệ đường ruột",

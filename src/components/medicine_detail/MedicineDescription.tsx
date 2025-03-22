@@ -1,7 +1,11 @@
 import { useState } from "react";
-import { Product } from "./MedicineSlider/MedicineSlider";
-import { ProductOption } from "./MedicineSlider/MedicineSlider";
-export const MedicineDescription = ({ medicineData }: Product) => {
+import {policies } from "./medicine";
+import { Product } from "./medicine";
+import { ProductOption } from "./medicine";
+interface ProductProps {
+    medicineData: Product;
+  }
+export const MedicineDescription = ({ medicineData }: ProductProps) => {
     const [selectedOption, setSelectedOption] = useState(medicineData.options[0]);
     const [quantity, setQuantity] = useState(1);
     const increaseQuantity = () => setQuantity((prev) => prev + 1);
@@ -95,14 +99,14 @@ export const MedicineDescription = ({ medicineData }: Product) => {
                         >
                             –
                         </button>
-                    
-                            <input
-                                type="number"
-                                value={quantity}
-                                onChange={handleQuantityChange}
-                                className="w-10 py-1 border text-center outline-none bg-transparent no-spinner"
-                            />
-                      
+
+                        <input
+                            type="number"
+                            value={quantity}
+                            onChange={handleQuantityChange}
+                            className="w-10 py-1 border text-center outline-none bg-transparent no-spinner"
+                        />
+
 
 
                         <button
@@ -123,6 +127,20 @@ export const MedicineDescription = ({ medicineData }: Product) => {
             </div>
 
             <button className="mt-4 w-full bg-blue-500 text-white px-6 py-2 rounded-md">Chọn mua</button>
+
+            <div className="border-t-2 border-gray-200 flex mt-5 pt-5 ">
+                <div className="flex space-x-8">
+                    {policies.map((policy, index) => (
+                        <div key={index} className="flex items-center space-x-3">
+                            <span className="text-3xl text-blue-500">{policy.icon}</span>
+                            <div>
+                                <p className="font-semibold">{policy.title}</p>
+                                <p className="text-gray-500 text-sm">{policy.description}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     )
 }

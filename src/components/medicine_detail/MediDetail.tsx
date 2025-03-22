@@ -3,6 +3,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { productData } from "./medicine";
 import ProductImageSlider from "./MedicineSlider/MedicineSlider";
 import { MedicineDescription } from "./MedicineDescription";
+import MedicineTech  from "./medicine_tech/MedicineTech";
 
 
 
@@ -16,7 +17,12 @@ export default function ProductDetail() {
           <ProductImageSlider images={productData[0].images} />
         </div>
         <MedicineDescription medicineData={productData[0]} />
+
       </div>
+      <div className="mt-6 bg-white rounded-xl">
+        <MedicineTech />
+      </div>
+      <div className="mt-6 h-[200px] bg-white"></div>
     </div>
 
   );

@@ -35,7 +35,7 @@ export default function ProductImageSlider({ images }: ProductImageSliderProps) 
   
 
   return (
-    <div className="w-full max-w-lg mx-auto">
+    <div className="w-full max-w-lg mx-auto sticky top-0">
       {/* Slider ảnh lớn */}
       <MainSlider
         images={images}

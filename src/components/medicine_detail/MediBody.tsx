@@ -6,6 +6,7 @@ import Breadcrumb from '../home_booking/details/component_details/BreadCrumb';
 
 
 
+
 export const MedicineBody = () => {
     const [isServiceHovered, setIsServiceHovered] = useState(false);
     const { name } = useParams();
@@ -19,7 +20,6 @@ export const MedicineBody = () => {
                     <div className="w-4/5 container mx-auto bg-gray-200  [&>*]:!bg-gray-200">
                         <Breadcrumb current={decodeURIComponent(name || "Thực phẩm chức năng")} />
                     </div>
-
                     <ProductDetail />
                 </div>
                 {isServiceHovered && (
