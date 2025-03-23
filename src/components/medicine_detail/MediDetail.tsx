@@ -4,6 +4,7 @@ import { productData } from "./medicine";
 import ProductImageSlider from "./MedicineSlider/MedicineSlider";
 import { MedicineDescription } from "./MedicineDescription";
 import MedicineTech  from "./medicine_tech/MedicineTech";
+import { RelatedMedicines } from "./RelatedProducts";
 
 
 
@@ -21,6 +22,9 @@ export default function ProductDetail() {
       </div>
       <div className="mt-6 bg-white rounded-xl">
         <MedicineTech />
+      </div>
+      <div className="">
+        <RelatedMedicines/>
       </div>
       <div className="mt-6 h-[200px] bg-white"></div>
     </div>

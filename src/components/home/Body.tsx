@@ -15,12 +15,12 @@ export const Body = () => {
     const [isServiceHovered, setIsServiceHovered] = useState(false);
 
     return (
-        <main className="flex-1 bg-gray-100 ">
+        <main className="flex-1 bg-white ">
             <div className="mx-auto">
                 <NavLink setIsServiceHovered={setIsServiceHovered} />
             </div>
             <div className='relative'>
-                <div className="mx-auto relative bg-gray-200">
+                <div className="mx-auto relative bg-gray-100">
                     <Banner />
                     <Promotion/>
                     <Medicines/>

@@ -6,6 +6,11 @@ interface ProductSectionProps {
   section: Title;
 }
 
+// Hàm tách nội dung theo ký tự xuống dòng
+const formatDescription = (description: string) => {
+  return description.split("/n").map((item) => item.trim());
+};
+
 const ProductSection: React.FC<ProductSectionProps> = ({ id, section }) => {
   let content;
 
@@ -29,7 +34,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({ id, section }) => {
           </tbody>
         </table>
         {section.description.description && (
-          <ul className="list-disc pl-5 mt-4">
+          <ul className="list-none pl-5 space-y-2">
             {section.description.description.map((desc, index) => (
               <li key={index}>{desc}</li>
             ))}
@@ -38,29 +43,31 @@ const ProductSection: React.FC<ProductSectionProps> = ({ id, section }) => {
       </>
     );
   } else if (id === DescriptionType.WARNINGS) {
+    const formattedDescription = formatDescription(section.description);
     content = (
       <div className="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 mt-2">
-        <strong>Cảnh báo:</strong>
-        <p>{section.description}</p>
+        <strong className="block mb-2">⚠️ Cảnh báo:</strong>
+        <ul className="list-none pl-5">
+          {formattedDescription.map((warn, index) => (
+            <li key={index}>{warn}</li>
+          ))}
+        </ul>
       </div>
     );
   } else {
+    // Tách dòng với tất cả type
+    const formattedDescription = formatDescription(section.description);
+
     content = (
       <div className="mt-2">
-        {Array.isArray(section.description) ? (
-          <ul className="list-disc pl-5">
-            {section.description.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-        ) : (
-          <div>
-            <p>{section.description}</p>
-            <div className="flex flex-col items-center">
-              <img alt="" src={section.image} className="my-2 rounded-lg" />
-            </div>
-          </div>
-        )}
+        <ul className="list-none space-y-2">
+          {formattedDescription.map((line, index) => (
+            <li key={index}>{line}</li>
+          ))}
+        </ul>
+        <div className="flex flex-col items-center">
+          <img alt="" src={section.image} className="rounded-lg"/>
+        </div>
       </div>
     );
   }

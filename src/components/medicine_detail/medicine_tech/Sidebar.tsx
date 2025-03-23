@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef} from "react";
 import { DescriptionType } from "./description";
 
 interface SidebarProps {
@@ -11,11 +11,18 @@ const Sidebar: React.FC<SidebarProps> = ({ sections, isCollapsed }) => {
     sections.length > 0 ? sections[0].type : null
   );
 
-  // 🟢 Khi "Thu gọn" thì về section đầu tiên ngay lập tức
+  const firstRender = useRef(true);
+
   useEffect(() => {
-    if (sections.length > 0) {
+    if (firstRender.current) {
+      // Bỏ qua lần chạy đầu tiên (nghĩa là khi user truy cập vào trang)
+      firstRender.current = false;
+      return;
+    }
+
+    if ( sections.length > 0) {
       setActiveSection(sections[0].type);
-      document.getElementById('introduction')?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("introduction")?.scrollIntoView({ behavior: "smooth" });
     }
   }, [isCollapsed, sections]);
 

@@ -7,23 +7,28 @@ import { productDescription } from "./description";
 const MedicineTech: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
   return (
-    <div className="flex">
-      <Sidebar sections={productDescription.description} isCollapsed={expanded} />
-      <div className="flex-1 pt-4 pr-4">
-        <h2 className="text-3xl font-bold border-b pb-3" id="introduction">{productDescription.title}</h2>
-        <div className="relative">
-          <ExpandableText expanded={expanded} setExpanded={setExpanded}>
-            {productDescription.description.map((section) => (
-              <ProductSection key={section.type} id={section.type} section={section} />
-            ))}
-          </ExpandableText>
-          {!expanded && (
-            <div className="absolute bottom-10 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent"></div>
-          )}
+    <div className="pb-4">
+      <div className="flex">
+        <Sidebar sections={productDescription.description} isCollapsed={expanded} />
+        <div className="flex-1 pt-4 pr-4">
+          <h2 className="text-3xl font-bold border-b pb-3" id="introduction">{productDescription.title}</h2>
+          <div className="relative">
+            <ExpandableText expanded={expanded} setExpanded={setExpanded}>
+              {productDescription.description.map((section) => (
+                <ProductSection key={section.type} id={section.type} section={section} />
+              ))}
+            </ExpandableText>
+            {!expanded && (
+              <div className="absolute bottom-10 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent"></div>
+            )}
+          </div>
         </div>
-
+      </div>
+      <div className="border-l-4 border-blue-700 bg-blue-100 h-8  rounded-[4px] mx-4 text-[11px] text-blue-700 font-semibold p-2">
+        <p>Mọi thông tin trên đây chỉ mang tính chất tham khảo. Việc sử dụng thuốc phải tuân theo hướng dẫn của bác sĩ chuyên môn.</p>
       </div>
     </div>
+
   );
 };
 

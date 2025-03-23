@@ -84,4 +84,18 @@ export const productData: Product[] = [{
   }
 ];
 
+import { Medicine } from "../home/product_for_age/Medical";
+
+export const medicines: Medicine[] = [
+  { id: 1, name: "Vitamin mẹ bầu", image: "/images/vitamin-mom.png", price: 420000, package: "Hộp 30 viên" },
+  { id: 2, name: "Vitamin mẹ bầu", image: "/images/vitamin-mom.png", price: 420000, package: "Hộp 30 viên" },
+  { id: 3, name: "Vitamin mẹ bầu", image: "/images/vitamin-mom.png", price: 420000, package: "Hộp 30 viên" },
+  { id: 4, name: "Vitamin mẹ bầu", image: "/images/vitamin-mom.png", price: 420000, package: "Hộp 30 viên" },
+  { id: 5, name: "Vitamin mẹ bầu", image: "/images/vitamin-mom.png", price: 420000, package: "Hộp 30 viên" },
+  { id: 6, name: "Vitamin mẹ bầu", image: "/images/vitamin-mom.png", price: 420000, package: "Hộp 30 viên" },
+  { id: 7, name: "Vitamin mẹ bầu", image: "/images/vitamin-mom.png", price: 420000, package: "Hộp 30 viên" },
+  { id: 8, name: "Vitamin mẹ bầu", image: "/images/vitamin-mom.png", price: 420000, package: "Hộp 30 viên" },
+  { id: 9, name: "Vitamin mẹ bầu", image: "/images/vitamin-mom.png", price: 420000, package: "Hộp 30 viên" },
+  { id: 10, name: "Vitamin mẹ bầu", image: "/images/vitamin-mom.png", price: 420000, package: "Hộp 30 viên" },
+]
 
