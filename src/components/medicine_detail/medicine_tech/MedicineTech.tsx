@@ -19,7 +19,7 @@ const MedicineTech: React.FC = () => {
               ))}
             </ExpandableText>
             {!expanded && (
-              <div className="absolute bottom-10 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent"></div>
+              <div className="absolute bottom-8 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent"></div>
             )}
           </div>
         </div>

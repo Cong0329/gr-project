@@ -1,4 +1,5 @@
 import React from "react";
+import { FaAngleDoubleDown, FaAngleDoubleUp } from "react-icons/fa";
 
 interface ExpandableTextProps {
   expanded: boolean;
@@ -17,10 +18,19 @@ const ExpandableText: React.FC<ExpandableTextProps> = ({ expanded, setExpanded, 
       </div>
       <div className="flex justify-center mt-2 mb-4">
         <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+          className=""
           onClick={() => setExpanded(!expanded)}
         >
-          {expanded ? "Thu gọn" : "Xem thêm"}
+          {expanded ?
+            <div className="">
+              <FaAngleDoubleUp className="inline-block mr-2" />
+              Thu gọn
+            </div> :
+            <div className="">
+              <FaAngleDoubleDown className="inline-block mr-2" />
+              Xem thêm
+            </div>
+          }
         </button>
       </div>
     </div>
