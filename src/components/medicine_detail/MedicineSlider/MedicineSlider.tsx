@@ -20,46 +20,56 @@ export default function ProductImageSlider({ images }: ProductImageSliderProps) 
     if (isFromMainSlider) {
       setCurrentIndex(index); // Chỉ cập nhật nếu mở từ slider chính
     }
-    
+
     setModalIndex(index);
     setShowModal(true);
-  
+
     setTimeout(() => {
       if (modalSwiperRef.current) {
         modalSwiperRef.current.slideTo(index, 0);
       }
     }, 100); // Đợi modal render xong mới cập nhật slide
   };
-  
-  
-  
+
+
+
 
   return (
-    <div className="w-full max-w-lg mx-auto sticky top-0">
-      {/* Slider ảnh lớn */}
-      <MainSlider
-        images={images}
-        mainSwiperRef={mainSwiperRef}
-        onImageClick={openModal}
-        setCurrentIndex={setCurrentIndex}
-      />
+    <>
+      <div className="sticky top-0  w-full max-w-lg mx-auto">
+        {/* Sticky Wrapper */}
 
-      {/* Thumbnail ảnh */}
-      <ThumbnailSlider
-        images={images}
-        currentIndex={currentIndex}
-        onThumbnailClick={(index) => mainSwiperRef.current?.slideTo(index)}
-        openModal={openModal}
-      />
+        {/* Slider ảnh lớn */}
+        <MainSlider
+          images={images}
+          mainSwiperRef={mainSwiperRef}
+          onImageClick={openModal}
+          setCurrentIndex={setCurrentIndex}
+        />
 
-      {/* Modal hiển thị khi nhấn "Xem thêm" */}
+        {/* Thumbnail ảnh */}
+        <ThumbnailSlider
+          images={images}
+          currentIndex={currentIndex}
+          onThumbnailClick={(index) => mainSwiperRef.current?.slideTo(index)}
+          openModal={openModal}
+        />
+
+
+      </div>
+      {/* Modal (Tách ra khỏi Sticky) */}
       {showModal && (
+
         <ImageModal
           images={images}
           indexModal={modalIndex}
           setShowModal={setShowModal}
         />
       )}
-    </div>
+    </>
+
+
+
+
   );
 }

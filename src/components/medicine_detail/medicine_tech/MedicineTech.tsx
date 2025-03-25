@@ -12,10 +12,10 @@ const MedicineTech: React.FC = () => {
         <Sidebar sections={productDescription.description} isCollapsed={expanded} />
         <div className="flex-1 pt-4 pr-4">
           <h2 className="text-3xl font-bold border-b pb-3" id="introduction">{productDescription.title}</h2>
-          <div className="relative">
+          <div className="relative z-10">
             <ExpandableText expanded={expanded} setExpanded={setExpanded}>
               {productDescription.description.map((section) => (
-                <ProductSection key={section.type} id={section.type} section={section} />
+                <ProductSection  key={section.type} id={section.type} section={section} />
               ))}
             </ExpandableText>
             {!expanded && (

@@ -10,7 +10,7 @@ const ReplyModal: React.FC<ReplyModalProps> = ({ onClose, onSubmit}) => {
   const [reply, setReply] = useState("");
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
       <div className="bg-white p-4 rounded-xl w-1/3">
         <div className="flex">
           <h2 className="text-lg font-semibold grow">Trả lời</h2>

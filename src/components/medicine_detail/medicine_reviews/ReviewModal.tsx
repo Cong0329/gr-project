@@ -12,7 +12,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ onClose, onSubmit, isReview }
   const [rating, setRating] = useState(5);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
       <div className="bg-white p-4 rounded-xl shadow-md w-1/3">
         <div className="flex justify-items-stretch">
           
