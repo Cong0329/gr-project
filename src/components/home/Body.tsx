@@ -20,7 +20,7 @@ export const Body = () => {
                 <NavLink setIsServiceHovered={setIsServiceHovered} />
             </div>
             <div className='relative'>
-                <div className="mx-auto relative bg-gray-100">
+                <div className="mx-auto relative bg-gray-100 pb-4">
                     <Banner />
                     <Promotion/>
                     <Medicines/>

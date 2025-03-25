@@ -1,5 +1,5 @@
 interface RatingSummaryProps {
-  reviews: { rating: number }[];
+  reviews: { rating: number | null }[];
   setShowModal: (value: boolean) => void;
 }
 
@@ -11,7 +11,7 @@ const RatingSummary: React.FC<RatingSummaryProps> = ({ reviews, setShowModal }) 
 
   const averageRating =
     totalReviews > 0
-      ? (reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews).toFixed(1)
+      ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / totalReviews).toFixed(1)
       : "0.0";
 
   return (
@@ -23,7 +23,7 @@ const RatingSummary: React.FC<RatingSummaryProps> = ({ reviews, setShowModal }) 
           <span className="text-yellow-500 text-xl">⭐</span>
         </div>
         <button
-          className="mt-3 bg-blue-700 text-white px-4 py-2 rounded-full"
+          className="mt-3 bg-blue-700 text-white px-4 py-2 rounded-full font-semibold"
           onClick={() => setShowModal(true)}
         >
           Gửi đánh giá

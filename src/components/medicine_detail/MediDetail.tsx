@@ -6,6 +6,7 @@ import { MedicineDescription } from "./MedicineDescription";
 import MedicineTech  from "./medicine_tech/MedicineTech";
 import { RelatedMedicines } from "./RelatedProducts";
 import ReviewSection from "./medicine_reviews/ReviewSection";
+import { MedicineComment } from "./medicine_comment/MedicineComment";
 
 
 
@@ -13,7 +14,7 @@ import ReviewSection from "./medicine_reviews/ReviewSection";
 
 export default function ProductDetail() {
   return (
-    <div className="w-4/5 mx-auto container">
+    <div className="w-4/5 mx-auto container pb-10">
       <div className="bg-white rounded-xl flex p-4 ">
         <div className="w-2/5">
           {/* Image Slider */}
@@ -31,7 +32,10 @@ export default function ProductDetail() {
       <div className="">
         <ReviewSection/>
       </div>
-      <div className="mt-6 h-[200px] bg-white"></div>
+      <div className="">
+        <MedicineComment/>
+      </div>
+    
     </div>
 
   );

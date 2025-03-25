@@ -9,7 +9,7 @@ export interface Review {
   id: number;
   author: string;
   content: string;
-  rating: number;
+  rating: number | null;
   date: string;
   replies: Reply[];
 }
@@ -47,6 +47,7 @@ const ReviewSection: React.FC = () => {
   const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [expanded, setExpanded] = useState(false);
+  const isReviews = true;
 
 
   const handleReviewSubmit = (content: string, rating: number) => {
@@ -126,7 +127,7 @@ const ReviewSection: React.FC = () => {
       <div className="mt-4 space-y-4">
         <ExpandableText expanded={expanded} setExpanded={setExpanded}>
           {filteredReviews.map((review) => (
-            <ReviewItem key={review.id} review={review} onReply={openReplyModal} />
+            <ReviewItem key={review.id} review={review} onReply={openReplyModal} isReview={isReviews} />
           ))}
         </ExpandableText>
       </div>
@@ -134,7 +135,7 @@ const ReviewSection: React.FC = () => {
 
       {/* Modal đánh giá */}
       {showReviewModal && (
-        <ReviewModal onClose={() => setShowReviewModal(false)} onSubmit={handleReviewSubmit} />
+        <ReviewModal onClose={() => setShowReviewModal(false)} onSubmit={handleReviewSubmit} isReview={isReviews} />
       )}
 
       {/* Modal trả lời */}

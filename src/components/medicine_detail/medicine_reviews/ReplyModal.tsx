@@ -6,7 +6,7 @@ interface ReplyModalProps {
   onSubmit: (replyContent: string) => void;
 }
 
-const ReplyModal: React.FC<ReplyModalProps> = ({ onClose, onSubmit }) => {
+const ReplyModal: React.FC<ReplyModalProps> = ({ onClose, onSubmit}) => {
   const [reply, setReply] = useState("");
 
   return (
