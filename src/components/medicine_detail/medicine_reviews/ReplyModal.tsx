@@ -11,7 +11,7 @@ const ReplyModal: React.FC<ReplyModalProps> = ({ onClose, onSubmit}) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
-      <div className="bg-white p-4 rounded-xl w-1/3">
+      <div className="bg-white p-4 rounded-xl w-1/3 tb:h-full tb:w-full">
         <div className="flex">
           <h2 className="text-lg font-semibold grow">Trả lời</h2>
           <FaXmark className="flex-none " size={20} onClick={onClose} />

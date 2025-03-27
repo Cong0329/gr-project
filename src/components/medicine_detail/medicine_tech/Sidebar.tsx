@@ -53,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sections, isCollapsed }) => {
   }, [sections, activeSection, isCollapsed]);
 
   return (
-    <div className="w-1/5 h-full sticky top-0 overflow-y-auto p-4">
+    <div className="w-1/5 h-full sticky top-0 overflow-y-auto p-4 tb:hidden">
       {sections.map((item) => (
         <a
           key={item.type}

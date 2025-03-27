@@ -12,7 +12,7 @@ const ExpandableText: React.FC<ExpandableTextProps> = ({ expanded, setExpanded, 
 
   return (
     <div className="relative">
-      <div className={`overflow-hidden transition-all ${expanded ? "max-h-full" : "m-h-[500px]"} relative`}>
+      <div className={`overflow-hidden transition-all ${expanded ? "max-h-full" : "max-h-[500px]"} relative`}>
         {children}
         <div />
       </div>

@@ -10,8 +10,8 @@ const MedicineTech: React.FC = () => {
     <div className="pb-4">
       <div className="flex">
         <Sidebar sections={productDescription.description} isCollapsed={expanded} />
-        <div className="flex-1 pt-4 pr-4">
-          <h2 className="text-3xl font-bold border-b pb-3" id="introduction">{productDescription.title}</h2>
+        <div className="flex-1 pt-4 pr-4 tb:pl-4">
+          <h2 className="text-3xl ms:text-xl font-bold border-b pb-3" id="introduction">{productDescription.title}</h2>
           <div className="relative z-10">
             <ExpandableText expanded={expanded} setExpanded={setExpanded}>
               {productDescription.description.map((section) => (
@@ -24,7 +24,7 @@ const MedicineTech: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="border-l-4 border-blue-700 bg-blue-100 h-8  rounded-[4px] mx-4 text-[11px] text-blue-700 font-semibold p-2">
+      <div className="border-l-4 border-blue-700 bg-blue-100 h-8 ml:h-12 mm:h-16  rounded-[4px] mx-4 text-[11px] text-blue-700 font-semibold p-2">
         <p>Mọi thông tin trên đây chỉ mang tính chất tham khảo. Việc sử dụng thuốc phải tuân theo hướng dẫn của bác sĩ chuyên môn.</p>
       </div>
     </div>

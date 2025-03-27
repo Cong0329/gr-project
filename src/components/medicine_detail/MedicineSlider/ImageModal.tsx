@@ -25,30 +25,31 @@ export default function ImageModal({ images, indexModal, setShowModal }: ImageMo
             onClick={() => setShowModal(false)}
         >
             <div
-                className="bg-white p-4 rounded-lg shadow-lg max-w-3xl w-full relative"
+                className="bg-white p-4  rounded-lg tb:rounded-none shadow-lg max-w-3xl w-full tb:h-full md-lg:h-auto relative"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Nút Đóng Modal */}
-                <button
-                    className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl"
-                    onClick={() => setShowModal(false)}
-                >
-                    ✕
-                </button>
+                <div className="">
+                    {/* Nút Đóng Modal */}
+                    <button
+                        className="absolute top-2 right-2 text-gray-600 hover:text-black text-xl"
+                        onClick={() => setShowModal(false)}
+                    >
+                        ✕
+                    </button>
 
-                {/* Số thứ tự ảnh */}
-                <div className="absolute top-4 left-4 bg-gray-800 text-white px-3 py-1 rounded-md text-sm">
-                    {modalIndex + 1} / {images.length}
+                    {/* Số thứ tự ảnh */}
+                    <div className="absolute top-4 left-4 bg-gray-800 text-white px-3 py-1 rounded-md text-sm">
+                        {modalIndex + 1} / {images.length}
+                    </div>
+
+                    {/* Nút Zoom */}
+                    <button
+                        className="absolute top-4 right-12 bg-gray-800 text-white px-3 py-1 rounded-md text-sm"
+                        onClick={() => setIsZoomed(!isZoomed)}
+                    >
+                        {isZoomed ? "Thu nhỏ" : "Phóng to"}
+                    </button>   
                 </div>
-
-                {/* Nút Zoom */}
-                <button
-                    className="absolute top-4 right-12 bg-gray-800 text-white px-3 py-1 rounded-md text-sm"
-                    onClick={() => setIsZoomed(!isZoomed)}
-                >
-                    {isZoomed ? "Thu nhỏ" : "Phóng to"}
-                </button>
-
                 {/* Slider trong Modal */}
                 <Swiper
                     spaceBetween={10}
@@ -62,14 +63,14 @@ export default function ImageModal({ images, indexModal, setShowModal }: ImageMo
                     }}
                     onSlideChange={(swiper) => setModalIndex(swiper.activeIndex)}
                     thumbs={{ swiper: modalThumbsSwiper }}
-                    className="rounded-lg overflow-hidden relative mt-10"
+                    className="rounded-lg overflow-hidden relative mt-10 ml:mt-32"
                 >
                     {images.map((src, index) => (
                         <SwiperSlide key={index} className="flex justify-center items-center">
                             <img
                                 src={src}
                                 alt={`Product Full ${index}`}
-                                className={`object-cover ${isZoomed ? "w-full h-[500px]" : "w-3/5"}`}
+                                className={`object-cover ${isZoomed ? "w-full h-[500px] ml:h-[325px] " : "w-3/5"}`}
                             />
                         </SwiperSlide>
                     ))}
@@ -77,21 +78,21 @@ export default function ImageModal({ images, indexModal, setShowModal }: ImageMo
 
 
                 {/* Thumbnail trong Modal */}
-                <div className="mt-4">
+                <div className="mt-4 md-lg:mt-0 md-lg:h-[100px] tb:h-[90px]">
                     <Swiper
                         onSwiper={setModalThumbsSwiper}
                         spaceBetween={10}
                         slidesPerView={5}
                         watchSlidesProgress
                         modules={[Thumbs]}
-                        className={`max-w-full ${isZoomed ? "hidden" : "block"}`}
+                        className={`max-w-full h-full ${isZoomed ? "hidden" : "block"}`}
                     >
                         {images.map((src, index) => (
                             <SwiperSlide key={index}>
                                 <img
                                     src={src}
                                     alt={`Modal Thumbnail ${index}`}
-                                    className={`w-full border-2 rounded-md cursor-pointer transition ${modalIndex === index ? "border-blue-500" : "border-gray-300"
+                                    className={`w-full h-full border-2 object-contain rounded-md cursor-pointer transition ${modalIndex === index ? "border-blue-500" : "border-gray-300"
                                         }`}
                                     onClick={() => modalSwiperRef.current?.slideTo(index)}
                                 />

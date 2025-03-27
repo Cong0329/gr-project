@@ -84,7 +84,7 @@ export const MedicineComment = () => {
     });
 
     return (
-        <div className=" mx-auto p-4 bg-white  rounded-xl mt-5">
+        <div className=" mx-auto p-4 bg-white  rounded-xl mt-5 tb:rounded-none">
             {/* Thống kê rating */}
             <div className="border-b-2 pb-2 font-semibold">
                 <p className="text-black text-xl  ">

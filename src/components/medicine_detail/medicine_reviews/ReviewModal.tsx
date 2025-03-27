@@ -13,7 +13,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ onClose, onSubmit, isReview }
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-40">
-      <div className="bg-white p-4 rounded-xl shadow-md w-1/3">
+      <div className="bg-white p-4 rounded-xl shadow-md w-1/3 tb:h-full tb:w-full">
         <div className="flex justify-items-stretch">
           
           <h2 className="text-lg grow font-bold">{isReview ? "Đánh giá sản phẩm" : "Hỏi đáp"} </h2>
