@@ -13,27 +13,9 @@ const Specialty = () => {
     slidesToShow: 4,
     slidesToScroll: 4,
     responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-        },
-      },
-      {
-        breakpoint: 600,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 2,
-        },
-      },
-      {
-        breakpoint: 480,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-        },
-      },
+      { breakpoint: 1024, settings: { slidesToShow: 3, slidesToScroll: 3 } },
+      { breakpoint: 600, settings: { slidesToShow: 2, slidesToScroll: 2 } },
+      { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
     ],
   };
 
@@ -52,26 +34,30 @@ const Specialty = () => {
   ];
 
   return (
-    <>
-      <div id="specialty-section" className="full-home w-full overflow-hidden">
-        <div className="home-specialty container-fix-spe mx-auto">
-          <div className="home-content">
-            <div className="home-title relative flex justify-between items-center mb-4 md:px-20">
-              <h3 className="text-xl font-bold ">Chuyên khoa phổ biến</h3>
-              <Link
-                to="/booking-home/specialty-list"
-                className="absolute right-20"
-              >
-                <button className="text-[rgb(45,135,243)] font-semibold">
-                  Xem thêm<span className="ml-1">&gt;</span>
-                </button>
-              </Link>
-            </div>
+    <div id="specialty-section" className="full-home w-full overflow-hidden">
+      <div className="home-specialty container-fix-spe mx-auto">
+        <div className="home-content">
+          <div className="home-title relative flex justify-between items-center mb-4 md:px-20">
+            <h3 className="text-xl font-bold">Chuyên khoa phổ biến</h3>
+            <Link
+              to="/booking-home/specialty-list"
+              className="absolute right-20"
+            >
+              <button className="text-[rgb(45,135,243)] font-semibold">
+                Xem thêm<span className="ml-1">&gt;</span>
+              </button>
+            </Link>
+          </div>
 
-            <div className="home-body pt-5">
-              <Slider {...settings}>
-                {specialties.map((specialty, index) => (
-                  <div key={index} className="px-2">
+          <div className="home-body pt-5">
+            <Slider {...settings}>
+              {specialties.map((specialty, index) => (
+                <div key={index} className="px-2">
+                  <Link
+                    to={`/booking-home/specialty-detail/${encodeURIComponent(
+                      specialty.name
+                    )}`}
+                  >
                     <div className="flex flex-col justify-center items-center">
                       <div className="w-full h-48 bg-white flex flex-col items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                         <img
@@ -85,14 +71,14 @@ const Specialty = () => {
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </Slider>
-            </div>
+                  </Link>
+                </div>
+              ))}
+            </Slider>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

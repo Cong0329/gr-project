@@ -8,65 +8,70 @@ export default function Breadcrumb({ current }) {
   const isOnlex = location.pathname.includes("/booking-home/onlex");
   const isGeneralEx = location.pathname.includes("/booking-home/generalex");
   const isMedicalTest = location.pathname.includes("/booking-home/medicaltest");
-  
 
   return (
     <nav className="breadcrumb py-4 flex items-center space-x-2 text-gray-600">
       <Link
-        to={location.pathname.startsWith("/booking-home") ? "/booking-home" : "/"}
+        to={
+          location.pathname.startsWith("/booking-home") ? "/booking-home" : "/"
+        }
         className="flex items-center hover:text-blue-500"
       >
         <Home className="w-4 h-4" />
       </Link>
-      <span>{">"}</span>
 
       {isSpecialty && (
         <>
+          <span>{">"}</span>
           <Link
             to="/booking-home/specialty-list"
             className="hover:text-blue-500"
           >
             Khám chuyên khoa
           </Link>
-          <span>{">"}</span>
         </>
       )}
 
       {isOnlex && (
         <>
+          <span>{">"}</span>
           <Link to="/booking-home/onlex-list" className="hover:text-blue-500">
             Khám từ xa
           </Link>
-          <span>{">"}</span>
         </>
       )}
 
       {isGeneralEx && (
         <>
+          <span>{">"}</span>
           <Link
             to="/booking-home/generalex-list"
             className="hover:text-blue-500"
           >
             Khám tổng quát
           </Link>
-          <span>{">"}</span>
         </>
       )}
 
       {isMedicalTest && (
         <>
+          <span>{">"}</span>
           <Link
             to="/booking-home/medicaltest-list"
             className="hover:text-blue-500"
           >
             Xét nghiệm y học
           </Link>
-          <span>{">"}</span>
         </>
       )}
 
       {current && (
-        <span className="text-gray-900 font-semibold">{current}</span>
+        <>
+          {(isSpecialty || isOnlex || isGeneralEx || isMedicalTest) && (
+            <span>{">"}</span>
+          )}
+          <span className="text-gray-900 font-semibold">{current}</span>
+        </>
       )}
     </nav>
   );
