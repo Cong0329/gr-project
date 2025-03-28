@@ -11,6 +11,7 @@ import { BookingGeneralExDetail } from "./components/pages/BookingGeneralExDetai
 import { BookingMedicalTest } from "./components/pages/BookingMedicalTest";
 import { BookingMedicalTestDetail } from "./components/pages/BookingMedicalTestDetail";
 import { MedicineDetail } from "./components/pages/MedicineDetail";
+import { SearchPage } from "./components/pages/MedicineSearch";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/medicine-detail" element={<MedicineDetail />} />
+        <Route path="/medicine-search" element={<SearchPage />} />
         <Route path="/booking-home" element={<HomeBookingCare />} />
         <Route
           path="/booking-home/specialty-list"
