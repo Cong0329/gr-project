@@ -12,10 +12,12 @@ import { BookingMedicalTest } from "./components/pages/BookingMedicalTest";
 import { BookingMedicalTestDetail } from "./components/pages/BookingMedicalTestDetail";
 import { MedicineDetail } from "./components/pages/MedicineDetail";
 import { SearchPage } from "./components/pages/MedicineSearch";
+import ScrollToTop from "./components/home_booking/details/component_details/ScrollToTop";
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/medicine-detail" element={<MedicineDetail />} />

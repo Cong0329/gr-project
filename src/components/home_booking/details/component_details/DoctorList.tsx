@@ -4,11 +4,14 @@ import { fetchSchedule } from "../../../../redux/scheduleThunks";
 import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 const DoctorList = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const { name } = useParams();
+  console.log("🔍 department từ URL:", name);
+
   const { schedules, loading, error } = useSelector((state) => state.schedule);
 
   useEffect(() => {
@@ -29,9 +32,13 @@ const DoctorList = () => {
     ? "specialty"
     : null;
 
-  const filteredDoctors = doctorType
-    ? schedules.filter((doctor) => doctor.type === doctorType)
-    : schedules;
+  const department = decodeURIComponent(name || "");
+
+  const filteredDoctors = schedules.filter(
+    (doctor) =>
+      (!doctorType || doctor.type === doctorType) &&
+      (!department || doctor.department === department)
+  );
 
   return (
     <div className="container-fix-spe mx-auto py-6">

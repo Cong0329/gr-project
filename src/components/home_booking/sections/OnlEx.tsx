@@ -5,99 +5,53 @@ import { Link } from "react-router-dom";
 
 const OnlEx = () => {
   const options = [
-    "Tất cả",
-    "Tư vấn, trị liệu tâm lý",
-    "Sức khoẻ tâm thần",
-    "Da liễu",
-    "Cơ xương khớp",
-    "Tiêu hoá",
-    "Nội khoa",
-    "Tim mạch",
-    "Tai mũi họng",
+    { label: "Tất cả", value: "Tất cả" },
+    { label: "Tư vấn trị liệu tâm lý", value: "Tư vấn trị liệu tâm lý từ xa" },
+    { label: "Sức khoẻ tâm thần", value: "Sức khoẻ tâm thần từ xa" },
+    { label: "Tim mạch", value: "Bác sĩ tim mạch từ xa" },
+    { label: "Da liễu", value: "Bác sĩ da liễu từ xa" },
+    { label: "Tiêu hoá", value: "Bác sĩ tiêu hoá từ xa" },
   ];
 
-  const doctors = [
-    {
-      name: "Dr. A",
-      department: "Tư vấn, trị liệu tâm lý",
-      avatar: [imgDt],
-      hospital: "Trung tâm Y khoa Nhật Bản T-Matsuoka",
-      address: "Da Nang",
-    },
-    {
-      name: "Dr. B",
-      department: "Sức khoẻ tâm thần",
-      avatar: [imgDt],
-      hospital: "Hospital B",
-      address: "Da Nang",
-    },
-    {
-      name: "Dr. C",
-      department: "Da liễu",
-      avatar: [imgDt],
-      hospital: "Hospital C",
-      address: "Da Nang",
-    },
-    {
-      name: "Dr. D",
-      department: "Cơ xương khớp",
-      avatar: [imgDt],
-      hospital: "Hospital D",
-      address: "Da Nang",
-    },
-    {
-      name: "Dr. E",
-      department: "Tiêu hoá",
-      avatar: [imgDt],
-      hospital: "Hospital E",
-      address: "Da Nang",
-    },
-    {
-      name: "Dr. F",
-      department: "Tim mạch",
-      avatar: [imgDt],
-      hospital: "Hospital F",
-      address: "Da Nang",
-    },
-    {
-      name: "Dr. G",
-      department: "Nội khoa",
-      avatar: [imgDt],
-      hospital: "Hospital G",
-      address: "Da Nang",
-    },
-    {
-      name: "Dr. H",
-      department: "Tai mũi họng",
-      avatar: [imgDt],
-      hospital: "Hospital H",
-      address: "Da Nang",
-    },
-  ];
-
+  const [doctors, setDoctors] = useState([]);
   const [activeOption, setActiveOption] = useState(0);
-  const [visibleDoctors, setVisibleDoctors] = useState(doctors);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const updateDoctorsList = () => {
-      if (window.innerWidth <= 768) {
-        setVisibleDoctors(doctors.slice(0, 4));
-      } else {
-        setVisibleDoctors(doctors);
+    const fetchDoctors = async () => {
+      try {
+        const response = await fetch(
+          "https://run.mocky.io/v3/f8cf43e8-0d71-496e-8509-e26fe898855f"
+        );
+        if (!response.ok) throw new Error("Lỗi khi lấy dữ liệu");
+
+        const data = await response.json();
+        const onlineDoctors = data.filter((doctor) => doctor.type === "online");
+
+        setDoctors(
+          onlineDoctors.map((doctor) => ({
+            ...doctor,
+            avatar: doctor.avatar || [imgDt],
+          }))
+        );
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    updateDoctorsList();
-    window.addEventListener("resize", updateDoctorsList);
-
-    return () => window.removeEventListener("resize", updateDoctorsList);
-  }, [doctors]);
+    fetchDoctors();
+  }, []);
 
   const filteredDoctors =
     activeOption === 0
-      ? visibleDoctors
-      : visibleDoctors.filter(
-          (doctor) => doctor.department === options[activeOption]
+      ? doctors
+      : doctors.filter(
+          (doctor) =>
+            doctor.department?.trim().toLowerCase() ===
+            options[activeOption].value.trim().toLowerCase()
         );
 
   return (
@@ -112,7 +66,7 @@ const OnlEx = () => {
           </Link>
         </div>
         <div className="flex flex-wrap gap-4">
-          {options.slice(0, 6).map((option, index) => (
+          {options.map((option, index) => (
             <button
               key={index}
               className={`px-6 py-2 rounded-full transition-colors duration-300 border border-solid ${
@@ -122,7 +76,7 @@ const OnlEx = () => {
               }`}
               onClick={() => setActiveOption(index)}
             >
-              {option}
+              {option.label}
             </button>
           ))}
         </div>
@@ -159,7 +113,7 @@ const OnlEx = () => {
                       d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
                     />
                   </svg>
-                  <span className="text-sm">{doctor.hospital}</span>
+                  <span className="text-sm">{doctor.clinic}</span>
                 </div>
                 <div className="flex items-center mb-2">
                   <svg
@@ -184,7 +138,14 @@ const OnlEx = () => {
                   <span className="text-sm">{doctor.address}</span>
                 </div>
                 <button className="w-full bg-white text-[rgb(89,89,89)] font-semibold py-2 rounded-md hover:bg-[rgb(227,242,255)] transition-colors duration-300 border border-[rgb(153,153,153)]">
-                  Đặt lịch khám
+                  <Link
+                    to={`/booking-home/onlex-detail/${encodeURIComponent(
+                      doctor.department
+                    )}`}
+                    state={{ doctor }}
+                  >
+                    Đặt lịch khám
+                  </Link>
                 </button>
               </div>
             </div>

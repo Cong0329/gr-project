@@ -1,10 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-// Thunk để fetch lịch khám
 export const fetchSchedule = createAsyncThunk("schedule/fetch", async () => {
-  const response = await axios.get("https://run.mocky.io/v3/897765ac-ca3b-43a1-bd8f-cf6711389704");
-  return response.data; // Đảm bảo API trả về **mảng**
+  const response = await axios.get("https://run.mocky.io/v3/f8cf43e8-0d71-496e-8509-e26fe898855f");
+  return response.data; 
 });
 
 const scheduleSlice = createSlice({
@@ -24,7 +23,7 @@ const scheduleSlice = createSlice({
         state.loading = false;
         state.schedules = Array.isArray(action.payload)
           ? action.payload
-          : [action.payload]; // 🔥 Đảm bảo luôn là mảng
+          : [action.payload];
       })
       .addCase(fetchSchedule.rejected, (state, action) => {
         state.loading = false;
