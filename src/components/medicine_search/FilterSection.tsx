@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaAngleDoubleDown, FaAngleDoubleUp } from "react-icons/fa";
 
 interface FilterItemProps {
   title: string;
@@ -33,8 +33,12 @@ const FilterItem: React.FC<FilterItemProps> = ({
         onClick={() => setIsOpen(!isOpen)}
       >
         {title}
-        {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+        <FaChevronDown
+          className={`transform transition-transform duration-300 ${isOpen ? "rotate-180" : "rotate-0"
+            }`}
+        />
       </button>
+
       {isOpen && (
         <div className="mt-2">
           {hasSearch && (
@@ -61,10 +65,10 @@ const FilterItem: React.FC<FilterItemProps> = ({
           </div>
           {filteredOptions.length > 4 && (
             <button
-              className="text-blue-500 mt-2 text-sm"
+              className="text-black mt-2 text-sm"
               onClick={() => setShowAll(!showAll)}
             >
-              {showAll ? "Thu gọn" : "Xem thêm"}
+              {showAll ? <span className="flex items-center gap-1"><FaAngleDoubleUp />Thu gọn</span> : <span className="flex items-center gap-1"><FaAngleDoubleDown />Xem thêm</span>}
             </button>
           )}
         </div>

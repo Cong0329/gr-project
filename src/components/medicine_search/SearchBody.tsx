@@ -13,7 +13,7 @@ export const SearchBody = () => {
             </div>
             <div className='relative'>
                 <div className="mx-auto relative bg-gray-100 pb-4">
-                    <div className="bg-gray-100 min-h-screen p-4">
+                    <div className="bg-gray-100 min-h-screen p-4 w-4/5 mx-auto container">
                         {/* Thanh tìm kiếm */}
                         <SearchBar />
 

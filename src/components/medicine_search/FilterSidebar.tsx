@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./../../redux/store";
 import { toggleFilter } from "./../../redux/filterSlice";
 import FilterItem from "./FilterSection";
+import { FaFilter } from "react-icons/fa6";
+import "./sidebar.css"
 
 const FilterSideBar: React.FC = () => {
   const dispatch = useDispatch();
@@ -13,11 +15,11 @@ const FilterSideBar: React.FC = () => {
   };
 
   return (
-    <div className="w-80 p-4 bg-gray-100 rounded-lg shadow-md">
-      <h2 className="font-semibold text-lg flex items-center space-x-2">
-        <span>🛠️</span> <span>Bộ lọc nâng cao</span>
+    <div className="w-full  bg-white rounded-xl text-black">
+      <h2 className="font-semibold text-lg flex items-center space-x-2 border-b p-4 ">
+        <span><FaFilter/></span> <span>Bộ lọc nâng cao</span>
       </h2>
-      <div className="mt-4 space-y-4">
+      <div className="mt-4 px-4 space-y-4 overflow-y-auto h-[450px]  scroll-smooth custom-scrollbar">
         <FilterItem
           title="Loại sản phẩm"
           options={["Tất cả", "Thuốc tim mạch huyết áp", "Dầu cá, Omega 3, DHA", "Sữa", "Thuốc trị mỡ máu"]}
@@ -42,12 +44,6 @@ const FilterSideBar: React.FC = () => {
           options={["Tất cả", "Thuốc kê đơn", "Thuốc không kê đơn"]}
           selected={selectedFilters["Loại thuốc"]}
           onChange={(value) => handleFilterChange("Loại thuốc", value)}
-        />
-        <FilterItem
-          title="Loại da"
-          options={["Tất cả", "Da dầu", "Da khô", "Da nhạy cảm"]}
-          selected={selectedFilters["Loại da"]}
-          onChange={(value) => handleFilterChange("Loại da", value)}
         />
         <FilterItem
           title="Nước sản xuất"
