@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Medicine } from '../home/medicines/Medicine';
-import ExpandableText from '../medicine_detail/medicine_tech/ExpandableText';
 import FilterSelected from './FilterSelected';
-import PriceFilter from './PriceFilter';
-import { FaA } from 'react-icons/fa6';
 import { FaAngleDoubleDown } from 'react-icons/fa';
 
 
@@ -31,8 +28,9 @@ const ProductGrid = () => {
     { id: '12', name: 'Medicine 3', image: 'https://i.imgur.com/HXN77Ev.png', price: 30, type: ['hộp', 'vỉ', 'viên'] },
   ]
   const [selectedTypes, setSelectedTypes] = useState({});
-  const [sortOrder, setSortOrder] = useState<string>("popular");
+  
   const [visibleCount, setVisibleCount] = useState(4); // Số sản phẩm hiển thị ban đầu
+ 
   const loadMore = () => {
     setVisibleCount((prev) => prev + 4); // Mỗi lần load thêm 6 sản phẩm
   };
@@ -53,20 +51,16 @@ const ProductGrid = () => {
 
   return (
     <div>
-      <div className="flex justify-between items-center">
-        <h2 className="font-semibold text-xl">Danh sách sản phẩm</h2>
-        <PriceFilter onSelect={setSortOrder} />
-      </div>
       <div>
         <FilterSelected />
       </div>
 
-      <div className="grid grid-cols-4 gap-4 mt-4">
+      <div className="grid grid-cols-4 gap-4 mt-4 tb:grid-cols-2 tb:gap-2">
 
         {medicines.slice(0, visibleCount).map((medicine) => (
-          <a href='/medicine-detail'>
+          
             <Medicine key={medicine.id} medicine={medicine} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
-          </a>
+       
         ))}
 
 

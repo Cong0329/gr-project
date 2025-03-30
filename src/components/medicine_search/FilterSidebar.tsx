@@ -19,7 +19,7 @@ const FilterSideBar: React.FC = () => {
       <h2 className="font-semibold text-lg flex items-center space-x-2 border-b p-4 ">
         <span><FaFilter/></span> <span>Bộ lọc nâng cao</span>
       </h2>
-      <div className="mt-4 px-4 space-y-4 overflow-y-auto h-[450px]  scroll-smooth custom-scrollbar">
+      <div className="mt-4 px-4 space-y-4 overflow-y-auto h-[450px]  scroll-smooth custom-scrollbar md-lg:text-sm">
         <FilterItem
           title="Loại sản phẩm"
           options={["Tất cả", "Thuốc tim mạch huyết áp", "Dầu cá, Omega 3, DHA", "Sữa", "Thuốc trị mỡ máu"]}

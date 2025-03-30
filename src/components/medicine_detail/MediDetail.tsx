@@ -25,7 +25,6 @@ export default function ProductDetail() {
           <ProductImageSlider images={productData[0].images} />
         </div>
         <MedicineDescription medicineData={productData[0]} isOpen={isOpen} setIsOpen={setIsOpen} />
-
       </div>
       <div className="mt-6 bg-white rounded-xl tb:rounded-none">
         <MedicineTech />

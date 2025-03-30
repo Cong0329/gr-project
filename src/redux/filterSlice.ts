@@ -10,7 +10,6 @@ const initialState: FilterState = {
     "Đối tượng sử dụng": ["Tất cả"],
     "Giá bán": [], // Giá bán không mặc định chọn "Tất cả" vì nó chỉ chọn 1 giá trị
     "Loại thuốc": ["Tất cả"],
-    "Loại da": ["Tất cả"],
     "Nước sản xuất": ["Tất cả"],
     "Chỉ định": ["Tất cả"],
     "Thương hiệu": ["Tất cả"],
@@ -78,8 +77,12 @@ const filterSlice = createSlice({
       state.selectedFilters[key] = ["Tất cả"];
     });
   },
+  applyFilters: (state, action: PayloadAction<{ [key: string]: string[] }>) => {
+    state.selectedFilters = action.payload;
   },
+  },
+
 });
 
-export const { toggleFilter, clearFilters, removeFilter } = filterSlice.actions;
+export const { toggleFilter, clearFilters, removeFilter, applyFilters } = filterSlice.actions;
 export default filterSlice.reducer;

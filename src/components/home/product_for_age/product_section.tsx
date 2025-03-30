@@ -84,13 +84,6 @@ export default function ProductList() {
             </div>
           ))}
         </Slider>
-
-
-
-
-
-
-
       </div>
       {/* Danh sách sản phẩm */}
       <div className="grid grid-cols-6 gap-4 ms:gap-2 tb:grid-cols-2">

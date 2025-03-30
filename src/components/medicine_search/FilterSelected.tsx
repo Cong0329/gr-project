@@ -14,12 +14,12 @@ const FilterSelected: React.FC = () => {
   if (activeFilters.length === 0) return null; // Không hiển thị nếu không có bộ lọc nào
 
   return (
-    <div className="bg-white p-2 rounded-lg flex flex-wrap items-center space-x-2 space-y-2 mt-2">
-      <span className="font-medium text-gray-600">Lọc theo ({activeFilters.length})</span>
+    <div className="bg-white p-4 mt-2 rounded-lg flex flex-wrap items-center space-x-2 space-y-2  tb:text-sm">
+      <span className="font-medium text-gray-600 tb:hidden">Lọc theo ({activeFilters.length})</span>
       {activeFilters.map(({ category, value }) => (
         <span
           key={`${category}-${value}`}
-          className="bg-gray-200 px-2 py-1 rounded-full flex items-center space-x-1 font-medium"
+          className="bg-gray-200 p-2 rounded-full flex items-center space-x-1 font-medium"
         >
           {value}
           <button
