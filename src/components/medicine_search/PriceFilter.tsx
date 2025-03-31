@@ -28,7 +28,7 @@ const PriceFilter: React.FC<PriceFilterProps> = ({ onSelect, onClose }) => {
           <button
             key={option.value}
             onClick={() => handleSelect(option.value)}
-            className={`px-2 py-1 rounded-full border font-medium ${selected === option.value
+            className={`px-2 py-1 rounded-full border mm:text-sm font-medium ${selected === option.value
               ? "bg-blue-100 text-blue-600 border-blue-500"
               : "text-gray-600 border-gray-300"
               } transition-all duration-300`}

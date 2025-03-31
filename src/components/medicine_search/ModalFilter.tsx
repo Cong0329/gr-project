@@ -92,6 +92,12 @@ export const ModalFilter: React.FC<ModalFilterProps> = ({ isOpen, onClose }) => 
     setTempSelectedFilters(JSON.parse(JSON.stringify(selectedFilters))); // Reset về ban đầu
     onClose();
   };
+  
+  const handleResetFilters = () => {
+    setTempSelectedFilters({}); // Reset về khóa
+    onClose();
+    dispatch(clearFilters());
+  };
 
   return (
     <Sheet isOpen={isOpen} onClose={handleCloseWithoutApply}>
@@ -169,11 +175,11 @@ export const ModalFilter: React.FC<ModalFilterProps> = ({ isOpen, onClose }) => 
 
             <div className="sticky bottom-0 left-0 bg-white px-4 py-2 border-t">
               <div><ModalFilterSelected tempSelectedFilters={tempSelectedFilters} setTempSelectedFilters={setTempSelectedFilters} /></div>
-              <div className="flex justify-between">
-                <button className="px-4 py-2 bg-gray-200 rounded-md" onClick={handleCloseWithoutApply}>
-                  Hủy
+              <div className="flex justify-between w-full gap-4 font-medium">
+                <button className="px-4 py-2 bg-blue-100 text-blue-700 rounded-full w-1/2" onClick={handleResetFilters}>
+                  Thiết lập lại
                 </button>
-                <button className="px-4 py-2 bg-blue-500 text-white rounded-md" onClick={handleApplyFilters}>
+                <button className="px-4 py-2 bg-blue-700 text-white rounded-full w-1/2" onClick={handleApplyFilters}>
                   Áp dụng
                 </button>
               </div>
