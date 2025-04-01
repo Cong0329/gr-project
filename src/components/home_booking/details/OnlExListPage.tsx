@@ -1,20 +1,53 @@
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
 import { Search } from "lucide-react";
 import CoXuongKhop from "../../../assets/sections/Co_Xuong_Khop.webp";
-import { useNavigate } from "react-router-dom";
 
 const OnlExListPage = () => {
-  const categories = [
-    { name: "Tư vấn trị liệu tâm lý từ xa", image: CoXuongKhop },
-    { name: "Sức khoẻ tâm thần từ xa", image: CoXuongKhop },
-    { name: "Bác sĩ da liễu từ xa", image: CoXuongKhop },
-    { name: "Bác sĩ cơ sương khớp từ xa", image: CoXuongKhop },
-    { name: "Bác sĩ tiêu hoá từ xa", image: CoXuongKhop },
-    { name: "Bác sĩ tim mạch từ xa", image: CoXuongKhop },
-    { name: "Bác sĩ tim mạch từ xa", image: CoXuongKhop },
-  ];
-
+  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(
+          "https://run.mocky.io/v3/3be6a135-0ba8-45e2-b86d-745fa3d30efd"
+        );
+        const departments = await response.json();
+
+        const doctorResponse = await fetch(
+          "https://run.mocky.io/v3/c2ec429b-94b8-40bf-8826-c398f1f44664"
+        );
+        const doctors = await doctorResponse.json();
+
+        const isOnlinePage = location.pathname.includes("onlex");
+
+        if (isOnlinePage) {
+          console.log("Filtering doctors with type 'online'...");
+          const onlineDepartmentIds = doctors
+            .filter((doctor) => doctor.type === "online")
+            .map((doctor) => Number(doctor.department_id));
+
+          console.log("Online department IDs:", onlineDepartmentIds);
+
+          const filteredDepartments = departments.filter((dept) =>
+            onlineDepartmentIds.includes(dept.id)
+          );
+
+          setCategories(filteredDepartments);
+        } else {
+          console.log("Setting all departments...");
+          setCategories(departments);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      }
+    };
+
+    fetchCategories();
+  }, [location.pathname]);
 
   return (
     <>
@@ -53,7 +86,7 @@ const OnlExListPage = () => {
                   }
                 >
                   <img
-                    src={category.image}
+                    src={CoXuongKhop}
                     alt={category.name}
                     className="w-16 h-16 mb-2"
                     loading="lazy"
@@ -104,7 +137,7 @@ const OnlExListPage = () => {
                   }
                 >
                   <img
-                    src={category.image}
+                    src={CoXuongKhop}
                     alt={category.name}
                     className="w-16 h-16 mb-2"
                     loading="lazy"

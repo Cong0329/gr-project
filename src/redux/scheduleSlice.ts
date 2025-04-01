@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const fetchSchedule = createAsyncThunk("schedule/fetch", async () => {
-  const response = await axios.get("https://run.mocky.io/v3/f8cf43e8-0d71-496e-8509-e26fe898855f");
+  const response = await axios.get("https://run.mocky.io/v3/c2ec429b-94b8-40bf-8826-c398f1f44664");
   return response.data; 
 });
 

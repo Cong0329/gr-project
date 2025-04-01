@@ -1,11 +1,30 @@
+import React, { useEffect, useState } from "react";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import "./Specialty.css";
-import CoXuongKhop from "../../../assets/sections/Co_Xuong_Khop.webp";
 import { Link } from "react-router-dom";
 
 const Specialty = () => {
+  const [specialties, setSpecialties] = useState([]);
+
+  useEffect(() => {
+    const fetchSpecialties = async () => {
+      try {
+        const response = await fetch(
+          "https://run.mocky.io/v3/3be6a135-0ba8-45e2-b86d-745fa3d30efd"
+        );
+        const data = await response.json();
+        const filteredData = data.filter((dept) => !/(từ xa)/i.test(dept.name));
+        setSpecialties(filteredData);
+      } catch (error) {
+        console.error("Lỗi khi lấy chuyên khoa:", error);
+      }
+    };
+
+    fetchSpecialties();
+  }, []);
+
   const settings = {
     dots: false,
     infinite: true,
@@ -18,20 +37,6 @@ const Specialty = () => {
       { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 } },
     ],
   };
-
-  const specialties = [
-    { image: CoXuongKhop, name: "Cơ Xương Khớp" },
-    { image: CoXuongKhop, name: "Thần Kinh" },
-    { image: CoXuongKhop, name: "Tiêu Hoá" },
-    { image: CoXuongKhop, name: "Tim Mạch" },
-    { image: CoXuongKhop, name: "Tai Mũi Họng" },
-    { image: CoXuongKhop, name: "Cột Sống" },
-    { image: CoXuongKhop, name: "Y Học Cổ Truyền" },
-    { image: CoXuongKhop, name: "Sản Phụ Khoa" },
-    { image: CoXuongKhop, name: "Siêu Âm Thai" },
-    { image: CoXuongKhop, name: "Nhi Khoa" },
-    { image: CoXuongKhop, name: "Da Liễu" },
-  ];
 
   return (
     <div id="specialty-section" className="full-home w-full overflow-hidden">
@@ -51,29 +56,33 @@ const Specialty = () => {
 
           <div className="home-body pt-5">
             <Slider {...settings}>
-              {specialties.map((specialty, index) => (
-                <div key={index} className="px-2">
-                  <Link
-                    to={`/booking-home/specialty-detail/${encodeURIComponent(
-                      specialty.name
-                    )}`}
-                  >
-                    <div className="flex flex-col justify-center items-center">
-                      <div className="w-full h-48 bg-white flex flex-col items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-                        <img
-                          src={specialty.image}
-                          className="w-24 h-24 rounded-full object-cover mb-2"
-                          alt={specialty.name}
-                          loading="lazy"
-                        />
-                        <div className="text-base font-semibold">
-                          {specialty.name}
+              {specialties.length > 0 ? (
+                specialties.map((specialty) => (
+                  <div key={specialty.id} className="px-2">
+                    <Link
+                      to={`/booking-home/specialty-detail/${encodeURIComponent(
+                        specialty.name
+                      )}`}
+                    >
+                      <div className="flex flex-col justify-center items-center">
+                        <div className="w-full h-48 bg-white flex flex-col items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                          <img
+                            src={specialty.image}
+                            className="w-24 h-24 rounded-full object-cover mb-2"
+                            alt={specialty.name}
+                            loading="lazy"
+                          />
+                          <div className="text-base font-semibold">
+                            {specialty.name}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                </div>
-              ))}
+                    </Link>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center">Đang tải chuyên khoa...</p>
+              )}
             </Slider>
           </div>
         </div>
