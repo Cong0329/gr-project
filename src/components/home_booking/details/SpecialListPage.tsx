@@ -1,31 +1,53 @@
 import Breadcrumb from "./component_details/BreadCrumb";
 import { Search } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import CoXuongKhop from "../../../assets/sections/Co_Xuong_Khop.webp";
-import { useNavigate } from "react-router-dom";
 
 const SpecialistPage = () => {
-  const categories = [
-    { name: "Tiểu đường", image: CoXuongKhop },
-    { name: "Bệnh tim mạch", image: CoXuongKhop },
-    { name: "Bệnh hô hấp", image: CoXuongKhop },
-    { name: "Ung thư - Ung bướu", image: CoXuongKhop },
-    { name: "Bệnh tiêu hóa", image: CoXuongKhop },
-    { name: "Tâm lý - Tâm thần", image: CoXuongKhop },
-    { name: "Da liễu", image: CoXuongKhop },
-    { name: "Sức khỏe tình dục", image: CoXuongKhop },
-    { name: "Dị ứng", image: CoXuongKhop },
-    { name: "Bệnh cơ xương khớp", image: CoXuongKhop },
-    { name: "Bệnh về máu", image: CoXuongKhop },
-    { name: "Bệnh truyền nhiễm", image: CoXuongKhop },
-    { name: "Sức khỏe mắt", image: CoXuongKhop },
-    { name: "Bệnh thận và Đường tiết niệu", image: CoXuongKhop },
-    { name: "Bệnh về não và hệ thần kinh", image: CoXuongKhop },
-    { name: "Ăn uống lành mạnh", image: CoXuongKhop },
-    { name: "Thể dục thể thao", image: CoXuongKhop },
-    { name: "Thuốc và thực phẩm chức năng", image: CoXuongKhop },
-  ];
-
+  const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(
+          "https://run.mocky.io/v3/3be6a135-0ba8-45e2-b86d-745fa3d30efd"
+        );
+        const departments = await response.json();
+
+        const doctorResponse = await fetch(
+          "https://run.mocky.io/v3/c2ec429b-94b8-40bf-8826-c398f1f44664"
+        );
+        const doctors = await doctorResponse.json();
+
+        const isSpecialtyPage = location.pathname.includes("specialty-list");
+
+        if (isSpecialtyPage) {
+          console.log("Filtering doctors with type 'specialty'...");
+          const specialtyDepartmentIds = doctors
+            .filter((doctor) => doctor.type === "specialty")
+            .map((doctor) => Number(doctor.department_id));
+
+          console.log("Specialty department IDs:", specialtyDepartmentIds);
+
+          const filteredDepartments = departments.filter((dept) =>
+            specialtyDepartmentIds.includes(dept.id)
+          );
+
+          setCategories(filteredDepartments);
+        } else {
+          console.log("Setting all departments...");
+          setCategories(departments);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+      }
+    };
+
+    fetchCategories();
+  }, [location.pathname]);
 
   return (
     <>
@@ -51,7 +73,7 @@ const SpecialistPage = () => {
         <div className="specialty container-fix-spe mx-auto">
           <div className="specialty-content">
             <div className="p-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 py-10">
-              {categories.slice(0, 3).map((category, index) => (
+              {categories.map((category, index) => (
                 <div
                   key={index}
                   className="flex flex-col items-center p-4 bg-white rounded-xl shadow-md hover:shadow-lg transition cursor-pointer py-6"

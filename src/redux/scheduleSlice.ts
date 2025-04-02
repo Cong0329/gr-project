@@ -1,9 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 
 export const fetchSchedule = createAsyncThunk("schedule/fetch", async () => {
-  const response = await axios.get("https://run.mocky.io/v3/f8cf43e8-0d71-496e-8509-e26fe898855f");
-  return response.data; 
+  try {
+    const response = await fetch("https://run.mocky.io/v3/2b5d8917-c2e9-4cf2-9e6a-7e83f4275483");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw error;
+  }
 });
 
 const scheduleSlice = createSlice({
@@ -21,9 +25,7 @@ const scheduleSlice = createSlice({
       })
       .addCase(fetchSchedule.fulfilled, (state, action) => {
         state.loading = false;
-        state.schedules = Array.isArray(action.payload)
-          ? action.payload
-          : [action.payload];
+        state.schedules = action.payload;
       })
       .addCase(fetchSchedule.rejected, (state, action) => {
         state.loading = false;

@@ -5,6 +5,8 @@ import filterReducer from './filterSlice'
 import cartReducer from './cartSlice'
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import doctorReducer from './doctorSlice';
+import departmentReducer from './departmentSlice'
 
 const persistConfig = {
   key: "root",
@@ -17,6 +19,8 @@ export const store = configureStore({
   reducer: {
     image: imageReducer,
     schedule: scheduleReducer,
+    doctors: doctorReducer,
+    departments: departmentReducer,
     filters: filterReducer,
     cart: persistedReducer,
   },

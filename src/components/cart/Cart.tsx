@@ -21,36 +21,36 @@ export const Cart = () => {
         }
     }, [dispatch,cartItems.length]);
 
-    const Product = {
-        id: "3",
-        name: 'Vitamin C 1000mg',
-        quantity: 1,
-        image: 'https://i.imgur.com/HXN77Ev.png',
-        selectedOption: 'hop',
-        options: [
-            {
-                id: 'hop',
-                label: 'Hộp',
-                price: 165000,
-                discountedPrice: 150000,
-                isDiscounted: true
-            },
-            {
-                id: 'vi',
-                label: 'Vỉ',
-                price: 92000
-            },
-            {
-                id: 'ong',
-                label: 'Ống',
-                price: 9200
-            }
-        ]
-    }
+    // const Product = {
+    //     id: "3",
+    //     name: 'Vitamin C 1000mg',
+    //     quantity: 1,
+    //     image: 'https://i.imgur.com/HXN77Ev.png',
+    //     selectedOption: 'hop',
+    //     options: [
+    //         {
+    //             id: 'hop',
+    //             label: 'Hộp',
+    //             price: 165000,
+    //             discountedPrice: 150000,
+    //             isDiscounted: true
+    //         },
+    //         {
+    //             id: 'vi',
+    //             label: 'Vỉ',
+    //             price: 92000
+    //         },
+    //         {
+    //             id: 'ong',
+    //             label: 'Ống',
+    //             price: 9200
+    //         }
+    //     ]
+    // }
 
-    const handleAddToCart = () => {
-        dispatch(addToCartAPI(Product));
-    }
+    // const handleAddToCart = () => {
+    //     dispatch(addToCartAPI(Product));
+    // }
     return (
         <main className="flex-1 bg-gray-100  ">
             <div className="mx-auto bg-white pt-2">
@@ -97,7 +97,7 @@ export const Cart = () => {
                         </div>
                     )}
 
-                    <button onClick={handleAddToCart}>Thêm</button>
+                    {/* <button onClick={handleAddToCart}>Thêm</button> */}
 
                 </div>
                 {isServiceHovered && (

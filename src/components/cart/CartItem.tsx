@@ -74,7 +74,7 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
 
       {/* Ảnh và tên sản phẩm */}
       <div className="flex items-center gap-x-2 flex-1">
-        <img src={image} alt={name} className="w-16 h-16 rounded-xl border p-1" />
+        <img src={image} alt={name} className="w-16 h-16 rounded-xl border p-1" loading="lazy" />
         <p className="text-sm text-left w-60">{name}</p>
       </div>
 

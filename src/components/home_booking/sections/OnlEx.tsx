@@ -8,33 +8,47 @@ const OnlEx = () => {
     { label: "Tất cả", value: "Tất cả" },
     { label: "Tư vấn trị liệu tâm lý", value: "Tư vấn trị liệu tâm lý từ xa" },
     { label: "Sức khoẻ tâm thần", value: "Sức khoẻ tâm thần từ xa" },
-    { label: "Tim mạch", value: "Bác sĩ tim mạch từ xa" },
-    { label: "Da liễu", value: "Bác sĩ da liễu từ xa" },
-    { label: "Tiêu hoá", value: "Bác sĩ tiêu hoá từ xa" },
+    { label: "Tim mạch", value: "Tim mạch từ xa" },
+    { label: "Da liễu", value: "Da liễu từ xa" },
+    { label: "Tiêu hoá", value: "Tiêu hoá từ xa" },
   ];
 
   const [doctors, setDoctors] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [activeOption, setActiveOption] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchDoctors = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://run.mocky.io/v3/f8cf43e8-0d71-496e-8509-e26fe898855f"
-        );
-        if (!response.ok) throw new Error("Lỗi khi lấy dữ liệu");
+        const [doctorsRes, departmentsRes] = await Promise.all([
+          fetch("https://run.mocky.io/v3/c2ec429b-94b8-40bf-8826-c398f1f44664"),
+          fetch("https://run.mocky.io/v3/3be6a135-0ba8-45e2-b86d-745fa3d30efd"),
+        ]);
 
-        const data = await response.json();
-        const onlineDoctors = data.filter((doctor) => doctor.type === "online");
+        if (!doctorsRes.ok || !departmentsRes.ok)
+          throw new Error("Lỗi khi lấy dữ liệu");
 
-        setDoctors(
-          onlineDoctors.map((doctor) => ({
+        const doctorsData = await doctorsRes.json();
+        const departmentsData = await departmentsRes.json();
+
+        const departmentMap = {};
+        departmentsData.forEach((dept) => {
+          departmentMap[dept.id] = dept.name;
+        });
+
+        const onlineDoctors = doctorsData
+          .filter((doctor) => doctor.type === "online")
+          .map((doctor) => ({
             ...doctor,
             avatar: doctor.avatar || [imgDt],
-          }))
-        );
+            departmentName:
+              departmentMap[doctor.department_id] || "Không xác định",
+          }));
+
+        setDoctors(onlineDoctors);
+        setDepartments(departmentsData);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -42,7 +56,7 @@ const OnlEx = () => {
       }
     };
 
-    fetchDoctors();
+    fetchData();
   }, []);
 
   const filteredDoctors =
@@ -50,7 +64,7 @@ const OnlEx = () => {
       ? doctors
       : doctors.filter(
           (doctor) =>
-            doctor.department?.trim().toLowerCase() ===
+            doctor.departmentName?.trim().toLowerCase() ===
             options[activeOption].value.trim().toLowerCase()
         );
 
@@ -88,13 +102,15 @@ const OnlEx = () => {
             >
               <div className="flex flex-col items-center mb-4">
                 <img
-                  src={doctor.avatar[0]}
+                  src={doctor.avatar}
                   alt={doctor.name}
                   className="w-16 h-16 rounded-full mb-2"
                 />
                 <div className="text-center">
                   <h3 className="text-lg font-semibold">{doctor.name}</h3>
-                  <p className="text-sm text-gray-600">{doctor.department}</p>
+                  <p className="text-sm text-gray-600">
+                    {doctor.departmentName}
+                  </p>
                 </div>
               </div>
               <div className="info-dt w-full bg-slate-100 rounded-lg pt-2 pb-4 px-4 mt-auto">
@@ -140,7 +156,7 @@ const OnlEx = () => {
                 <button className="w-full bg-white text-[rgb(89,89,89)] font-semibold py-2 rounded-md hover:bg-[rgb(227,242,255)] transition-colors duration-300 border border-[rgb(153,153,153)]">
                   <Link
                     to={`/booking-home/onlex-detail/${encodeURIComponent(
-                      doctor.department
+                      doctor.departmentName
                     )}`}
                     state={{ doctor }}
                   >

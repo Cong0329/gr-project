@@ -1,6 +1,8 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { CheckoutItem } from "./CheckoutItem";
+import AddressSelection from "./AddressSelection";
+
 
 const Checkout: React.FC = () => {
 
@@ -18,18 +20,25 @@ const Checkout: React.FC = () => {
             ))}
         </div>
       </div>
+      <div className="mt-4">
+        <p className="text-sm font-semibold mb-2">Chọn địa điểm giao hàng</p>
 
-      <div className="mt-4 p-4 bg-white rounded-lg shadow-md">
-        <h3 className="text-lg font-semibold">Chọn phương thức thanh toán</h3>
+        <AddressSelection />
 
-        <div className="mt-2">
+      </div>
+      <div className="mt-4 ">
+        <p className="text-sm font-semibold">Chọn phương thức thanh toán</p>
+
+        <div className="mt-2 bg-white rounded-xl shadow-md p-4">
           <label className="flex items-center space-x-2">
             <input type="radio" name="payment" defaultChecked />
+            <img src="https://i.imgur.com/9GxNvdb.png" alt="" />
             <span>Thanh toán khi nhận hàng</span>
           </label>
 
           <label className="flex items-center space-x-2 mt-2">
             <input type="radio" name="payment" />
+            <img src="https://i.imgur.com/GIYkroG.png" alt="" />
             <span>Chuyển khoản ngân hàng</span>
           </label>
         </div>
