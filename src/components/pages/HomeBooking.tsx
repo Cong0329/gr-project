@@ -1,3 +1,7 @@
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { fetchDoctors } from "../../redux/doctorSlice";
+import { fetchDepartments } from "../../redux/departmentSlice";
 import HomeBooking from "../home_booking/Booking";
 import { Footer } from "../footer/Footer";
 import { Header } from "../header/Header";
@@ -8,6 +12,13 @@ import MedicalTest from "../home_booking/sections/MedicalTest";
 import ChatBox from "../chatbox/chatbox";
 
 export const HomeBookingCare = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchDoctors());
+    dispatch(fetchDepartments());
+  }, [dispatch]);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />

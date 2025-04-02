@@ -1,29 +1,46 @@
 import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchDepartments } from "../../../redux/departmentSlice";
+import { fetchDoctors } from "../../../redux/doctorSlice";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
-import "./Specialty.css";
 import { Link } from "react-router-dom";
+import "./Specialty.css";
 
 const Specialty = () => {
   const [specialties, setSpecialties] = useState([]);
+  const dispatch = useDispatch();
+
+  const { departments, loading: departmentLoading } = useSelector(
+    (state) => state.departments
+  );
+  const { doctors, loading: doctorLoading } = useSelector(
+    (state) => state.doctors
+  );
 
   useEffect(() => {
-    const fetchSpecialties = async () => {
-      try {
-        const response = await fetch(
-          "https://run.mocky.io/v3/3be6a135-0ba8-45e2-b86d-745fa3d30efd"
-        );
-        const data = await response.json();
-        const filteredData = data.filter((dept) => !/(từ xa)/i.test(dept.name));
-        setSpecialties(filteredData);
-      } catch (error) {
-        console.error("Lỗi khi lấy chuyên khoa:", error);
-      }
-    };
+    if (departments.length === 0) dispatch(fetchDepartments());
+    if (doctors.length === 0) dispatch(fetchDoctors());
+  }, [dispatch, departments.length, doctors.length]);
 
-    fetchSpecialties();
-  }, []);
+  useEffect(() => {
+    if (doctorLoading || departmentLoading) return;
+
+    const specialtyDoctors = doctors.filter(
+      (doctor) => doctor.type === "specialty"
+    );
+
+    const specialtyDepartmentIds = [
+      ...new Set(specialtyDoctors.map((doc) => Number(doc.department_id))),
+    ];
+
+    const filteredDepartments = departments.filter((dept) =>
+      specialtyDepartmentIds.includes(dept.id)
+    );
+
+    setSpecialties(filteredDepartments);
+  }, [departments, doctors, doctorLoading, departmentLoading]);
 
   const settings = {
     dots: false,
@@ -56,7 +73,9 @@ const Specialty = () => {
 
           <div className="home-body pt-5">
             <Slider {...settings}>
-              {specialties.length > 0 ? (
+              {doctorLoading || departmentLoading ? (
+                <p className="text-center">Đang tải chuyên khoa...</p>
+              ) : specialties.length > 0 ? (
                 specialties.map((specialty) => (
                   <div key={specialty.id} className="px-2">
                     <Link
@@ -81,7 +100,7 @@ const Specialty = () => {
                   </div>
                 ))
               ) : (
-                <p className="text-center">Đang tải chuyên khoa...</p>
+                <p className="text-center">Không có dữ liệu chuyên khoa.</p>
               )}
             </Slider>
           </div>

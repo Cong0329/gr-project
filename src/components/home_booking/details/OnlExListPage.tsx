@@ -3,51 +3,61 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
 import { Search } from "lucide-react";
 import CoXuongKhop from "../../../assets/sections/Co_Xuong_Khop.webp";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchDoctors } from "../../../redux/doctorSlice";
+import { fetchDepartments } from "../../../redux/departmentSlice";
 
 const OnlExListPage = () => {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
+
+  const {
+    doctors,
+    loading: doctorLoading,
+    error: doctorError,
+  } = useSelector((state) => state.doctors);
+  const {
+    departments,
+    loading: departmentLoading,
+    error: departmentError,
+  } = useSelector((state) => state.departments);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch(
-          "https://run.mocky.io/v3/3be6a135-0ba8-45e2-b86d-745fa3d30efd"
-        );
-        const departments = await response.json();
+    if (doctors.length === 0) dispatch(fetchDoctors());
+    if (departments.length === 0) dispatch(fetchDepartments());
+  }, [dispatch, doctors.length, departments.length]);
 
-        const doctorResponse = await fetch(
-          "https://run.mocky.io/v3/c2ec429b-94b8-40bf-8826-c398f1f44664"
-        );
-        const doctors = await doctorResponse.json();
+  useEffect(() => {
+    if (doctorLoading || departmentLoading) return;
 
-        const isOnlinePage = location.pathname.includes("onlex");
+    const isOnlinePage = location.pathname.includes("onlex");
 
-        if (isOnlinePage) {
-          console.log("Filtering doctors with type 'online'...");
-          const onlineDepartmentIds = doctors
-            .filter((doctor) => doctor.type === "online")
-            .map((doctor) => Number(doctor.department_id));
+    if (isOnlinePage) {
+      console.log("Filtering doctors with type 'online'...");
+      const onlineDepartmentIds = doctors
+        .filter((doctor) => doctor.type === "online")
+        .map((doctor) => Number(doctor.department_id));
 
-          console.log("Online department IDs:", onlineDepartmentIds);
+      console.log("Online department IDs:", onlineDepartmentIds);
 
-          const filteredDepartments = departments.filter((dept) =>
-            onlineDepartmentIds.includes(dept.id)
-          );
+      const filteredDepartments = departments.filter((dept) =>
+        onlineDepartmentIds.includes(dept.id)
+      );
 
-          setCategories(filteredDepartments);
-        } else {
-          console.log("Setting all departments...");
-          setCategories(departments);
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu:", error);
-      }
-    };
-
-    fetchCategories();
-  }, [location.pathname]);
+      setCategories(filteredDepartments);
+    } else {
+      console.log("Setting all departments...");
+      setCategories(departments);
+    }
+  }, [
+    location.pathname,
+    doctors,
+    departments,
+    doctorLoading,
+    departmentLoading,
+  ]);
 
   return (
     <>

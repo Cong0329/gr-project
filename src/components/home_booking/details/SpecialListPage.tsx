@@ -1,53 +1,63 @@
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchDepartments } from "../../../redux/departmentSlice";
+import { fetchDoctors } from "../../../redux/doctorSlice";
+import { useNavigate, useLocation } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
 import { Search } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
 import CoXuongKhop from "../../../assets/sections/Co_Xuong_Khop.webp";
 
 const SpecialistPage = () => {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
+
+  // Lấy dữ liệu từ Redux
+  const { departments, loading: departmentLoading } = useSelector(
+    (state) => state.departments
+  );
+  const { doctors, loading: doctorLoading } = useSelector(
+    (state) => state.doctors
+  );
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch(
-          "https://run.mocky.io/v3/3be6a135-0ba8-45e2-b86d-745fa3d30efd"
-        );
-        const departments = await response.json();
+    if (departments.length === 0) dispatch(fetchDepartments());
+    if (doctors.length === 0) dispatch(fetchDoctors());
+  }, [dispatch, departments.length, doctors.length]);
 
-        const doctorResponse = await fetch(
-          "https://run.mocky.io/v3/c2ec429b-94b8-40bf-8826-c398f1f44664"
-        );
-        const doctors = await doctorResponse.json();
+  useEffect(() => {
+    if (doctorLoading || departmentLoading) return;
 
-        const isSpecialtyPage = location.pathname.includes("specialty-list");
+    const isSpecialtyPage = location.pathname.includes("specialty-list");
 
-        if (isSpecialtyPage) {
-          console.log("Filtering doctors with type 'specialty'...");
-          const specialtyDepartmentIds = doctors
-            .filter((doctor) => doctor.type === "specialty")
-            .map((doctor) => Number(doctor.department_id));
+    if (isSpecialtyPage) {
+      // 1️⃣ Lọc bác sĩ có type là "specialty"
+      const specialtyDoctors = doctors.filter(
+        (doctor) => doctor.type === "specialty"
+      );
 
-          console.log("Specialty department IDs:", specialtyDepartmentIds);
+      // 2️⃣ Lấy danh sách department_id (tránh trùng lặp)
+      const specialtyDepartmentIds = [
+        ...new Set(specialtyDoctors.map((doc) => Number(doc.department_id))),
+      ];
 
-          const filteredDepartments = departments.filter((dept) =>
-            specialtyDepartmentIds.includes(dept.id)
-          );
+      // 3️⃣ Lọc danh sách departments dựa trên department_id
+      const filteredDepartments = departments.filter((dept) =>
+        specialtyDepartmentIds.includes(dept.id)
+      );
 
-          setCategories(filteredDepartments);
-        } else {
-          console.log("Setting all departments...");
-          setCategories(departments);
-        }
-      } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu:", error);
-      }
-    };
-
-    fetchCategories();
-  }, [location.pathname]);
+      setCategories(filteredDepartments);
+    } else {
+      setCategories(departments);
+    }
+  }, [
+    departments,
+    doctors,
+    doctorLoading,
+    departmentLoading,
+    location.pathname,
+  ]);
 
   return (
     <>

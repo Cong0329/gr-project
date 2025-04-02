@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import "./OnlEx.css";
 import imgDt from "../../../assets/sections/doctor.jpg";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDoctors } from "../../../redux/doctorSlice";
+import { fetchDepartments } from "../../../redux/departmentSlice";
 
 const OnlEx = () => {
   const options = [
@@ -10,62 +13,57 @@ const OnlEx = () => {
     { label: "Sức khoẻ tâm thần", value: "Sức khoẻ tâm thần từ xa" },
     { label: "Tim mạch", value: "Tim mạch từ xa" },
     { label: "Da liễu", value: "Da liễu từ xa" },
-    { label: "Tiêu hoá", value: "Tiêu hoá từ xa" },
+    { label: "Tiêu hoá", value: "tiêu hoá từ xa" },
   ];
 
-  const [doctors, setDoctors] = useState([]);
-  const [departments, setDepartments] = useState([]);
+  const dispatch = useDispatch();
   const [activeOption, setActiveOption] = useState(0);
+
+  const {
+    doctors,
+    loading: doctorLoading,
+    error: doctorError,
+  } = useSelector((state) => state.doctors);
+  const {
+    departments,
+    loading: departmentLoading,
+    error: departmentError,
+  } = useSelector((state) => state.departments);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [doctorsRes, departmentsRes] = await Promise.all([
-          fetch("https://run.mocky.io/v3/c2ec429b-94b8-40bf-8826-c398f1f44664"),
-          fetch("https://run.mocky.io/v3/3be6a135-0ba8-45e2-b86d-745fa3d30efd"),
-        ]);
+    dispatch(fetchDoctors());
+    dispatch(fetchDepartments());
+  }, [dispatch]);
 
-        if (!doctorsRes.ok || !departmentsRes.ok)
-          throw new Error("Lỗi khi lấy dữ liệu");
+  if (doctorLoading || departmentLoading) {
+    return <p>Đang tải dữ liệu...</p>;
+  }
 
-        const doctorsData = await doctorsRes.json();
-        const departmentsData = await departmentsRes.json();
+  if (doctorError || departmentError) {
+    return <p>Lỗi: {doctorError || departmentError}</p>;
+  }
 
-        const departmentMap = {};
-        departmentsData.forEach((dept) => {
-          departmentMap[dept.id] = dept.name;
-        });
+  const departmentMap = {};
+  departments.forEach((dept) => {
+    departmentMap[dept.id] = dept.name;
+  });
 
-        const onlineDoctors = doctorsData
-          .filter((doctor) => doctor.type === "online")
-          .map((doctor) => ({
-            ...doctor,
-            avatar: doctor.avatar || [imgDt],
-            departmentName:
-              departmentMap[doctor.department_id] || "Không xác định",
-          }));
-
-        setDoctors(onlineDoctors);
-        setDepartments(departmentsData);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const processedDoctors = doctors.map((doctor) => ({
+    ...doctor,
+    departmentName: departmentMap[doctor.department_id] || "Không xác định",
+  }));
 
   const filteredDoctors =
     activeOption === 0
-      ? doctors
-      : doctors.filter(
+      ? processedDoctors.filter((doctor) => doctor.type === "online")
+      : processedDoctors.filter(
           (doctor) =>
             doctor.departmentName?.trim().toLowerCase() ===
-            options[activeOption].value.trim().toLowerCase()
+              options[activeOption].value.trim().toLowerCase() &&
+            doctor.type === "online"
         );
 
   return (
