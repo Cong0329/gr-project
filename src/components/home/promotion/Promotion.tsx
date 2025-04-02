@@ -51,12 +51,18 @@ export const Promotion = () => {
             </div>
             <CountdownTimer />
             <div className="container grid grid-cols-6 gap-5 px-3 tb:grid-cols-2 ms:gap-2">
-                {medicines.slice(0, 6).map((medicine) => (
-                 
+                {medicines.slice(0, 6).map((medicine, index) => (
+                    <div key={medicine.id} className={`
+                        ${index >= 4 ? "hidden sm:block" : ""}  
+                        ${index >= 8 ? "hidden md:block" : ""}  
+                        ${index >= 10 ? "hidden lg:block" : ""}
+                      `}>
                         <a href="/medicine-detail">
                             <PromotionChild key={medicine.id} medicine={medicine} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
                         </a>
-                  
+                    </div>
+
+
 
 
                 ))}

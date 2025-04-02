@@ -17,7 +17,7 @@ export const NavLink = ({setIsServiceHovered}: {setIsServiceHovered: (isHovered:
     ];
     return (
         <div className="mx-auto w-4/5 container md-lg:w-11/12 tb:hidden">
-            <ul className="flex flex-wrap justify-center mt-2 relative w-full h-9 mx-auto">
+            <ul className="flex flex-wrap justify-center relative w-full h-9 mx-auto">
                 {popularSearches.map((item: { id: number; name: string }) => (
                     <Service item={item} key={item.id} setIsServiceHovered={setIsServiceHovered} />
                 ))}

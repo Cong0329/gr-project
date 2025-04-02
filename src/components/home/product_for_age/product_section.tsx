@@ -28,8 +28,8 @@ export default function ProductList() {
     dots: false,            // Ẩn chấm điều hướng
     infinite: false,        // Không lặp lại khi hết danh mục
     speed: 500,             // Tốc độ chuyển slide
-    slidesToShow: 1, 
-    swipeToSlide: true,       
+    slidesToShow: 1,
+    swipeToSlide: true,
   };
 
 
@@ -75,8 +75,8 @@ export default function ProductList() {
           {categories.map((category) => (
             <div key={category.id}
               className={`inline-block mr-2 !w-auto px-3 py-1 rounded-full border cursor-pointer whitespace-nowrap ${selectedCategory === category.id
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-200 text-black"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-black"
                 }`}
               onClick={() => setSelectedCategory(category.id)}
             >
@@ -87,8 +87,15 @@ export default function ProductList() {
       </div>
       {/* Danh sách sản phẩm */}
       <div className="grid grid-cols-6 gap-4 ms:gap-2 tb:grid-cols-2">
-        {products[selectedCategory]?.slice(0, 12).map((product) => (
-          <Medicine key={product.id} medicine={product} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
+        {products[selectedCategory]?.slice(0, 12).map((product, index) => (
+          <div key={product.id}
+            className={`
+            ${index >= 4 ? "hidden sm:block" : ""}  
+            ${index >= 8 ? "hidden md:block" : ""}  
+            ${index >= 10 ? "hidden lg:block" : ""}
+          `}>
+            <Medicine key={product.id} medicine={product} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
+          </div>
         ))}
       </div>
     </div>

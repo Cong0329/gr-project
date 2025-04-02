@@ -55,8 +55,15 @@ export const Medicines = () => {
             </div>
 
             <div className="container grid grid-cols-6 gap-5 ms:gap-2 tb:grid-cols-2">
-                {medicines.slice(0, 12).map((medicine) => (
-                    <Medicine key={medicine.id} medicine={medicine} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
+                {medicines.slice(0, 12).map((medicine, index) => (
+                    <div key={medicine.id}
+                        className={`
+                      ${index >= 4 ? "hidden sm:block" : ""}  
+                      ${index >= 8 ? "hidden md:block" : ""}  
+                      ${index >= 10 ? "hidden lg:block" : ""}
+                    `}>
+                        <Medicine key={medicine.id} medicine={medicine} handleTypeClick={handleTypeClick} selectedType={selectedTypes} />
+                    </div>
                 ))}
             </div>
         </div>

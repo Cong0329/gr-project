@@ -2,18 +2,27 @@ import { configureStore } from '@reduxjs/toolkit';
 import imageReducer from './imageSlice';
 import scheduleReducer from './scheduleSlice';
 import filterReducer from './filterSlice'
+import cartReducer from './cartSlice'
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
+const persistConfig = {
+  key: "root",
+  storage, // lưu trữ vào localStorage
+};
 
+const persistedReducer = persistReducer(persistConfig, cartReducer);
 // Cấu hình store
-const store = configureStore({
+export const store = configureStore({
   reducer: {
     image: imageReducer,
     schedule: scheduleReducer,
     filters: filterReducer,
+    cart: persistedReducer,
   },
 });
 export type AppDispatch = typeof store.dispatch;
 
 export type RootState = ReturnType<typeof store.getState>;
 
-export default store;
+export const persistor = persistStore(store); 

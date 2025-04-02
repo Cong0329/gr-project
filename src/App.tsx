@@ -13,6 +13,7 @@ import { BookingMedicalTestDetail } from "./components/pages/BookingMedicalTestD
 import { MedicineDetail } from "./components/pages/MedicineDetail";
 import { SearchPage } from "./components/pages/MedicineSearch";
 import ScrollToTop from "./components/home_booking/details/component_details/ScrollToTop";
+import { CartPage } from "./components/pages/CartPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/medicine-detail" element={<MedicineDetail />} />
         <Route path="/medicine-search" element={<SearchPage />} />
+        <Route path="/cart" element={<CartPage />} />
         <Route path="/booking-home" element={<HomeBookingCare />} />
         <Route
           path="/booking-home/specialty-list"

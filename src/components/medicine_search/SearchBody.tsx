@@ -12,12 +12,12 @@ export const SearchBody = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sortOrder, setSortOrder] = useState<string>("popular");
     return (
-        <main className="flex-1 bg-white ">
-            <div className="mx-auto">
+        <main className="flex-1 bg-gray-100 ">
+            <div className="mx-auto bg-white pt-2">
                 <NavLink setIsServiceHovered={setIsServiceHovered} />
             </div>
             <div className='relative'>
-                <div className="mx-auto relative bg-gray-100 pb-4">
+                <div className="mx-auto relative pb-4">
                     <div className="bg-gray-100 min-h-screen mt-4 w-4/5 tb:w-11/12 mx-auto container">
                         {/* Thanh tìm kiếm */}
                         <SearchBar />
