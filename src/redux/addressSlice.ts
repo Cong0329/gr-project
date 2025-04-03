@@ -1,0 +1,85 @@
+import { createSlice } from "@reduxjs/toolkit";
+import { fetchAddresses, addAddressAPI, deleteAddressAPI, updateAddressAPI, getAddressById} from "./addressAsyncThunk";
+
+
+// Interface cho Address
+export interface Address { 
+  id: string;
+  name: string;
+  phone: string;
+  district: string;
+  ward: string;
+  province: string;
+  street: string;
+  type: string;
+  default: boolean;
+}
+
+
+interface AddressState {
+  addresses: Address[];
+  selectedAddress: Address | null;
+  isEdit: boolean;
+  status: "idle" | "loading" | "succeeded" | "failed";
+}
+
+const initialState: AddressState = {
+  addresses: [],
+  selectedAddress: null,
+  status: "idle",
+  isEdit: false
+};
+
+
+
+// Slice quản lý địa chỉ
+const addressSlice = createSlice({
+  name: "addresses",
+  initialState,
+  reducers: {
+    // Chọn địa chỉ từ state, ưu tiên địa chỉ mặc định
+    selectAddress: (state, action) => {
+      state.selectedAddress = state.addresses.find(addr => addr.id === action.payload) || state.selectedAddress;
+    },
+
+    setIsEdit: (state, action) => {
+      state.isEdit = action.payload;
+    }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchAddresses.fulfilled, (state, action) => {
+        state.addresses = action.payload;
+        state.selectedAddress = action.payload.find(addr => addr.default) || null;
+        state.status = "succeeded";
+      })
+      .addCase(getAddressById.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.selectedAddress = action.payload;
+      })
+      .addCase(addAddressAPI.fulfilled, (state, action) => {
+        state.addresses.push(action.payload);
+        if (action.payload.default) {
+          state.selectedAddress = action.payload;
+        }
+      })
+      .addCase(deleteAddressAPI.fulfilled, (state, action) => {
+        state.addresses = state.addresses.filter(addr => addr.id !== action.payload);
+        if (state.selectedAddress?.id === action.payload) {
+          state.selectedAddress = state.addresses.find(addr => addr.default) || null;
+        }
+      })
+      .addCase(updateAddressAPI.fulfilled, (state, action) => {
+        const index = state.addresses.findIndex(addr => addr.id === action.payload.id);
+        if (index !== -1) {
+          state.addresses[index] = action.payload;
+        }
+        if (action.payload.default) {
+          state.selectedAddress = action.payload;
+        }
+      });
+  },
+});
+
+export const { selectAddress, setIsEdit } = addressSlice.actions;
+export default addressSlice.reducer;

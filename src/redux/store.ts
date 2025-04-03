@@ -7,6 +7,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import doctorReducer from './doctorSlice';
 import departmentReducer from './departmentSlice'
+import addressReducer from './addressSlice';
 
 const persistConfig = {
   key: "root",
@@ -23,6 +24,7 @@ export const store = configureStore({
     departments: departmentReducer,
     filters: filterReducer,
     cart: persistedReducer,
+    address: addressReducer
   },
 });
 export type AppDispatch = typeof store.dispatch;
