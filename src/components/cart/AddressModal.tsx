@@ -5,9 +5,9 @@ import AddAddressModal from "./AddAddressModal"; // Import interface Address t�
 import { RootState } from "../../redux/store"; // Import RootState
 import { selectAddress } from "../../redux/addressSlice"; // Import action từ slice
 
+
 interface Props {
   isOpen: boolean;
-  isEdit: boolean;
   onClose: () => void;
 }
 
@@ -15,8 +15,10 @@ const AddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const addresses = useSelector((state: RootState) => state.address.addresses);
   const defaultAddress = useSelector((state: RootState) => state.address.selectedAddress);
+  const [isEdit, setIsEdit] = useState(false);
 
   const [selectedId, setSelectedId] = useState(defaultAddress?.id || "");
+  const [selectedEdit, setSelectedEdit] = useState('');
   const [isAddingNew, setIsAddingNew] = useState(false);
 
   const handleSelect = () => {
@@ -26,9 +28,16 @@ const AddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
     onClose();
   };
 
-  const handleEdit = () => {
+  const handleEdit = (id: string) => {
     setIsAddingNew(true);
-  }
+    setIsEdit(true);
+    setSelectedEdit(id); // Cập nhật ID địa chỉ được chỉnh sửa
+  };
+
+  const handleAddNew = () => {
+    setIsAddingNew(true);
+    setIsEdit(false);
+  };
 
   if (!isOpen) return null;
 
@@ -36,13 +45,20 @@ const AddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50  flex items-center justify-center">
       <div className="bg-white  rounded-lg shadow-lg w-2/5">
         <div className="border-b mb-2">
-          <h2 className="px-6 pt-6 text-lg font-semibold mb-2">{isAddingNew ? "Thêm điểm giao hàng" : "Chọn địa điểm giao hàng"}</h2>
+          <h2 className="px-6 pt-6 text-lg font-semibold mb-4">
+            {isAddingNew
+              ? (isEdit ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới")
+              : "Chọn địa điểm giao hàng"}
+          </h2>
+
         </div>
         <div className={`${isAddingNew ? "" : "overflow-y-auto max-h-96"}  w-full `}>
           {isAddingNew ? (
             <AddAddressModal
               isOpen={isAddingNew}
+              isEdit={isEdit}
               onClose={() => setIsAddingNew(false)}
+              selectedEdit={selectedEdit}
             />
           ) : (
             addresses.map((address) => (
@@ -70,7 +86,7 @@ const AddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
                       )}
                     </div>
                     {/* Button "Sửa" ở góc phải */}
-                    <button className="text-blue-700 hover:underline">Sửa</button>
+                    <button className="text-blue-700 hover:underline" onClick={() => handleEdit(address.id)}>Sửa</button>
                   </div>
 
                   <p className="text-sm">{address.phone}</p>
@@ -89,7 +105,7 @@ const AddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
         {!isAddingNew && (
           <>
             <button
-              onClick={() => setIsAddingNew(true)}
+              onClick={handleAddNew}
               className="text-blue-500 mt-2 px-6 block w-full text-left hover:underline"
             >
               + Thêm địa chỉ mới

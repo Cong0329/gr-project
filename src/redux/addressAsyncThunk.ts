@@ -43,12 +43,15 @@ export const addAddressAPI = createAsyncThunk(
   // Cập nhật địa chỉ
   export const updateAddressAPI = createAsyncThunk(
     "addresses/updateAddress",
-    async (updatedAddress: Address, { rejectWithValue }) => {
+    async ({ id, updatedFields }: { id: string; updatedFields: any }, { rejectWithValue }) => {
       try {
-        const response = await axios.put(`https://65e695fbd7f0758a76e897e1.mockapi.io/api/v1/address/${updatedAddress.id}`, updatedAddress);
+        const response = await axios.put(
+          `https://65e695fbd7f0758a76e897e1.mockapi.io/api/v1/address/${id}`,
+          updatedFields // Truyền trực tiếp updatedFields
+        );
         return response.data;
       } catch (error) {
-        return rejectWithValue(error.response.data);
+        return rejectWithValue(error.response?.data || "Lỗi không xác định");
       }
     }
   );

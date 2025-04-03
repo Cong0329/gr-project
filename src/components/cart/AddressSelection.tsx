@@ -13,7 +13,7 @@ const AddressSelection = () => {
 
     useEffect(() => {
         dispatch(fetchAddresses());
-    }, [dispatch]);
+    }, [dispatch, selectedAddress]);
 
    
 

@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { addAddressAPI } from "../../redux/addressAsyncThunk";
+import { addAddressAPI, getAddressById, updateAddressAPI, deleteAddressAPI } from "../../redux/addressAsyncThunk";
 import { CustomSelect } from "./CustomSelect";
 
 interface Props {
   isOpen: boolean;
+  isEdit: boolean;
+  selectedEdit: string;
   onClose: () => void;
 }
 
@@ -34,10 +36,10 @@ interface Address {
 }
 
 
-const AddAddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
+const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdit }) => {
   const dispatch = useDispatch();
-  const addresses = useSelector((state: RootState) => state.address.addresses);
-  const [formData, setFormData] = useState({
+  const address = useSelector((state: RootState) => state.address.isEdit);
+  const [formData, setFormData] = useState<Address>({
     name: "",
     phone: "",
     street: "",
@@ -48,10 +50,73 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
     default: false
   });
 
+
+
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
 
+
+  useEffect(() => {
+    if (isOpen) {
+      // Load provinces khi mở modal
+      fetch("https://provinces.open-api.vn/api/p/")
+        .then(res => res.json())
+        .then(setProvinces);
+    }
+  }, [isOpen]);
+
+  // Xử lý riêng cho chế độ chỉnh sửa
+  useEffect(() => {
+    if (isOpen && isEdit && selectedEdit) {
+      // Chỉ dispatch khi có selectedEdit hợp lệ
+      dispatch(getAddressById(selectedEdit));
+    }
+  }, [isOpen, isEdit, selectedEdit, dispatch]);
+
+  // Cập nhật form data khi address thay đổi
+  useEffect(() => {
+    if (isEdit && address) {
+      setFormData(address);
+      loadInitialData(address);
+    }
+  }, [address, isEdit]);
+
+  // Reset form khi mở modal thêm mới
+  useEffect(() => {
+    if (isOpen && !isEdit) {
+      setFormData({
+        name: "",
+        phone: "",
+        street: "",
+        province: "",
+        district: "",
+        ward: "",
+        type: "nhà",
+        default: false
+      });
+      setDistricts([]);
+      setWards([]);
+    }
+  }, [isOpen, isEdit]);
+
+  const loadInitialData = async (addr: Address) => {
+    // Load districts
+    const province = provinces.find(p => p.name === addr.province);
+    if (province) {
+      const districtsRes = await fetch(`https://provinces.open-api.vn/api/p/${province.code}?depth=2`);
+      const districtsData = await districtsRes.json();
+      setDistricts(districtsData.districts);
+
+      // Load wards
+      const district = districtsData.districts.find((d: District) => d.name === addr.district);
+      if (district) {
+        const wardsRes = await fetch(`https://provinces.open-api.vn/api/d/${district.code}?depth=2`);
+        const wardsData = await wardsRes.json();
+        setWards(wardsData.wards);
+      }
+    }
+  };
 
   const handleTypeChange = (type: string) => {
     setFormData(prev => ({ ...prev, type }));
@@ -63,13 +128,7 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
 
-  useEffect(() => {
-    if (isOpen) {
-      fetch("https://provinces.open-api.vn/api/p/")
-        .then(res => res.json())
-        .then(setProvinces);
-    }
-  }, [isOpen]);
+
 
   const handleProvinceSelect = (province: Province | null) => {
     if (!province) {
@@ -127,13 +186,37 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
   };
 
   const handleSubmit = () => {
-    const newAddress: Address = {
-      ...formData
-    };
-
-    dispatch(addAddressAPI(newAddress));
+    if (isEdit && address) {
+      // Tạo object chỉ chứa các trường thay đổi
+      const updatedFields = getChangedFields(address, formData);
+      dispatch(updateAddressAPI({
+        id: address.id,
+        updatedFields, // Đảm bảo updatedFields chứa toàn bộ dữ liệu cần cập nhật
+      }));
+    } else {
+      const newAddress = {
+        ...formData,
+        id: Date.now().toString()
+      };
+      dispatch(addAddressAPI(newAddress));
+    }
     onClose();
   };
+
+  const getChangedFields = (original: Address, updated: Address) => {
+    const changes: Partial<Address> = {};
+    (Object.keys(updated) as (keyof Address)[]).forEach(key => {
+      if (updated[key] !== original[key]) {
+        changes[key] = updated[key];
+      }
+    });
+    return changes;
+  };
+
+  const handleDelete = () => {
+      dispatch(deleteAddressAPI(selectedEdit));
+      onClose();
+  }
 
   if (!isOpen) return null;
 
@@ -230,7 +313,9 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
             Đặt làm địa chỉ mặc định
           </label>
         </div>
-
+        <button onClick={handleDelete} className="flex justify-center items-center w-full text-red-500">
+          Xóa địa chỉ
+        </button>
 
       </div>
 
@@ -248,7 +333,7 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
           disabled={!formData.name || !formData.phone || !formData.province ||
             !formData.district || !formData.ward || !formData.street}
         >
-          Hoàn tất
+          {isEdit ? "Cập nhật" : "Hoàn tất"}
         </button>
       </div>
     </div>

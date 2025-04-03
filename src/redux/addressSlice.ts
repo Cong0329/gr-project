@@ -19,15 +19,16 @@ export interface Address {
 interface AddressState {
   addresses: Address[];
   selectedAddress: Address | null;
-  isEdit: boolean;
+  isEdit: Address | null;
   status: "idle" | "loading" | "succeeded" | "failed";
 }
 
 const initialState: AddressState = {
   addresses: [],
   selectedAddress: null,
+
   status: "idle",
-  isEdit: false
+  isEdit: null
 };
 
 
@@ -55,7 +56,7 @@ const addressSlice = createSlice({
       })
       .addCase(getAddressById.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.selectedAddress = action.payload;
+        state.isEdit = action.payload;
       })
       .addCase(addAddressAPI.fulfilled, (state, action) => {
         state.addresses.push(action.payload);
@@ -69,14 +70,8 @@ const addressSlice = createSlice({
           state.selectedAddress = state.addresses.find(addr => addr.default) || null;
         }
       })
-      .addCase(updateAddressAPI.fulfilled, (state, action) => {
-        const index = state.addresses.findIndex(addr => addr.id === action.payload.id);
-        if (index !== -1) {
-          state.addresses[index] = action.payload;
-        }
-        if (action.payload.default) {
-          state.selectedAddress = action.payload;
-        }
+      .addCase(updateAddressAPI.fulfilled, (state) => {
+        state.status = "succeeded";
       });
   },
 });
