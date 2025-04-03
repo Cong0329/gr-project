@@ -70,6 +70,9 @@ const addressSlice = createSlice({
           state.selectedAddress = state.addresses.find(addr => addr.default) || null;
         }
       })
+      .addCase(updateAddressAPI.pending, (state) => {
+        state.status = "loading";
+      })
       .addCase(updateAddressAPI.fulfilled, (state) => {
         state.status = "succeeded";
       });

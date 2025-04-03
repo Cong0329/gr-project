@@ -10,10 +10,10 @@ const AddressSelection = () => {
 
     // Lấy selectedAddress từ Redux store
     const selectedAddress = useSelector((state: RootState) => state.address.selectedAddress);
-
+    const status = useSelector((state: RootState) => state.address.status);
     useEffect(() => {
         dispatch(fetchAddresses());
-    }, [dispatch, selectedAddress]);
+    }, [dispatch,status]);
 
    
 
