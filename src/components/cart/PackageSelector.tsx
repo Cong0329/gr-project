@@ -25,18 +25,18 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({ selectedOption, optio
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        className="flex items-center justify-between border border-gray-300 rounded-full px-4 py-2 text-gray-700 hover:bg-gray-100 w-24"
+        className="flex items-center justify-between border border-gray-300 rounded-full ml:px-2 ml:py-1 px-4 py-2 text-gray-700 hover:bg-gray-100 w-24"
         onClick={() => setIsOpen(!isOpen)}
       >
         {selectedOption} <span className="ml-2">▼</span>
       </button>
 
       {isOpen && (
-        <ul className="absolute left-0 w-24 bg-white border border-gray-300 rounded-lg shadow-md mt-2 z-10">
+        <ul className="absolute left-0 w-24 bg-white border border-gray-300 rounded-lg shadow-md mt-2 z-10 ml:bottom-full mb-2">
           {options.map((option) => (
             <li
               key={option}
-              className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+              className="px-4 py-2 hover:bg-gray-200 cursor-pointer hover:bg-blue-100"
               onClick={() => {
                 onChange(option);  // Gọi hàm onChange khi chọn option
                 setIsOpen(false);
@@ -46,6 +46,7 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({ selectedOption, optio
             </li>
           ))}
         </ul>
+        
       )}
     </div>
   );

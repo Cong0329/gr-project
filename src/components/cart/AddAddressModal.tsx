@@ -224,10 +224,10 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
   if (!isOpen) return null;
 
   return (
-    <div className="px-6  ">
+    <div className="px-6 tb:p-0  md-lg:text-sm">
 
 
-      <div className="space-y-3">
+      <div className="space-y-3 tb:px-6 overflow-y-auto max-h-[400px]">
         <label htmlFor="name">Thông tin người nhận</label>
         <input
           type="text"
@@ -330,7 +330,7 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
             onDelete={handleDelete}
           />
         )}
-      <div className="flex justify-end gap-2 my-4 ">
+      <div className="flex justify-end gap-2 my-4 p-4 ">
         <button
           onClick={onClose}
           className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"

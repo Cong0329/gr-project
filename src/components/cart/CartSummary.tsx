@@ -43,8 +43,8 @@ const CartSummary: React.FC = () => {
   };
 
   return (
-    <div className={`bg-white p-4 rounded-lg shadow-md ${isCheckout  && "mt-7"}`}>
-      <button onClick={() => setIsOpen(true)} className="flex justify-between items-center font-semibold bg-blue-100 text-blue-700 rounded-lg p-3 w-full">
+    <div className={`bg-white p-4 rounded-lg ${isCheckout  && "mt-7"}`}>
+      <button onClick={() => setIsOpen(true)} className="flex md-lg:text-sm justify-between items-center font-semibold bg-blue-100 text-blue-700 rounded-lg p-3 w-full">
         Áp dụng ưu đãi để được giảm giá
         <FaAngleRight />
       </button>

@@ -67,7 +67,7 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
   return (
     <div
 
-      className={`flex items-center py-4 text-black gap-x-4 ${isFirst === 0 ? "border-none" : "border-t border-gray-300"}`}
+      className={`flex items-center py-4 text-black gap-x-2 ${isFirst === 0 ? "border-none" : "border-t border-gray-300"}`}
     >
       {/* Checkbox chọn sản phẩm */}
       <input
@@ -77,54 +77,122 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
         onChange={() => dispatch(toggleSelectItem(id))}
       />
 
-      {/* Ảnh và tên sản phẩm */}
-      <div className="flex items-center gap-x-2 flex-1">
-        <img src={image} alt={name} className="w-16 h-16 rounded-xl border p-1" loading="lazy" />
-        <p className="text-sm text-left w-60">{name}</p>
-      </div>
+      <div className="ml:hidden flex items-center gap-x-2">
 
-      {/* Giá tiền */}
-      <p className="text-blue-700 w-24 font-semibold text-sm">{totalPrice.toLocaleString()}đ</p>
-
-      {/* Điều chỉnh số lượng */}
-      <div className="w-32">
-        <div className="flex w-28 border rounded-full items-center">
-          <button
-            className="px-3 py-1 border-r disabled:opacity-50"
-            onClick={handleQuantityDecrement}
-            disabled={quantity <= 1}
+        {/* Ảnh và tên sản phẩm */}
+        <div className="flex items-center gap-x-2 flex-1">
+          <img src={image} alt={name} className="w-16 h-16 rounded-xl border p-1" loading="lazy" />
+          <p
+            className="text-sm text-left w-60 md-lg:w-52 overflow-hidden h-10 max-h-10"
+            title={name}
           >
-            -
-          </button>
-          <input
-            type="number"
-            className="w-10 text-center outline-none no-spinner"
-            value={quantity}
-            onChange={handleQuantityChange}
-          />
-          <button
-            className="px-3 py-1 border-l"
-            onClick={handleQuantityIncrement}
-          >
-            +
-          </button>
+            {name}
+          </p>
         </div>
+
+        {/* Giá tiền */}
+        <p className="text-blue-700 w-24 font-semibold text-sm">{totalPrice.toLocaleString()}đ</p>
+
+        {/* Điều chỉnh số lượng */}
+        <div className="w-32">
+          <div className="flex w-28 border rounded-full items-center">
+            <button
+              className="px-3 py-1 border-r disabled:opacity-50"
+              onClick={handleQuantityDecrement}
+              disabled={quantity <= 1}
+            >
+              -
+            </button>
+            <input
+              type="number"
+              className="w-10 text-center outline-none no-spinner"
+              value={quantity}
+              onChange={handleQuantityChange}
+            />
+            <button
+              className="px-3 py-1 border-l"
+              onClick={handleQuantityIncrement}
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        {/* Chọn tùy chọn sản phẩm */}
+        <div className="w-28">
+          <PackageSelector
+            selectedOption={selectedOption.label}
+            options={options.map(option => option.label)}
+            onChange={handleOptionChange}
+          />
+        </div>
+
+        {/* Nút xóa sản phẩm */}
+        <button onClick={() => setIsOpen(true)} className="text-gray-500 w-8 px-2">
+          <FaTrash />
+        </button>
+
+
       </div>
 
-      {/* Chọn tùy chọn sản phẩm */}
-      <div className="w-28">
-        <PackageSelector
-          selectedOption={selectedOption.label}
-          options={options.map(option => option.label)}
-          onChange={handleOptionChange}
-        />
+      <div className="hidden ml:flex ml:items-center">
+        <div>
+          <div className="flex items-start gap-x-2 flex-1">
+            <img src={image} alt={name} className="w-16 h-16 rounded-xl border p-1" loading="lazy" />
+            <div>
+              <p
+                className="text-sm text-left w-60 md-lg:w-52 overflow-hidden h-5 max-h-5 ms:w-44"
+                title={name}
+              >
+                {name}
+              </p>
+              {/* Giá tiền */}
+              <p className="text-blue-700 w-24 font-semibold text-sm">{totalPrice.toLocaleString()}đ</p>
+            </div>
+          </div>
+          <div className="flex justify-end ms:pt-1 ">
+            {/* Điều chỉnh số lượng */}
+            <div className="w-32">
+              <div className="flex w-28 border rounded-full items-center">
+                <button
+                  className="px-3 py-1 border-r disabled:opacity-50"
+                  onClick={handleQuantityDecrement}
+                  disabled={quantity <= 1}
+                >
+                  -
+                </button>
+                <input
+                  type="number"
+                  className="w-10 text-center outline-none no-spinner"
+                  value={quantity}
+                  onChange={handleQuantityChange}
+                />
+                <button
+                  className="px-3 py-1 border-l"
+                  onClick={handleQuantityIncrement}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Chọn tùy chọn sản phẩm */}
+            <div className="">
+              <PackageSelector
+                selectedOption={selectedOption.label}
+                options={options.map(option => option.label)}
+                onChange={handleOptionChange}
+              />
+            </div>
+          </div>
+
+
+        </div>
+        {/* Nút xóa sản phẩm */}
+        <button onClick={() => setIsOpen(true)} className="text-gray-500 w-8 px-2">
+          <FaTrash />
+        </button>
       </div>
-
-      {/* Nút xóa sản phẩm */}
-      <button onClick={() => setIsOpen(true)} className="text-gray-500 w-8 px-2">
-        <FaTrash />
-      </button>
-
       {isOpen && (
         <ModalDelete
           message="Bạn có chắc chắn muốn xóa sản phẩm này?"

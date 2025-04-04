@@ -29,10 +29,20 @@ export const CheckoutItem: React.FC<CheckoutItemProps> = ({ isFirst, item }) => 
     <div className={`flex items-center justify-between ${isFirst ? "border-t" : "border-none"} border-gray-300 py-4 text-black gap-x-2`}>
       <div className="flex items-center gap-x-2">
         <img src={image} alt={name} className="w-16 h-16 rounded-xl border p-1" />
-        <p className="text-sm text-left w-[400px]">{name}</p>
+        <div>
+          <p
+            className="text-sm text-left w-60 md-lg:w-52 overflow-hidden h-5 max-h-5 ms:w-44 mm:w-32"
+            title={name}
+          >
+            {name}
+          </p>
+          <p className="text-black hidden ml:block  font-semibold text-sm">{totalPrice.toLocaleString()}đ</p>
+
+        </div>
+
       </div>
 
-      <p className="text-black  font-semibold text-sm">{totalPrice.toLocaleString()}đ</p>
+      <p className="text-black  font-semibold text-sm ml:hidden">{totalPrice.toLocaleString()}đ</p>
       <div className="text-gray-500 flex font-semibold text-sm">
         <span>x</span>
         <p className="">{quantity}</p>

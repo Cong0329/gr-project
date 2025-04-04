@@ -8,8 +8,8 @@ const CartOder: React.FC = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   return (
     <div className="mx-auto w-full ">
-      <div className="flex gap-x-2 items-center bg-white  rounded-t-xl px-4 py-1 mb-0.5 text-black text-sm font-semibold">
-        <div className="flex  w-[336px] items-center ">
+      <div className="flex gap-x-2 items-center bg-white tb:hidden  rounded-t-xl px-4 py-1 mb-0.5 text-black text-sm font-semibold">
+        <div className="flex  w-[330px] items-center md-lg:w-[300px]">
           <input
             type="checkbox"
             className=" w-4 h-4 cursor-pointer"
