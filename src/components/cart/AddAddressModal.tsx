@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { addAddressAPI, getAddressById, updateAddressAPI, deleteAddressAPI } from "../../redux/addressAsyncThunk";
 import { CustomSelect } from "./CustomSelect";
+import {ModalDelete }from "./ModalDelete";
 
 interface Props {
   isOpen: boolean;
@@ -55,6 +56,7 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
+  const [isDelete, setIsDelete] = useState(false);
 
 
   useEffect(() => {
@@ -191,7 +193,7 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
       const updatedFields = getChangedFields(address, formData);
       dispatch(updateAddressAPI({
         id: address.id,
-        updatedFields, // Đảm bảo updatedFields chứa toàn bộ dữ liệu cần cập nhật
+        updatedFields, 
       }));
     } else {
       const newAddress = {
@@ -214,9 +216,10 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
   };
 
   const handleDelete = () => {
-      dispatch(deleteAddressAPI(selectedEdit));
-      onClose();
+    dispatch(deleteAddressAPI(selectedEdit));
+    onClose();
   }
+
 
   if (!isOpen) return null;
 
@@ -313,12 +316,20 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
             Đặt làm địa chỉ mặc định
           </label>
         </div>
-        <button onClick={handleDelete} className="flex justify-center items-center w-full text-red-500">
-          Xóa địa chỉ
-        </button>
-
+        {isEdit && (
+          <button onClick={() => setIsDelete(true)} className="flex justify-center items-center w-full text-red-500">
+            Xóa địa chỉ
+          </button>
+        )}
+      
       </div>
-
+      {isDelete && (
+          <ModalDelete
+            message="Bạn có chắc chắn muốn xóa địa chỉ này?"
+            onClose={() => setIsDelete(false)}
+            onDelete={handleDelete}
+          />
+        )}
       <div className="flex justify-end gap-2 my-4 ">
         <button
           onClick={onClose}

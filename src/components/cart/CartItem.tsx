@@ -1,10 +1,11 @@
 import { useDispatch } from "react-redux";
+import { useState } from "react";
 import { removeFromCartAPI, updateQuantityAPI, updateSelectedOptionAPI } from "../../redux/cartAsyncThunk";
-import { toggleSelectItem, updateQuantity, updateSelectedOption } from "../../redux/cartSlice";
+import { toggleSelectItem, updateQuantity } from "../../redux/cartSlice";
 import { FaTrash } from "react-icons/fa6";
 import PackageSelector from "./PackageSelector";
 import { ProductOption } from "./product";
-
+import { ModalDelete } from "./ModalDelete";
 
 interface CartItem {
   id: string;
@@ -22,13 +23,17 @@ interface CartItemProps {
 }
 
 const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const { id, name, quantity, image, selected, selectedOption, options } = item;
 
   // Tính tổng tiền dựa trên tùy chọn được chọn
   const totalPrice = (selectedOption.discountedPrice ?? selectedOption.price) * quantity;
 
-  const handleRemove = () => dispatch(removeFromCartAPI(id));
+  const handleRemove = () => {
+    dispatch(removeFromCartAPI(id))
+    setIsOpen(false);
+  };
 
   // Cập nhật tùy chọn gói sản phẩm
   const handleOptionChange = (newOption: string) => {
@@ -116,9 +121,17 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
       </div>
 
       {/* Nút xóa sản phẩm */}
-      <button onClick={handleRemove} className="text-gray-500 w-8 px-2">
+      <button onClick={() => setIsOpen(true)} className="text-gray-500 w-8 px-2">
         <FaTrash />
       </button>
+
+      {isOpen && (
+        <ModalDelete
+          message="Bạn có chắc chắn muốn xóa sản phẩm này?"
+          onClose={() => setIsOpen(false)}
+          onDelete={handleRemove}
+        />
+      )}
     </div>
   );
 };

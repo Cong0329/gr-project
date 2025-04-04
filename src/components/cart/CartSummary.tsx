@@ -3,12 +3,14 @@ import { goToCheckout } from "../../redux/cartSlice";
 import { RootState } from "../../redux/store";
 import { FaAngleRight, FaQuestion } from "react-icons/fa6";
 import { useEffect, useState } from "react";
+import { VoucherModal } from "./VoucherModal";
 
 const CartSummary: React.FC = () => {
   const dispatch = useDispatch();
   const [message, setMessage] = useState('');
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isCheckout = useSelector((state: RootState) => state.cart.isCheckout);
+  const [isOpen, setIsOpen] = useState(false);
 
   const totalPrice = cartItems
     .filter(item => item.selected) // Chỉ lấy các sản phẩm được chọn
@@ -42,11 +44,11 @@ const CartSummary: React.FC = () => {
 
   return (
     <div className={`bg-white p-4 rounded-lg shadow-md ${isCheckout  && "mt-7"}`}>
-      <button className="flex justify-between items-center font-semibold bg-blue-100 text-blue-700 rounded-lg p-3 w-full">
+      <button onClick={() => setIsOpen(true)} className="flex justify-between items-center font-semibold bg-blue-100 text-blue-700 rounded-lg p-3 w-full">
         Áp dụng ưu đãi để được giảm giá
         <FaAngleRight />
       </button>
-
+      {isOpen && <VoucherModal onClose={() => setIsOpen(false)} />}
       <div className="flex justify-between font-semibold mt-2">
         <span className=" text-gray-500">Tổng tiền</span>
         <span className=" text-gray-900">{totalPrice.toLocaleString()}đ</span>
