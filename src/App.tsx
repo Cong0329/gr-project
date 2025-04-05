@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Home } from "./components/pages/Home";
 import { HomeBookingCare } from "./components/pages/HomeBooking";
 import { BookingSpecialty } from "./components/pages/BookingSpecialty";
@@ -14,6 +14,8 @@ import { MedicineDetail } from "./components/pages/MedicineDetail";
 import { SearchPage } from "./components/pages/MedicineSearch";
 import ScrollToTop from "./components/home_booking/details/component_details/ScrollToTop";
 import { CartPage } from "./components/pages/CartPage";
+import { ProfilePage } from "./components/pages/ProfilePage";
+import InvalidPage  from "./components/information/InvalidPage";
 
 function App() {
   return (
@@ -24,6 +26,10 @@ function App() {
         <Route path="/medicine-detail" element={<MedicineDetail />} />
         <Route path="/medicine-search" element={<SearchPage />} />
         <Route path="/cart" element={<CartPage />} />
+        <Route path="/profile" element={<Navigate to="/profile/personal-info" replace />} />
+          <Route path="/profile/:pageId" element={<ProfilePage />} />
+          <Route path="*" element={<InvalidPage />} />
+
         <Route path="/booking-home" element={<HomeBookingCare />} />
         <Route
           path="/booking-home/specialty-list"

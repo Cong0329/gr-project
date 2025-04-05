@@ -8,6 +8,8 @@ import storage from "redux-persist/lib/storage";
 import doctorReducer from './doctorSlice';
 import departmentReducer from './departmentSlice'
 import addressReducer from './addressSlice';
+import profileReducer from './profileSlice';
+import navigationReducer from './navigationSlice';
 
 const persistConfig = {
   key: "root",
@@ -24,7 +26,9 @@ export const store = configureStore({
     departments: departmentReducer,
     filters: filterReducer,
     cart: persistedReducer,
-    address: addressReducer
+    address: addressReducer,
+    profile: profileReducer,
+    navigation: navigationReducer,
   },
 });
 export type AppDispatch = typeof store.dispatch;
