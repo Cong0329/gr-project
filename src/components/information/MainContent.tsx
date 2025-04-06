@@ -22,7 +22,7 @@ const MainContent: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-auto">
+    <div className="w-full">
       {contentMap[activePage]}
     </div>
   );

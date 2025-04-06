@@ -34,9 +34,15 @@ export const InformationBody = () => {
                     <div className="  mx-auto bg-gray-100  [&>*]:!bg-gray-100">
                         <Breadcrumb current={activePage} />
                     </div>
-                    <div className="flex h-screen gap-4">
-                        <Sidebar />
-                        <MainContent />
+                    <div className="flex  w-full gap-10">
+                        <div className='w-1/5'>
+                            <Sidebar />
+
+                        </div>
+                        <div className='w-4/5'>
+                            <MainContent />
+
+                        </div>
                     </div>
                 </div>
                 {isServiceHovered && (

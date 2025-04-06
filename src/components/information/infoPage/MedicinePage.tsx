@@ -20,7 +20,7 @@ export const MedicinePage = () => {
     }, [activeTab]);
 
     return (
-        <div className="p-6">
+        <div className="pt-2">
             <div className="flex justify-between mb-6">
                 <h2 className="text-2xl font-bold">Đơn thuốc của tôi</h2>
                 <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">Gửi yêu cầu mới</button>

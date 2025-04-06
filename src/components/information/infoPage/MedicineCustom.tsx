@@ -24,7 +24,7 @@ export const MedicineCustom = () => {
             ) : (
                 <div className="flex items-center justify-center flex-col p-12">
                     <div className="w-96 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <img src="https://imgur.com/wJtkO6K.png" alt="" className="w-full" />
+                        <img src="https://imgur.com/wJtkO6K.png" alt="" className="w-full" loading="lazy" />
                     </div>
                     <div className="text-lg font-medium mb-1">Bạn chưa có yêu cầu nào</div>
                     <div className="text-gray-500">Dược sỹ luôn sẵn lòng lắng nghe những yêu cầu của bạn</div>

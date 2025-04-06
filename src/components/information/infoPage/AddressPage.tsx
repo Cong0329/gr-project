@@ -16,7 +16,13 @@ export const AddressPage = () => {
     const [isEdit, setIsEdit] = useState(false);
     const [selectedEdit, setSelectedEdit] = useState('');
     const [isDelete, setIsDelete] = useState(false);
-    
+    const [isLoading, setIsLoading] = useState(true);
+    useEffect(() => {
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1000)
+    }, [])
+
     const handleEdit = (id: string) => {
         setIsAddingNew(true);
         setIsEdit(true);
@@ -29,6 +35,7 @@ export const AddressPage = () => {
     };
     useEffect(() => {
         dispatch(fetchAddresses());
+
     }, [dispatch, status]);
 
     const handleOpenDelet = (id: string) => {
@@ -39,13 +46,45 @@ export const AddressPage = () => {
         dispatch(deleteAddressAPI(selectedEdit));
         setIsAddingNew(false);
     }
-    return (
-        <div className="p-6 ">
-            <div className="flex justify-between mb-6">
-                <h2 className="text-2xl font-bold">Quản lý số địa chỉ</h2>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg" onClick={handleAddNew}>Thêm địa chỉ mới</button>
-            </div>
-            <div className="space-y-2 bg-white rounded-xl">
+    const addr = [1, 2, 3, 4, 5, 6, 7, 8]
+
+    let content;
+
+    if (isLoading) {
+        content = (
+            <>
+                {addr.map((index) => (
+                    <div key={index} className={`p-4 flex justify-between items-center ${index !== 2 ? 'border-b' : ''}`}>
+                        <div className=''>
+                            <div className="flex gap-2 items-center">
+                                <div className="font-medium h-5 w-36 bg-gray-200 rounded"></div>
+                                <span className="border h-5"></span>
+                                <div className="h-5 w-32 bg-gray-200 rounded"></div>
+                            </div>
+                            <div className="text-gray-600 mt-1">
+                                <div className="h-5 w-[500px] bg-gray-200 rounded"></div>
+                            </div>
+                            <div className="flex items-center mt-2 gap-4">
+                                <div className="h-5 w-16 bg-gray-200 rounded"></div>
+                                <div className="h-5 w-16 bg-gray-200 rounded"></div>
+
+                            </div>
+                        </div>
+                        <div className="flex justify-end items-center space-x-2">
+                            <button className="text-blue-600" disabled>
+                                <div className="h-5 w-12 bg-gray-200 rounded"></div>
+                            </button>
+                            <span className='border h-5'></span>
+                            <button className="text-red-600" disabled>
+                                <div className="h-5 w-12 bg-gray-200 rounded"></div>
+                            </button>
+                        </div>
+                    </div>
+                ))}</>
+        );
+    } else if (addresses.length > 0) {
+        content = (
+            <>
                 {addresses.map((address, index) => (
                     <div key={address.id} className={`p-4 flex justify-between items-center ${index !== addresses.length - 1 ? 'border-b' : ''}`}>
                         <div className=''>
@@ -79,7 +118,30 @@ export const AddressPage = () => {
                             <button className="text-red-600" onClick={() => handleOpenDelet(address.id)}>Xóa</button>
                         </div>
                     </div>
-                ))}
+                ))}</>
+        );
+    } else {
+        content = (
+            <div className="flex items-center justify-center flex-col p-12">
+                <div className="w-96 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <img src="https://imgur.com/wJtkO6K.png" alt="" className="w-full" loading="lazy" />
+                </div>
+                <div className="text-lg font-medium mb-1">Bạn chưa có đơn hàng nào.</div>
+                <div className="text-gray-500">Cùng khám phá hàng ngàn sản phẩm tại Nhà thuốc FPT Long Châu nhé!</div>
+                <button className="font-semibold text-white bg-blue-600 px-16 py-2 rounded-full mt-4">Khám phá ngay</button>
+            </div>
+        );
+    }
+
+
+    return (
+        <div className="pt-2 ">
+            <div className="flex justify-between mb-6">
+                <h2 className="text-2xl font-bold">Quản lý số địa chỉ</h2>
+                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg" onClick={handleAddNew}>Thêm địa chỉ mới</button>
+            </div>
+            <div className="space-y-2 bg-white rounded-xl">
+                {content}
             </div>
             {isAddingNew && (
                 <AddAddressModal isModal={isModal} isOpen={isAddingNew} onClose={() => setIsAddingNew(false)} isEdit={isEdit} selectedEdit={selectedEdit} />
