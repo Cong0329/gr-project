@@ -15,7 +15,7 @@ import { SearchPage } from "./components/pages/MedicineSearch";
 import ScrollToTop from "./components/home_booking/details/component_details/ScrollToTop";
 import { CartPage } from "./components/pages/CartPage";
 import { ProfilePage } from "./components/pages/ProfilePage";
-import InvalidPage  from "./components/information/InvalidPage";
+import InvalidPage from "./components/information/InvalidPage";
 
 function App() {
   return (
@@ -27,8 +27,8 @@ function App() {
         <Route path="/medicine-search" element={<SearchPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/profile" element={<Navigate to="/profile/personal-info" replace />} />
-          <Route path="/profile/:pageId" element={<ProfilePage />} />
-          <Route path="*" element={<InvalidPage />} />
+        <Route path="/profile/:pageId" element={<ProfilePage />} />
+        <Route path="*" element={<InvalidPage />} />
 
         <Route path="/booking-home" element={<HomeBookingCare />} />
         <Route

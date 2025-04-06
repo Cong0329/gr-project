@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchAddresses, addAddressAPI, deleteAddressAPI, updateAddressAPI, getAddressById} from "./addressAsyncThunk";
+import { reset } from "./imageSlice";
 
 
 // Interface cho Address
@@ -45,6 +46,11 @@ const addressSlice = createSlice({
 
     setIsEdit: (state, action) => {
       state.isEdit = action.payload;
+    },
+    reset: (state) => {
+      state.selectedAddress = initialState.selectedAddress;
+      state.isEdit = initialState.isEdit;
+      state.status = initialState.status;
     }
   },
   extraReducers: (builder) => {
@@ -79,5 +85,5 @@ const addressSlice = createSlice({
   },
 });
 
-export const { selectAddress, setIsEdit } = addressSlice.actions;
+export const { selectAddress, setIsEdit, reset: resetAddress } = addressSlice.actions;
 export default addressSlice.reducer;

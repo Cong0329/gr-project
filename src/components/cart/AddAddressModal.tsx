@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { addAddressAPI, getAddressById, updateAddressAPI, deleteAddressAPI } from "../../redux/addressAsyncThunk";
 import { CustomSelect } from "./CustomSelect";
-import {ModalDelete }from "./ModalDelete";
+import { ModalDelete } from "./ModalDelete";
 
 interface Props {
   isOpen: boolean;
-  isEdit: boolean;
-  selectedEdit: string;
+  isEdit: boolean | null;
+  selectedEdit: string | null;
+  isModal: boolean | null;
   onClose: () => void;
 }
 
@@ -37,7 +38,7 @@ interface Address {
 }
 
 
-const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdit }) => {
+const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdit, isModal }) => {
   const dispatch = useDispatch();
   const address = useSelector((state: RootState) => state.address.isEdit);
   const [formData, setFormData] = useState<Address>({
@@ -193,7 +194,7 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
       const updatedFields = getChangedFields(address, formData);
       dispatch(updateAddressAPI({
         id: address.id,
-        updatedFields, 
+        updatedFields,
       }));
     } else {
       const newAddress = {
@@ -224,129 +225,132 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
   if (!isOpen) return null;
 
   return (
-    <div className="px-6 tb:p-0  md-lg:text-sm">
+    <div className={`px-6 tb:p-0  md-lg:text-sm ${isModal ? 'fixed inset-0 bg-black bg-opacity-50  flex flex-col  items-center justify-center z-20 tb:hidden' : ''}`}>
 
-
-      <div className="space-y-3 tb:px-6 overflow-y-auto max-h-[400px]">
-        <label htmlFor="name">Thông tin người nhận</label>
-        <input
-          type="text"
-          placeholder="Họ và tên"
-          className="w-full p-2 border rounded"
-          value={formData.name}
-          onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-        />
-
-        <input
-          type="tel"
-          placeholder="Số điện thoại"
-          className="w-full p-2 border rounded"
-          value={formData.phone}
-          onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-        />
-        <p>Địa chỉ nhận hàng</p>
-        <CustomSelect
-          options={provinces}
-          placeholder="Chọn tỉnh/thành phố"
-          onSelect={handleProvinceSelect}
-          value={formData.province}
-        />
-
-        {districts.length > 0 && (
-          <CustomSelect
-            options={districts}
-            placeholder="Chọn quận/huyện"
-            onSelect={handleDistrictSelect}
-            value={formData.district}
+      <div className={isModal ? 'bg-white rounded-xl p-4' : ''}>
+        <div className="space-y-3 tb:px-6 overflow-y-auto max-h-[400px]  scrollbar-hide ">
+          <label htmlFor="name">Thông tin người nhận</label>
+          <input
+            type="text"
+            placeholder="Họ và tên"
+            className="w-full p-2 border rounded"
+            value={formData.name}
+            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
           />
-        )}
 
-        {wards.length > 0 && (
-          <CustomSelect
-            options={wards}
-            placeholder="Chọn phường/xã"
-            onSelect={handleWardSelect}
-            value={formData.ward}
+          <input
+            type="tel"
+            placeholder="Số điện thoại"
+            className="w-full p-2 border rounded"
+            value={formData.phone}
+            onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
           />
-        )}
+          <p>Địa chỉ nhận hàng</p>
+          <CustomSelect
+            options={provinces}
+            placeholder="Chọn tỉnh/thành phố"
+            onSelect={handleProvinceSelect}
+            value={formData.province}
+          />
 
-        <input
-          type="text"
-          placeholder="Số nhà, tên đường *"
-          className="w-full p-2 border rounded"
-          value={formData.street}
-          onChange={(e) => setFormData(prev => ({ ...prev, street: e.target.value }))}
-        />
+          {districts.length > 0 && (
+            <CustomSelect
+              options={districts}
+              placeholder="Chọn quận/huyện"
+              onSelect={handleDistrictSelect}
+              value={formData.district}
+            />
+          )}
 
-        <div className="border p-2 rounded">
-          <label className="block text-sm font-medium mb-2">Loại địa chỉ</label>
-          <div className="flex gap-4">
-            <label className="flex items-center gap-1">
-              <input
-                type="radio"
-                name="addressType"
-                value="home"
-                checked={formData.type === "nhà"}
-                onChange={() => handleTypeChange("nhà")}
-              />
-              <span>Nhà riêng</span>
-            </label>
-            <label className="flex items-center gap-1">
-              <input
-                type="radio"
-                name="addressType"
-                value="office"
-                checked={formData.type === "công ty"}
-                onChange={() => handleTypeChange("công ty")}
-              />
-              <span>Công ty</span>
+          {wards.length > 0 && (
+            <CustomSelect
+              options={wards}
+              placeholder="Chọn phường/xã"
+              onSelect={handleWardSelect}
+              value={formData.ward}
+            />
+          )}
+
+          <input
+            type="text"
+            placeholder="Số nhà, tên đường *"
+            className="w-full p-2 border rounded"
+            value={formData.street}
+            onChange={(e) => setFormData(prev => ({ ...prev, street: e.target.value }))}
+          />
+
+          <div className="border p-2 rounded">
+            <label className="block text-sm font-medium mb-2">Loại địa chỉ</label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-1">
+                <input
+                  type="radio"
+                  name="addressType"
+                  value="home"
+                  checked={formData.type === "nhà"}
+                  onChange={() => handleTypeChange("nhà")}
+                />
+                <span>Nhà riêng</span>
+              </label>
+              <label className="flex items-center gap-1">
+                <input
+                  type="radio"
+                  name="addressType"
+                  value="office"
+                  checked={formData.type === "công ty"}
+                  onChange={() => handleTypeChange("công ty")}
+                />
+                <span>Công ty</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 mt-2">
+            <input
+              type="checkbox"
+              id="defaultAddress"
+              checked={formData.default}
+              onChange={handleDefaultChange}
+              className="w-4 h-4"
+            />
+            <label htmlFor="defaultAddress" className="text-sm">
+              Đặt làm địa chỉ mặc định
             </label>
           </div>
-        </div>
+          {isEdit && (
+            <button onClick={() => setIsDelete(true)} className="flex justify-center items-center w-full text-red-500">
+              Xóa địa chỉ
+            </button>
+          )}
 
-        <div className="flex items-center gap-2 mt-2">
-          <input
-            type="checkbox"
-            id="defaultAddress"
-            checked={formData.default}
-            onChange={handleDefaultChange}
-            className="w-4 h-4"
-          />
-          <label htmlFor="defaultAddress" className="text-sm">
-            Đặt làm địa chỉ mặc định
-          </label>
         </div>
-        {isEdit && (
-          <button onClick={() => setIsDelete(true)} className="flex justify-center items-center w-full text-red-500">
-            Xóa địa chỉ
+        <div className="flex justify-end gap-2 my-4 p-4 ">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          >
+            Hủy
           </button>
-        )}
-      
-      </div>
-      {isDelete && (
-          <ModalDelete
-            message="Bạn có chắc chắn muốn xóa địa chỉ này?"
-            onClose={() => setIsDelete(false)}
-            onDelete={handleDelete}
-          />
-        )}
-      <div className="flex justify-end gap-2 my-4 p-4 ">
-        <button
-          onClick={onClose}
-          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-        >
-          Hủy
-        </button>
-        <button
-          onClick={handleSubmit}
-          className="px-4 py-2  bg-blue-500 text-white rounded hover:bg-blue-600
+          <button
+            onClick={handleSubmit}
+            className="px-4 py-2  bg-blue-500 text-white rounded hover:bg-blue-600
               disabled:opacity-50"
-          disabled={!formData.name || !formData.phone || !formData.province ||
-            !formData.district || !formData.ward || !formData.street}
-        >
-          {isEdit ? "Cập nhật" : "Hoàn tất"}
-        </button>
+            disabled={!formData.name || !formData.phone || !formData.province ||
+              !formData.district || !formData.ward || !formData.street}
+          >
+            {isEdit ? "Cập nhật" : "Hoàn tất"}
+          </button>
+        </div>
       </div>
+
+      {isDelete && (
+        <ModalDelete
+          message="Bạn có chắc chắn muốn xóa địa chỉ này?"
+          onClose={() => setIsDelete(false)}
+          onDelete={handleDelete}
+        />
+      )}
+
     </div>
   );
 };
