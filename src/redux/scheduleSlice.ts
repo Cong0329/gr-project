@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const fetchSchedule = createAsyncThunk("schedule/fetch", async () => {
   try {
-    const response = await fetch("https://run.mocky.io/v3/2b5d8917-c2e9-4cf2-9e6a-7e83f4275483");
+    const response = await fetch("https://run.mocky.io/v3/229b27c8-38d6-4a56-928e-d69f4e9c07a9");
     const data = await response.json();
     return data;
   } catch (error) {

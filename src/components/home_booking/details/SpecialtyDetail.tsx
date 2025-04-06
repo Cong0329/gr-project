@@ -18,7 +18,7 @@ const SpecialtyDetail = () => {
 
   return (
     <>
-      <div id="specialty-detail" className="w-full">
+      <div id="specialty-detail" className="w-full bg-gray-50">
         <div className="specialty container-fix-spe mx-auto px-16">
           <Breadcrumb current={decodeURIComponent(name || "Chuyên khoa")} />
         </div>

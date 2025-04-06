@@ -10,7 +10,7 @@ export default function Breadcrumb({ current }) {
   const isMedicalTest = location.pathname.includes("/booking-home/medicaltest");
 
   return (
-    <nav className="breadcrumb py-4 flex items-center space-x-2 text-gray-600">
+    <nav className="breadcrumb py-4 flex items-center space-x-2 text-gray-600 bg-gray-50">
       <Link
         to={
           location.pathname.startsWith("/booking-home") ? "/booking-home" : "/"

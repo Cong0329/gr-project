@@ -29,3 +29,12 @@
         font-size: 14px;
     }
   }
+
+@media (max-width: 768px) {
+    .general-category a {
+        font-size: 16px;
+    }
+    .general-category span {
+        font-size: 14px;
+    }
+  }

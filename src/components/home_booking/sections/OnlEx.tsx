@@ -151,16 +151,17 @@ const OnlEx = () => {
                   </svg>
                   <span className="text-sm">{doctor.address}</span>
                 </div>
-                <button className="w-full bg-white text-[rgb(89,89,89)] font-semibold py-2 rounded-md hover:bg-[rgb(227,242,255)] transition-colors duration-300 border border-[rgb(153,153,153)]">
-                  <Link
-                    to={`/booking-home/onlex-detail/${encodeURIComponent(
-                      doctor.departmentName
-                    )}`}
-                    state={{ doctor }}
-                  >
+                <Link
+                  to={`/booking-home/onlex-detail/${encodeURIComponent(
+                    doctor.departmentName
+                  )}`}
+                  state={{ doctor }}
+                  className="w-full"
+                >
+                  <button className="w-full bg-white text-[rgb(89,89,89)] font-semibold py-2 rounded-md hover:bg-[rgb(227,242,255)] transition-colors duration-300 border border-[rgb(153,153,153)]">
                     Đặt lịch khám
-                  </Link>
-                </button>
+                  </button>
+                </Link>
               </div>
             </div>
           ))}
