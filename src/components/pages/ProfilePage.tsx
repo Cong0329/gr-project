@@ -1,7 +1,7 @@
 import React from 'react';
 import { Header } from '../header/Header';
 import { Footer } from '../footer/Footer';
-import { InformationBody } from '../information/informationBody';
+import { InformationBody } from '../information/InformationBody';
 
 export const ProfilePage: React.FC = () => {
  
@@ -16,4 +16,5 @@ export const ProfilePage: React.FC = () => {
 
   )
 };
+
 

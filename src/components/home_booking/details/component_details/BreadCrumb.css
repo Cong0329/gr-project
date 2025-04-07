@@ -9,12 +9,10 @@
   
   .breadcrumb a {
     text-decoration: none;
-    color: inherit;
+    color: rgb(29, 78, 216);
   }
   
-  .breadcrumb a:hover {
-    color: #374151;
-  }
+
   
   .breadcrumb span {
     font-weight: 500;

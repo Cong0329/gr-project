@@ -1,14 +1,36 @@
-import { useState, useEffect } from "react";
 import { FaAngleRight } from "react-icons/fa6";
+import Skeleton from "react-loading-skeleton";
 import { Link } from "react-router-dom";
-export const OrderCustom = ({ orders }: { orders: number[] }) => {
-    const [isLoading, setIsLoading] = useState(true);
-    useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 1000)
-    }, [])
+import { Order } from "./OrderPage";
+
+interface OrderCustomProps {
+    orders: Order[];
+    isLoading?: boolean;
+}
+
+export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
     let content;
+    const statusColor = {
+        delivered: 'text-green-500',
+        canceled: 'text-red-500',
+        pending: 'text-yellow-500',
+        delivering: 'text-blue-500',
+        return: 'text-gray-500'
+    };
+    const statusBg = {
+        delivered: 'bg-green-500',
+        canceled: 'bg-red-500',
+        pending: 'bg-yellow-500',
+        delivering: 'bg-blue-500',
+        return: 'bg-gray-500'
+    };
+    const statusText = {
+        delivered: 'Đã giao',
+        canceled: 'Đã hủy',
+        pending: 'Đang xử lý',
+        delivering: 'Đang giao',
+        return: 'Trả hàng'
+    };
     if (isLoading) {
         content = (
             <>
@@ -18,34 +40,34 @@ export const OrderCustom = ({ orders }: { orders: number[] }) => {
                         <div className="px-4 pt-4 pb-2">
                             <div className="flex justify-between items-center border-b pb-2">
                                 <div className="flex items-center gap-1 font-semibold">
-                                    <div className="h-5 w-36 bg-gray-200 rounded-md"></div>
+                                    <Skeleton className="h-5 w-36 bg-gray-200 rounded-md"></Skeleton>
                                     <div className="mx-1 text-gray-300">•</div>
-                                    <div className="h-5 w-32 bg-gray-200 rounded-md"></div>
+                                    <Skeleton className="h-5 w-32 bg-gray-200 rounded-md"></Skeleton>
                                     <div className="mx-1 text-gray-300">•</div>
-                                    <div className="h-5 w-20 bg-gray-200 rounded-md"></div>
+                                    <Skeleton className="h-5 w-20 bg-gray-200 rounded-md"></Skeleton>
                                 </div>
                                 <div className="flex items-center">
-                                    <div className="w-2 h-2 bg-gray-200 rounded-md mr-2"></div>
-                                    <div className="h-5 w-20 bg-gray-200 rounded-md"></div>
+                                    <Skeleton className="w-2 h-2 bg-gray-200 rounded-md mr-2"></Skeleton>
+                                    <Skeleton className="h-5 w-20 bg-gray-200 rounded-md"></Skeleton>
                                 </div>
                             </div>
                             <div className="pt-4 pb-2 flex justify-between items-start">
                                 <div className="flex items-center">
-                                    <div className="h-16 w-16 bg-gray-200 rounded-md p-2"></div>
+                                    <Skeleton className="h-16 w-16 bg-gray-200 rounded-md p-2"></Skeleton>
                                     <div className="ml-4">
-                                        <div className="h-10 w-[500px] bg-gray-200 rounded-md"></div>
-                                        <div className="h-5 w-32 bg-gray-200 rounded-md mt-2"></div>
+                                        <Skeleton className="h-10 w-[500px] bg-gray-200 rounded-md"></Skeleton>
+                                        <Skeleton className="h-5 w-32 bg-gray-200 rounded-md mt-2"></Skeleton>
                                     </div>
                                 </div>
-                                <div className="h-5 w-20 bg-gray-200 rounded-md"></div>
-                                <div className="h-5 w-20 bg-gray-200 rounded-md"></div>
+                                <Skeleton className="h-5 w-20 bg-gray-200 rounded-md"></Skeleton>
+                                <Skeleton className="h-5 w-20 bg-gray-200 rounded-md"></Skeleton>
                             </div>
                             <div className="flex justify-between items-center">
-                                <div className="h-5 w-28 bg-gray-200 rounded-md"></div>
-                                <div className="h-5 w-36 bg-gray-200 rounded-md mt-2"></div>
+                                <Skeleton className="h-5 w-28 bg-gray-200 rounded-md"></Skeleton>
+                                <Skeleton className="h-5 w-36 bg-gray-200 rounded-md mt-2"></Skeleton>
                             </div>
                             <div className="border-t pt-2 mt-2 flex justify-end">
-                                <div className="h-10 w-40 bg-gray-200 rounded-full"></div>
+                                <Skeleton className="h-10 w-40 bg-gray-200 rounded-full"></Skeleton>
                             </div>
                         </div>
                     </div>
@@ -55,23 +77,23 @@ export const OrderCustom = ({ orders }: { orders: number[] }) => {
     } else if (orders.length > 0) {
         content = (
             <>
-                {orders.map((i) => (
-                    <div key={i} className="mt-2 bg-white rounded-lg border">
+                {orders.map((order) => (
+                    <div key={order.id} className="mt-2 bg-white rounded-lg border">
                         <div className="px-4 pt-4 pb-2">
                             <div className="flex justify-between items-center border-b pb-2">
                                 <div className="flex items-center gap-1 font-semibold">
-                                    <span>Đơn hàng 01/04/2025</span>
+                                    <span>Đơn hàng {order.date}</span>
                                     <span className="mx-1 text-gray-300">•</span>
-                                    <span className="text-gray-500">Giao hàng tận nơi</span>
+                                    <span className="text-gray-500">{order.shippingMethod}</span>
                                     <span className="mx-1 text-gray-300">•</span>
-                                    <span className="text-gray-600">#7212016</span>
+                                    <span className="text-gray-600">{order.orderId}</span>
                                 </div>
                                 <div className="flex items-center">
-                                    <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-                                    <div className="text-red-500 font-medium">Đã hủy</div>
+                                    <div className={`w-2 h-2 ${statusBg[order.status]} rounded-full mr-2`}></div>
+                                    <div className={`${statusColor[order.status]} font-medium`}>{statusText[order.status]}</div>
                                 </div>
                             </div>
-                            <Link to={"/order"}>
+                            <Link to={`/profile/orders/order-detail/${order.status}`}>
                                 <div className="pt-4 pb-2 flex justify-between">
                                     <div className="flex items-center">
                                         <img
@@ -82,23 +104,23 @@ export const OrderCustom = ({ orders }: { orders: number[] }) => {
                                         />
                                         <div className="ml-4">
                                             <div className="font-semibold text-sm w-[500px] line-clamp-2">
-                                                Thực phẩm bảo vệ sức khỏe OMEGA 3 PLUS Kenko hỗ trợ não bộ, thị lực và sức khỏe tim mạch (120 viên)
+                                                {order.items[0].name}
                                             </div>
                                             <div className="text-gray-500 w-full line-clamp-1">+1 sản phẩm khác</div>
                                         </div>
                                     </div>
-                                    <div className="font-bold">920.000đ</div>
-                                    <div className="text-gray-500">x1 Hộp</div>
+                                    <div className="font-bold">{order.items[0].price.toLocaleString()}đ</div>
+                                    <div className="text-gray-500">x{order.items[0].quantity} Hộp</div>
                                 </div>
                             </Link>
-                            <Link to={'/'}>
+                            <Link to={`/profile/orders/order-detail/${order.status}`}>
                                 <div className="flex justify-between items-center">
                                     <div className="text-blue-700 font-medium gap-1 flex items-center">
                                         Xem chi tiết <FaAngleRight />
                                     </div>
                                     <div className="text-right flex gap-2 font-semibold">
                                         <div className="text-gray-500">Thành tiền:</div>
-                                        <div className="text-blue-700 ">948.000đ</div>
+                                        <div className="text-blue-700 ">{order.total.toLocaleString()}đ</div>
                                     </div>
                                 </div>
                             </Link>

@@ -12,7 +12,6 @@ import Breadcrumb from '../home_booking/details/component_details/BreadCrumb';
 
 export const InformationBody = () => {
     const [isServiceHovered, setIsServiceHovered] = useState(false);
-    const activePage = useSelector((state: RootState) => state.navigation.activePage);
     const { pageId } = useParams<{ pageId: string }>();
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -32,7 +31,7 @@ export const InformationBody = () => {
             <div className='relative'>
                 <div className="mx-auto relative w-4/5 bg-gray-100 pb-4 container">
                     <div className="  mx-auto bg-gray-100  [&>*]:!bg-gray-100">
-                        <Breadcrumb current={activePage} />
+                        <Breadcrumb  />
                     </div>
                     <div className="flex  w-full gap-10">
                         <div className='w-1/5'>

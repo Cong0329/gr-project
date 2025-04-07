@@ -16,6 +16,7 @@ import ScrollToTop from "./components/home_booking/details/component_details/Scr
 import { CartPage } from "./components/pages/CartPage";
 import { ProfilePage } from "./components/pages/ProfilePage";
 import InvalidPage from "./components/information/InvalidPage";
+import { OrderDetailPage } from "./components/pages/OrderDetailPage";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/profile" element={<Navigate to="/profile/personal-info" replace />} />
         <Route path="/profile/:pageId" element={<ProfilePage />} />
+        <Route path="/profile/orders/order-detail/:status" element={<OrderDetailPage />} />
         <Route path="*" element={<InvalidPage />} />
 
         <Route path="/booking-home" element={<HomeBookingCare />} />

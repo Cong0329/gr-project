@@ -75,6 +75,13 @@ const cartSlice = createSlice({
     backToCart: (state) => {
       state.isCheckout = false;
     },
+    checkout: (state,action) => {
+      state.isCheckout = action.payload;
+    },
+    resetCart: (state) => {
+      state.items = [];
+      state.isCheckout = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -142,6 +149,8 @@ export const {
   backToCart,
   updateSelectedOption,
   initializeCart,
+  checkout,
+  resetCart
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

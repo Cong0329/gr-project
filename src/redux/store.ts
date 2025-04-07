@@ -8,13 +8,10 @@ import storage from "redux-persist/lib/storage";
 import doctorReducer from './doctorSlice';
 import departmentReducer from './departmentSlice'
 import addressReducer from './addressSlice';
-<<<<<<< HEAD
 import generalExReducer from "./generalExSlice";
 import medicalTestReducer from './medicalTestSlice';
-=======
 import profileReducer from './profileSlice';
 import navigationReducer from './navigationSlice';
->>>>>>> c7ae778af31bddca2d3f2663101b5490247e8952
 
 const persistConfig = {
   key: "root",
