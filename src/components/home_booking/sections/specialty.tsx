@@ -56,16 +56,24 @@ const Specialty = () => {
   };
 
   return (
-    <div id="specialty-section" className="full-home w-full overflow-hidden">
-      <div className="home-specialty container-fix-spe mx-auto">
+    <div id="specialty-section" className="full-home w-full overflow-hidden ">
+      <div className="home-specialty container-fix-spe lg:px-8 mx-auto">
         <div className="home-content">
-          <div className="home-title relative flex justify-between items-center mb-4 md:px-20">
-            <h3 className="text-xl font-bold">Chuyên khoa phổ biến</h3>
+          <div className="home-title relative flex justify-between items-center mb-6 lg:px-20 ml:px-0">
+            <div className="flex flex-col">
+              <h2 className="text-xl lg:text-2xl font-bold text-indigo-500 mb-2">
+                Chuyên khoa phổ biến
+              </h2>
+              <div className="h-1 w-20 bg-indigo-400 rounded"></div>
+              <p className="text-gray-600 mt-2 text-sm">
+                Tìm kiếm bác sĩ theo chuyên khoa phù hợp với nhu cầu của bạn
+              </p>
+            </div>
             <Link
               to="/booking-home/specialty-list"
-              className="absolute right-20"
+              className="absolute right-20 lg:top-[50%] ml:top-[15%] transform -translate-y-1/2 md:translate-y-0"
             >
-              <button className="text-[rgb(45,135,243)] font-semibold">
+              <button className="bg-indigo-100 hover:bg-indigo-200 text-indigo-500 font-semibold py-2 px-4 rounded-full transition duration-300 flex items-center">
                 Xem thêm<span className="ml-1">&gt;</span>
               </button>
             </Link>
@@ -93,6 +101,15 @@ const Specialty = () => {
                           />
                           <div className="text-base font-semibold">
                             {specialty.name}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-2 text-center">
+                            {
+                              doctors.filter(
+                                (doc) =>
+                                  Number(doc.department_id) === specialty.id
+                              ).length
+                            }{" "}
+                            bác sĩ
                           </div>
                         </div>
                       </div>

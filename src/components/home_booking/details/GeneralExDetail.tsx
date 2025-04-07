@@ -54,7 +54,7 @@ const GeneralExDetail = () => {
   }
 
   return (
-    <div id="generalex-detail" className="w-full bg-gray-50">
+    <div id="generalex-detail" className="w-full bg-gray-50 pb-10">
       <div className="container-fix-spe mx-auto px-4 sm:px-10">
         <Breadcrumb current={decodedName} />
 

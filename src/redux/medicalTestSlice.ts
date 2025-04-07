@@ -1,11 +1,27 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
+interface TestItem {
+  name: string;
+  description: string;
+}
+
+interface TestCategory {
+  category: string;
+  items: TestItem[];
+}
+
+interface TestDetails {
+  categories: TestCategory[];
+}
+
 interface MedicalTest {
-  id: string;
+  id: number;
   name: string;
   description?: string;
-  price: number;
-  category: string;
+  image?: string;
+  details?: TestDetails;
+  price?: number;
+  category?: string;
   preparation?: string;
   resultTime?: string;
 }
@@ -45,26 +61,65 @@ const medicalTestSlice = createSlice({
   reducers: {
     filterTests: (state, action) => {
       const { category, searchTerm } = action.payload;
+      
       state.filteredTests = state.tests.filter(test => {
         const matchesCategory = category ? test.category === category : true;
+        
         const matchesSearch = searchTerm 
-          ? test.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            test.description?.toLowerCase().includes(searchTerm.toLowerCase())
+          ? (
+              test.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+              (test.description?.toLowerCase() || '').includes(searchTerm.toLowerCase())
+            )
           : true;
+          
         return matchesCategory && matchesSearch;
       });
     },
+    
     sortTests: (state, action) => {
       const sortBy = action.payload;
       const testsToSort = [...state.filteredTests];
       
       testsToSort.sort((a, b) => {
-        if (sortBy === 'price') return a.price - b.price;
-        if (sortBy === 'name') return a.name.localeCompare(b.name);
+        if (sortBy === 'price') {
+          const priceA = a.price || 0;
+          const priceB = b.price || 0;
+          return priceA - priceB;
+        }
+        
+        if (sortBy === 'name') {
+          return a.name.localeCompare(b.name);
+        }
+        
         return 0;
       });
       
       state.filteredTests = testsToSort;
+    },
+    
+    searchInDetails: (state, action) => {
+      const searchTerm = action.payload.toLowerCase();
+      
+      state.filteredTests = state.tests.filter(test => {
+        if (
+          test.name.toLowerCase().includes(searchTerm) ||
+          (test.description?.toLowerCase() || '').includes(searchTerm)
+        ) {
+          return true;
+        }
+        
+        if (test.details?.categories) {
+          return test.details.categories.some(category => 
+            category.category.toLowerCase().includes(searchTerm) ||
+            category.items.some(item => 
+              item.name.toLowerCase().includes(searchTerm) ||
+              item.description.toLowerCase().includes(searchTerm)
+            )
+          );
+        }
+        
+        return false;
+      });
     }
   },
   extraReducers: (builder) => {
@@ -75,9 +130,18 @@ const medicalTestSlice = createSlice({
       })
       .addCase(fetchMedicalTests.fulfilled, (state, action) => {
         state.loading = false;
-        state.tests = action.payload.tests || action.payload;
+        
+        state.tests = Array.isArray(action.payload) 
+          ? action.payload 
+          : action.payload.tests || [action.payload];
+          
         state.filteredTests = state.tests;
-        state.categories = [...new Set(state.tests.map(test => test.category))];
+        
+        state.categories = [...new Set(
+          state.tests
+            .filter(test => test.category)
+            .map(test => test.category as string)
+        )];
       })
       .addCase(fetchMedicalTests.rejected, (state, action) => {
         state.loading = false;
@@ -86,5 +150,5 @@ const medicalTestSlice = createSlice({
   },
 });
 
-export const { filterTests, sortTests } = medicalTestSlice.actions;
+export const { filterTests, sortTests, searchInDetails } = medicalTestSlice.actions;
 export default medicalTestSlice.reducer;

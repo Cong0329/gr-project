@@ -12,6 +12,11 @@
     transform: scale(1);
     opacity: 1;
 }
+
+.package-slide{ 
+    color: rgb(75 85 99 / var(--tw-text-opacity)) !important;
+}
+
 @media screen and (max-width: 768px) {
     .general-ex .slick-slide {
         transform: scale(0.9); 

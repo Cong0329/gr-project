@@ -45,7 +45,7 @@ const MedicalTestDetail = () => {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full bg-gray-50">
       <div className="container-fix-spe mx-auto px-4 sm:px-10">
         <Breadcrumb current={decodedName} />
 

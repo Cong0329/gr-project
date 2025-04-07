@@ -68,11 +68,22 @@ const OnlEx = () => {
 
   return (
     <div id="onlex-section" className="w-full full-onl">
-      <div className="container-lite mx-auto px-4 py-8">
-        <div className="onl-title flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold">Tư vấn Online qua Video</h3>
-          <Link to="/booking-home/onlex-list">
-            <button className="text-[rgb(45,135,243)] font-semibold">
+      <div className="container-lite mx-auto py-8">
+        <div className="onl-title relative flex justify-between items-center mb-6">
+          <div className="flex flex-col">
+            <h2 className="text-xl lg:text-2xl font-bold text-indigo-500 mb-2">
+              Tư vấn Online qua Video
+            </h2>
+            <div className="h-1 w-20 bg-indigo-400 rounded"></div>
+            <p className="text-gray-600 mt-2 text-sm">
+              Cùng nhau hợp tác online với các bác sĩ đầy chuyên môn và vui tính
+            </p>
+          </div>
+          <Link
+            to="/booking-home/onlex-list"
+            className="absolute right-0 ml:top-[15%] transform -translate-y-1/2 md:translate-y-0"
+          >
+            <button className="bg-indigo-100 hover:bg-indigo-200 text-indigo-500 font-semibold py-2 px-4 rounded-full transition duration-300 flex items-center">
               Xem thêm<span className="ml-1">&gt;</span>
             </button>
           </Link>
@@ -83,7 +94,7 @@ const OnlEx = () => {
               key={index}
               className={`px-6 py-2 rounded-full transition-colors duration-300 border border-solid ${
                 activeOption === index
-                  ? "bg-[rgb(227,242,255)] text-[rgb(45,135,243)] border-[rgb(227,242,255)]"
+                  ? "bg-[rgb(227,242,255)] text-[rgb(99,102,241)] border-[rgb(227,242,255)]"
                   : "bg-white border-[rgb(228,232,236)] text-[rgb(89,89,89)]"
               }`}
               onClick={() => setActiveOption(index)}
@@ -92,79 +103,81 @@ const OnlEx = () => {
             </button>
           ))}
         </div>
-        <div className="doctors mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredDoctors.map((doctor, index) => (
-            <div
-              key={index}
-              className="p-4 border rounded-xl flex flex-col bg-white"
-            >
-              <div className="flex flex-col items-center mb-4">
-                <img
-                  src={doctor.avatar}
-                  alt={doctor.name}
-                  className="w-16 h-16 rounded-full mb-2"
-                />
-                <div className="text-center">
-                  <h3 className="text-lg font-semibold">{doctor.name}</h3>
-                  <p className="text-sm text-gray-600">
-                    {doctor.departmentName}
-                  </p>
+        <div className="doctors mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {filteredDoctors
+            .slice(0, window.innerWidth >= 1024 ? 8 : 3)
+            .map((doctor, index) => (
+              <div
+                key={index}
+                className="p-4 border rounded-xl flex flex-col bg-white"
+              >
+                <div className="flex flex-col items-center mb-4">
+                  <img
+                    src={doctor.avatar}
+                    alt={doctor.name}
+                    className="w-16 h-16 rounded-full mb-2"
+                  />
+                  <div className="text-center">
+                    <h3 className="text-lg font-semibold">{doctor.name}</h3>
+                    <p className="text-sm text-gray-600">
+                      {doctor.departmentName}
+                    </p>
+                  </div>
+                </div>
+                <div className="info-dt w-full bg-blue-50 rounded-lg pt-2 pb-4 px-4 mt-auto">
+                  <div className="flex items-start mb-1">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-[17px] h-[17px] mr-2 mt-1 flex-shrink-0"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+                      />
+                    </svg>
+                    <span className="text-sm">{doctor.clinic}</span>
+                  </div>
+                  <div className="flex items-center mb-2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-[17px] h-[17px] mr-2 flex-shrink-0"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
+                      />
+                    </svg>
+                    <span className="text-sm">{doctor.address}</span>
+                  </div>
+                  <Link
+                    to={`/booking-home/onlex-detail/${encodeURIComponent(
+                      doctor.departmentName
+                    )}`}
+                    state={{ doctor }}
+                    className="w-full"
+                  >
+                    <button className="w-full bg-white text-[rgb(89,89,89)] font-semibold py-2 rounded-md hover:bg-[rgb(227,242,255)] transition-colors duration-300 border border-[rgb(153,153,153)]">
+                      Đặt lịch khám
+                    </button>
+                  </Link>
                 </div>
               </div>
-              <div className="info-dt w-full bg-slate-100 rounded-lg pt-2 pb-4 px-4 mt-auto">
-                <div className="flex items-start mb-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="w-[17px] h-[17px] mr-2 mt-1 flex-shrink-0"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-                    />
-                  </svg>
-                  <span className="text-sm">{doctor.clinic}</span>
-                </div>
-                <div className="flex items-center mb-2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    className="w-[17px] h-[17px] mr-2 flex-shrink-0"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"
-                    />
-                  </svg>
-                  <span className="text-sm">{doctor.address}</span>
-                </div>
-                <Link
-                  to={`/booking-home/onlex-detail/${encodeURIComponent(
-                    doctor.departmentName
-                  )}`}
-                  state={{ doctor }}
-                  className="w-full"
-                >
-                  <button className="w-full bg-white text-[rgb(89,89,89)] font-semibold py-2 rounded-md hover:bg-[rgb(227,242,255)] transition-colors duration-300 border border-[rgb(153,153,153)]">
-                    Đặt lịch khám
-                  </button>
-                </Link>
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </div>

@@ -6,3 +6,37 @@
         font-size: 14px;
     }
   }
+
+
+.slick-list {
+    margin: 0 auto;
+    width: 90%;
+  }
+  
+.slick-prev {
+    left: 0 !important;
+    z-index: 200;
+  }
+
+  .slick-prev {
+    width: 11%;
+  }
+
+  .slick-next {
+    width: 11%;
+  }
+  
+.slick-prev::before {
+    color: slategray !important;
+    font-size: 25px;
+  }
+  
+ .slick-next {
+    right: 0 !important;
+    z-index: 200;
+  }
+  
+  .slick-next::before {
+    color: slategray !important;
+    font-size: 25px;
+  }
