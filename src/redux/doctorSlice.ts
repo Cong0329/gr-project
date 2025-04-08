@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const fetchDoctors = createAsyncThunk("doctors/fetch", async () => {
   const response = await axios.get(
-    "https://run.mocky.io/v3/44882b0e-fe3e-455a-917e-5f436b6aba6b"
+    "https://run.mocky.io/v3/18c008b4-e017-4ecb-922a-ad6e76dd542d"
   );
   return response.data;
 });

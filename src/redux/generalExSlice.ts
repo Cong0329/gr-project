@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-const API_URL = "https://run.mocky.io/v3/0fc1e048-9fab-4f7e-96d4-bf543350b22d";
+const API_URL = "https://run.mocky.io/v3/bdfec24f-26c7-48ad-bd64-b67f068ef46b";
 const MIN_FEATURED_RATING = 4.7;
 const MIN_SUGGESTED_RATING = 4.5;
 const MAX_SUGGESTED_RATING = 4.7;
@@ -25,9 +25,7 @@ interface ExamPackage {
   name: string;
   description: string;
   price: number;
-  priceCurrency: string;
   duration: number;
-  durationUnit: string;
   rating: number;
   reviews: number;
   target: string;

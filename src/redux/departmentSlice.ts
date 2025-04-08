@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const fetchDepartments = createAsyncThunk("departments/fetch", async () => {
   const response = await axios.get(
-    "https://run.mocky.io/v3/af278157-0e45-4b55-9772-ce299a3cdf66"
+    "https://run.mocky.io/v3/5c3a7acc-d713-4158-9dd5-43ed9923832c"
   );
   return response.data;
 });

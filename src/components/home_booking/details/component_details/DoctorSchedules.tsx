@@ -1,6 +1,10 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchSchedule } from "../../../../redux/scheduleSlice";
+import {
+  fetchSpecialistSchedules,
+  fetchGeneralSchedules,
+  fetchMedicalSchedules,
+} from "../../../../redux/scheduleSlice";
 import { fetchDoctors } from "../../../../redux/doctorSlice";
 import { fetchDepartments } from "../../../../redux/departmentSlice";
 import { format } from "date-fns";
@@ -15,15 +19,19 @@ const DoctorSchedules = () => {
   console.log("🔍 department từ URL:", name);
 
   const {
-    schedules,
-    loading: scheduleLoading,
-    error: scheduleError,
+    specialistSchedules,
+    generalSchedules,
+    medicalSchedules,
+    loading,
+    error,
   } = useSelector((state) => state.schedule);
+
   const {
     doctors,
     loading: doctorLoading,
     error: doctorError,
   } = useSelector((state) => state.doctors);
+
   const {
     departments,
     loading: departmentLoading,
@@ -31,15 +39,44 @@ const DoctorSchedules = () => {
   } = useSelector((state) => state.departments);
 
   useEffect(() => {
-    dispatch(fetchSchedule());
+    const isOnlinePage = location.pathname.includes("onlex");
+
+    if (isOnlinePage) {
+      dispatch(fetchGeneralSchedules());
+    } else {
+      dispatch(fetchSpecialistSchedules());
+    }
+
     dispatch(fetchDoctors());
     dispatch(fetchDepartments());
-  }, [dispatch]);
+  }, [dispatch, location.pathname]);
 
-  if (doctorLoading || departmentLoading || scheduleLoading)
+  if (
+    doctorLoading ||
+    departmentLoading ||
+    loading.specialist ||
+    loading.general ||
+    loading.medical
+  )
     return <p>Đang tải dữ liệu...</p>;
-  if (doctorError || departmentError || scheduleError)
-    return <p>Lỗi: {doctorError || departmentError || scheduleError}</p>;
+
+  if (
+    doctorError ||
+    departmentError ||
+    error.specialist ||
+    error.general ||
+    error.medical
+  )
+    return (
+      <p>
+        Lỗi:{" "}
+        {doctorError ||
+          departmentError ||
+          error.specialist ||
+          error.general ||
+          error.medical}
+      </p>
+    );
 
   const isOnlinePage = location.pathname.includes("onlex");
   const departmentName = decodeURIComponent(name || "")
@@ -57,6 +94,9 @@ const DoctorSchedules = () => {
           doctor.type === (isOnlinePage ? "online" : "specialty")
       )
     : [];
+
+  // Select the appropriate schedule based on the page
+  const schedules = isOnlinePage ? generalSchedules : specialistSchedules;
 
   const today = new Date();
   const formattedDate = format(today, "EEEE - dd/MM");

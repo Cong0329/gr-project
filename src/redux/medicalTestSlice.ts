@@ -46,7 +46,7 @@ export const fetchMedicalTests = createAsyncThunk(
   'medicalTests/fetchMedicalTests',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch('https://run.mocky.io/v3/a523dbac-3d7e-4f96-80ac-782afdddcfc6');
+      const response = await fetch('https://run.mocky.io/v3/34d92809-9b8f-4de4-be0c-6b712ad9db49');
       if (!response.ok) throw new Error('Network response was not ok');
       return await response.json();
     } catch (err) {

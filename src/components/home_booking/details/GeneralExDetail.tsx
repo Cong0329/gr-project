@@ -1,14 +1,17 @@
 import { useParams } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchGeneralExams } from "../../../redux/generalExSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import PackageSchedule from "./component_details/PackageSchedules";
 
 const GeneralExDetail = () => {
   const { name } = useParams();
   const dispatch = useDispatch();
+  const [showSchedule, setShowSchedule] = useState(false);
+  const scheduleRef = useRef(null);
   const { allPackages, loading, error } = useSelector(
     (state: any) => state.generalExams
   );
@@ -24,6 +27,20 @@ const GeneralExDetail = () => {
       dispatch(fetchGeneralExams());
     }
   }, [dispatch, allPackages.length]);
+
+  const handleScheduleClick = () => {
+    setShowSchedule(true);
+
+    // Thêm timeout nhỏ để đảm bảo animation bắt đầu trước khi cuộn
+    setTimeout(() => {
+      if (scheduleRef.current) {
+        scheduleRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 100);
+  };
 
   if (loading) {
     return (
@@ -70,62 +87,85 @@ const GeneralExDetail = () => {
               <h1 className="text-3xl font-bold text-blue-800 mb-2">
                 {currentPackage.name}
               </h1>
-              <p className="text-gray-700 text-base mb-4">
+              <p className="text-gray-700 text-lg mb-4">
                 {currentPackage.description ||
                   "Gói khám giúp đánh giá sức khỏe toàn diện, sàng lọc các bệnh lý phổ biến, phát hiện sớm để điều trị hiệu quả hơn."}
               </p>
-              <ul className="text-gray-600 text-sm list-disc ml-5 space-y-1">
+              <ul className="text-gray-600 text-base list-disc ml-5 space-y-1">
                 <li>Khám tại Bệnh viện đa khoa uy tín</li>
                 <li>Bác sĩ chuyên khoa, nhiều kinh nghiệm</li>
                 <li>Tư vấn kỹ sau khi có kết quả</li>
               </ul>
             </div>
-            <div className="mt-6">
-              <p className="text-sm text-gray-500">
-                Đánh giá:{" "}
-                <span className="font-medium">
-                  {currentPackage.rating} ★ ({currentPackage.reviews} đánh giá)
-                </span>
-              </p>
-              <p className="text-sm text-gray-500">
-                Giá gói:{" "}
-                <span className="text-red-600 font-semibold">
-                  {currentPackage.price?.toLocaleString("vi-VN")}đ
-                </span>
-              </p>
+            <div className="mt-6 flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-500">
+                  Đánh giá:{" "}
+                  <span className="font-medium">
+                    {currentPackage.rating} ★ ({currentPackage.reviews} đánh
+                    giá)
+                  </span>
+                </p>
+                <p className="text-sm text-gray-500">
+                  Giá gói:{" "}
+                  <span className="text-red-600 font-semibold">
+                    {currentPackage.price?.toLocaleString("vi-VN")}đ
+                  </span>
+                </p>
+              </div>
+              {/* <button
+                onClick={handleScheduleClick}
+                className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition duration-200 flex items-center justify-center group"
+              >
+                <svg
+                  className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  ></path>
+                </svg>
+                Đặt lịch khám
+              </button> */}
             </div>
           </div>
         </div>
 
-        <div className="mt-10 bg-blue-50 rounded-xl p-6">
-          <h3 className="text-xl font-bold text-blue-800 mb-4">
-            Đặt lịch khám
-          </h3>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Ngày khám
-              </label>
-              <input
-                type="date"
-                className="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Giờ khám
-              </label>
-              <select className="w-full p-2 border rounded-md focus:ring-blue-500 focus:border-blue-500">
-                <option>8:00 - 9:00</option>
-                <option>9:00 - 10:00</option>
-                {/* ... */}
-              </select>
-            </div>
-            <div className="flex items-end">
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors">
-                Đặt lịch ngay
-              </button>
-            </div>
+        <div
+          ref={scheduleRef}
+          className="mt-10 overflow-hidden transition-all duration-700 ease-in-out"
+          style={{
+            maxHeight: showSchedule ? "2000px" : "0",
+            opacity: showSchedule ? 1 : 0,
+            transform: showSchedule ? "translateY(0)" : "translateY(-20px)",
+            marginBottom: showSchedule ? "2rem" : "0",
+          }}
+        >
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-600">
+            <h2 className="text-2xl font-bold text-blue-800 mb-6 flex items-center">
+              <svg
+                className="w-6 h-6 mr-2 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                ></path>
+              </svg>
+              Đặt lịch khám sức khỏe
+            </h2>
+            <PackageSchedule />
           </div>
         </div>
 
@@ -135,15 +175,104 @@ const GeneralExDetail = () => {
           </h2>
 
           <div className="bg-white shadow p-6 rounded-xl space-y-4">
-            <ul className="list-disc ml-6 text-gray-700 space-y-1">
-              {currentPackage.servicesIncluded?.map(
-                (service: any, index: number) => (
-                  <li key={index} className="text-lg font-medium ">
-                    {service.category}
-                  </li>
-                )
-              )}
-            </ul>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-semibold text-blue-700 mb-3">
+                  Danh sách dịch vụ
+                </h3>
+                <ul className="list-disc ml-6 text-gray-700 space-y-1">
+                  {currentPackage.servicesIncluded?.map(
+                    (service: any, index: number) => (
+                      <li key={index} className="text-lg font-medium ">
+                        {service.category}
+                      </li>
+                    )
+                  )}
+                </ul>
+              </div>
+
+              <div className="bg-blue-50 p-5 rounded-lg">
+                <h3 className="text-lg font-semibold text-blue-700 mb-3">
+                  Thông tin gói khám
+                </h3>
+
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-medium text-gray-800 mb-1 flex items-center">
+                      <svg
+                        className="w-5 h-5 mr-2 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                      </svg>
+                      Thời gian khám
+                    </h4>
+                    <p className="text-gray-600">
+                      {currentPackage.duration || "60-90 phút"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-medium text-gray-800 mb-1 flex items-center">
+                      <svg
+                        className="w-5 h-5 mr-2 text-blue-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        ></path>
+                      </svg>
+                      Chuẩn bị trước khám
+                    </h4>
+                    <ul className="list-disc pl-5 space-y-1 text-gray-600">
+                      <li>Nhịn ăn 8-12 giờ trước khi khám</li>
+                      <li>Mang theo giấy tờ tùy thân</li>
+                      <li>
+                        Mang theo các kết quả khám, xét nghiệm trước đây (nếu
+                        có)
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <button
+                      onClick={handleScheduleClick}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition duration-200 flex items-center justify-center group mt-4"
+                    >
+                      <svg
+                        className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        ></path>
+                      </svg>
+                      Đặt lịch khám
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

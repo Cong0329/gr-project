@@ -1,14 +1,17 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMedicalTests } from "../../../redux/medicalTestSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import PackageSchedule from "./component_details/PackageSchedules";
 
 const MedicalTestDetail = () => {
   const { name } = useParams();
   const dispatch = useDispatch();
+  const [showSchedule, setShowSchedule] = useState(false);
+  const scheduleRef = useRef(null);
   const { tests, loading, error } = useSelector(
     (state: any) => state.medicalTests
   );
@@ -23,6 +26,19 @@ const MedicalTestDetail = () => {
       dispatch(fetchMedicalTests());
     }
   }, [dispatch, tests.length]);
+
+  const handleScheduleClick = () => {
+    setShowSchedule(true);
+
+    setTimeout(() => {
+      if (scheduleRef.current) {
+        scheduleRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 100);
+  };
 
   if (loading) {
     return (
@@ -56,9 +72,41 @@ const MedicalTestDetail = () => {
           </p>
         </div>
 
+        <div
+          ref={scheduleRef}
+          className="mt-10 overflow-hidden transition-all duration-700 ease-in-out"
+          style={{
+            maxHeight: showSchedule ? "2000px" : "0",
+            opacity: showSchedule ? 1 : 0,
+            transform: showSchedule ? "translateY(0)" : "translateY(-20px)",
+            marginBottom: showSchedule ? "2rem" : "0",
+          }}
+        >
+          <div className="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-600">
+            <h2 className="text-2xl font-bold text-blue-800 mb-6 flex items-center">
+              <svg
+                className="w-6 h-6 mr-2 text-blue-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                ></path>
+              </svg>
+              Đặt lịch xét nghiệm
+            </h2>
+            <PackageSchedule />
+          </div>
+        </div>
+
         <div className="bg-white rounded-xl shadow-md p-6 mt-8">
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="md:col-span-2">
+            <div className="md:col-span-1">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">
                 Giới thiệu về {decodedName}
               </h2>
@@ -91,14 +139,117 @@ const MedicalTestDetail = () => {
               </div>
             </div>
 
-            <div className="space-y-6">
-              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">
-                  Đặt lịch xét nghiệm
+            <div className="md:col-span-1">
+              <div className="bg-blue-50 rounded-lg p-6 h-full">
+                <h3 className="text-xl font-semibold text-blue-700 mb-4">
+                  Thông tin quan trọng
                 </h3>
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-colors">
-                  Đặt lịch ngay
-                </button>
+
+                <div className="mb-6">
+                  <h4 className="font-medium text-gray-800 mb-2 flex items-center">
+                    <svg
+                      className="w-5 h-5 mr-2 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path>
+                    </svg>
+                    Thời gian nhận kết quả
+                  </h4>
+                  <p className="text-gray-600">
+                    {currentTest?.resultTime || "24-48 giờ sau khi lấy mẫu"}
+                  </p>
+                </div>
+
+                <div className="mb-6">
+                  <h4 className="font-medium text-gray-800 mb-2 flex items-center">
+                    <svg
+                      className="w-5 h-5 mr-2 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      ></path>
+                    </svg>
+                    Chuẩn bị trước xét nghiệm
+                  </h4>
+                  <ul className="list-disc pl-5 space-y-1 text-gray-600">
+                    <li>Nhịn ăn 8-12 giờ trước xét nghiệm (nếu cần)</li>
+                    <li>Mang theo giấy tờ tùy thân</li>
+                    <li>Thông báo về các loại thuốc đang sử dụng</li>
+                  </ul>
+                </div>
+
+                <div className="mb-6">
+                  <h4 className="font-medium text-gray-800 mb-2 flex items-center">
+                    <svg
+                      className="w-5 h-5 mr-2 text-blue-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                      ></path>
+                    </svg>
+                    Chi phí xét nghiệm
+                  </h4>
+                  <div className="bg-white rounded-md p-3 shadow-sm">
+                    <span className="text-2xl font-bold text-blue-700">
+                      {currentTest?.price || "Liên hệ để biết giá"}
+                    </span>
+                    {currentTest?.originalPrice && (
+                      <span className="text-gray-400 line-through ml-2">
+                        {currentTest.originalPrice}
+                      </span>
+                    )}
+                    {currentTest?.discount && (
+                      <span className="ml-2 bg-red-100 text-red-600 text-sm py-1 px-2 rounded">
+                        -{currentTest.discount}%
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <button
+                    onClick={handleScheduleClick}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-lg font-medium transition duration-200 flex items-center justify-center group"
+                  >
+                    <svg
+                      className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      ></path>
+                    </svg>
+                    Đặt lịch hẹn
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -120,7 +271,7 @@ const MedicalTestDetail = () => {
                     Mô tả
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Giá
+                    ThờI gian
                   </th>
                 </tr>
               </thead>
@@ -146,8 +297,8 @@ const MedicalTestDetail = () => {
                             {item.description}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            Liên hệ
-                          </td>{" "}
+                            {item.duration}
+                          </td>
                         </tr>
                       ))}
                     </>
