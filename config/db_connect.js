@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
     database: process.env.DB_NAME,
     port: process.env.DB_PORT,
     timezone: process.env.DB_TIMEZONE,
-    ssl: process.env.DB_SSL === 'true' // Chuyển đổi chuỗi thành boolean
+    ssl: process.env.DB_SSL === 'true'
 });
 
 // Kết nối với MySQL
