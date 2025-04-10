@@ -17,6 +17,7 @@ import { CartPage } from "./components/pages/CartPage";
 import { ProfilePage } from "./components/pages/ProfilePage";
 import InvalidPage from "./components/information/InvalidPage";
 import { OrderDetailPage } from "./components/pages/OrderDetailPage";
+import adminRoutes from "./components/pages/AdminRouter";
 
 function App() {
   return (
@@ -30,7 +31,7 @@ function App() {
         <Route path="/profile" element={<Navigate to="/profile/personal-info" replace />} />
         <Route path="/profile/:pageId" element={<ProfilePage />} />
         <Route path="/profile/orders/order-detail/:status" element={<OrderDetailPage />} />
-        <Route path="*" element={<InvalidPage />} />
+
 
         <Route path="/booking-home" element={<HomeBookingCare />} />
         <Route
@@ -62,6 +63,9 @@ function App() {
           path="/booking-home/medicaltest-detail/:name"
           element={<BookingMedicalTestDetail />}
         />
+        
+        {adminRoutes}
+        <Route path="*" element={<InvalidPage />} />
       </Routes>
     </Router>
   );

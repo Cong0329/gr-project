@@ -13,6 +13,7 @@ import medicalTestReducer from './medicalTestSlice';
 import profileReducer from './profileSlice';
 import navigationReducer from './navigationSlice';
 
+
 const persistConfig = {
   key: "root",
   storage, // lưu trữ vào localStorage
