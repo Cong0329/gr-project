@@ -74,6 +74,15 @@ button:focus-visible {
 }
 
 
+.apexcharts-canvas,
+.apexcharts-inner,
+.apexcharts-tooltip,
+.apexcharts-graphical {
+  z-index: 1 !important;
+  pointer-events: none; /* Chỉ nếu bạn không cần tương tác với chart */
+}
+
+
 
 
 @tailwind base;
