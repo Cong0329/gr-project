@@ -9,7 +9,8 @@ const connection = mysql.createConnection({
     database: process.env.DB_NAME,
     port: process.env.DB_PORT,
     timezone: process.env.DB_TIMEZONE,
-    ssl: process.env.DB_SSL === 'true'
+    ssl: process.env.DB_SSL === 'true',
+    dialect: process.env.DB_DIALECT,
 });
 
 // Kết nối với MySQL
