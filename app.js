@@ -5,7 +5,6 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
 const db = require('./config/db_connect');
 require('dotenv').config();
 const passport = require('passport');
@@ -22,12 +21,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(passport.initialize());
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/v1/user', require('./routes/user.routes'));
 app.use('/api/v1/auth', require('./routes/auth.routes'));
 
 
 
-sequelize.sync({ alter: true, force: true }) // tự động tạo/cập nhật bảng
+sequelize.sync({ alter: true }) // tự động tạo/cập nhật bảng
   .then(() => console.log('✅ Database synced!'))
   .catch(err => console.error('❌ DB sync error:', err));
 
