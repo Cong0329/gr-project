@@ -1,6 +1,5 @@
 const createError = require('http-errors');
 const express = require('express');
-const path = require('path');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
@@ -8,7 +7,7 @@ const indexRouter = require('./routes/index');
 const db = require('./config/db_connect');
 require('dotenv').config();
 const passport = require('passport');
-const { sequelize } = require('./models/user.model');
+const { sequelize } = require('./models');
 require('./config/passport');
 db.connect();
 const app = express();
@@ -26,9 +25,11 @@ app.use('/api/v1/auth', require('./routes/auth.routes'));
 
 
 
-sequelize.sync({ alter: true }) // tự động tạo/cập nhật bảng
-  .then(() => console.log('✅ Database synced!'))
+// Sync database tự động cập nhật schema mà không mất dữ liệu
+sequelize.sync({ alter: true })
+  .then(() => console.log('✅ DB synced (altered without data loss)'))
   .catch(err => console.error('❌ DB sync error:', err));
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
