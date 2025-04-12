@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     phone: DataTypes.STRING,
     gender: DataTypes.ENUM('MALE', 'FEMALE', 'OTHER'),
     avatar_url: DataTypes.STRING,
-    email: { type: DataTypes.STRING, allowNull: false, unique: true },
+    email: { type: DataTypes.STRING, allowNull: false },
     provider: DataTypes.STRING,
     provider_id: DataTypes.STRING,
     created_at: {
