@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       {
-        tableName: "user_roles",
+        tableName: "user_role",
         timestamps: false, // Tắt tự động tạo createdAt, updatedAt
       }
     );

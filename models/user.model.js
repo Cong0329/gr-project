@@ -12,8 +12,11 @@ module.exports = (sequelize, DataTypes) => {
     gender: DataTypes.ENUM('MALE', 'FEMALE', 'OTHER'),
     avatar_url: DataTypes.STRING,
     email: { type: DataTypes.STRING, allowNull: false },
+    password: DataTypes.STRING,
     provider: DataTypes.STRING,
     provider_id: DataTypes.STRING,
+    verify_code: { type: DataTypes.INTEGER, allowNull: true },
+    verify_code_expires_at: { type: DataTypes.DATE, allowNull: true },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
