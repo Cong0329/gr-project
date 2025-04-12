@@ -7,9 +7,8 @@ const UserModel = require('./user.model');
 const RoleModel = require('./role.model');
 const DoctorModel = require('./doctor.model');
 const DepartmentModel = require('./department.model');
-const UserModel = require("./user.model");
-const RoleModel = require("./role.model");
-const UserRoleModel = require("./user-role.model"); // (Nếu có model trung gian)
+const UserRoleModel = require("./user-role.model");
+const RefreshTokenModel = require("./refresh.model");
 
 // Import hàm thiết lập quan hệ
 const setupUserRoleAssociations = require("../associations/user-role.association");
@@ -19,6 +18,7 @@ const setupUserRoleAssociations = require("../associations/user-role.association
 const User = UserModel(sequelize, DataTypes);
 const Role = RoleModel(sequelize, DataTypes);
 const UserRole = UserRoleModel(sequelize, DataTypes);
+const RefreshToken = RefreshTokenModel(sequelize, DataTypes);
 const Doctor = DoctorModel(sequelize, DataTypes);
 const Department = DepartmentModel(sequelize, DataTypes);
 
@@ -30,16 +30,27 @@ Department.hasMany(Doctor, { foreignKey: 'department_id' });
 
 
 
-// Gọi hàm thiết lập quan hệ từ file riêng
-setupUserRoleAssociations(User, Role, UserRole); 
-
-// Xuất các model và sequelize
-module.exports = {
+// Tạo đối tượng db để xuất tất cả models
+const db = {
   sequelize,
   User,
   Role,
   Doctor,
   Department,
   UserRole,
+  RefreshToken,
 };
+
+// Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)
+setupUserRoleAssociations(User, Role, UserRole); 
+
+// Gọi associate() cho các model nếu có hàm này
+Object.values(db).forEach((model) => {
+  if (model.associate) {
+    model.associate(db);
+  }
+});
+
+// Xuất các model và sequelize
+module.exports = db;
 
