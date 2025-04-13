@@ -3,11 +3,14 @@ const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 // Import models
-const UserModel = require('./user.model');
-const RoleModel = require('./role.model');
 const DoctorModel = require('./doctor.model');
 const DepartmentModel = require('./department.model');
-const UserRoleModel = require("./user-role.model");
+const UserModel = require("./user.model");
+const RoleModel = require("./role.model");
+const UserRoleModel = require("./user-role.model"); // (Nếu có model trung gian)
+const GeneralPackageModel = require('./general-pkg.model');
+const MedicalPackageModel = require('./medical-pkg.model');
+const ScheduleModel = require('./schedule.model');
 const AddressModel = require("./address.model")
 const RefreshTokenModel = require("./refresh.model");
 const CountryModel = require("./country.model");
@@ -16,6 +19,7 @@ const OriginModel = require("./origin.model");
 const MedicalObjectModel = require("./medical_object.model");
 const IndicationModel = require("./indication.model");
 const CategoryModel = require("./category.model");
+
 
 
 // Import hàm thiết lập quan hệ
@@ -36,11 +40,18 @@ const Origin = OriginModel(sequelize, DataTypes);
 const MedicalObject = MedicalObjectModel(sequelize, DataTypes);
 const Indication = IndicationModel(sequelize, DataTypes); 
 const Category = CategoryModel(sequelize, DataTypes);
+const Schedule = ScheduleModel(sequelize, DataTypes);
+const GeneralPackage = GeneralPackageModel(sequelize, DataTypes);
+const MedicalPackage = MedicalPackageModel(sequelize, DataTypes);
 
 
-// Define relationships
-Doctor.belongsTo(Department, { foreignKey: 'department_id' });
-Department.hasMany(Doctor, { foreignKey: 'department_id' });
+
+
+Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
+Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
+
+Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
+Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
 
 
 
@@ -52,7 +63,10 @@ const db = {
   Role,
   Doctor,
   Department,
+  Schedule,
   UserRole,
+  GeneralPackage,
+  MedicalPackage
   Address,
   RefreshToken,
   Country,
