@@ -8,6 +8,7 @@ const RoleModel = require('./role.model');
 const DoctorModel = require('./doctor.model');
 const DepartmentModel = require('./department.model');
 const UserRoleModel = require("./user-role.model");
+const AddressModel = require("./address.model")
 const RefreshTokenModel = require("./refresh.model");
 
 // Import hàm thiết lập quan hệ
@@ -18,6 +19,7 @@ const setupUserRoleAssociations = require("../associations/user-role.association
 const User = UserModel(sequelize, DataTypes);
 const Role = RoleModel(sequelize, DataTypes);
 const UserRole = UserRoleModel(sequelize, DataTypes);
+const Address = AddressModel(sequelize, DataTypes);
 const RefreshToken = RefreshTokenModel(sequelize, DataTypes);
 const Doctor = DoctorModel(sequelize, DataTypes);
 const Department = DepartmentModel(sequelize, DataTypes);
@@ -38,6 +40,7 @@ const db = {
   Doctor,
   Department,
   UserRole,
+  Address,
   RefreshToken,
 };
 
