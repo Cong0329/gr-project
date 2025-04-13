@@ -11,6 +11,8 @@ const UserRoleModel = require("./user-role.model"); // (Nếu có model trung gi
 const GeneralPackageModel = require('./general-pkg.model');
 const MedicalPackageModel = require('./medical-pkg.model');
 const ScheduleModel = require('./schedule.model');
+const AddressModel = require("./address.model")
+const RefreshTokenModel = require("./refresh.model");
 
 
 // Import hàm thiết lập quan hệ
@@ -21,15 +23,15 @@ const setupUserRoleAssociations = require("../associations/user-role.association
 const User = UserModel(sequelize, DataTypes);
 const Role = RoleModel(sequelize, DataTypes);
 const UserRole = UserRoleModel(sequelize, DataTypes);
+const Address = AddressModel(sequelize, DataTypes);
+const RefreshToken = RefreshTokenModel(sequelize, DataTypes);
 const Doctor = DoctorModel(sequelize, DataTypes);
 const Department = DepartmentModel(sequelize, DataTypes);
 const Schedule = ScheduleModel(sequelize, DataTypes);
 const GeneralPackage = GeneralPackageModel(sequelize, DataTypes);
 const MedicalPackage = MedicalPackageModel(sequelize, DataTypes);
 
-// Define relationships
-User.belongsToMany(Role, { through: 'user_roles', foreignKey: 'user_id' });
-Role.belongsToMany(User, { through: 'user_roles', foreignKey: 'role_id' });
+
 
 Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
 Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
@@ -40,11 +42,8 @@ Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
 
 
 
-// Gọi hàm thiết lập quan hệ từ file riêng
-setupUserRoleAssociations(User, Role, UserRole); 
-
-// Xuất các model và sequelize
-module.exports = {
+// Tạo đối tượng db để xuất tất cả models
+const db = {
   sequelize,
   User,
   Role,
@@ -54,5 +53,20 @@ module.exports = {
   UserRole,
   GeneralPackage,
   MedicalPackage
+  Address,
+  RefreshToken,
 };
+
+// Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)
+setupUserRoleAssociations(User, Role, UserRole); 
+
+// Gọi associate() cho các model nếu có hàm này
+Object.values(db).forEach((model) => {
+  if (model.associate) {
+    model.associate(db);
+  }
+});
+
+// Xuất các model và sequelize
+module.exports = db;
 

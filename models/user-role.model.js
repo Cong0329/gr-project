@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
       "UserRole",
       {
         user_id: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.UUID,
           allowNull: false,
         },
         role_id: {
