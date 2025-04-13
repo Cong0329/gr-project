@@ -1,4 +1,4 @@
-const { type } = require("jquery");
+
 
 module.exports = (sequelize, DataTypes) => {
     const Address = sequelize.define(

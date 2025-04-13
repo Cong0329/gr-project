@@ -75,9 +75,6 @@ exports.updateAddress = async (req, res) => {
   try {
     const { id } = req.params;
     const user_id = req.user.id;
-    const {
-      name, phone, street, ward, district, province, type, default_address
-    } = req.body;
 
     const address = await Address.findByPk(id);
 
@@ -90,10 +87,20 @@ exports.updateAddress = async (req, res) => {
       return res.status(403).json({ message: "You do not have permission to update this address." });
     }
 
-    await address.update({
-      name, phone, street, ward, district, province, type, default_address,
-      updated_at: new Date(),
-    });
+    // Chỉ lấy các trường có trong req.body để update
+    const allowedFields = ['name', 'phone', 'street', 'ward', 'district', 'province', 'type', 'default_address'];
+    const updateData = {};
+
+    for (const key of allowedFields) {
+      if (req.body[key] !== undefined) {
+        updateData[key] = req.body[key];
+      }
+    }
+
+    // Cập nhật thời gian
+    updateData.updated_at = new Date();
+
+    await address.update(updateData);
 
     res.json({ message: "Address updated", address });
   } catch (err) {
@@ -101,6 +108,7 @@ exports.updateAddress = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 
 // Delete Address
