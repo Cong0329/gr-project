@@ -1,7 +1,7 @@
 module.exports = function requireRole(roleCode) {
     return async (req, res, next) => {
       try {
-        const userRoles = await req.user.getRoles(); // đã OK
+        const userRoles = await req.user.getRoles();
         const hasRole = userRoles.some(role => role.code === roleCode);
         if (!hasRole) {
           return res.status(403).json({ message: 'Forbidden: Insufficient permissions' });

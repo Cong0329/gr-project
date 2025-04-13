@@ -22,13 +22,9 @@ app.use(passport.initialize());
 
 
 // Routers
-app.use('/', indexRouter);
-app.use('/api/v1/user', require('./routes/user.routes'));
-app.use('/api/v1/address', require('./routes/address.routes'));
-app.use('/api/v1/auth', require('./routes/auth.routes'));
-app.use('/api/v1/doctor', require('./routes/doctor.routes'));
-app.use('/api/v1/department', require('./routes/department.routes'));
-app.use('/api/v1/schedule', require('./routes/schedule.routes'));
+
+app.use('/api/v1', indexRouter);
+
 
 
 

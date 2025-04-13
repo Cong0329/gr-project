@@ -13,6 +13,13 @@ const MedicalPackageModel = require('./medical-pkg.model');
 const ScheduleModel = require('./schedule.model');
 const AddressModel = require("./address.model")
 const RefreshTokenModel = require("./refresh.model");
+const CountryModel = require("./country.model");
+const BrandModel = require("./brand.model");
+const OriginModel = require("./origin.model");
+const MedicalObjectModel = require("./medical_object.model");
+const IndicationModel = require("./indication.model");
+const CategoryModel = require("./category.model");
+
 
 
 // Import hàm thiết lập quan hệ
@@ -27,9 +34,16 @@ const Address = AddressModel(sequelize, DataTypes);
 const RefreshToken = RefreshTokenModel(sequelize, DataTypes);
 const Doctor = DoctorModel(sequelize, DataTypes);
 const Department = DepartmentModel(sequelize, DataTypes);
+const Country = CountryModel(sequelize, DataTypes);
+const Brand = BrandModel(sequelize, DataTypes);
+const Origin = OriginModel(sequelize, DataTypes);
+const MedicalObject = MedicalObjectModel(sequelize, DataTypes);
+const Indication = IndicationModel(sequelize, DataTypes); 
+const Category = CategoryModel(sequelize, DataTypes);
 const Schedule = ScheduleModel(sequelize, DataTypes);
 const GeneralPackage = GeneralPackageModel(sequelize, DataTypes);
 const MedicalPackage = MedicalPackageModel(sequelize, DataTypes);
+
 
 
 
@@ -55,6 +69,12 @@ const db = {
   MedicalPackage
   Address,
   RefreshToken,
+  Country,
+  Brand,
+  Origin,
+  MedicalObject,
+  Indication,
+  Category
 };
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)
