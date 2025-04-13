@@ -61,10 +61,10 @@ const Specialty = () => {
         <div className="home-content">
           <div className="home-title relative flex justify-between items-center mb-6 lg:px-20 ml:px-0">
             <div className="flex flex-col">
-              <h2 className="text-xl lg:text-2xl font-bold text-indigo-500 mb-2">
+              <h2 className="text-xl lg:text-2xl font-bold text-indigo-600 mb-2">
                 Chuyên khoa phổ biến
               </h2>
-              <div className="h-1 w-20 bg-indigo-400 rounded"></div>
+              <div className="h-1 w-20 bg-indigo-500 rounded"></div>
               <p className="text-gray-600 mt-2 text-sm">
                 Tìm kiếm bác sĩ theo chuyên khoa phù hợp với nhu cầu của bạn
               </p>

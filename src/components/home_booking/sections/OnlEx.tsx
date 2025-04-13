@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import "./OnlEx.css";
-import imgDt from "../../../assets/sections/doctor.jpg";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDoctors } from "../../../redux/doctorSlice";
@@ -37,6 +36,10 @@ const OnlEx = () => {
     dispatch(fetchDoctors());
     dispatch(fetchDepartments());
   }, [dispatch]);
+
+  useEffect(() => {
+    console.log("Departments:", departments);
+  }, [departments]);
 
   if (doctorLoading || departmentLoading) {
     return <p>Đang tải dữ liệu...</p>;

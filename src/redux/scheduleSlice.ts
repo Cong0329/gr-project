@@ -1,224 +1,305 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+// // scheduleSlice.js
+// import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+// import axios from 'axios';
 
-// Base URL for API calls
-const API_BASE_URL = "https://run.mocky.io/v3/e06f9b6f-74ef-4ad0-98ce-d6ac4df9336d";
+// const API_URL = 'http://localhost:3000/api/v1/schedule';
 
-// Fetch different types of schedules
-export const fetchSpecialistSchedules = createAsyncThunk(
-  "schedule/fetchSpecialist",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/schedules/specialist`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to fetch specialist schedules");
-    }
-  }
-);
+// // Khởi tạo state ban đầu
+// const initialState = {
+//   schedules: [],
+//   doctorSchedules: [],
+//   scheduleDetail: null,
+//   appointments: [],
+//   loading: false,
+//   error: null,
+//   pagination: {
+//     page: 1,
+//     limit: 10,
+//     total: 0
+//   }
+// };
 
-export const fetchGeneralSchedules = createAsyncThunk(
-  "schedule/fetchGeneral",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/schedules/general`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to fetch general schedules");
-    }
-  }
-);
-
-export const fetchMedicalSchedules = createAsyncThunk(
-  "schedule/fetchMedical",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/schedules/medical`);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to fetch medical schedules");
-    }
-  }
-);
-
-// Create new appointment request
-export const createAppointment = createAsyncThunk(
-  "schedule/createAppointment",
-  async (appointmentData, { rejectWithValue }) => {
-    try {
-      const response = await axios.post(`${API_BASE_URL}/appointments`, appointmentData);
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to create appointment");
-    }
-  }
-);
-
-// Doctor confirms appointment and creates schedule
-export const confirmAppointment = createAsyncThunk(
-  "schedule/confirmAppointment",
-  async ({ appointmentId, scheduleData }, { rejectWithValue }) => {
-    try {
-      // Update appointment status
-      await axios.patch(`${API_BASE_URL}/appointments/${appointmentId}`, { status: "confirmed" });
+// export const fetchSchedules = createAsyncThunk(
+//   'schedules/fetchSchedules',
+//   async ({ page = 1, limit = 10, filters = {} }, { rejectWithValue }) => {
+//     try {
+//       const params = new URLSearchParams({
+//         page,
+//         limit,
+//         ...filters
+//       }).toString();
       
-      // Create actual schedule entry
-      const response = await axios.post(`${API_BASE_URL}/schedules`, scheduleData);
-      return response.data;
+//       const response = await axios.get(`${API_URL}?${params}`);
+//       return {
+//         data: response.data,
+//         pagination: {
+//           page,
+//           limit,
+//           total: response.headers['x-total-count'] || 0
+//         }
+//       };
+//     } catch (error) {
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
+// export const fetchSchedulesByType = createAsyncThunk(
+//   'schedules/fetchByType',
+//   async (type, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.get(`${API_URL}/${type}`);
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
+// export const fetchDoctorSchedules = createAsyncThunk(
+//   'schedules/fetchDoctorSchedules',
+//   async ({ doctorId, params = {} }, { rejectWithValue }) => {
+//     try {
+//       const queryString = new URLSearchParams(params).toString();
+//       const response = await axios.get(`${API_URL}/doctor/${doctorId}?${queryString}`);
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
+// export const fetchScheduleDetail = createAsyncThunk(
+//   'schedules/fetchDetail',
+//   async (scheduleId, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.get(`${API_URL}/${scheduleId}`);
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
+// export const createSchedule = createAsyncThunk(
+//   'schedules/create',
+//   async (scheduleData, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.post(API_URL, scheduleData);
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
+// export const updateSchedule = createAsyncThunk(
+//   'schedules/update',
+//   async ({ id, updateData }, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.put(`${API_URL}/${id}`, updateData);
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
+// export const deleteSchedule = createAsyncThunk(
+//   'schedules/delete',
+//   async (scheduleId, { rejectWithValue }) => {
+//     try {
+//       await axios.delete(`${API_URL}/${scheduleId}`);
+//       return scheduleId;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
+// export const createAppointment = createAsyncThunk(
+//   'schedules/createAppointment',
+//   async (appointmentData, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.post(`${API_URL}/appointments`, appointmentData);
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
+// export const updateAppointmentStatus = createAsyncThunk(
+//   'schedules/updateAppointment',
+//   async ({ id, status }, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.patch(`${API_URL}/appointments/${id}`, { status });
+//       return response.data;
+//     } catch (error) {
+//       return rejectWithValue(error.response.data);
+//     }
+//   }
+// );
+
+// const scheduleSlice = createSlice({
+//   name: 'schedules',
+//   initialState,
+//   reducers: {
+//     // ... các reducers khác
+//   },
+//   extraReducers: (builder) => {
+//     // Đầu tiên xử lý tất cả các cases cụ thể
+//     builder
+//       .addCase(fetchSchedules.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.schedules = action.payload.data;
+//         state.pagination = action.payload.pagination;
+//       })
+//       .addCase(fetchSchedulesByType.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.schedules = action.payload;
+//       })
+//       .addCase(fetchDoctorSchedules.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.doctorSchedules = action.payload;
+//       })
+//       .addCase(fetchScheduleDetail.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.scheduleDetail = action.payload;
+//       })
+//       .addCase(createSchedule.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.schedules.unshift(action.payload);
+//       })
+//       .addCase(updateSchedule.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.schedules = state.schedules.map(schedule => 
+//           schedule.id === action.payload.id ? action.payload : schedule
+//         );
+//         if (state.scheduleDetail?.id === action.payload.id) {
+//           state.scheduleDetail = action.payload;
+//         }
+//       })
+//       .addCase(deleteSchedule.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.schedules = state.schedules.filter(
+//           schedule => schedule.id !== action.payload
+//         );
+//       })
+//       .addCase(createAppointment.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.appointments.push(action.payload);
+//       })
+//       .addCase(updateAppointmentStatus.fulfilled, (state, action) => {
+//         state.loading = false;
+//         state.appointments = state.appointments.map(appt => 
+//           appt.id === action.payload.id ? action.payload : appt
+//         );
+//       });
+
+//     // Sau đó mới xử lý các matchers chung
+//     builder
+//       .addMatcher(
+//         (action) => action.type.endsWith('/pending'),
+//         (state) => {
+//           state.loading = true;
+//           state.error = null;
+//         }
+//       )
+//       .addMatcher(
+//         (action) => action.type.endsWith('/rejected'),
+//         (state, action) => {
+//           state.loading = false;
+//           state.error = action.payload || action.error.message;
+//         }
+//       );
+//   }
+// });
+
+// // Export actions và reducer
+// export const { clearScheduleDetail, clearSchedules, resetScheduleState } = scheduleSlice.actions;
+// export default scheduleSlice.reducer;
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+
+const API_URL = 'http://localhost:3000/api/v1/schedule';
+
+const initialState = {
+  specialistSchedules: [],
+  loading: false,
+  error: null,
+  pagination: {
+    page: 1,
+    limit: 10,
+    total: 0
+  },
+  currentType: 'specialty' // Thêm trạng thái để lưu loại hiện tại
+};
+
+// Async thunk để lấy lịch của bác sĩ theo type (specialty/online)
+export const fetchSpecialistSchedules = createAsyncThunk(
+  'schedules/fetchSpecialistSchedules',
+  async ({ page = 1, limit = 10, type = 'specialty', filters = {} }, { rejectWithValue }) => {
+    try {
+      const params = new URLSearchParams({
+        page,
+        limit,
+        type, // Thêm type vào query params
+        ...filters
+      }).toString();
+      
+      const response = await axios.get(`${API_URL}/specialist?${params}`);
+      return {
+        data: response.data,
+        pagination: {
+          page,
+          limit,
+          total: response.headers['x-total-count'] || response.data.length || 0
+        },
+        type // Trả về type để lưu vào state
+      };
     } catch (error) {
-      return rejectWithValue(error.response?.data || "Failed to confirm appointment");
+      return rejectWithValue(error.response?.data || error.message);
     }
   }
 );
 
 const scheduleSlice = createSlice({
-  name: "schedule",
-  initialState: {
-    specialistSchedules: [],
-    generalSchedules: [],
-    medicalSchedules: [],
-    pendingAppointments: [],
-    confirmedAppointments: [],
-    loading: {
-      specialist: false,
-      general: false,
-      medical: false,
-      createAppointment: false,
-      confirmAppointment: false
-    },
-    error: {
-      specialist: null,
-      general: null,
-      medical: null,
-      createAppointment: null,
-      confirmAppointment: null
-    },
-  },
+  name: 'schedules',
+  initialState,
   reducers: {
-    clearErrors: (state) => {
-      state.error = {
-        specialist: null,
-        general: null,
-        medical: null,
-        createAppointment: null,
-        confirmAppointment: null
-      };
+    resetSpecialistSchedules: (state) => {
+      state.specialistSchedules = [];
+      state.pagination = initialState.pagination;
     },
-    filterSchedulesByDoctor: (state, action) => {
-      const { doctorId, scheduleType } = action.payload;
-      if (scheduleType === 'specialist') {
-        state.specialistSchedules = state.specialistSchedules.filter(
-          schedule => schedule.doctor_id === doctorId
-        );
-      } else if (scheduleType === 'general') {
-        state.generalSchedules = state.generalSchedules.filter(
-          schedule => schedule.doctor_id === doctorId
-        );
-      } else if (scheduleType === 'medical') {
-        state.medicalSchedules = state.medicalSchedules.filter(
-          schedule => schedule.doctor_id === doctorId
-        );
-      }
-    },
-    filterAppointmentsByStatus: (state, action) => {
-      const status = action.payload;
-      state.pendingAppointments = state.pendingAppointments.filter(
-        appointment => appointment.status === status
-      );
+    // Thêm reducer để thay đổi type nếu cần
+    setSpecialistType: (state, action) => {
+      state.currentType = action.payload;
     }
   },
   extraReducers: (builder) => {
     builder
-      // Specialist schedules
       .addCase(fetchSpecialistSchedules.pending, (state) => {
-        state.loading.specialist = true;
+        state.loading = true;
+        state.error = null;
       })
       .addCase(fetchSpecialistSchedules.fulfilled, (state, action) => {
-        state.loading.specialist = false;
-        state.specialistSchedules = action.payload;
+        state.loading = false;
+        state.specialistSchedules = action.payload.data;
+        state.pagination = action.payload.pagination;
+        state.currentType = action.payload.type; // Lưu type hiện tại
       })
       .addCase(fetchSpecialistSchedules.rejected, (state, action) => {
-        state.loading.specialist = false;
-        state.error.specialist = action.payload;
-      })
-      
-      // General schedules
-      .addCase(fetchGeneralSchedules.pending, (state) => {
-        state.loading.general = true;
-      })
-      .addCase(fetchGeneralSchedules.fulfilled, (state, action) => {
-        state.loading.general = false;
-        state.generalSchedules = action.payload;
-      })
-      .addCase(fetchGeneralSchedules.rejected, (state, action) => {
-        state.loading.general = false;
-        state.error.general = action.payload;
-      })
-      
-      // Medical schedules
-      .addCase(fetchMedicalSchedules.pending, (state) => {
-        state.loading.medical = true;
-      })
-      .addCase(fetchMedicalSchedules.fulfilled, (state, action) => {
-        state.loading.medical = false;
-        state.medicalSchedules = action.payload;
-      })
-      .addCase(fetchMedicalSchedules.rejected, (state, action) => {
-        state.loading.medical = false;
-        state.error.medical = action.payload;
-      })
-      
-      // Create appointment
-      .addCase(createAppointment.pending, (state) => {
-        state.loading.createAppointment = true;
-      })
-      .addCase(createAppointment.fulfilled, (state, action) => {
-        state.loading.createAppointment = false;
-        state.pendingAppointments.push(action.payload);
-      })
-      .addCase(createAppointment.rejected, (state, action) => {
-        state.loading.createAppointment = false;
-        state.error.createAppointment = action.payload;
-      })
-      
-      // Confirm appointment
-      .addCase(confirmAppointment.pending, (state) => {
-        state.loading.confirmAppointment = true;
-      })
-      .addCase(confirmAppointment.fulfilled, (state, action) => {
-        state.loading.confirmAppointment = false;
-        
-        // Move appointment from pending to confirmed
-        const appointmentId = action.meta.arg.appointmentId;
-        const appointmentIndex = state.pendingAppointments.findIndex(
-          app => app.id === appointmentId
-        );
-        
-        if (appointmentIndex !== -1) {
-          const appointment = state.pendingAppointments[appointmentIndex];
-          state.pendingAppointments.splice(appointmentIndex, 1);
-          state.confirmedAppointments.push({
-            ...appointment,
-            status: 'confirmed'
-          });
-        }
-        
-        // Add new schedule based on type
-        const scheduleData = action.payload;
-        if (scheduleData.type === 'specialist') {
-          state.specialistSchedules.push(scheduleData);
-        } else if (scheduleData.type === 'general') {
-          state.generalSchedules.push(scheduleData);
-        } else if (scheduleData.type === 'medical') {
-          state.medicalSchedules.push(scheduleData);
-        }
-      })
-      .addCase(confirmAppointment.rejected, (state, action) => {
-        state.loading.confirmAppointment = false;
-        state.error.confirmAppointment = action.payload;
+        state.loading = false;
+        state.error = action.payload || 'Failed to fetch specialist schedules';
       });
-  },
+  }
 });
 
-export const { clearErrors, filterSchedulesByDoctor, filterAppointmentsByStatus } = scheduleSlice.actions;
+// Export actions
+export const { 
+  resetSpecialistSchedules,
+  setSpecialistType 
+} = scheduleSlice.actions;
+
 export default scheduleSlice.reducer;

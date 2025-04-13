@@ -24,7 +24,7 @@ const persistedReducer = persistReducer(persistConfig, cartReducer);
 export const store = configureStore({
   reducer: {
     image: imageReducer,
-    schedule: scheduleReducer,
+    schedules: scheduleReducer,
     doctors: doctorReducer,
     departments: departmentReducer,
     generalExams: generalExReducer,
