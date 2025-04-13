@@ -46,7 +46,7 @@ exports.getAllUsers = async (req, res) => {
 
 // Cập nhật thông tin cá nhân
 exports.updateProfile = async (req, res) => {
-  const { name, phone, gender } = req.body;
+  const { name, phone, gender, password } = req.body;
   const userId = req.user.id;
 
   try {
@@ -56,9 +56,26 @@ exports.updateProfile = async (req, res) => {
     if (name !== undefined) user.name = name;
     if (phone !== undefined) user.phone = phone;
     if (gender !== undefined) user.gender = gender;
-    user.updated_at = new Date();
 
+    // Lấy role từ quan hệ
+    const roles = await user.getRoles(); // đảm bảo đã định nghĩa association
+    const hasValidRole = roles.some(role =>
+      ['ROLE_ADMIN', 'ROLE_PHARMACIST'].includes(role.code)
+    );
+
+    // Nếu có gửi password thì check role trước khi cập nhật
+    if (password !== undefined) {
+      if (!hasValidRole) {
+        return res.status(403).json({ message: 'You do not have permission to change the password.' });
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+
+    user.updated_at = new Date();
     await user.save();
+
     res.json({
       message: 'User updated successfully',
       user: {
@@ -73,3 +90,4 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
