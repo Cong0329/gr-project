@@ -8,8 +8,7 @@ const DepartmentModel = require('./department.model');
 const UserModel = require("./user.model");
 const RoleModel = require("./role.model");
 const UserRoleModel = require("./user-role.model"); // (Nếu có model trung gian)
-const GeneralPackageModel = require('./general-pkg.model');
-const MedicalPackageModel = require('./medical-pkg.model');
+const ServicePackageModel = require('./service-pkg.model');
 const ScheduleModel = require('./schedule.model');
 const AddressModel = require("./address.model")
 const RefreshTokenModel = require("./refresh.model");
@@ -19,7 +18,9 @@ const OriginModel = require("./origin.model");
 const MedicalObjectModel = require("./medical_object.model");
 const IndicationModel = require("./indication.model");
 const CategoryModel = require("./category.model");
-
+const ServiceCategoryModel = require("./service-category.model")
+const ServiceItemModel = require("./service-item.model")
+const PackageItemModel = require("./package-item.model")
 
 
 // Import hàm thiết lập quan hệ
@@ -41,19 +42,10 @@ const MedicalObject = MedicalObjectModel(sequelize, DataTypes);
 const Indication = IndicationModel(sequelize, DataTypes); 
 const Category = CategoryModel(sequelize, DataTypes);
 const Schedule = ScheduleModel(sequelize, DataTypes);
-const GeneralPackage = GeneralPackageModel(sequelize, DataTypes);
-const MedicalPackage = MedicalPackageModel(sequelize, DataTypes);
-
-
-
-
-Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
-Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
-
-Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
-Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
-
-
+const ServicePackage = ServicePackageModel(sequelize, DataTypes);
+const ServiceCategory = ServiceCategoryModel(sequelize, DataTypes)
+const ServiceItem = ServiceItemModel(sequelize, DataTypes)
+const PackageItem = PackageItemModel(sequelize, DataTypes)
 
 
 // Tạo đối tượng db để xuất tất cả models
@@ -65,8 +57,7 @@ const db = {
   Department,
   Schedule,
   UserRole,
-  GeneralPackage,
-  MedicalPackage
+  ServicePackage,
   Address,
   RefreshToken,
   Country,
@@ -74,7 +65,10 @@ const db = {
   Origin,
   MedicalObject,
   Indication,
-  Category
+  Category,
+  ServiceCategory,
+  ServiceItem,
+  PackageItem
 };
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)

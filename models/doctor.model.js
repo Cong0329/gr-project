@@ -40,7 +40,18 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'doctor',
       timestamps: false
     });
-  
+    Doctor.associate = (models) => {
+      Doctor.belongsTo(models.Department, {
+        foreignKey: 'department_id',
+        as: 'department'
+      });
+    
+      Doctor.hasMany(models.Schedule, {
+        foreignKey: 'doctor_id',
+        as: 'schedules' 
+      });
+    };
+    
     return Doctor;
   };
   

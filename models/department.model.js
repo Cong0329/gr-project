@@ -27,6 +27,14 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'department',
       timestamps: false
     });
+
+    Department.associate = (models) => {
+      Department.hasMany(models.Doctor, {
+        foreignKey: 'department_id',
+        as: 'doctors'
+      });
+    };
+    
   
     return Department;
   };

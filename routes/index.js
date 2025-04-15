@@ -10,12 +10,13 @@ router.use('/user', require('./user.routes'));
 router.use('/address', require('./address.routes'));
 router.use('/auth', require('./auth.routes'));
 router.use('/doctor', require('./doctor.routes'));
+router.use('/schedule', require('./schedule.routes'));
 router.use('/department', require('./department.routes'));
 router.use('/brand', require('./brand.routes'));
 router.use('/origin', require('./origin.routes'));
 router.use('/category', require('./category.routes'));
 router.use('/country', require('./country.routes'));
 router.use('/indication', require('./indication.routes'));
-router.use('/medical_object', require('./medical_object.routes'));
+router.use('/service-pkg', require('./service_pkg.routes'));
 
 module.exports = router;
