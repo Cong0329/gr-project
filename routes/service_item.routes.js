@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
-const itemController = require('../controllers/service-item.controller');
+const itemController = require('../controllers/service_item.controller');
 const authenticateToken = require('../middlewares/auth.middleware');
 const requireRole = require('../middlewares/role.middleware');
 const validateRequest = require('../middlewares/validateRequest.middleware');
@@ -45,3 +45,4 @@ router.delete('/:id',
   requireRole('ROLE_ADMIN'),
   itemController.deleteItem
 );
+module.exports = router;

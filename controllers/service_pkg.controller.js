@@ -12,6 +12,7 @@ const getAllPackages = async (req, res) => {
       whereCondition.type = type;
     }
     
+    // Trong getAllPackages (và các hàm tương tự)
     const packages = await ServicePackage.findAll({
       where: whereCondition,
       include: [
@@ -22,7 +23,13 @@ const getAllPackages = async (req, res) => {
         {
           model: ServiceItem,
           as: 'items',
-          through: { attributes: ['quantity'] }
+          through: { attributes: ['quantity'] },
+          include: [
+            {
+              model: ServiceCategory,
+              as: 'category'
+            }
+          ]
         }
       ]
     });

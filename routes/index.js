@@ -18,5 +18,7 @@ router.use('/category', require('./category.routes'));
 router.use('/country', require('./country.routes'));
 router.use('/indication', require('./indication.routes'));
 router.use('/service-pkg', require('./service_pkg.routes'));
+router.use('/service-item', require('./service_item.routes'));
+router.use('/service-category', require('./service_category.routes'));
 
 module.exports = router;
