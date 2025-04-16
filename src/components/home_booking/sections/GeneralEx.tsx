@@ -6,7 +6,13 @@ import { FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchGeneralExams } from "../../../redux/generalExSlice";
+import {
+  fetchServicePackages,
+  selectFeaturedPackages,
+  selectSuggestedPackages,
+  selectAllPackages,
+  selectLoadingStatus,
+} from "../../../redux/servicePackageSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -137,13 +143,15 @@ const SliderSection = ({
 };
 
 const GeneralEx = () => {
-  const dispatch = useDispatch();
-  const { featuredPackages, suggestedPackages, allPackages, loading } =
-    useSelector((state: any) => state.generalExams);
+  const dispatch = useDispatch<AppDispatch>();
+  const featuredPackages = useSelector(selectFeaturedPackages);
+  const suggestedPackages = useSelector(selectSuggestedPackages);
+  const allPackages = useSelector(selectAllPackages);
+  const loading = useSelector(selectLoadingStatus);
 
   useEffect(() => {
     if (allPackages.length === 0) {
-      dispatch(fetchGeneralExams());
+      dispatch(fetchServicePackages());
     }
   }, [dispatch, allPackages.length]);
 

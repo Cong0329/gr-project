@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchGeneralExams } from "../../../redux/generalExSlice";
+import {
+  fetchServicePackages,
+  selectAllPackages,
+  selectLoadingStatus,
+  selectError,
+} from "../../../redux/servicePackageSlice";
 import { Search, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
@@ -10,14 +15,16 @@ const GeneralExListPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { allPackages, loading, error } = useSelector(
-    (state) => state.generalExams
-  );
+  // Sử dụng selectors từ slice mới
+  const allPackages = useSelector(selectAllPackages);
+  const loading = useSelector(selectLoadingStatus);
+  const error = useSelector(selectError);
 
   useEffect(() => {
-    dispatch(fetchGeneralExams());
+    dispatch(fetchServicePackages());
   }, [dispatch]);
 
+  // Lọc gói dựa trên searchTerm
   const filteredPackages =
     allPackages && allPackages.length > 0
       ? allPackages.filter((pkg) =>
@@ -26,12 +33,22 @@ const GeneralExListPage = () => {
       : [];
 
   const featuredPackage =
-    allPackages && allPackages.length > 0 ? allPackages[0] : null;
+    allPackages && allPackages.length > 0
+      ? allPackages.find((pkg) => pkg.rating >= 4.7) || allPackages[0]
+      : null;
 
   const handlePackageClick = (packageName) => {
     navigate(
       `/booking-home/generalex-detail/${encodeURIComponent(packageName)}`
     );
+  };
+
+  const handleSearch = () => {
+    // Thực hiện tìm kiếm - đã được xử lý thông qua state, có thể thêm logic tìm kiếm chi tiết nếu cần
+    const resultsSection = document.getElementById("packages-results");
+    if (resultsSection) {
+      resultsSection.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -59,7 +76,7 @@ const GeneralExListPage = () => {
               />
               <button
                 className="absolute right-1 top-1 bg-blue-600 hover:bg-blue-700 text-white py-1 px-4 rounded-md transition-colors"
-                onClick={() => {}}
+                onClick={handleSearch}
               >
                 Tìm kiếm
               </button>
@@ -67,7 +84,7 @@ const GeneralExListPage = () => {
           </div>
         </div>
 
-        <div className="mt-12">
+        <div className="mt-12" id="packages-results">
           {loading ? (
             <div className="flex justify-center items-center py-20">
               <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
@@ -79,7 +96,7 @@ const GeneralExListPage = () => {
                 <p className="text-red-500 font-medium">{error}</p>
                 <button
                   className="mt-4 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
-                  onClick={() => dispatch(fetchGeneralExams())}
+                  onClick={() => dispatch(fetchServicePackages())}
                 >
                   Thử lại
                 </button>
@@ -122,16 +139,16 @@ const GeneralExListPage = () => {
                     </div>
                     <div className="p-6 md:p-8">
                       <span className="inline-block bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-sm font-medium">
-                        Khám chuyên khoa
+                        Khám xét nghiệm
                       </span>
                       <h3 className="mt-3 text-xl font-bold text-gray-900 md:text-2xl">
-                        Khi nào bạn cần đi khám chuyên khoa? Những điều cần biết
+                        Khi nào bạn cần đi khám xét nghiệm? Những điều cần biết
                         trước khi đặt lịch
                       </h3>
                       <p className="mt-4 text-gray-600">
-                        Việc khám chuyên khoa giúp phát hiện và điều trị bệnh
+                        Việc khám xét nghiệm giúp phát hiện và điều trị bệnh
                         sớm. Tìm hiểu khi nào bạn nên đi khám, cần chuẩn bị gì
-                        và các chuyên khoa phù hợp với triệu chứng của bạn...
+                        và các xét nghiệm phù hợp với triệu chứng của bạn...
                       </p>
                       <div className="mt-6">
                         <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg transition-colors">

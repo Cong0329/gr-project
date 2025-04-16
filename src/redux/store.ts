@@ -8,7 +8,7 @@ import storage from "redux-persist/lib/storage";
 import doctorReducer from './doctorSlice';
 import departmentReducer from './departmentSlice'
 import addressReducer from './addressSlice';
-import generalExReducer from "./generalExSlice";
+import servicePackageReducer from './servicePackageSlice'
 import medicalTestReducer from './medicalTestSlice';
 import profileReducer from './profileSlice';
 import navigationReducer from './navigationSlice';
@@ -27,7 +27,7 @@ export const store = configureStore({
     schedules: scheduleReducer,
     doctors: doctorReducer,
     departments: departmentReducer,
-    generalExams: generalExReducer,
+    servicePackage: servicePackageReducer,
     medicalTests: medicalTestReducer,
     filters: filterReducer,
     cart: persistedReducer,

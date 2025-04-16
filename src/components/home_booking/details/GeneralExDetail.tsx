@@ -2,7 +2,12 @@ import { useParams } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchGeneralExams } from "../../../redux/generalExSlice";
+import {
+  fetchServicePackages,
+  selectAllPackages,
+  selectLoadingStatus,
+  selectError,
+} from "../../../redux/servicePackageSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import PackageSchedule from "./component_details/PackageSchedules";
@@ -12,19 +17,20 @@ const GeneralExDetail = () => {
   const dispatch = useDispatch();
   const [showSchedule, setShowSchedule] = useState(false);
   const scheduleRef = useRef(null);
-  const { allPackages, loading, error } = useSelector(
-    (state: any) => state.generalExams
-  );
+
+  // Sử dụng selectors từ slice mới
+  const allPackages = useSelector(selectAllPackages);
+  const loading = useSelector(selectLoadingStatus);
+  const error = useSelector(selectError);
 
   const decodedName = decodeURIComponent(name || "Gói khám");
 
-  const currentPackage = allPackages.find(
-    (pkg: any) => decodeURIComponent(pkg.name) === decodedName
-  );
+  // Tìm gói khám hiện tại dựa trên tên
+  const currentPackage = allPackages.find((pkg) => pkg.name === decodedName);
 
   useEffect(() => {
     if (allPackages.length === 0) {
-      dispatch(fetchGeneralExams());
+      dispatch(fetchServicePackages());
     }
   }, [dispatch, allPackages.length]);
 
@@ -70,6 +76,54 @@ const GeneralExDetail = () => {
     );
   }
 
+  // Lấy danh mục và dịch vụ từ cấu trúc mới
+  const getServiceCategories = (currentPackage) => {
+    if (!currentPackage) return [];
+
+    // Nếu đã có sẵn cấu trúc details.categories
+    if (
+      currentPackage.details?.categories &&
+      Array.isArray(currentPackage.details.categories)
+    ) {
+      return currentPackage.details.categories;
+    }
+
+    // Nếu không có, tạo từ mối quan hệ items
+    if (currentPackage.items && Array.isArray(currentPackage.items)) {
+      // Nhóm items theo category
+      const itemsByCategory = {};
+
+      currentPackage.items.forEach((item) => {
+        const categoryId = item.categoryId;
+        const categoryName = item.category?.name || "Không phân loại";
+
+        if (!itemsByCategory[categoryId]) {
+          itemsByCategory[categoryId] = {
+            category: categoryName,
+            items: [],
+          };
+        }
+
+        // Thêm item vào danh mục tương ứng
+        itemsByCategory[categoryId].items.push({
+          name: item.name,
+          description: item.description,
+          duration: item.duration,
+          // Thêm thông tin khác nếu cần
+        });
+      });
+
+      return Object.values(itemsByCategory);
+    }
+
+    return [];
+  };
+
+  // Sau đó trong component (không phải trong điều kiện nào)
+  const serviceCategories = getServiceCategories(currentPackage);
+  console.log("currentPackage:", currentPackage);
+  console.log("serviceCategories:", serviceCategories);
+
   return (
     <div id="generalex-detail" className="w-full bg-gray-50 pb-10">
       <div className="container-fix-spe mx-auto px-4 sm:px-10">
@@ -77,7 +131,7 @@ const GeneralExDetail = () => {
 
         <div className="bg-white rounded-xl shadow-md p-6 mt-6 grid md:grid-cols-3 gap-6 ">
           <img
-            src={currentPackage.image}
+            src={currentPackage.image || "https://via.placeholder.com/400x240"}
             alt={currentPackage.name}
             className="w-full h-64 object-cover rounded-xl col-span-1"
           />
@@ -92,9 +146,17 @@ const GeneralExDetail = () => {
                   "Gói khám giúp đánh giá sức khỏe toàn diện, sàng lọc các bệnh lý phổ biến, phát hiện sớm để điều trị hiệu quả hơn."}
               </p>
               <ul className="text-gray-600 text-base list-disc ml-5 space-y-1">
-                <li>Khám tại Bệnh viện đa khoa uy tín</li>
+                {currentPackage.availableLocations &&
+                  currentPackage.availableLocations.length > 0 && (
+                    <li>
+                      Khám tại: {currentPackage.availableLocations.join(", ")}
+                    </li>
+                  )}
                 <li>Bác sĩ chuyên khoa, nhiều kinh nghiệm</li>
                 <li>Tư vấn kỹ sau khi có kết quả</li>
+                {currentPackage.target && (
+                  <li>Đối tượng: {currentPackage.target}</li>
+                )}
               </ul>
             </div>
             <div className="mt-6 flex items-center justify-between">
@@ -102,37 +164,17 @@ const GeneralExDetail = () => {
                 <p className="text-sm text-gray-500">
                   Đánh giá:{" "}
                   <span className="font-medium">
-                    {currentPackage.rating} ★ ({currentPackage.reviews} đánh
-                    giá)
+                    {currentPackage.rating || 4.5} ★ (
+                    {currentPackage.reviews || 0} đánh giá)
                   </span>
                 </p>
                 <p className="text-sm text-gray-500">
                   Giá gói:{" "}
                   <span className="text-red-600 font-semibold">
-                    {currentPackage.price?.toLocaleString("vi-VN")}đ
+                    {currentPackage.price?.toLocaleString("vi-VN") || 0}đ
                   </span>
                 </p>
               </div>
-              {/* <button
-                onClick={handleScheduleClick}
-                className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition duration-200 flex items-center justify-center group"
-              >
-                <svg
-                  className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  ></path>
-                </svg>
-                Đặt lịch khám
-              </button> */}
             </div>
           </div>
         </div>
@@ -165,7 +207,7 @@ const GeneralExDetail = () => {
               </svg>
               Đặt lịch khám sức khỏe
             </h2>
-            <PackageSchedule />
+            <PackageSchedule packageInfo={currentPackage} />
           </div>
         </div>
 
@@ -178,15 +220,19 @@ const GeneralExDetail = () => {
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <h3 className="text-lg font-semibold text-blue-700 mb-3">
-                  Danh sách dịch vụ
+                  Danh sách danh mục
                 </h3>
                 <ul className="list-disc ml-6 text-gray-700 space-y-1">
-                  {currentPackage.servicesIncluded?.map(
-                    (service: any, index: number) => (
-                      <li key={index} className="text-lg font-medium ">
-                        {service.category}
+                  {serviceCategories.length > 0 ? (
+                    serviceCategories.map((category, index) => (
+                      <li key={index} className="text-lg font-medium">
+                        {category.category}
                       </li>
-                    )
+                    ))
+                  ) : (
+                    <li className="text-gray-500">
+                      Không có thông tin chi tiết
+                    </li>
                   )}
                 </ul>
               </div>
@@ -216,7 +262,11 @@ const GeneralExDetail = () => {
                       Thời gian khám
                     </h4>
                     <p className="text-gray-600">
-                      {currentPackage.duration || "60-90 phút"}
+                      {currentPackage.totalDuration
+                        ? `${currentPackage.totalDuration} phút`
+                        : currentPackage.duration
+                        ? `${currentPackage.duration} phút`
+                        : "60-90 phút"}
                     </p>
                   </div>
 
@@ -239,14 +289,46 @@ const GeneralExDetail = () => {
                       Chuẩn bị trước khám
                     </h4>
                     <ul className="list-disc pl-5 space-y-1 text-gray-600">
-                      <li>Nhịn ăn 8-12 giờ trước khi khám</li>
-                      <li>Mang theo giấy tờ tùy thân</li>
-                      <li>
-                        Mang theo các kết quả khám, xét nghiệm trước đây (nếu
-                        có)
-                      </li>
+                      {currentPackage.preparation ? (
+                        <li>{currentPackage.preparation}</li>
+                      ) : (
+                        <>
+                          <li>Nhịn ăn 8-12 giờ trước khi khám</li>
+                          <li>Mang theo giấy tờ tùy thân</li>
+                          <li>
+                            Mang theo các kết quả khám, xét nghiệm trước đây
+                            (nếu có)
+                          </li>
+                        </>
+                      )}
                     </ul>
                   </div>
+
+                  {currentPackage.type === "medical" &&
+                    currentPackage.resultTime && (
+                      <div>
+                        <h4 className="font-medium text-gray-800 mb-1 flex items-center">
+                          <svg
+                            className="w-5 h-5 mr-2 text-blue-600"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                            ></path>
+                          </svg>
+                          Thời gian có kết quả
+                        </h4>
+                        <p className="text-gray-600">
+                          {currentPackage.resultTime}
+                        </p>
+                      </div>
+                    )}
 
                   <div>
                     <button
@@ -276,20 +358,20 @@ const GeneralExDetail = () => {
           </div>
         </div>
 
-        <div className="mt-10">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            Danh mục gói
-          </h2>
+        {serviceCategories.length > 0 && (
+          <div className="mt-10">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Chi tiết dịch vụ
+            </h2>
 
-          <div className="bg-white shadow p-6 rounded-xl space-y-6">
-            {currentPackage.servicesIncluded?.map(
-              (service: any, index: number) => (
+            <div className="bg-white shadow p-6 rounded-xl space-y-6">
+              {serviceCategories.map((category, index) => (
                 <div
                   key={index}
                   className="border-b pb-4 last:border-b-0 last:pb-0"
                 >
                   <h3 className="text-lg font-semibold text-blue-700 mb-3">
-                    {service.category}
+                    {category.category}
                   </h3>
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
@@ -307,30 +389,33 @@ const GeneralExDetail = () => {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {service.items.map((item, itemIndex) => (
-                          <tr
-                            key={itemIndex}
-                            className="hover:bg-gray-50 transition-colors"
-                          >
-                            <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                              {item.name}
-                            </td>
-                            <td className="px-6 py-4 text-gray-500">
-                              {item.description || "Không có mô tả"}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-gray-500">
-                              {item.duration || "30 phút"}
-                            </td>
-                          </tr>
-                        ))}
+                        {category.items &&
+                          category.items.map((item, itemIndex) => (
+                            <tr
+                              key={itemIndex}
+                              className="hover:bg-gray-50 transition-colors"
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                                {item.name}
+                              </td>
+                              <td className="px-6 py-4 text-gray-500">
+                                {item.description || "Không có mô tả"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                                {item.duration
+                                  ? `${item.duration} phút`
+                                  : "30 phút"}
+                              </td>
+                            </tr>
+                          ))}
                       </tbody>
                     </table>
                   </div>
                 </div>
-              )
-            )}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

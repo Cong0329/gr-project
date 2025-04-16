@@ -101,7 +101,7 @@ const DoctorSchedules = () => {
 
   return (
     <div className="bg-gray-50">
-      <div className="container-fix-spe mx-auto py-6">
+      <div className="container-fix-spe mx-auto px-4 py-6 sm:px-10">
         <div className="mb-6">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
@@ -131,7 +131,6 @@ const DoctorSchedules = () => {
         <div className="grid gap-6">
           {filteredDoctors.length > 0 ? (
             filteredDoctors.map((doctor) => {
-              // Lọc lịch cho bác sĩ này
               const doctorSchedules = specialistSchedules.filter(
                 (schedule) => schedule.doctor?.id === doctor.id
               );
@@ -183,11 +182,12 @@ const DoctorSchedules = () => {
                               key={schedule.id}
                               className={`text-gray-700 text-sm px-3 py-2 rounded-md text-center ${
                                 schedule.status === "booked"
-                                  ? "bg-red-300 cursor-not-allowed"
-                                  : "bg-green-200 hover:bg-green-300 cursor-pointer"
+                                  ? "bg-rose-100 text-rose-700 cursor-not-allowed"
+                                  : "bg-sky-100 hover:bg-sky-200 text-sky-700 cursor-pointer"
                               }`}
                             >
-                              {schedule.start_time} - {schedule.end_time}
+                              {schedule.start_time.slice(0, 5)} -{" "}
+                              {schedule.end_time.slice(0, 5)}
                             </span>
                           ))}
                         </div>
