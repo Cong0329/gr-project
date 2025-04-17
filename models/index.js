@@ -26,6 +26,8 @@ const ProductDetailModel = require("./product_detail.model");
 const ProductDetailSectionModel = require("./product_detail_section.model");
 const SectionIngredientModel = require("./section_ingredients.model");
 const SectionIngredientDescriptionModel = require("./section_ingredient_descriptions.model");
+const CartModel = require("./cart.model");
+const CartItemModel = require("./cart_items.model");
 
 
 
@@ -57,6 +59,8 @@ const SectionIngredientDescription = SectionIngredientDescriptionModel(sequelize
 const Schedule = ScheduleModel(sequelize, DataTypes);
 const GeneralPackage = GeneralPackageModel(sequelize, DataTypes);
 const MedicalPackage = MedicalPackageModel(sequelize, DataTypes);
+const Cart = CartModel(sequelize, DataTypes);
+const CartItem = CartItemModel(sequelize, DataTypes);
 
 
 
@@ -64,7 +68,7 @@ const MedicalPackage = MedicalPackageModel(sequelize, DataTypes);
 Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
 Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
 
-Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
+// Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
 Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
 
 
@@ -95,7 +99,9 @@ const db = {
   ProductDetail,
   ProductDetailSection,
   SectionIngredient, 
-  SectionIngredientDescription
+  SectionIngredientDescription,
+  Cart,
+  CartItem
 };
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)
