@@ -6,6 +6,7 @@ const requireRole = require('../middlewares/role.middleware');
 
 router.post('/', authenticateToken, requireRole('ROLE_ADMIN'), categoryController.createCategory);
 router.get('/', categoryController.getAllCategorys);
+router.get('/:name', categoryController.getProductsByCategoryName);
 router.put('/:id', authenticateToken, requireRole('ROLE_ADMIN'), categoryController.updateCategory);
 router.delete('/:id', authenticateToken, requireRole('ROLE_ADMIN'), categoryController.deleteCategory);
 

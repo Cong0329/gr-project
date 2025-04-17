@@ -7,13 +7,19 @@ module.exports = (sequelize, DataTypes) => {
         },
         name: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         }
     }, {
         tableName: 'origin',
-        timestamps: false
+        timestamps: true
     }
     );
-
+    Origin.associate = (models) => {
+        Origin.hasMany(models.Product, {
+            foreignKey: 'origin_id',
+            as: 'products',
+        });
+    };
     return Origin;
 };

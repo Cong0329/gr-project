@@ -1,4 +1,4 @@
-const { MedicalObject } = require('../models');
+const { MedicalObject, Product } = require('../models');
 
 exports.createMedicalObject = async (req, res) => {
     try {
@@ -64,4 +64,29 @@ exports.deleteMedicalObject = async (req, res) => {
 };
 
 
+exports.getProductsByMedicalObjectName = async (req, res) => {
+    const { name } = req.params;
+
+    try {
+        const medical_object = await MedicalObject.findOne({
+            where: { name: name },
+            include: [
+                {
+                    model: Product,
+                    as: 'products',
+                    attributes: ['id', 'name', 'slug', 'code', 'rating']
+                }
+            ]
+        });
+
+        if (!medical_object) return res.status(404).json({ message: 'Medical object not found' });
+
+        res.status(200).json({
+            products: medical_object.products
+        });
+    } catch (error) {
+        console.error('Error fetching products by medical object name:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
 
