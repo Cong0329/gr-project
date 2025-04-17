@@ -3,11 +3,14 @@ const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 // Import models
-const UserModel = require('./user.model');
-const RoleModel = require('./role.model');
 const DoctorModel = require('./doctor.model');
 const DepartmentModel = require('./department.model');
-const UserRoleModel = require("./user-role.model");
+const UserModel = require("./user.model");
+const RoleModel = require("./role.model");
+const UserRoleModel = require("./user-role.model"); // (Nếu có model trung gian)
+const GeneralPackageModel = require('./general-pkg.model');
+const MedicalPackageModel = require('./medical-pkg.model');
+const ScheduleModel = require('./schedule.model');
 const AddressModel = require("./address.model")
 const RefreshTokenModel = require("./refresh.model");
 const CountryModel = require("./country.model");
@@ -23,6 +26,7 @@ const ProductDetailModel = require("./product_detail.model");
 const ProductDetailSectionModel = require("./product_detail_section.model");
 const SectionIngredientModel = require("./section_ingredients.model");
 const SectionIngredientDescriptionModel = require("./section_ingredient_descriptions.model");
+
 
 
 // Import hàm thiết lập quan hệ
@@ -50,12 +54,18 @@ const ProductDetail = ProductDetailModel(sequelize, DataTypes);
 const ProductDetailSection = ProductDetailSectionModel(sequelize, DataTypes);
 const SectionIngredient = SectionIngredientModel(sequelize, DataTypes);
 const SectionIngredientDescription = SectionIngredientDescriptionModel(sequelize, DataTypes);
+const Schedule = ScheduleModel(sequelize, DataTypes);
+const GeneralPackage = GeneralPackageModel(sequelize, DataTypes);
+const MedicalPackage = MedicalPackageModel(sequelize, DataTypes);
 
 
 
-// Define relationships
-Doctor.belongsTo(Department, { foreignKey: 'department_id' });
-Department.hasMany(Doctor, { foreignKey: 'department_id' });
+
+Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
+Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
+
+Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
+Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
 
 
 
@@ -67,7 +77,10 @@ const db = {
   Role,
   Doctor,
   Department,
+  Schedule,
   UserRole,
+  GeneralPackage,
+  MedicalPackage,
   Address,
   RefreshToken,
   Country,
