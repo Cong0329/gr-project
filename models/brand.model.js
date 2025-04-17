@@ -1,3 +1,4 @@
+
 module.exports = (sequelize, DataTypes) => {
     const Brand = sequelize.define('Brand', {
         id: {
@@ -7,17 +8,24 @@ module.exports = (sequelize, DataTypes) => {
         },
         name: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         logo: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         }
     }, {
         tableName: 'brand',
         timestamps: false
     }
-);
+    );
+    Brand.associate = (models) => {
+        Brand.hasMany(models.Product, {
+            foreignKey: 'brand_id',
+            as: 'products',
+        });
+    };
 
     return Brand;
 };

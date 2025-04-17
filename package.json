@@ -26,6 +26,8 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "react-api": "file:",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "slugify": "^1.6.6",
+    "streamifier": "^0.1.1"
   }
 }

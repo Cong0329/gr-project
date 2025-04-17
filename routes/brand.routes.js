@@ -8,6 +8,7 @@ const requireRole = require('../middlewares/role.middleware');
 
 
 router.get('/', brandController.getAllBrands);
+router.get('/:name', brandController.getProductsByBrandName);
 router.post('/', authenticateToken, requireRole('ROLE_ADMIN'), upload.single('logo'), brandController.createBrand);
 router.put('/:id', authenticateToken,requireRole('ROLE_ADMIN'), upload.single('logo'), brandController.updateBrand);
 router.delete('/:id', authenticateToken, requireRole('ROLE_ADMIN'), brandController.deleteBrand);

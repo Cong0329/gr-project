@@ -1,10 +1,14 @@
-const { Brand } = require('../models');
+const { Brand, Product } = require('../models');
 const cloudinary = require('../utils/cloudinary');
 
 // Get all brands
 exports.getAllBrands = async (req, res) => {
   try {
-    const brands = await Brand.findAll();
+    const brands = await Brand.findAll(
+      {
+        attributes: ['id', 'name', 'logo'],
+      }
+    );
     res.json({ brands });
   } catch (err) {
     console.error('Get brands error:', err);
@@ -19,7 +23,7 @@ exports.createBrand = async (req, res) => {
     if (!req.file) return res.status(400).json({ message: 'Logo is required' });
 
     // Upload lên Cloudinary
-    const result =  cloudinary.uploader.upload_stream(
+    const result = cloudinary.uploader.upload_stream(
       { folder: 'brands' },
       async (error, result) => {
         if (error) return res.status(500).json({ message: 'Upload error', error });
@@ -60,7 +64,7 @@ exports.updateBrand = async (req, res) => {
 
     // Nếu có file ảnh mới
     if (file) {
-      const result =  cloudinary.uploader.upload_stream(
+      const result = cloudinary.uploader.upload_stream(
         { folder: 'brands' },
         async (error, result) => {
           if (error) {
@@ -94,11 +98,40 @@ exports.deleteBrand = async (req, res) => {
     const { id } = req.params;
     const brand = await Brand.findByPk(id);
     if (!brand) return res.status(404).json({ message: 'Brand not found' });
+    const publicId = brand.logo.split('/').pop().split('.')[0];
+    await cloudinary.uploader.destroy(`brands/${publicId}`);
 
     await brand.destroy();
     res.json({ message: 'Brand deleted' });
   } catch (err) {
     console.error('Delete brand error:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+exports.getProductsByBrandName = async (req, res) => {
+  const { name } = req.params;
+
+  try {
+    const brand = await Brand.findOne({
+      where: { name: name },
+      include: [
+        {
+          model: Product,
+          as: 'products',
+          attributes: ['id', 'name', 'slug', 'code', 'rating']
+        }
+      ]
+    });
+
+    if (!brand) return res.status(404).json({ message: 'Brand not found' });
+
+    res.status(200).json({
+      products: brand.products
+    });
+  } catch (error) {
+    console.error('Error fetching products by brand name:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

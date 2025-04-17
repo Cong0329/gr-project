@@ -1,3 +1,4 @@
+
 module.exports = (sequelize, DataTypes) => {
     const MedicalObject = sequelize.define('MedicalObject', {
         id: {
@@ -7,12 +8,18 @@ module.exports = (sequelize, DataTypes) => {
         },
         name: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         }
     }, {
         tableName: 'medical_object',
-        timestamps: false
+        timestamps: true
     });
-
+    MedicalObject.associate = (models) => {
+        MedicalObject.hasMany(models.Product, {
+            foreignKey: 'medical_object_id',
+            as: 'products',
+        });
+    };
     return MedicalObject;
 };

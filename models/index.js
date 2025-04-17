@@ -19,6 +19,13 @@ const OriginModel = require("./origin.model");
 const MedicalObjectModel = require("./medical_object.model");
 const IndicationModel = require("./indication.model");
 const CategoryModel = require("./category.model");
+const ProductModel = require("./product.model");
+const ProcuctImageModel = require("./product_image.model");
+const ProductOptionModel = require("./product_option.model");
+const ProductDetailModel = require("./product_detail.model");
+const ProductDetailSectionModel = require("./product_detail_section.model");
+const SectionIngredientModel = require("./section_ingredients.model");
+const SectionIngredientDescriptionModel = require("./section_ingredient_descriptions.model");
 
 
 
@@ -40,6 +47,13 @@ const Origin = OriginModel(sequelize, DataTypes);
 const MedicalObject = MedicalObjectModel(sequelize, DataTypes);
 const Indication = IndicationModel(sequelize, DataTypes); 
 const Category = CategoryModel(sequelize, DataTypes);
+const Product = ProductModel(sequelize, DataTypes);
+const ProductImage = ProcuctImageModel(sequelize, DataTypes);
+const ProductOption = ProductOptionModel(sequelize, DataTypes);
+const ProductDetail = ProductDetailModel(sequelize, DataTypes);
+const ProductDetailSection = ProductDetailSectionModel(sequelize, DataTypes);
+const SectionIngredient = SectionIngredientModel(sequelize, DataTypes);
+const SectionIngredientDescription = SectionIngredientDescriptionModel(sequelize, DataTypes);
 const Schedule = ScheduleModel(sequelize, DataTypes);
 const GeneralPackage = GeneralPackageModel(sequelize, DataTypes);
 const MedicalPackage = MedicalPackageModel(sequelize, DataTypes);
@@ -66,7 +80,7 @@ const db = {
   Schedule,
   UserRole,
   GeneralPackage,
-  MedicalPackage
+  MedicalPackage,
   Address,
   RefreshToken,
   Country,
@@ -74,7 +88,14 @@ const db = {
   Origin,
   MedicalObject,
   Indication,
-  Category
+  Category,
+  Product,
+  ProductImage,
+  ProductOption,
+  ProductDetail,
+  ProductDetailSection,
+  SectionIngredient, 
+  SectionIngredientDescription
 };
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)

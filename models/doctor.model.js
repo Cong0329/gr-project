@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
       deleted_by: DataTypes.BIGINT
     }, {
       tableName: 'doctor',
-      timestamps: false
+      timestamps: true
     });
   
     return Doctor;
