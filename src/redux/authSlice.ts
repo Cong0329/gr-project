@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 interface AuthState {
+  isUserAuthenticated: boolean;
   isAuthenticated: boolean;
   token: string | null;
 }
 
 const initialState: AuthState = {
+  isUserAuthenticated: false,
   isAuthenticated: false,
   token: null,
 };
