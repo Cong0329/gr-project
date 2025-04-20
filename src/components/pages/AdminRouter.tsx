@@ -18,11 +18,13 @@ import FormElements from "../admin/pages/Forms/FormElements";
 import Blank from "../admin/pages/Blank";
 import AppLayout from "../admin/layout/AppLayout";
 import Home from "../admin/pages/Dashboard/Home";
+import AdminProtectedRoute from '../../components/pages/AdminProtectedRoute';
 
 const adminRoutes = (
     <>
         {/* Dashboard Layout */}
-        <Route element={<AppLayout />}>
+
+        <Route element={<AdminProtectedRoute><AppLayout /></AdminProtectedRoute>}>
             <Route index path="/admin" element={<Home />} />
             <Route path="/admin/profile" element={<UserProfiles />} />
             <Route path="/admin/calendar" element={<Calendar />} />
@@ -48,8 +50,8 @@ const adminRoutes = (
         </Route>
 
         {/* Auth Routes */}
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="admin/signin" element={<SignIn />} />
+        <Route path="admin/signup" element={<SignUp />} />
 
         {/* Fallback */}
         <Route path="*" element={<NotFound />} />

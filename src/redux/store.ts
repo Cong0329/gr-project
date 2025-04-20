@@ -12,6 +12,7 @@ import servicePackageReducer from './servicePackageSlice'
 import medicalTestReducer from './medicalTestSlice';
 import profileReducer from './profileSlice';
 import navigationReducer from './navigationSlice';
+import authReducer from './authSlice';
 
 
 const persistConfig = {
@@ -34,6 +35,7 @@ export const store = configureStore({
     address: addressReducer,
     profile: profileReducer,
     navigation: navigationReducer,
+    auth: authReducer,
   },
 });
 export type AppDispatch = typeof store.dispatch;
