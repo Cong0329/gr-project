@@ -4,12 +4,14 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const indexRouter = require('./routes/index');
-const db = require('./config/db_connect');
+// const db = require('./config/db_connect');
 require('dotenv').config();
 const passport = require('passport');
 const { sequelize } = require('./models');
 require('./config/passport');
-db.connect();
+require('./jods/orderCancelJob');
+// db.connect();
+
 const app = express();
 app.use(cors());
 
@@ -22,17 +24,7 @@ app.use(passport.initialize());
 
 
 // Routers
-
 app.use('/api/v1', indexRouter);
-
-
-
-
-
-// Sync database tự động cập nhật schema mà không mất dữ liệu
-sequelize.sync({ alter: false })
-  .then(() => console.log('✅ DB synced (altered without data loss)'))
-  .catch(err => console.error('❌ DB sync error:', err));
 
 
 // catch 404 and forward to error handler

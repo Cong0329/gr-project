@@ -22,5 +22,8 @@ router.use('/product-image', require('./product_image.routes'));
 router.use('/product-option', require('./product_option.routes'));
 router.use('/product-detail', require('./product_detail.routes'));
 router.use('/detail-section', require('./detail_section.routes'));
+router.use('/cart', require('./cart.routes'));
+router.use('/order', require('./order.routes'));
+router.use('/payment', require('./payment.routes'));
 
 module.exports = router;

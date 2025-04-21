@@ -36,8 +36,8 @@ exports.getAddressesByUser = async (req, res) => {
   
       const addresses = await Address.findAll({
         where: { user_id },
-        order: [['created_at', 'DESC']],
-        attributes : { exclude: ['user_id', 'created_at', 'updated_at'] },
+        order: [['createdAt', 'DESC']],
+        attributes : { exclude: ['user_id', 'createdAt', 'updatedAt'] },
       });
   
       res.json({ addresses });
@@ -51,8 +51,8 @@ exports.getAddressesByUser = async (req, res) => {
   exports.getAllAddresses = async (req, res) => {
     try {
       const addresses = await Address.findAll({
-        order: [['created_at', 'DESC']],
-        attributes : { exclude: ['user_id', 'created_at', 'updated_at'] },
+        order: [['createdAt', 'DESC']],
+        attributes : { exclude: ['user_id', 'createdAt', 'updatedAt'] },
         include: [
           {
             model: User,

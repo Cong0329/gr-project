@@ -1,6 +1,6 @@
 const { Product } = require('../models');
 const { productExcludeAttributes, productIncludeOptions } = require('../utils/productInclude');
-const { pickProductFields } = require('../utils/productFileds');
+const  pickProductFields  = require('../utils/productFileds');
 
 // Creat Product
 exports.createProduct = async (req, res) => {
