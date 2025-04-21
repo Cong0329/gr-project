@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMedicalTests } from "../../../redux/medicalTestSlice";
+import {
+  fetchServicePackages,
+  selectAllPackages,
+  selectLoadingStatus,
+  selectError,
+  filterPackages,
+} from "../../../redux/servicePackageSlice";
 import { Search, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
@@ -10,25 +16,41 @@ const MedicalTestListPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { tests, loading, error } = useSelector((state) => state.medicalTests);
+  const allPackages = useSelector(selectAllPackages);
+  const loading = useSelector(selectLoadingStatus);
+  const error = useSelector(selectError);
+
+  // Filter packages to get only medical types
+  const medicalTests = allPackages.filter((pkg) => pkg.type === "medical");
 
   useEffect(() => {
-    dispatch(fetchMedicalTests());
-  }, [dispatch]);
+    if (allPackages.length === 0) {
+      dispatch(fetchServicePackages());
+    }
+  }, [dispatch, allPackages.length]);
 
-  const filteredTests =
-    tests && tests.length > 0
-      ? tests.filter((test) =>
-          test.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      : [];
+  // Update filtered packages when search term changes
+  useEffect(() => {
+    dispatch(filterPackages({ searchTerm }));
+  }, [dispatch, searchTerm]);
 
-  const featuredTest = tests && tests.length > 0 ? tests[0] : null;
+  const filteredTests = searchTerm
+    ? medicalTests.filter((test) =>
+        test.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : medicalTests;
+
+  const featuredTest = medicalTests.length > 0 ? medicalTests[0] : null;
 
   const handleTestClick = (testName) => {
     navigate(
       `/booking-home/medicaltest-detail/${encodeURIComponent(testName)}`
     );
+  };
+
+  const handleSearch = () => {
+    // Có thể thêm logic tìm kiếm nâng cao ở đây nếu cần
+    dispatch(filterPackages({ searchTerm }));
   };
 
   return (
@@ -56,7 +78,7 @@ const MedicalTestListPage = () => {
               />
               <button
                 className="absolute right-1 top-1 bg-blue-600 hover:bg-blue-700 text-white py-1 px-4 rounded-md transition-colors"
-                onClick={() => {}}
+                onClick={handleSearch}
               >
                 Tìm kiếm
               </button>
@@ -76,7 +98,7 @@ const MedicalTestListPage = () => {
                 <p className="text-red-500 font-medium">{error}</p>
                 <button
                   className="mt-4 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
-                  onClick={() => dispatch(fetchMedicalTests())}
+                  onClick={() => dispatch(fetchServicePackages())}
                 >
                   Thử lại
                 </button>

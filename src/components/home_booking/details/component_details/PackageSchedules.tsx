@@ -227,12 +227,15 @@ import { vi } from "date-fns/locale";
 import { Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
-const PackageSchedule = ({ packageData, onSubmit }) => {
+const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+
+  const navigate = useNavigate();
 
   const {
     handleSubmit,
@@ -246,10 +249,10 @@ const PackageSchedule = ({ packageData, onSubmit }) => {
   });
 
   // Nếu không có dữ liệu gói được truyền vào, sử dụng dữ liệu mẫu
-  const currentPackage = packageData || {
+  const currentPackage = currentTest || {
     id: 1,
-    name: "Gói xét nghiệm #1",
-    price: 1500000,
+    name: "Gói xét nghiệm mặc định",
+    price: 0,
     totalDuration: "60",
   };
 
@@ -292,23 +295,18 @@ const PackageSchedule = ({ packageData, onSubmit }) => {
   const processSubmit = (data) => {
     setIsSubmitting(true);
 
-    // If custom onSubmit is provided, use it
-    if (onSubmit) {
-      onSubmit({
-        packageData: currentPackage,
-        date: selectedDate,
-        time: selectedTime,
-      });
-      setIsSubmitting(false);
-      return;
-    }
-
-    // Default submission behavior
     setTimeout(() => {
-      alert(`Đã đặt lịch thành công!
-Gói: ${currentPackage.name}
-Ngày: ${format(selectedDate, "dd/MM/yyyy")}
-Giờ: ${selectedTime}`);
+      // Sau khi xử lý dữ liệu xong thì chuyển trang
+      navigate("/booking-home/appointment", {
+        state: {
+          packageInfo: {
+            name: currentPackage.name,
+            price: currentPackage.price,
+            date: format(selectedDate, "yyyy-MM-dd"),
+            time: selectedTime,
+          },
+        },
+      });
 
       setIsSubmitting(false);
     }, 1500);
@@ -325,6 +323,17 @@ Giờ: ${selectedTime}`);
       return "Ngày mai";
     }
     return format(date, "dd/MM/yyyy");
+  };
+
+  const handleCreateAppointment = () => {
+    navigate("/booking-home/appointment", {
+      state: {
+        packageInfo: {
+          name: currentTest.name,
+          price: currentTest.price,
+        },
+      },
+    });
   };
 
   return (
@@ -472,7 +481,7 @@ Giờ: ${selectedTime}`);
                 Đang xử lý...
               </span>
             ) : (
-              "Xác nhận đặt lịch"
+              "Tiếp tục"
             )}
           </button>
         </div>

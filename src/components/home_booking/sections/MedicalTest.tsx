@@ -1,6 +1,11 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMedicalTests } from "../../../redux/medicalTestSlice";
+import {
+  fetchServicePackages,
+  selectAllPackages,
+  selectLoadingStatus,
+  selectError,
+} from "../../../redux/servicePackageSlice";
 import "./MedicalTest.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -10,11 +15,18 @@ import { Link } from "react-router-dom";
 
 const MedicalTest = () => {
   const dispatch = useDispatch();
-  const { tests, loading, error } = useSelector((state) => state.medicalTests);
+  const allPackages = useSelector(selectAllPackages);
+  const loading = useSelector(selectLoadingStatus);
+  const error = useSelector(selectError);
+
+  // Filter packages to get only medical types
+  const medicalTests = allPackages.filter((pkg) => pkg.type === "medical");
 
   useEffect(() => {
-    dispatch(fetchMedicalTests());
-  }, [dispatch]);
+    if (allPackages.length === 0) {
+      dispatch(fetchServicePackages());
+    }
+  }, [dispatch, allPackages.length]);
 
   const settings = {
     dots: true,
@@ -51,17 +63,15 @@ const MedicalTest = () => {
   };
 
   const getPopularTests = () => {
-    return tests.slice(0, 8);
+    return medicalTests.slice(0, 8);
   };
 
   const getRecentTests = () => {
-    return [...tests].reverse().slice(0, 4);
+    return [...medicalTests].reverse().slice(0, 4);
   };
 
   const getMostValuableTests = () => {
-    return [...tests]
-      .sort((a, b) => Number(b.price) - Number(a.price))
-      .slice(0, 4);
+    return [...medicalTests].sort((a, b) => b.price - a.price).slice(0, 4);
   };
 
   if (loading) {
@@ -92,7 +102,7 @@ const MedicalTest = () => {
           </div>
 
           <div className="mb-8">
-            {tests.length > 0 ? (
+            {medicalTests.length > 0 ? (
               <Slider {...settings}>
                 {getPopularTests().map((test) => (
                   <div key={test.id} className="px-2">
@@ -116,7 +126,7 @@ const MedicalTest = () => {
                           </div>
                           {test.price && (
                             <div className="text-xs text-gray-600">
-                              {Number(test.price).toLocaleString("vi-VN")} VNĐ
+                              {test.price.toLocaleString("vi-VN")} VNĐ
                             </div>
                           )}
                         </div>
@@ -255,7 +265,7 @@ const MedicalTest = () => {
                       <div className="font-medium">{test.name}</div>
                       {test.price && (
                         <div className="text-xs text-gray-600">
-                          {Number(test.price).toLocaleString("vi-VN")} VNĐ
+                          {test.price.toLocaleString("vi-VN")} VNĐ
                         </div>
                       )}
                     </div>
@@ -288,7 +298,7 @@ const MedicalTest = () => {
                       <div className="font-medium">{test.name}</div>
                       {test.price && (
                         <div className="text-xs text-gray-600">
-                          {Number(test.price).toLocaleString("vi-VN")} VNĐ
+                          {test.price.toLocaleString("vi-VN")} VNĐ
                         </div>
                       )}
                     </div>

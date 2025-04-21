@@ -9,7 +9,6 @@ import doctorReducer from './doctorSlice';
 import departmentReducer from './departmentSlice'
 import addressReducer from './addressSlice';
 import servicePackageReducer from './servicePackageSlice'
-import medicalTestReducer from './medicalTestSlice';
 import profileReducer from './profileSlice';
 import navigationReducer from './navigationSlice';
 
@@ -28,7 +27,6 @@ export const store = configureStore({
     doctors: doctorReducer,
     departments: departmentReducer,
     servicePackage: servicePackageReducer,
-    medicalTests: medicalTestReducer,
     filters: filterReducer,
     cart: persistedReducer,
     address: addressReducer,
