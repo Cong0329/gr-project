@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     const ProductDetailSection = sequelize.define('ProductDetailSection', {
       id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
       product_detail_id: { type: DataTypes.BIGINT, allowNull: false },
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM('Product Description', 'Ingredients', 'Benefits', 'Usage', 'Side Effects', 'Warnings', 'Storage'),
       title: DataTypes.STRING,
       image: DataTypes.TEXT,
       text_description: DataTypes.TEXT

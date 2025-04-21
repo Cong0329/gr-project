@@ -1,3 +1,4 @@
+
 // models/user-role.model.js
 module.exports = (sequelize, DataTypes) => {
     const UserRole = sequelize.define(

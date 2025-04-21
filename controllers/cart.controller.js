@@ -143,13 +143,25 @@ exports.updateCartItem = async (req, res) => {
     }
 
     // Update quantity nếu có
-    if (quantity && quantity > 0) {
-      cartItem.quantity = quantity;
-    } else {
-      return res.status(400).json({ message: 'Quantity must be greater than 0' });
+    // Update quantity nếu có truyền vào
+    if (quantity !== undefined) {
+      if (quantity > 0) {
+        cartItem.quantity = quantity;
+      } else {
+        return res.status(400).json({ message: 'Quantity must be greater than 0' });
+      }
     }
 
+
     await cartItem.save();
+    await cartItem.reload({
+      include: [
+        {
+          model: ProductOption,
+          as: 'option',
+        },
+      ],
+    });
 
     res.status(200).json({
       message: 'Cart item updated successfully',
