@@ -39,13 +39,6 @@ module.exports = (sequelize, DataTypes) => {
       as: 'category'
     });
     
-    // Quan hệ với ServicePackage thông qua bảng trung gian
-    ServiceItem.belongsToMany(models.ServicePackage, {
-      through: 'package_items',
-      foreignKey: 'itemId',
-      otherKey: 'packageId', 
-      as: 'packages'
-    });
   };
 
   return ServiceItem;

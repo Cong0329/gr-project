@@ -2,28 +2,23 @@ module.exports = (sequelize, DataTypes) => {
     const PackageItem = sequelize.define('PackageItem', {
       packageId: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
-        references: {
-          model: 'service_packages',
-          key: 'id'
-        }
+        
+        allowNull: false
       },
       itemId: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
-        references: {
-          model: 'service_items',
-          key: 'id'
-        }
+        
+        allowNull: false
       },
       quantity: {
         type: DataTypes.INTEGER,
-        defaultValue: 1,
+        defaultValue: 0,
       }
     }, {
       tableName: 'package_items',
       timestamps: false
     });
-  
+      
     return PackageItem;
   };
+  

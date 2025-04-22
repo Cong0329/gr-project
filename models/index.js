@@ -25,6 +25,7 @@ const PackageItemModel = require("./package-item.model")
 
 // Import hàm thiết lập quan hệ
 const setupUserRoleAssociations = require("../associations/user-role.association");
+const setupPackageServiceAssociations = require("../associations/package-item.association")
 
 
 // Khởi tạo models
@@ -73,6 +74,7 @@ const db = {
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)
 setupUserRoleAssociations(User, Role, UserRole); 
+setupPackageServiceAssociations(ServicePackage, ServiceItem, PackageItem);
 
 // Gọi associate() cho các model nếu có hàm này
 Object.values(db).forEach((model) => {

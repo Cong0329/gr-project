@@ -23,12 +23,21 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const newDepartment = await Department.create(req.body);
-    res.status(201).json(newDepartment);
+    let result;
+
+    if (Array.isArray(req.body)) {
+      result = await Department.bulkCreate(req.body);
+    } else {
+      result = await Department.create(req.body);
+    }
+
+    res.status(201).json(result);
   } catch (error) {
+    console.error('Lỗi POST Department:', error);
     res.status(500).json({ error: error.message });
   }
 });
+
 
 router.put("/:id", async (req, res) => {
   try {

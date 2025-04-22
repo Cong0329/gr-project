@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
         model: 'service_categories',
         key: 'id'
       },
-      comment: 'Để lưu trữ danh mục cha (nếu có)'
     },
     name: {
       type: DataTypes.STRING,
@@ -25,7 +24,6 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   ServiceCategory.associate = function(models) {
-    // Quan hệ tự tham chiếu
     ServiceCategory.hasMany(models.ServiceCategory, {
       foreignKey: 'parentId',
       as: 'subCategories'
@@ -36,13 +34,11 @@ module.exports = (sequelize, DataTypes) => {
       as: 'parentCategory'
     });
     
-    // Quan hệ với ServicePackage
     ServiceCategory.hasMany(models.ServicePackage, {
       foreignKey: 'categoryId',
       as: 'servicePackages'
     });
     
-    // Quan hệ với ServiceItem
     ServiceCategory.hasMany(models.ServiceItem, {
       foreignKey: 'categoryId',
       as: 'serviceItems'

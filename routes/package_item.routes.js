@@ -10,9 +10,7 @@ router.post('/:itemId/package/:packageId',
     requireRole('ROLE_ADMIN'),
     itemController.removeItemFromPackage
   );
-  
-  module.exports = router;
-  
+    
   // File: routes/index.js
   const express = require('express');
   const router = express.Router();
