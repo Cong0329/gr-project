@@ -6,6 +6,7 @@ const requireRole = require('../middlewares/role.middleware');
 
 router.post('/', authenticateToken, requireRole('ROLE_ADMIN'), countryController.createCountry);
 router.get('/', countryController.getAllCountries);
+router.get('/:name', countryController.getProductsByCountryName);
 router.put('/:id', authenticateToken, requireRole('ROLE_ADMIN'), countryController.updateCountry);
 router.delete('/:id', authenticateToken, requireRole('ROLE_ADMIN'), countryController.deleteCountry);
 

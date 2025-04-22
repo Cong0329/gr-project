@@ -1,4 +1,4 @@
-const { Indication } = require('../models');
+const { Indication, Product } = require('../models');
 
 exports.createIndication = async (req, res) => {
     try {
@@ -66,3 +66,28 @@ exports.deleteIndication = async (req, res) => {
 
 
 
+exports.getProductsByIndicationName = async (req, res) => {
+    const { name } = req.params;
+
+    try {
+        const indication = await Indication.findOne({
+            where: { name: name },
+            include: [
+                {
+                    model: Product,
+                    as: 'products',
+                    attributes: ['id', 'name', 'slug', 'code', 'rating']
+                }
+            ]
+        });
+
+        if (!indication) return res.status(404).json({ message: 'Indication not found' });
+
+        res.status(200).json({
+            products: indication.products
+        });
+    } catch (error) {
+        console.error('Error fetching products by Indication name:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};

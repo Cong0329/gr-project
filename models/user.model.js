@@ -11,30 +11,15 @@ module.exports = (sequelize, DataTypes) => {
     phone: DataTypes.STRING,
     gender: DataTypes.ENUM('MALE', 'FEMALE', 'OTHER'),
     avatar_url: DataTypes.STRING,
-    email: { type: DataTypes.STRING, allowNull: false },
+    email: { type: DataTypes.STRING, allowNull: false, unique: true },
     password: DataTypes.STRING,
     provider: DataTypes.STRING,
     provider_id: DataTypes.STRING,
     verify_code: { type: DataTypes.INTEGER, allowNull: true },
     verify_code_expires_at: { type: DataTypes.DATE, allowNull: true },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-      onUpdate: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    deleted_at: DataTypes.DATE,
-    created_by: DataTypes.BIGINT,
-    updated_by: DataTypes.BIGINT,
-    deleted_by: DataTypes.BIGINT
   }, {
     tableName: 'user',
-    timestamps: false
+    timestamps: true
   });
 
   return User;

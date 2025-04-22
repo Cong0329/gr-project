@@ -1,3 +1,5 @@
+
+
 module.exports = (sequelize, DataTypes) => {
     const Indication = sequelize.define('Indication', {
         id: {
@@ -7,11 +9,18 @@ module.exports = (sequelize, DataTypes) => {
         },
         name: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         }
     }, {
         tableName: 'indication',
-        timestamps: false
+        timestamps: true
     });
+    Indication.associate = (models) => {
+        Indication.hasMany(models.Product, {
+            foreignKey: 'indication_id',
+            as: 'products',
+        });
+    };
     return Indication;
 };

@@ -1,4 +1,4 @@
-const { Origin } = require('../models');
+const { Origin, Product } = require('../models');
 
 exports.createOrigin = async (req, res) => {
     try {
@@ -64,5 +64,30 @@ exports.deleteOrigin = async (req, res) => {
     }
 };
 
+exports.getProductsByOriginName = async (req, res) => {
+    const { name } = req.params;
+
+    try {
+        const origin = await Origin.findOne({
+            where: { name: name },
+            include: [
+                {
+                    model: Product,
+                    as: 'products',
+                    attributes: ['id', 'name', 'slug', 'code', 'rating']
+                }
+            ]
+        });
+
+        if (!origin) return res.status(404).json({ message: 'Origin not found' });
+
+        res.status(200).json({
+            products: origin.products
+        });
+    } catch (error) {
+        console.error('Error fetching products by origin name:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
 
 

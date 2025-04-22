@@ -20,5 +20,15 @@ router.use('/indication', require('./indication.routes'));
 router.use('/service-pkg', require('./service_pkg.routes'));
 router.use('/service-item', require('./service_item.routes'));
 router.use('/service-category', require('./service_category.routes'));
+router.use('/medical-object', require('./medical_object.routes'));
+router.use('/product', require('./product.routes'));
+router.use('/product-image', require('./product_image.routes'));
+router.use('/product-option', require('./product_option.routes'));
+router.use('/product-detail', require('./product_detail.routes'));
+router.use('/detail-section', require('./detail_section.routes'));
+router.use('/cart', require('./cart.routes'));
+router.use('/order', require('./order.routes'));
+router.use('/payment', require('./payment.routes'));
+
 
 module.exports = router;

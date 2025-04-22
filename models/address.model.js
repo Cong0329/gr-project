@@ -1,5 +1,4 @@
 
-
 module.exports = (sequelize, DataTypes) => {
     const Address = sequelize.define(
         "Address",
@@ -45,20 +44,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.BOOLEAN,
                 allowNull: false,
             },
-            created_at: {
-                type: DataTypes.DATE,
-                allowNull: false,
-                defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
-            },
-            updated_at: {
-                type: DataTypes.DATE,
-                allowNull: false,
-                defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
-            },
+        
         },
         {
             tableName: "address",
-            timestamps: false,
+            timestamps: true,
         }
     );
     Address.associate = (models) => {

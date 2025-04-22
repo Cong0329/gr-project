@@ -6,6 +6,7 @@ const requireRole = require('../middlewares/role.middleware');
 
 router.post('/', authenticateToken, requireRole('ROLE_ADMIN'), indicationController.createIndication);
 router.get('/', indicationController.getAllIndications);
+router.get('/:name', indicationController.getProductsByIndicationName);
 router.put('/:id', authenticateToken, requireRole('ROLE_ADMIN'), indicationController.updateIndication);
 router.delete('/:id', authenticateToken, requireRole('ROLE_ADMIN'), indicationController.deleteIndication);
 
