@@ -129,10 +129,8 @@ module.exports = (sequelize, DataTypes) => {
     let model;
     switch (this.type) {
       case 'general':
-        model = sequelize.models.GeneralPackage;
-        break;
       case 'medical':
-        model = sequelize.models.MedicalPackage;
+        model = sequelize.models.ServicePackage;
         break;
       case 'specialist':
       case 'specialist_online':
