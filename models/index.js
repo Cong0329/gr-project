@@ -8,8 +8,7 @@ const DepartmentModel = require('./department.model');
 const UserModel = require("./user.model");
 const RoleModel = require("./role.model");
 const UserRoleModel = require("./user-role.model"); // (Nếu có model trung gian)
-const GeneralPackageModel = require('./general-pkg.model');
-const MedicalPackageModel = require('./medical-pkg.model');
+const ServicePackageModel = require('./service-pkg.model');
 const ScheduleModel = require('./schedule.model');
 const AddressModel = require("./address.model")
 const RefreshTokenModel = require("./refresh.model");
@@ -19,6 +18,9 @@ const OriginModel = require("./origin.model");
 const MedicalObjectModel = require("./medical_object.model");
 const IndicationModel = require("./indication.model");
 const CategoryModel = require("./category.model");
+const ServiceCategoryModel = require("./service-category.model");
+const ServiceItemModel = require("./service-item.model");
+const PackageItemModel = require("./package-item.model");
 const ProductModel = require("./product.model");
 const ProcuctImageModel = require("./product_image.model");
 const ProductOptionModel = require("./product_option.model");
@@ -36,6 +38,7 @@ const PaymentMethodModel = require("./payment_method.model");
 
 // Import hàm thiết lập quan hệ
 const setupUserRoleAssociations = require("../associations/user-role.association");
+const setupPackageServiceAssociations = require("../associations/package-item.association")
 
 
 // Khởi tạo models
@@ -60,8 +63,10 @@ const ProductDetailSection = ProductDetailSectionModel(sequelize, DataTypes);
 const SectionIngredient = SectionIngredientModel(sequelize, DataTypes);
 const SectionIngredientDescription = SectionIngredientDescriptionModel(sequelize, DataTypes);
 const Schedule = ScheduleModel(sequelize, DataTypes);
-const GeneralPackage = GeneralPackageModel(sequelize, DataTypes);
-const MedicalPackage = MedicalPackageModel(sequelize, DataTypes);
+const ServicePackage = ServicePackageModel(sequelize, DataTypes);
+const ServiceCategory = ServiceCategoryModel(sequelize, DataTypes);
+const ServiceItem = ServiceItemModel(sequelize, DataTypes);
+const PackageItem = PackageItemModel(sequelize, DataTypes);
 const Cart = CartModel(sequelize, DataTypes);
 const CartItem = CartItemModel(sequelize, DataTypes);
 const Order = OrderModel(sequelize, DataTypes);
@@ -80,6 +85,7 @@ Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
 
 
 
+
 // Tạo đối tượng db để xuất tất cả models
 const db = {
   sequelize,
@@ -89,8 +95,7 @@ const db = {
   Department,
   Schedule,
   UserRole,
-  GeneralPackage,
-  MedicalPackage,
+  ServicePackage,
   Address,
   RefreshToken,
   Country,
@@ -99,6 +104,9 @@ const db = {
   MedicalObject,
   Indication,
   Category,
+  ServiceCategory,
+  ServiceItem,
+  PackageItem,
   Product,
   ProductImage,
   ProductOption,
@@ -115,6 +123,7 @@ const db = {
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)
 setupUserRoleAssociations(User, Role, UserRole); 
+setupPackageServiceAssociations(ServicePackage, ServiceItem, PackageItem);
 
 // Gọi associate() cho các model nếu có hàm này
 Object.values(db).forEach((model) => {
