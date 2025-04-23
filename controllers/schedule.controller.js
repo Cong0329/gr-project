@@ -1,4 +1,4 @@
-const { Schedule, Doctor, Department, GeneralPackage, MedicalPackage, Appointment } = require('../models');
+const { Schedule, Doctor, Department, ServicePackage, Appointment, PackageBookingRequest, DoctorAssignment, User } = require('../models');
 const { Op } = require('sequelize');
 const { validationResult } = require('express-validator');
 
@@ -122,14 +122,29 @@ exports.getSpecialistSchedules = async (req, res, next) => {
 };
 
 /**
- * Lấy lịch trình bác sĩ khám tổng quát
+ * Lấy lịch trình cho các gói dịch vụ (cả general và medical)
  */
-exports.getGeneralSchedules = async (req, res, next) => {
+exports.getServicePackageSchedules = async (req, res, next) => {
   try {
+    const { package_type } = req.query;
+    
+    const whereClause = {
+      type: 'service_package'
+    };
+    
+    // Nếu có chỉ định loại gói, thêm điều kiện để join với loại package tương ứng
+    const packageInclude = {
+      model: ServicePackage,
+      as: 'service_package',
+      attributes: ['id', 'name', 'price', 'description', 'type']
+    };
+    
+    if (package_type) {
+      packageInclude.where = { type: package_type };
+    }
+
     const schedules = await Schedule.findAll({
-      where: {
-        type: 'general'
-      },
+      where: whereClause,
       include: [
         { 
           model: Doctor, 
@@ -143,49 +158,14 @@ exports.getGeneralSchedules = async (req, res, next) => {
             }
           ]
         },
-        {
-          model: GeneralPackage,
-          as: 'general_pkg',
-          attributes: ['id', 'name', 'price', 'description']
-        }
+        packageInclude
       ],
       order: [['date', 'ASC'], ['start_time', 'ASC']]
     });
 
     res.json(schedules);
   } catch (error) {
-    console.error('Error in getGeneralSchedules:', error);
-    next(error);
-  }
-};
-
-/**
- * Lấy lịch trình khám gói y tế
- */
-exports.getMedicalSchedules = async (req, res, next) => {
-  try {
-    const schedules = await Schedule.findAll({
-      where: {
-        type: 'medical'
-      },
-      include: [
-        { 
-          model: Doctor, 
-          as: 'doctor',
-          attributes: ['id', 'name', 'avatar', 'position']
-        },
-        {
-          model: MedicalPackage,
-          as: 'medical_pkg',
-          attributes: ['id', 'name', 'price', 'description']
-        }
-      ],
-      order: [['date', 'ASC'], ['start_time', 'ASC']]
-    });
-
-    res.json(schedules);
-  } catch (error) {
-    console.error('Error in getMedicalSchedules:', error);
+    console.error('Error in getServicePackageSchedules:', error);
     next(error);
   }
 };
@@ -306,13 +286,9 @@ exports.getScheduleById = async (req, res) => {
     let service = null;
     
     switch (schedule.type) {
-      case 'general':
-        service = await GeneralPackage.findByPk(schedule.service_id);
-        schedule.dataValues.general_pkg = service;
-        break;
-      case 'medical':
-        service = await MedicalPackage.findByPk(schedule.service_id);
-        schedule.dataValues.medical_pkg = service;
+      case 'service_package':
+        service = await ServicePackage.findByPk(schedule.service_id);
+        schedule.dataValues.service_package = service;
         break;
       case 'specialist':
       case 'specialist_online':
@@ -336,6 +312,9 @@ exports.getScheduleById = async (req, res) => {
  */
 exports.createSchedule = async (req, res) => {
   try {
+    console.log('🔥 User:', req.user);
+    console.log('🔥 Roles:', req.user?.roles);
+    console.log('🔥 Body:', req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
@@ -493,7 +472,324 @@ exports.deleteSchedule = async (req, res) => {
 };
 
 /**
- * Tạo yêu cầu đặt lịch khám - Có thể dùng cho USER và PUBLIC
+ * Tạo yêu cầu đặt lịch khám Package - Dành cho USER
+ */
+exports.createPackageBookingRequest = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ 
+        success: false,
+        errors: errors.array() 
+      });
+    }
+
+    // Thêm user_id từ token
+    let bookingData = { 
+      ...req.body,
+      status: 'pending',
+      user_id: req.user.id
+    };
+
+    const booking = await PackageBookingRequest.create(bookingData);
+
+    res.status(201).json(booking);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server Error' 
+    });
+  }
+};
+
+/**
+ * Lấy danh sách yêu cầu đặt lịch gói dịch vụ - dành cho ADMIN và DOCTOR
+ */
+exports.getPackageBookingRequests = async (req, res) => {
+  try {
+    const { 
+      package_type, 
+      status,
+      page = 1,
+      limit = 10
+    } = req.query;
+
+    const whereClause = {};
+    if (package_type) whereClause.package_type = package_type;
+    if (status) whereClause.status = status;
+
+    // Nếu là bác sĩ, chỉ lấy những yêu cầu phù hợp với chuyên môn của họ
+    // Logic này phụ thuộc vào cách bạn xác định "phù hợp với chuyên môn"
+
+    const bookings = await PackageBookingRequest.findAndCountAll({
+      where: whereClause,
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'name', 'email', 'phone', 'avatar']
+        },
+        {
+          model: ServicePackage,
+          as: 'package',
+          attributes: ['id', 'name', 'type', 'price', 'description']
+        },
+        {
+          model: DoctorAssignment,
+          as: 'doctorAssignments',
+          include: [
+            {
+              model: Doctor,
+              as: 'doctor',
+              attributes: ['id', 'name', 'avatar', 'position']
+            }
+          ]
+        }
+      ],
+      order: [['created_at', 'DESC']],
+      limit: parseInt(limit),
+      offset: (parseInt(page) - 1) * parseInt(limit)
+    });
+
+    res.json({
+      bookings: bookings.rows,
+      total: bookings.count,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      pages: Math.ceil(bookings.count / parseInt(limit))
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server Error' 
+    });
+  }
+};
+
+/**
+ * Bác sĩ đăng ký nhận yêu cầu khám gói dịch vụ
+ */
+exports.requestAssignment = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ 
+        success: false,
+        errors: errors.array() 
+      });
+    }
+
+    const { booking_request_id, doctor_note } = req.body;
+    const doctor_id = req.user.id; // Lấy doctor_id từ user đã đăng nhập
+
+    // Kiểm tra xem yêu cầu đặt lịch có tồn tại không
+    const bookingRequest = await PackageBookingRequest.findByPk(booking_request_id);
+    if (!bookingRequest) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Booking request not found' 
+      });
+    }
+
+    // Kiểm tra xem bác sĩ đã đăng ký yêu cầu này chưa
+    const existingAssignment = await DoctorAssignment.findOne({
+      where: {
+        booking_request_id,
+        doctor_id
+      }
+    });
+
+    if (existingAssignment) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'You have already requested this assignment' 
+      });
+    }
+
+    // Tạo mới đăng ký
+    const assignment = await DoctorAssignment.create({
+      booking_request_id,
+      doctor_id,
+      doctor_note,
+      status: 'doctor_requested'
+    });
+
+    // Cập nhật trạng thái booking request để hiển thị có bác sĩ quan tâm
+    await bookingRequest.update({ status: 'doctor_requested' });
+
+    res.status(201).json(assignment);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server Error' 
+    });
+  }
+};
+
+/**
+ * Admin phê duyệt/từ chối đăng ký của bác sĩ
+ */
+exports.approveAssignment = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ 
+        success: false,
+        errors: errors.array() 
+      });
+    }
+
+    const { id } = req.params;
+    const { status, admin_note } = req.body;
+
+    // Chỉ cho phép các trạng thái hợp lệ
+    if (status !== 'approved' && status !== 'rejected_by_admin') {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Invalid status. Must be approved or rejected_by_admin' 
+      });
+    }
+
+    // Kiểm tra xem assignment có tồn tại không
+    const assignment = await DoctorAssignment.findByPk(id, {
+      include: [
+        {
+          model: PackageBookingRequest,
+          as: 'bookingRequest'
+        }
+      ]
+    });
+
+    if (!assignment) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Assignment not found' 
+      });
+    }
+
+    // Cập nhật trạng thái assignment
+    await assignment.update({
+      status,
+      admin_note
+    });
+
+    // Nếu phê duyệt, cập nhật trạng thái booking request và tạo lịch
+    if (status === 'approved') {
+      // Cập nhật trạng thái booking request
+      await assignment.bookingRequest.update({
+        status: 'assigned'
+      });
+
+      // Tạo lịch mới cho bác sĩ và bệnh nhân
+      const schedule = await Schedule.create({
+        doctor_id: assignment.doctor_id,
+        date: assignment.bookingRequest.requested_date,
+        start_time: assignment.bookingRequest.requested_time_slot.split('-')[0],
+        end_time: assignment.bookingRequest.requested_time_slot.split('-')[1],
+        type: 'service_package',
+        service_id: assignment.bookingRequest.package_id,
+        status: 'booked'
+      });
+
+      // Cập nhật schedule_id vào booking request
+      await assignment.bookingRequest.update({
+        schedule_id: schedule.id
+      });
+
+      // Bổ sung thông tin lịch vào kết quả trả về
+      assignment.dataValues.schedule = schedule;
+    }
+
+    res.json(assignment);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server Error' 
+    });
+  }
+};
+
+/**
+ * Admin chủ động phân công bác sĩ
+ */
+exports.assignDoctor = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ 
+        success: false,
+        errors: errors.array() 
+      });
+    }
+
+    const { booking_request_id, doctor_id, admin_note } = req.body;
+
+    // Kiểm tra xem yêu cầu đặt lịch có tồn tại không
+    const bookingRequest = await PackageBookingRequest.findByPk(booking_request_id);
+    if (!bookingRequest) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Booking request not found' 
+      });
+    }
+
+    // Kiểm tra xem bác sĩ có tồn tại không
+    const doctor = await Doctor.findByPk(doctor_id);
+    if (!doctor) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Doctor not found' 
+      });
+    }
+
+    // Tạo mới assignment với trạng thái admin_assigned
+    const assignment = await DoctorAssignment.create({
+      booking_request_id,
+      doctor_id,
+      admin_note,
+      status: 'admin_assigned'
+    });
+
+    // Cập nhật trạng thái booking request
+    await bookingRequest.update({
+      status: 'assigned'
+    });
+
+    // Tạo lịch mới cho bác sĩ và bệnh nhân
+    const schedule = await Schedule.create({
+      doctor_id: doctor_id,
+      date: bookingRequest.requested_date,
+      start_time: bookingRequest.requested_time_slot.split('-')[0],
+      end_time: bookingRequest.requested_time_slot.split('-')[1],
+      type: 'service_package',
+      service_id: bookingRequest.package_id,
+      status: 'booked'
+    });
+
+    // Cập nhật schedule_id vào booking request
+    await bookingRequest.update({
+      schedule_id: schedule.id
+    });
+
+    // Bổ sung thông tin lịch vào kết quả trả về
+    assignment.dataValues.schedule = schedule;
+
+    res.status(201).json(assignment);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Server Error' 
+    });
+  }
+};
+
+/**
+ * Tạo yêu cầu đặt lịch khám thông thường - Có thể dùng cho USER và PUBLIC
  */
 exports.createAppointment = async (req, res) => {
   try {

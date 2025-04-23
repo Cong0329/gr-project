@@ -33,12 +33,15 @@ const CartItemModel = require("./cart_items.model");
 const OrderModel = require("./order.model");
 const OrderItemModel = require("./order_item.model");
 const PaymentMethodModel = require("./payment_method.model");
+const PackageBookingRequestModel = require("./packageBookingRequest.model");
+const DoctorAssignmentModel = require("./doctorAssignment.model");
+
 
 
 
 // Import hàm thiết lập quan hệ
 const setupUserRoleAssociations = require("../associations/user-role.association");
-const setupPackageServiceAssociations = require("../associations/package-item.association")
+const setupPackageServiceAssociations = require("../associations/package-item.association");
 
 
 // Khởi tạo models
@@ -72,18 +75,8 @@ const CartItem = CartItemModel(sequelize, DataTypes);
 const Order = OrderModel(sequelize, DataTypes);
 const OrderItem = OrderItemModel(sequelize, DataTypes);
 const PaymentMethod = PaymentMethodModel(sequelize, DataTypes);
-
-
-
-
-Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
-Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
-
-// Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
-Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
-
-
-
+const PackageBookingRequest = PackageBookingRequestModel(sequelize, DataTypes);
+const DoctorAssignment = DoctorAssignmentModel(sequelize, DataTypes);
 
 
 // Tạo đối tượng db để xuất tất cả models
@@ -119,6 +112,8 @@ const db = {
   Order,
   OrderItem,
   PaymentMethod,
+  PackageBookingRequest,
+  DoctorAssignment,
 };
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)
