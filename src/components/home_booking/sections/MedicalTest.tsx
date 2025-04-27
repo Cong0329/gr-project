@@ -88,10 +88,10 @@ const MedicalTest = () => {
         <div className="bg-white rounded-xl shadow-md p-6 mb-6">
           <div className="flex justify-between items-center mb-6 medical-title">
             <div className="flex flex-col">
-              <h2 className="text-xl lg:text-2xl font-bold text-indigo-500 mb-2">
+              <h2 className="text-xl lg:text-2xl font-bold text-indigo-600 mb-2">
                 Xét nghiệm y học
               </h2>
-              <div className="h-1 w-20 bg-indigo-400 rounded"></div>
+              <div className="h-1 w-20 bg-indigo-500 rounded"></div>
             </div>
             <Link to="/booking-home/medicaltest-list">
               <button className="bg-indigo-100 hover:bg-indigo-200 text-indigo-500 font-semibold py-2 px-4 rounded-full transition duration-300 flex items-center">

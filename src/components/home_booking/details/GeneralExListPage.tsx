@@ -14,6 +14,7 @@ const GeneralExListPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   // Sử dụng selectors từ slice mới
   const allPackages = useSelector(selectAllPackages);
@@ -24,17 +25,22 @@ const GeneralExListPage = () => {
     dispatch(fetchServicePackages());
   }, [dispatch]);
 
+  const generalPackages =
+    allPackages && allPackages.length > 0
+      ? allPackages.filter((pkg) => pkg.type === "general")
+      : [];
+
   // Lọc gói dựa trên searchTerm
   const filteredPackages =
-    allPackages && allPackages.length > 0
-      ? allPackages.filter((pkg) =>
+    generalPackages.length > 0
+      ? generalPackages.filter((pkg) =>
           pkg.name.toLowerCase().includes(searchTerm.toLowerCase())
         )
       : [];
 
   const featuredPackage =
-    allPackages && allPackages.length > 0
-      ? allPackages.find((pkg) => pkg.rating >= 4.7) || allPackages[0]
+    generalPackages.length > 0
+      ? generalPackages.find((pkg) => pkg.rating >= 4.7) || generalPackages[0]
       : null;
 
   const handlePackageClick = (packageName) => {
@@ -51,12 +57,51 @@ const GeneralExListPage = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container-fix-spe mx-auto px-4 sm:px-10">
-        <Breadcrumb />
+  useEffect(() => {
+    if (searchTerm.trim() && isSearchFocused) {
+      const timer = setTimeout(() => {
+        const resultsSection = document.getElementById("packages-results");
+        if (resultsSection) {
+          resultsSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      }, 300); // Delay để đảm bảo render xong kết quả
 
-        <div className="bg-gradient-to-r from-blue-100 to-blue-50 rounded-2xl py-12 text-center mt-6 px-6 transition-all duration-300">
+      return () => clearTimeout(timer);
+    }
+  }, [searchTerm, isSearchFocused]);
+
+  return (
+    <div className="min-h-screen bg-gray-50 relative">
+      {isSearchFocused && (
+        <div
+          className="fixed inset-0 z-40 pointer-events-auto"
+          onClick={() => setIsSearchFocused(false)}
+          style={{
+            background: "linear-gradient(rgba(241, 245, 249, 0.3)",
+          }}
+        />
+      )}
+      <div
+        className={`container-fix-spe mx-auto px-4 sm:px-10 transition-all ${
+          isSearchFocused ? "pt-32 md:pt-28" : ""
+        }`}
+      >
+        <Breadcrumb className={isSearchFocused ? "z-50 relative" : ""} />
+
+        <div
+          className={`bg-gradient-to-r from-blue-100 to-blue-50 rounded-2xl py-12 text-center mt-6 px-6 transition-all duration-300 ${
+            isSearchFocused
+              ? `
+              fixed inset-x-0 top-0 z-50 mx-0
+              md:mx-auto md:max-w-4xl md:top-4 md:shadow-xl
+              animate-popup
+            `
+              : ""
+          }`}
+        >
           <h1 className="text-3xl md:text-4xl font-bold text-blue-800">
             Bạn đang tìm kiếm gì?
           </h1>
@@ -69,13 +114,16 @@ const GeneralExListPage = () => {
               <Search className="absolute left-3 top-3 text-gray-400 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Tìm kiếm chuyên mục"
-                className="pl-10 pr-3 py-2 border border-gray-200 focus:ring-2 focus:ring-blue-500 rounded-lg w-full"
+                placeholder="Tìm kiếm chuyên mục..."
+                className="pl-10 pr-3 py-3 border border-gray-200 focus:ring-2 focus:ring-blue-500 rounded-lg w-full text-base"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               />
               <button
-                className="absolute right-1 top-1 bg-blue-600 hover:bg-blue-700 text-white py-1 px-4 rounded-md transition-colors"
+                className="absolute right-1 top-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors"
                 onClick={handleSearch}
               >
                 Tìm kiếm
