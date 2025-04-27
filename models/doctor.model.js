@@ -10,7 +10,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false
       },
       avatar: DataTypes.STRING,
-      type: DataTypes.STRING,
+      type: {
+        type: DataTypes.ENUM('specialty', 'online'),
+        allowNull: false,
+        validate: {
+          isIn: [['specialty', 'online']]
+        }
+      },
       experience: DataTypes.STRING,
       position: DataTypes.STRING,
       patientAge: DataTypes.STRING,
@@ -38,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
       deleted_by: DataTypes.BIGINT
     }, {
       tableName: 'doctor',
-      timestamps: true
+      timestamps: false
     });
     Doctor.associate = (models) => {
       Doctor.belongsTo(models.Department, {

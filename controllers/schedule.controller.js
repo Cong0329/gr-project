@@ -69,24 +69,53 @@ exports.getAllSchedules = async (req, res, next) => {
  */
 exports.getSpecialistSchedules = async (req, res, next) => {
   try {
-    const { type, department_id } = req.query;
+    // Định nghĩa ánh xạ giữa type của Doctor và type của Schedule
+    const typeMapping = {
+      'specialty': 'specialist',
+      'online': 'specialist_online'
+    };
+    
+    const { type, service_id, date, startDate, endDate, doctor_id, status } = req.query;
 
-    // Validate type
-    if (!type || (type !== 'specialty' && type !== 'online')) {
-      return res.status(400).json({
-        error: 'Invalid type parameter. Must be "specialty" or "online"'
-      });
+    // Kiểm tra và map type từ request
+    let doctorType, scheduleType;
+    
+    if (type && (type === 'specialty' || type === 'online')) {
+      doctorType = type; // Giá trị trong DB của Doctor
+      scheduleType = typeMapping[type]; // Ánh xạ tới giá trị trong Schedule
+    } else {
+      // Nếu không có type hoặc type không hợp lệ, lấy cả hai loại
+      doctorType = ['specialty', 'online'];
+      scheduleType = ['specialist', 'specialist_online'];
     }
 
-    // Tạo object where cho Doctor
-    const doctorWhere = { type };
+    console.log(`Tìm lịch: doctorType=${doctorType}, scheduleType=${scheduleType}`);
 
-    // Nếu có department_id thì thêm điều kiện vào where
-    if (department_id) {
-      doctorWhere.department_id = department_id;
+    // Điều kiện cho Schedule
+    const scheduleWhere = {
+      type: scheduleType
+    };
+
+    // Thêm các điều kiện lọc khác
+    if (date) {
+      scheduleWhere.date = date;
+    } else if (startDate && endDate) {
+      scheduleWhere.date = {
+        [Op.between]: [startDate, endDate] 
+      };
     }
+    if (status) scheduleWhere.status = status;
+
+    // Điều kiện cho Doctor
+    const doctorWhere = {
+      type: doctorType
+    };
+    
+    if (doctor_id) doctorWhere.id = doctor_id;
+    if (service_id) scheduleWhere.service_id = service_id;
 
     const schedules = await Schedule.findAll({
+      where: scheduleWhere,
       include: [
         {
           model: Doctor,
@@ -114,10 +143,18 @@ exports.getSpecialistSchedules = async (req, res, next) => {
       order: [['date', 'ASC'], ['start_time', 'ASC']]
     });
 
-    res.json(schedules);
+    res.status(200).json({
+      success: true,
+      count: schedules.length,
+      data: schedules
+    });
   } catch (error) {
     console.error('Error in getSpecialistSchedules:', error);
-    next(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Có lỗi xảy ra khi lấy danh sách lịch chuyên khoa',
+      error: error.message
+    });
   }
 };
 
