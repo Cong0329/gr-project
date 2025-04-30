@@ -74,10 +74,10 @@ const OnlEx = () => {
       <div className="container-lite mx-auto py-8">
         <div className="onl-title relative flex justify-between items-center mb-6">
           <div className="flex flex-col">
-            <h2 className="text-xl lg:text-2xl font-bold text-indigo-500 mb-2">
+            <h2 className="text-xl lg:text-2xl font-bold text-indigo-600 mb-2">
               Tư vấn Online qua Video
             </h2>
-            <div className="h-1 w-20 bg-indigo-400 rounded"></div>
+            <div className="h-1 w-20 bg-indigo-500 rounded"></div>
             <p className="text-gray-600 mt-2 text-sm">
               Cùng nhau hợp tác online với các bác sĩ đầy chuyên môn và vui tính
             </p>
@@ -172,11 +172,9 @@ const OnlEx = () => {
                       doctor.departmentName
                     )}`}
                     state={{ doctor }}
-                    className="w-full"
+                    className="w-full bg-white text-[rgb(89,89,89)] font-semibold py-2 rounded-md hover:bg-blue-100 transition-colors duration-300 border border-[rgb(153,153,153)] flex items-center justify-center"
                   >
-                    <button className="w-full bg-white text-[rgb(89,89,89)] font-semibold py-2 rounded-md hover:bg-[rgb(227,242,255)] transition-colors duration-300 border border-[rgb(153,153,153)]">
-                      Đặt lịch khám
-                    </button>
+                    Đặt lịch khám
                   </Link>
                 </div>
               </div>

@@ -386,4 +386,6 @@ export const selectCategories = (state: RootState) => state.servicePackage.categ
 export const selectLoadingStatus = (state: RootState) => state.servicePackage.loading;
 export const selectError = (state: RootState) => state.servicePackage.error;
 
+
+
 export default servicePackageSlice.reducer;

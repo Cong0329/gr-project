@@ -219,6 +219,7 @@
 // // Export actions và reducer
 // export const { clearScheduleDetail, clearSchedules, resetScheduleState } = scheduleSlice.actions;
 // export default scheduleSlice.reducer;
+
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
@@ -233,32 +234,44 @@ const initialState = {
     limit: 10,
     total: 0
   },
-  currentType: 'specialty' // Thêm trạng thái để lưu loại hiện tại
+  currentType: 'specialist' 
 };
 
 // Async thunk để lấy lịch của bác sĩ theo type (specialty/online)
 export const fetchSpecialistSchedules = createAsyncThunk(
   'schedules/fetchSpecialistSchedules',
-  async ({ page = 1, limit = 10, type = 'specialty', filters = {} }, { rejectWithValue }) => {
+  async ({ page = 1, limit = 10, type, date, service_id }, { rejectWithValue }) => {
     try {
+      // Log value trước khi gọi API để debug
+      console.log(`Type being sent to API: ${type}`);
+      
       const params = new URLSearchParams({
         page,
         limit,
-        type, // Thêm type vào query params
-        ...filters
+        type, // Sử dụng đúng type được truyền vào
+        ...(date && { date }),
+        ...(service_id && { service_id })
       }).toString();
       
+      console.log(`Calling API: ${API_URL}/specialist?${params}`);
+      
       const response = await axios.get(`${API_URL}/specialist?${params}`);
+      
+      // Check API response structure
+      const data = response.data.data || response.data;
+      const total = response.data.count || data.length || 0;
+      
       return {
-        data: response.data,
+        data: data,
         pagination: {
           page,
           limit,
-          total: response.headers['x-total-count'] || response.data.length || 0
+          total
         },
-        type // Trả về type để lưu vào state
+        type // Lưu lại type
       };
     } catch (error) {
+      console.error('API Error:', error);
       return rejectWithValue(error.response?.data || error.message);
     }
   }
@@ -272,9 +285,8 @@ const scheduleSlice = createSlice({
       state.specialistSchedules = [];
       state.pagination = initialState.pagination;
     },
-    // Thêm reducer để thay đổi type nếu cần
     setSpecialistType: (state, action) => {
-      state.currentType = action.payload;
+      state.currentType = action.payload; 
     }
   },
   extraReducers: (builder) => {
@@ -287,7 +299,7 @@ const scheduleSlice = createSlice({
         state.loading = false;
         state.specialistSchedules = action.payload.data;
         state.pagination = action.payload.pagination;
-        state.currentType = action.payload.type; // Lưu type hiện tại
+        state.currentType = action.payload.type; 
       })
       .addCase(fetchSpecialistSchedules.rejected, (state, action) => {
         state.loading = false;
@@ -296,7 +308,6 @@ const scheduleSlice = createSlice({
   }
 });
 
-// Export actions
 export const { 
   resetSpecialistSchedules,
   setSpecialistType 

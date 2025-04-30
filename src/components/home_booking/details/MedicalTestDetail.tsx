@@ -2,7 +2,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMedicalTests } from "../../../redux/medicalTestSlice";
+import {
+  fetchServicePackages,
+  selectAllPackages,
+  selectLoadingStatus,
+  selectError,
+} from "../../../redux/servicePackageSlice";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import PackageSchedule from "./component_details/PackageSchedules";
@@ -12,20 +17,22 @@ const MedicalTestDetail = () => {
   const dispatch = useDispatch();
   const [showSchedule, setShowSchedule] = useState(false);
   const scheduleRef = useRef(null);
-  const { tests, loading, error } = useSelector(
-    (state: any) => state.medicalTests
-  );
+
+  const allPackages = useSelector(selectAllPackages);
+  const loading = useSelector(selectLoadingStatus);
+  const error = useSelector(selectError);
+
+  // Filter packages to get only medical types
+  const medicalTests = allPackages.filter((pkg) => pkg.type === "medical");
 
   const decodedName = decodeURIComponent(name || "Chuyên khoa");
-  const currentTest = tests.find(
-    (test: any) => decodeURIComponent(test.name) === decodedName
-  );
+  const currentTest = medicalTests.find((test) => test.name === decodedName);
 
   useEffect(() => {
-    if (tests.length === 0) {
-      dispatch(fetchMedicalTests());
+    if (medicalTests.length === 0) {
+      dispatch(fetchServicePackages());
     }
-  }, [dispatch, tests.length]);
+  }, [dispatch, medicalTests.length]);
 
   const handleScheduleClick = () => {
     setShowSchedule(true);
@@ -61,7 +68,7 @@ const MedicalTestDetail = () => {
   }
 
   return (
-    <div className="w-full bg-gray-50">
+    <div className="w-full bg-gray-50 pb-10">
       <div className="container-fix-spe mx-auto px-4 sm:px-10">
         <Breadcrumb current={decodedName} />
 
@@ -100,7 +107,12 @@ const MedicalTestDetail = () => {
               </svg>
               Đặt lịch xét nghiệm
             </h2>
-            <PackageSchedule />
+            {/* <PackageSchedule packageData={currentTest} /> */}
+            <PackageSchedule
+              showSchedule={showSchedule}
+              scheduleRef={scheduleRef}
+              currentTest={currentTest}
+            />
           </div>
         </div>
 
@@ -117,25 +129,23 @@ const MedicalTestDetail = () => {
 
               <div className="mb-8">
                 <h3 className="text-xl font-semibold text-blue-700 mb-3">
-                  Các danh mục xét nghiệm
+                  Danh mục xét nghiệm
                 </h3>
-                {currentTest?.details?.categories.map(
-                  (category: any, index: number) => (
-                    <div key={index} className="mb-4">
-                      <h4 className="text-lg font-semibold text-gray-800 mb-2">
-                        {category.category}
-                      </h4>
-                      <ul className="list-disc pl-5 space-y-2 text-gray-700">
-                        {category.items.map((item: any, i: number) => (
-                          <li key={i}>
-                            <strong>{item.name}: </strong>
-                            {item.description}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )
-                )}
+                {currentTest?.details?.categories?.map((category, index) => (
+                  <div key={index} className="mb-4">
+                    <h4 className="text-lg font-semibold text-gray-800 mb-2">
+                      {category.category}
+                    </h4>
+                    <ul className="list-disc pl-5 space-y-2 text-gray-700">
+                      {category.items.map((item, i) => (
+                        <li key={i}>
+                          <strong>{item.name}: </strong>
+                          {item.description}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -190,6 +200,9 @@ const MedicalTestDetail = () => {
                     <li>Nhịn ăn 8-12 giờ trước xét nghiệm (nếu cần)</li>
                     <li>Mang theo giấy tờ tùy thân</li>
                     <li>Thông báo về các loại thuốc đang sử dụng</li>
+                    {currentTest?.preparation && (
+                      <li>{currentTest.preparation}</li>
+                    )}
                   </ul>
                 </div>
 
@@ -213,7 +226,9 @@ const MedicalTestDetail = () => {
                   </h4>
                   <div className="bg-white rounded-md p-3 shadow-sm">
                     <span className="text-2xl font-bold text-blue-700">
-                      {currentTest?.price || "Liên hệ để biết giá"}
+                      {currentTest?.price
+                        ? `${currentTest.price.toLocaleString("vi-VN")} VNĐ`
+                        : "Liên hệ để biết giá"}
                     </span>
                     {currentTest?.originalPrice && (
                       <span className="text-gray-400 line-through ml-2">
@@ -255,59 +270,63 @@ const MedicalTestDetail = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl shadow-md p-6 mt-8 mb-10">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Dịch vụ {decodedName}
-          </h2>
+        {currentTest?.details?.categories?.length > 0 && (
+          <div className="mt-10">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Chi tiết dịch vụ {decodedName}
+            </h2>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Dịch vụ
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Mô tả
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    ThờI gian
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {currentTest?.details?.categories?.map(
-                  (category: any, index: number) => (
-                    <>
-                      <tr key={index} className="hover:bg-gray-50">
-                        <td
-                          className="px-6 py-4 whitespace-nowrap font-medium"
-                          colSpan={3}
-                        >
-                          <strong>{category.category}</strong>
-                        </td>
-                      </tr>
-
-                      {category.items.map((item: any, itemIndex: number) => (
-                        <tr key={itemIndex} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {item.name}
-                          </td>
-                          <td className="px-6 py-4 text-gray-600">
-                            {item.description}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            {item.duration}
-                          </td>
+            <div className="bg-white shadow p-6 rounded-xl space-y-6">
+              {currentTest.details.categories.map((category, index) => (
+                <div
+                  key={index}
+                  className="border-b pb-4 last:border-b-0 last:pb-0"
+                >
+                  <h3 className="text-lg font-semibold text-blue-700 mb-3">
+                    {category.category}
+                  </h3>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="w-1/3 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Dịch vụ
+                          </th>
+                          <th className="w-1/2 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Mô tả
+                          </th>
+                          <th className="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Thời gian
+                          </th>
                         </tr>
-                      ))}
-                    </>
-                  )
-                )}
-              </tbody>
-            </table>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {category.items?.map((item, itemIndex) => (
+                          <tr
+                            key={`item-${index}-${itemIndex}`}
+                            className="hover:bg-gray-50 transition-colors"
+                          >
+                            <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                              {item.name}
+                            </td>
+                            <td className="px-6 py-4 text-gray-500">
+                              {item.description || "Không có mô tả"}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                              {item.duration
+                                ? `${item.duration} phút`
+                                : "30 phút"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -25,7 +25,7 @@ const PackageCard = ({
 }) => {
   if (isSlider) {
     return (
-      <div className="w-full h-48 bg-blue-50 flex flex-col items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-4">
+      <div className="w-full h-48 bg-indigo-50 flex flex-col items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 p-4">
         <img
           src={pkg.image}
           className="w-20 h-20 rounded-full object-cover mb-2"
@@ -49,7 +49,7 @@ const PackageCard = ({
       to={`/booking-home/generalex-detail/${encodeURIComponent(pkg.name)}`}
       className="block h-full"
     >
-      <div className="bg-blue-50 rounded-lg shadow-md overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
+      <div className="bg-indigo-50 rounded-lg shadow-md overflow-hidden flex flex-col h-full hover:shadow-lg transition-shadow duration-300">
         <img
           src={pkg.image}
           alt={pkg.name}
@@ -113,7 +113,7 @@ const SliderSection = ({
     <>
       <div className="mb-4">
         <h3 className="text-xl font-bold">{title}</h3>
-        <div className="h-1 w-12 bg-indigo-400 rounded mt-2 mb-4"></div>
+        <div className="h-1 w-12 bg-indigo-500 rounded mt-2 mb-4"></div>
       </div>
       <div className="relative my-6">
         {loading ? (
@@ -160,7 +160,7 @@ const GeneralEx = () => {
       <div className="container-lite mx-auto px-4 py-8">
         <div className="flex flex-wrap -mx-4">
           <div className="w-full md:w-1/3 px-4 mb-4 md:mb-0">
-            <div className="bg-white rounded-lg shadow-md p-4 h-full text-xl lg:text-2xl font-bold text-indigo-500 ">
+            <div className="bg-white rounded-lg shadow-md p-4 h-full text-xl lg:text-2xl font-bold text-indigo-600 ">
               <SliderSection
                 title="Gói nổi bật"
                 packages={featuredPackages}
@@ -180,10 +180,10 @@ const GeneralEx = () => {
             <div className="bg-white rounded-lg shadow-md p-4 h-full">
               <div className="flex mb-4 justify-between items-center general-title">
                 <div className="flex flex-col">
-                  <h2 className="text-xl lg:text-2xl font-bold text-indigo-500 mb-2">
+                  <h2 className="text-xl lg:text-2xl font-bold text-indigo-600 mb-2">
                     Danh mục
                   </h2>
-                  <div className="h-1 w-20 bg-indigo-400 rounded"></div>
+                  <div className="h-1 w-20 bg-indigo-500 rounded"></div>
                 </div>
                 <Link to="/booking-home/generalex-list">
                   <button className="bg-indigo-100 hover:bg-indigo-200 text-indigo-500 font-semibold py-2 px-4 rounded-full transition duration-300 flex items-center">

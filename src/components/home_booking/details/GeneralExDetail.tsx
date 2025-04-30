@@ -23,7 +23,9 @@ const GeneralExDetail = () => {
   const loading = useSelector(selectLoadingStatus);
   const error = useSelector(selectError);
 
+  const generalTests = allPackages.filter((pkg) => pkg.type === "general");
   const decodedName = decodeURIComponent(name || "Gói khám");
+  const currentTest = generalTests.find((test) => test.name === decodedName);
 
   // Tìm gói khám hiện tại dựa trên tên
   const currentPackage = allPackages.find((pkg) => pkg.name === decodedName);
@@ -104,12 +106,10 @@ const GeneralExDetail = () => {
           };
         }
 
-        // Thêm item vào danh mục tương ứng
         itemsByCategory[categoryId].items.push({
           name: item.name,
           description: item.description,
           duration: item.duration,
-          // Thêm thông tin khác nếu cần
         });
       });
 
@@ -119,7 +119,6 @@ const GeneralExDetail = () => {
     return [];
   };
 
-  // Sau đó trong component (không phải trong điều kiện nào)
   const serviceCategories = getServiceCategories(currentPackage);
   console.log("currentPackage:", currentPackage);
   console.log("serviceCategories:", serviceCategories);
@@ -207,7 +206,11 @@ const GeneralExDetail = () => {
               </svg>
               Đặt lịch khám sức khỏe
             </h2>
-            <PackageSchedule packageInfo={currentPackage} />
+            <PackageSchedule
+              showSchedule={showSchedule}
+              scheduleRef={scheduleRef}
+              currentTest={currentTest}
+            />
           </div>
         </div>
 
@@ -377,13 +380,13 @@ const GeneralExDetail = () => {
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="w-1/3 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Dịch vụ
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="w-1/2 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Mô tả
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          <th className="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Thời gian
                           </th>
                         </tr>

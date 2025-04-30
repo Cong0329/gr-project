@@ -1,5 +1,10 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { Home } from "./components/pages/Home";
 import { HomeBookingCare } from "./components/pages/HomeBooking";
 import { BookingSpecialty } from "./components/pages/BookingSpecialty";
@@ -19,6 +24,7 @@ import InvalidPage from "./components/information/InvalidPage";
 import { OrderDetailPage } from "./components/pages/OrderDetailPage";
 import adminRoutes from "./components/pages/AdminRouter";
 import UserProtectedRoute from "./components/pages/UserProtectedRoute copy";
+import { BookingAppoinment } from "./components/pages/BookingAppoinment";
 
 function App() {
   return (
@@ -37,6 +43,16 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
         </Route>
 
+        <Route path="/cart" element={<CartPage />} />
+        <Route
+          path="/profile"
+          element={<Navigate to="/profile/personal-info" replace />}
+        />
+        <Route path="/profile/:pageId" element={<ProfilePage />} />
+        <Route
+          path="/profile/orders/order-detail/:status"
+          element={<OrderDetailPage />}
+        />
 
         <Route path="/booking-home" element={<HomeBookingCare />} />
         <Route
@@ -67,6 +83,10 @@ function App() {
         <Route
           path="/booking-home/medicaltest-detail/:name"
           element={<BookingMedicalTestDetail />}
+        />
+        <Route
+          path="/booking-home/appointment"
+          element={<BookingAppoinment />}
         />
 
         {adminRoutes}

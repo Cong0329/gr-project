@@ -1,23 +1,38 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchDoctors } from "../../../../redux/doctorSlice";
 import { fetchDepartments } from "../../../../redux/departmentSlice";
-import { fetchSpecialistSchedules } from "../../../../redux/scheduleSlice";
-import { format } from "date-fns";
+import {
+  fetchSpecialistSchedules,
+  setSpecialistType,
+} from "../../../../redux/scheduleSlice";
+import { format, parseISO, isToday, isTomorrow } from "date-fns";
+import { vi } from "date-fns/locale";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChevronDown,
   faCalendarAlt,
+  faUserMd,
+  faHospital,
+  faVideo,
+  faClock,
+  faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { useLocation, useParams } from "react-router-dom";
 
 const DoctorSchedules = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   const { name } = useParams();
 
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [doctorType, setDoctorType] = useState("specialty"); // Thêm state để lưu loại bác sĩ
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [selectedSchedule, setSelectedSchedule] = useState(null);
+
+  const [hasDispatched, setHasDispatched] = useState(false);
 
   // Get data từ Redux
   const {
@@ -26,193 +41,345 @@ const DoctorSchedules = () => {
     error: doctorsError,
   } = useSelector((state) => state.doctors);
 
-  const {
-    departments,
-    loading: departmentsLoading,
-    error: departmentsError,
-  } = useSelector((state) => state.departments);
+  const { departments, loading: departmentsLoading } = useSelector(
+    (state) => state.departments
+  );
 
   const {
     specialistSchedules,
     loading: schedulesLoading,
     error: schedulesError,
+    currentType,
   } = useSelector((state) => state.schedules);
 
-  // Load doctors và departments từ Redux
+  // Xác định loại bác sĩ từ URL và cập nhật vào Redux store
+  useEffect(() => {
+    const newType = /\/onlex-detail\//.test(location.pathname)
+      ? "specialist_online"
+      : "specialist";
+
+    console.log(`Setting type to: ${newType}`);
+    dispatch(setSpecialistType(newType));
+  }, [location.pathname, dispatch]);
+
+  // Load initial data
   useEffect(() => {
     dispatch(fetchDoctors());
     dispatch(fetchDepartments());
   }, [dispatch]);
 
-  // Load schedules khi thay đổi ngày hoặc loại bác sĩ
+  // Fetch schedules whenever relevant parameters change
+  // Fetch schedules whenever relevant parameters change
   useEffect(() => {
-    dispatch(
-      fetchSpecialistSchedules({
-        type: doctorType,
-        date: format(selectedDate, "yyyy-MM-dd"), // Thêm ngày nếu API hỗ trợ
-      })
-    );
-  }, [dispatch, selectedDate, doctorType]);
+    if (!hasDispatched && departments.length > 0 && currentType) {
+      const department = departments.find((dep) => dep.name === name);
+
+      if (department) {
+        const currentDateStr = format(selectedDate, "yyyy-MM-dd");
+
+        console.log(
+          `Fetching with type: ${currentType}, date: ${currentDateStr}`
+        );
+
+        dispatch(
+          fetchSpecialistSchedules({
+            type: currentType,
+            date: currentDateStr,
+            service_id: department.id,
+          })
+        );
+
+        // Đánh dấu đã dispatch
+        setHasDispatched(true);
+      }
+    }
+  }, [departments, name, currentType, hasDispatched]);
 
   useEffect(() => {
-    if (location.pathname.includes("specialty-detail")) {
-      setDoctorType("specialty");
-    } else if (location.pathname.includes("onlex-detail")) {
-      setDoctorType("online");
-    }
-  }, [location.pathname]);
+    setHasDispatched(false);
+  }, [selectedDate, name]);
 
   // Handle date change
   const handleDateChange = (date) => {
     setSelectedDate(date);
+    setShowDatePicker(false);
+
+    // Khi thay đổi ngày, reset selectedDoctor và selectedSchedule
+    setSelectedDoctor(null);
+    setSelectedSchedule(null);
   };
 
-  // Handle doctor type change
-  const handleTypeChange = (type) => {
-    setDoctorType(type);
+  // Format ngày hiển thị thân thiện
+  const formatDisplayDate = (date) => {
+    if (isToday(date)) return "Hôm nay";
+    if (isTomorrow(date)) return "Ngày mai";
+    return format(date, "EEEE, dd/MM", { locale: vi });
   };
 
-  const loading = doctorsLoading || departmentsLoading || schedulesLoading;
-  const error = doctorsError || departmentsError || schedulesError;
-
-  if (loading) {
-    return <p className="text-center py-10">Đang tải dữ liệu...</p>;
-  }
-
-  if (error) {
-    return <p className="text-center py-10 text-red-500">Lỗi: {error}</p>;
-  }
-
-  // Lọc department dựa trên tên lấy từ URL
+  // Lọc department dựa trên tên từ URL
   const department = departments.find((dep) => dep.name === name);
 
-  // Lọc bác sĩ theo department_id và doctor type
-  const filteredDoctors = Array.from(
-    new Set(specialistSchedules.map((schedule) => schedule.doctor?.id))
-  )
-    .map((id) => doctors.find((doctor) => doctor.id === id))
-    .filter(
-      (doctor) =>
-        doctor?.type === doctorType && doctor?.department_id === department?.id
-    );
+  // Tạo danh sách ngày khả dụng (7 ngày tiếp theo)
+  const availableDates = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() + i);
+    return date;
+  });
 
-  // Format date for display
-  const formattedDate = format(selectedDate, "EEEE - dd/MM");
+  // Xử lý dữ liệu từ API trả về
+  // Giả sử rằng mỗi specialistSchedule có thông tin doctor được include từ API
+  const groupedSchedules = {};
+
+  // Nhóm lịch theo bác sĩ
+  specialistSchedules.forEach((schedule) => {
+    if (schedule.doctor) {
+      if (!groupedSchedules[schedule.doctor.id]) {
+        groupedSchedules[schedule.doctor.id] = {
+          doctor: schedule.doctor,
+          schedules: [],
+        };
+      }
+      groupedSchedules[schedule.doctor.id].schedules.push(schedule);
+    }
+  });
+
+  if (doctorsLoading || departmentsLoading || schedulesLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (doctorsError || schedulesError) {
+    return (
+      <div className="bg-red-50 border-l-4 border-red-500 p-4">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <svg
+              className="h-5 w-5 text-red-500"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+          <div className="ml-3">
+            <p className="text-sm text-red-700">
+              {doctorsError || schedulesError}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50">
-      <div className="container-fix-spe mx-auto px-4 py-6 sm:px-10">
-        <div className="mb-6">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-4">
+      <div className="container mx-auto px-6 py-12 sm:px-12 md:px-16 lg:px-20 xl:px-24">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
               <h1 className="text-2xl font-bold text-gray-800">
-                {doctorType === "specialty"
-                  ? "Khám chuyên khoa"
-                  : "Khám chuyên khoa online"}
+                {currentType === "specialist"
+                  ? "Đặt lịch khám chuyên khoa"
+                  : "Đặt lịch khám online"}
               </h1>
+              <p className="text-gray-600 mt-1">
+                {department?.name || "Chuyên khoa"}
+              </p>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <input
-                  type="date"
-                  className="border border-gray-300 p-2 rounded-md"
-                  value={format(selectedDate, "yyyy-MM-dd")}
-                  onChange={(e) => handleDateChange(new Date(e.target.value))}
-                />
+
+            {/* Date Picker */}
+            <div className="relative">
+              <button
+                onClick={() => setShowDatePicker(!showDatePicker)}
+                className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-4 py-2 shadow-sm hover:bg-gray-50"
+              >
                 <FontAwesomeIcon
                   icon={faCalendarAlt}
-                  className="absolute right-3 top-3 text-gray-500"
+                  className="text-gray-500"
                 />
-              </div>
+                <span>{formatDisplayDate(selectedDate)}</span>
+                <FontAwesomeIcon
+                  icon={faChevronDown}
+                  className={`text-gray-500 transition-transform ${
+                    showDatePicker ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {showDatePicker && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute z-10 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 w-64"
+                >
+                  <div className="p-3 grid grid-cols-3 gap-2">
+                    {availableDates.map((date, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleDateChange(date)}
+                        className={`p-2 rounded-md text-center text-sm ${
+                          format(selectedDate, "yyyy-MM-dd") ===
+                          format(date, "yyyy-MM-dd")
+                            ? "bg-blue-600 text-white"
+                            : "bg-white hover:bg-gray-100 text-gray-700"
+                        }`}
+                      >
+                        <div>{format(date, "EEE", { locale: vi })}</div>
+                        <div className="font-medium">
+                          {format(date, "dd/MM")}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
             </div>
           </div>
         </div>
 
+        {/* Doctors List */}
         <div className="grid gap-6">
-          {filteredDoctors.length > 0 ? (
-            filteredDoctors.map((doctor) => {
-              const doctorSchedules = specialistSchedules.filter(
-                (schedule) => schedule.doctor?.id === doctor.id
-              );
-
-              return (
-                <div
-                  key={doctor.id}
-                  className="bg-white shadow-md rounded-lg p-6 flex flex-col md:flex-row gap-4"
-                >
-                  <div className="flex flex-col items-center w-full md:w-1/3">
+          {Object.values(groupedSchedules).length > 0 ? (
+            Object.values(groupedSchedules).map(({ doctor, schedules }) => (
+              <motion.div
+                key={doctor.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                className={`bg-white rounded-xl shadow-md overflow-hidden ${
+                  selectedDoctor?.id === doctor.id ? "ring-2 ring-blue-500" : ""
+                }`}
+              >
+                <div className="p-6 flex flex-col md:flex-row gap-6">
+                  {/* Doctor Info */}
+                  <div
+                    className="flex flex-col items-center md:items-start md:w-1/3 cursor-pointer"
+                    onClick={() => setSelectedDoctor(doctor)}
+                  >
                     <img
-                      src={doctor.avatar || "https://via.placeholder.com/80"}
+                      src={doctor.avatar || "/default-doctor-avatar.jpg"}
                       alt={doctor.name}
-                      className="w-20 h-20 rounded-full object-cover"
+                      className="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
                       loading="lazy"
                     />
-                    <h2 className="text-blue-600 font-bold text-lg text-center mt-2">
+                    <h2 className="text-xl font-bold text-blue-600 mt-3 text-center md:text-left">
                       {doctor.name}
                     </h2>
-                    <p className="text-gray-700 text-center">
-                      {doctor.experience || ""}
+                    <p className="text-gray-700 font-medium mt-1">
+                      {doctor.position}
                     </p>
-                    <p className="text-gray-500 text-center">
-                      {doctor.position || ""}
+                    <p className="text-gray-500 text-sm mt-1">
+                      {doctor.experience} năm kinh nghiệm
                     </p>
-                    {doctor.department && (
-                      <p className="text-gray-500 text-center">
-                        {doctor.department.name}
-                      </p>
-                    )}
-                    <p className="text-gray-500 text-center">
-                      📍 {doctor.address || ""}
-                    </p>
+
+                    <div className="mt-3 flex items-center text-sm text-gray-500">
+                      <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
+                      <span>
+                        {currentType === "online"
+                          ? "Khám từ xa"
+                          : doctor.address || "Bệnh viện Đa khoa Quốc tế"}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="w-full md:w-2/3">
-                    <div className="flex items-center mb-2">
-                      <h3 className="text-gray-700 font-semibold">
-                        📅 {formattedDate}
-                      </h3>
-                    </div>
+                  {/* Schedules */}
+                  <div className="md:w-2/3">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                      <FontAwesomeIcon icon={faClock} className="mr-2" />
+                      Lịch khám ngày {formatDisplayDate(selectedDate)}
+                    </h3>
 
-                    <div className="bg-gray-100 p-4 rounded-lg">
-                      <h3 className="text-gray-700 font-semibold">LỊCH KHÁM</h3>
-                      {doctorSchedules.length > 0 ? (
-                        <div className="grid grid-cols-4 gap-2 mt-2">
-                          {doctorSchedules.map((schedule) => (
-                            <span
-                              key={schedule.id}
-                              className={`text-gray-700 text-sm px-3 py-2 rounded-md text-center ${
-                                schedule.status === "booked"
-                                  ? "bg-rose-100 text-rose-700 cursor-not-allowed"
-                                  : "bg-sky-100 hover:bg-sky-200 text-sky-700 cursor-pointer"
-                              }`}
-                            >
-                              {schedule.start_time.slice(0, 5)} -{" "}
-                              {schedule.end_time.slice(0, 5)}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <div className="mt-2 text-center">
-                          <p className="text-gray-500 mb-2">
-                            Không có lịch khám trong ngày này
-                          </p>
-                        </div>
-                      )}
-                    </div>
+                    {schedules.length > 0 ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        {schedules.map((schedule) => (
+                          <button
+                            key={schedule.id}
+                            onClick={() => setSelectedSchedule(schedule)}
+                            disabled={schedule.status === "booked"}
+                            className={`p-2 rounded-lg text-center ${
+                              schedule.status === "booked"
+                                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                : selectedSchedule?.id === schedule.id
+                                ? "bg-blue-600 text-white"
+                                : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                            }`}
+                          >
+                            {schedule.start_time.slice(0, 5)} -{" "}
+                            {schedule.end_time.slice(0, 5)}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="bg-gray-50 p-4 rounded-lg text-center">
+                        <p className="text-gray-500">
+                          Bác sĩ không có lịch khám trong ngày này
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
-              );
-            })
+              </motion.div>
+            ))
           ) : (
-            <div className="bg-white shadow-md rounded-lg p-6 text-center">
-              <p className="text-gray-700">
-                {doctorType === "specialty"
-                  ? "Không tìm thấy bác sĩ chuyên khoa."
-                  : "Không tìm thấy bác sĩ chuyên khoa online."}
+            <div className="bg-white rounded-xl shadow-md p-8 text-center">
+              <div className="text-gray-400 mb-4">
+                <FontAwesomeIcon icon={faUserMd} size="3x" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-800 mb-2">
+                {currentType === "specialist"
+                  ? "Hiện không có bác sĩ chuyên khoa nào có lịch khám"
+                  : "Hiện không có bác sĩ online nào có lịch khám"}
+              </h3>
+              <p className="text-gray-500">
+                Vui lòng chọn ngày khác hoặc thử loại hình khám khác
               </p>
             </div>
           )}
         </div>
+
+        {/* Booking Button (fixed at bottom) */}
+        {selectedDoctor && selectedSchedule && (
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-4 px-6 shadow-lg">
+            <div className="container mx-auto flex justify-between items-center">
+              <div>
+                <h3 className="font-medium text-gray-800">
+                  Đặt lịch với {selectedDoctor.name}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {formatDisplayDate(selectedDate)} |{" "}
+                  {selectedSchedule.start_time.slice(0, 5)} -{" "}
+                  {selectedSchedule.end_time.slice(0, 5)}
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  navigate("/booking-confirmation", {
+                    state: {
+                      doctor: selectedDoctor,
+                      schedule: selectedSchedule,
+                      department: department,
+                      date: selectedDate,
+                      type: currentType,
+                    },
+                  });
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow-md transition-colors"
+              >
+                Tiếp tục
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
