@@ -13,14 +13,25 @@ import medicalTestReducer from './medicalTestSlice';
 import profileReducer from './profileSlice';
 import navigationReducer from './navigationSlice';
 import authReducer from './authSlice';
+import brandReducer from './brandSlice';
+import categoryReducer from './categorySlice';
+import medicalObjectReducer from './medicalObjectSlice';
+import indicationReducer from './indicationSlice';
+import productReducer from './productSlice';
 
-
-const persistConfig = {
-  key: "root",
-  storage, // lưu trữ vào localStorage
+const cartPersistConfig = {
+  key: 'cart',
+  storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, cartReducer);
+const authPersistConfig = {
+  key: 'auth',
+  storage,
+  whitelist: ['isAuthenticated', 'isUserAuthenticated', 'user', 'admin', 'verify', 'mail']
+};
+
+const persistedReducer = persistReducer(cartPersistConfig, cartReducer);
+const persistedReducer2 = persistReducer(authPersistConfig, authReducer);
 // Cấu hình store
 export const store = configureStore({
   reducer: {
@@ -35,7 +46,12 @@ export const store = configureStore({
     address: addressReducer,
     profile: profileReducer,
     navigation: navigationReducer,
-    auth: authReducer,
+    auth: persistedReducer2,
+    brands: brandReducer,
+    categories: categoryReducer,
+    medicalObjects: medicalObjectReducer,
+    indications: indicationReducer,
+    products: productReducer
   },
 });
 export type AppDispatch = typeof store.dispatch;

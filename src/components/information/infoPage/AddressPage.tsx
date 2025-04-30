@@ -106,7 +106,7 @@ export const AddressPage = () => {
                                     )}
                                     {address.type}
                                 </div>
-                                {address.default && (
+                                {address.default_address && (
                                     <div className="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs">
                                         Mặc định
                                     </div>

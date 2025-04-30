@@ -34,7 +34,7 @@ interface Address {
   district: string,
   street: string,
   type: string,
-  default: boolean
+  default_address: boolean
 }
 
 
@@ -49,7 +49,7 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
     district: "",
     ward: "",
     type: "nhà",
-    default: false
+    default_address: false
   });
 
 
@@ -96,7 +96,7 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
         district: "",
         ward: "",
         type: "nhà",
-        default: false
+        default_address: false
       });
       setDistricts([]);
       setWards([]);
@@ -127,7 +127,7 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
 
   const handleDefaultChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isDefault = e.target.checked;
-    setFormData(prev => ({ ...prev, default: isDefault }));
+    setFormData(prev => ({ ...prev, default_address: isDefault }));
   };
 
 
@@ -309,7 +309,7 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
             <input
               type="checkbox"
               id="defaultAddress"
-              checked={formData.default}
+              checked={formData.default_address}
               onChange={handleDefaultChange}
               className="w-4 h-4"
             />

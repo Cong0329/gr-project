@@ -18,6 +18,7 @@ import { ProfilePage } from "./components/pages/ProfilePage";
 import InvalidPage from "./components/information/InvalidPage";
 import { OrderDetailPage } from "./components/pages/OrderDetailPage";
 import adminRoutes from "./components/pages/AdminRouter";
+import UserProtectedRoute from "./components/pages/UserProtectedRoute copy";
 
 function App() {
   return (
@@ -27,10 +28,14 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/medicine-detail" element={<MedicineDetail />} />
         <Route path="/medicine-search" element={<SearchPage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/profile" element={<Navigate to="/profile/personal-info" replace />} />
-        <Route path="/profile/:pageId" element={<ProfilePage />} />
-        <Route path="/profile/orders/order-detail/:status" element={<OrderDetailPage />} />
+
+
+        <Route element={<UserProtectedRoute />}>
+          <Route path="/profile" element={<Navigate to="/profile/personal-info" replace />} />
+          <Route path="/profile/:pageId" element={<ProfilePage />} />
+          <Route path="/profile/orders/order-detail/:status" element={<OrderDetailPage />} />
+          <Route path="/cart" element={<CartPage />} />
+        </Route>
 
 
         <Route path="/booking-home" element={<HomeBookingCare />} />
@@ -63,7 +68,7 @@ function App() {
           path="/booking-home/medicaltest-detail/:name"
           element={<BookingMedicalTestDetail />}
         />
-        
+
         {adminRoutes}
         <Route path="*" element={<InvalidPage />} />
       </Routes>

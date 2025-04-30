@@ -7,6 +7,7 @@ import {
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
+  ProductIcon,
   ListIcon,
   PageIcon,
   PieChartIcon,
@@ -15,7 +16,7 @@ import {
   UserCircleIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
-import SidebarWidget from "./SidebarWidget";
+
 
 type NavItem = {
   name: string;
@@ -27,18 +28,31 @@ type NavItem = {
 const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
-    name: "Dashboard",
-    subItems: [{ name: "Ecommerce", path: "/admin", pro: false }],
+    name: "Bảng thống kê",
+    subItems: [{ name: "Doanh số bán hàng", path: "/admin", pro: false }],
   },
   {
     icon: <UserCircleIcon />,
-    name: "User Profile",
+    name: "Thông tin người dùng",
     path: "/admin/profile",
   },
   {
-    name: "Forms",
+    name: "Sản Phẩm",
+    icon: <ProductIcon />,
+    subItems: [
+      { name: "Thêm sản phẩm", path: "/admin/create-product", pro: false },
+      { name: "Danh sách sản phẩm", path: "/admin/products", pro: false },
+    ],
+  },
+  {
+    name: "Danh Mục",
     icon: <ListIcon />,
-    subItems: [{ name: "Form Elements", path: "/admin/form-elements", pro: false }],
+    subItems: [
+      { name: "Thương hiệu", path: "/admin/brand", pro: false }, 
+      { name: "Danh mục ", path: "/admin/category", pro: false },
+      { name: "Đối tượng ", path: "/admin/medical-object", pro: false },
+      { name: "Chỉ định ", path: "/admin/indication", pro: false },
+    ],
   },
   {
     name: "Tables",
@@ -227,14 +241,14 @@ const AppSidebar: React.FC = () => {
                     : "0px",
               }}
             >
-              <ul className="mt-3  ml-9">
+              <ul className="mt-3  ml-9 space-y-2">
                 {nav.subItems.map((subItem) => (
                   <li key={subItem.name}>
                     <Link
                       to={subItem.path}
-                      className={`menu-dropdown-item text-sm font-semibold  ${isActive(subItem.path)
-                          ? "bg-blue-100 text-blue-600 px-4 py-2 rounded-md w-[210px]"
-                          : "menu-dropdown-item-inactive"
+                      className={`menu-dropdown-item text-sm  px-4 py-2 font-semibold  ${isActive(subItem.path)
+                        ? "bg-blue-100 text-blue-600 px-4 py-2 rounded-md w-[210px]"
+                        : "menu-dropdown-item-inactive"
                         } block`} // 👈 Thêm class "block" ở đây
                     >
                       {subItem.name}
@@ -252,7 +266,7 @@ const AppSidebar: React.FC = () => {
 
   return (
     <aside
-      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white  text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
+      className={` fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white  text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
         ${isExpanded || isMobileOpen
           ? "w-[290px]"
           : isHovered
