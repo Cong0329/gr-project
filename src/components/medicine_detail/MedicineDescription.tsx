@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { policies } from "./medicine";
-import { Product } from "./medicine";
-import { ProductOption } from "./medicine";
+import { ProductDetail, ProductOption, policies } from "./medicine";
 import { Sheet } from "react-modal-sheet";
 import { FaXmark } from "react-icons/fa6";
-
+import { useDispatch } from "react-redux";
+import { addToCartAPI } from "../../redux/cartAsyncThunk";
 interface ProductProps {
-    medicineData: Product;
+    medicineData: ProductDetail;
     setIsOpen: (value: boolean) => void;
     isOpen: boolean;
 }
 export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: ProductProps) => {
+    const dispatch = useDispatch();
     const [selectedOption, setSelectedOption] = useState(medicineData.options[0]);
     const [quantity, setQuantity] = useState(1);
     const increaseQuantity = () => setQuantity((prev) => prev + 1);
@@ -19,36 +19,44 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
         const value = parseInt(e.target.value, 10);
         setQuantity(isNaN(value) || value < 1 ? 1 : value);
     };
+    const addToCart = () => {
+        if (medicineData.quantity > quantity) {
+            dispatch(addToCartAPI({ product_id: medicineData.id, quantity: quantity, option_id: selectedOption.id }));
+            alert("Thêm vào giỏ hàng thành công");
+        } else {
+            alert("Số lượng sản phẩm không đủ");
+        }
+    };
     return (
         <div className="w-3/5 ml-10 tb:ml-0 space-y-2 tb:w-full">
             <h2 className="text-xl font-semibold">{medicineData.name}</h2>
-            <p className="text-black font-semibold">Thương hiệu: <a href="#" className="text-blue-700">{medicineData.brand}</a></p>
+            <p className="text-black font-semibold">Thương hiệu: <a href="#" className="text-blue-700">{medicineData.brand.name}</a></p>
             <div className="flex items-center gap-2 ms:text-sm mm:text-[12px]">
                 <span className="text-gray-500 cursor-pointer">{medicineData.code}</span>
                 <span className="bg-gray-300 w-1.5 h-1.5 rounded-full"></span>
                 <span className="text-gray-500 cursor-pointer">{medicineData.rating} ⭐</span>
                 <span className="bg-gray-300 w-1.5 h-1.5 rounded-full"></span>
-                <a href="#" className="text-blue-700 capitalize">{medicineData.review} đánh giá</a>
+                <a href="#" className="text-blue-700 capitalize">{medicineData.review_count} đánh giá</a>
                 <span className="bg-gray-300 w-1.5 h-1.5 rounded-full"></span>
-                <a href="#" className="text-blue-700 capitalize">{medicineData.comments} bình luận</a>
+                <a href="#" className="text-blue-700 capitalize">{medicineData.comments_count} bình luận</a>
             </div>
             <div>
                 {/* Hiển thị giá */}
                 <div className="flex flex-col">
                     <div>
                         <span className="text-2xl font-semibold text-blue-700">
-                            {selectedOption.isDiscounted && selectedOption.discountedPrice
-                                ? selectedOption.discountedPrice.toLocaleString()
-                                : selectedOption.price.toLocaleString()}đ
+                            {selectedOption.discounted_price && selectedOption.discounted_price > 0
+                                ? parseFloat(selectedOption.discounted_price).toLocaleString()
+                                : parseFloat(selectedOption.price).toLocaleString()}đ
                         </span>
                         <span className="text-blue-700 text-lg font-medium">/ {selectedOption.label}</span>
 
                     </div>
 
 
-                    {selectedOption.isDiscounted && selectedOption.discountedPrice && (
+                    {selectedOption.discounted_price && selectedOption.discounted_price > 0 && (
                         <span className="text-lg text-gray-500 line-through">
-                            {selectedOption.price.toLocaleString()}đ
+                            {parseFloat(selectedOption.price).toLocaleString()}đ
                         </span>
                     )}
 
@@ -70,22 +78,22 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
                     </div>
 
                     <div className="font-semibold">Danh mục</div>
-                    <div className="text-blue-500">{medicineData.category}</div>
+                    <div className="text-blue-500">{medicineData.category.name}</div>
 
                     <div className="font-semibold">Dạng bào chế</div>
-                    <div>{medicineData.dosageform}</div>
+                    <div>{medicineData.dosage_form}</div>
 
                     <div className="font-semibold">Quy cách</div>
                     <div>{medicineData.specification}</div>
 
                     <div className="font-semibold">Xuất xứ thương hiệu</div>
-                    <div>{medicineData.origin}</div>
+                    <div>{medicineData.brand.original}</div>
 
                     <div className="font-semibold">Nhà sản xuất</div>
                     <div>{medicineData.manufacturer}</div>
 
                     <div className="font-semibold">Nước sản xuất</div>
-                    <div>{medicineData.country}</div>
+                    <div>{medicineData.brand.country}</div>
 
                     <div className="font-semibold">Thành phần</div>
                     <div>{medicineData.ingredients}</div>
@@ -94,7 +102,7 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
                     <div>{medicineData.description}</div>
 
                     <div className="font-semibold">Số đăng ký</div>
-                    <div>{medicineData.registrationNumber}</div>
+                    <div>{medicineData.registration_number}</div>
 
                     <div className="font-semibold tb:hidden">Chọn số lượng</div>
                     <div className="flex items-center  overflow-hidden tb:hidden">
@@ -131,7 +139,7 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
 
             </div>
 
-            <button className="mt-4 w-full bg-blue-500 text-white px-6 py-2 rounded-md tb:hidden">Chọn mua</button>
+            <button className="mt-4 w-full bg-blue-500 text-white px-6 py-2 rounded-md tb:hidden" onClick={addToCart}>Chọn mua</button>
 
             <div className="border-t-2 border-gray-200 flex mt-5 pt-5 ">
                 <div className="flex space-x-8 ml:flex-col ml:space-x-0 ml:space-y-2">
@@ -164,15 +172,15 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
                         <div className="p-4 space-y-2">
                             <div className="flex">
                                 <div className="w-36  border-2 rounded-lg p-2 mr-2">
-                                    <img src={medicineData.images[0]} alt="" className="w-full h-full object-contain" />
+                                    <img src={medicineData.images[0].image} alt="" className="w-full h-full object-contain" />
                                 </div>
                                 <div className="">
                                     <p className="font-medium text-gray-600">{medicineData.name}</p>
                                     <div className="flex flex-col">
                                         <div>
                                             <span className="text-2xl font-semibold text-blue-700">
-                                                {selectedOption.isDiscounted && selectedOption.discountedPrice
-                                                    ? selectedOption.discountedPrice.toLocaleString()
+                                                {selectedOption.discounted_price && selectedOption.discounted_price > 0
+                                                    ? selectedOption.discounted_price.toLocaleString()
                                                     : selectedOption.price.toLocaleString()}đ
                                             </span>
 
@@ -180,7 +188,7 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
                                         </div>
 
 
-                                        {selectedOption.isDiscounted && selectedOption.discountedPrice && (
+                                        {selectedOption.discounted_price && selectedOption.discounted_price > 0 && (
                                             <span className="text-lg text-gray-500 line-through">
                                                 {selectedOption.price.toLocaleString()}đ
                                             </span>
@@ -237,9 +245,9 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
                                     Tạm tính
                                 </div>
                                 <span className="text-xl font-semibold text-gray-600 flex-none">
-                                    {selectedOption.isDiscounted && selectedOption.discountedPrice
-                                        ? ((selectedOption.discountedPrice)*quantity).toLocaleString()
-                                        : ((selectedOption.price)*quantity).toLocaleString()}đ
+                                    {selectedOption.discounted_price && selectedOption.discounted_price > 0
+                                        ? ((selectedOption.discounted_price) * quantity).toLocaleString()
+                                        : ((selectedOption.price) * quantity).toLocaleString()}đ
                                 </span>
 
 
@@ -251,7 +259,7 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
                                     Tiết kiệm được
                                 </div>
                                 <span className="text-xl font-semibold text-gray-600 flex-none">
-                                    {((selectedOption.price - (selectedOption.discountedPrice || selectedOption.price))*quantity).toLocaleString()}đ
+                                    {((selectedOption.price - (selectedOption.discounted_price || selectedOption.price)) * quantity).toLocaleString()}đ
                                 </span>
 
 

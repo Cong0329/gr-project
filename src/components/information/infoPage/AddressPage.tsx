@@ -10,8 +10,7 @@ import Skeleton from 'react-loading-skeleton';
 export const AddressPage = () => {
 
     const dispatch = useDispatch();
-    const addresses = useSelector((state: RootState) => state.address.addresses);
-    const status = useSelector((state: RootState) => state.address.status);
+    const {status, addresses} = useSelector((state: RootState) => state.address);
     const [isAddingNew, setIsAddingNew] = useState(false);
     const [isModal, setIsModal] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
@@ -35,9 +34,12 @@ export const AddressPage = () => {
         setIsEdit(false);
     };
     useEffect(() => {
-        dispatch(fetchAddresses());
-
-    }, [dispatch, status]);
+        if (addresses.length === 0) {
+            dispatch(fetchAddresses());
+        } else if (status === 'succeeded') {
+            dispatch(fetchAddresses());
+        }
+    }, [dispatch, status, addresses.length]);
 
     const handleOpenDelet = (id: string) => {
         setIsDelete(true);

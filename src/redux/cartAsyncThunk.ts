@@ -1,65 +1,92 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { CartItem } from './cartSlice';
 
-export const fetchProducts = createAsyncThunk(
-  'cart/fetchProducts',
+export const fetchCarts = createAsyncThunk(
+  'cart/fetchCarts',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('https://65e695fbd7f0758a76e897e1.mockapi.io/api/v1/medicine'); // Thay bằng endpoint API của bạn
+      const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/cart`, {
+        withCredentials: true
+      });
       return response.data;
-    } catch (error) {
-      return rejectWithValue('Failed to load products');
+    } catch (error:unknown) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue({ message: 'An unknown error occurred' });
     }
   }
 );
 
 export const addToCartAPI = createAsyncThunk(
   'cart/addToCartAPI',
-  async (product: CartItem, { rejectWithValue }) => {
+  async ({product_id, quantity, option_id}: {product_id: string, quantity: number, option_id: string}, { rejectWithValue }) => {
     try {
-      const response = await axios.post('https://65e695fbd7f0758a76e897e1.mockapi.io/api/v1/medicine', product); // Thay bằng endpoint API của bạn
+      const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/cart`, {product_id, quantity, option_id}, {
+        withCredentials: true
+      });
       return response.data; // Giả sử API trả về giỏ hàng sau khi thêm sản phẩm
-    } catch (error) {
-      return rejectWithValue('Failed to add product to cart');
+    } catch (error:unknown) {
+      if (axios.isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
+      return rejectWithValue({ message: 'An unknown error occurred' });
     }
   }
 );
 
 export const updateQuantityAPI = createAsyncThunk(
     'cart/updateQuantityAPI',
-    async ({ id, quantity }: { id: string; quantity: number }, { rejectWithValue }) => {
+    async ({ cartItemId, quantity }: { cartItemId: string; quantity: number}, { rejectWithValue }) => {
+      console.log(cartItemId, quantity);
       try {
-        // Gửi PUT request để cập nhật số lượng sản phẩm
-        const response = await axios.put(`https://65e695fbd7f0758a76e897e1.mockapi.io/api/v1/medicine/${id}`, { quantity }); // Thay URL với endpoint thực tế
+        // Gửi PATCH request để cập nhật số lượng sản phẩm
+        const response = await axios.patch(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/cart/${cartItemId}`, { quantity },{
+          withCredentials: true
+        }); // Thay URL với endpoint thực tế
         return response.data; // Giả sử API trả về giỏ hàng đã cập nhật
-      } catch (error) {
-        return rejectWithValue('Failed to update product quantity');
+      } catch (error:unknown) {
+        if (axios.isAxiosError(error) && error.response) {
+          return rejectWithValue(error.response.data);
+        }
+        return rejectWithValue({ message: 'An unknown error occurred' });
       }
     }
   );
 
   export const removeFromCartAPI = createAsyncThunk(
     'cart/removeFromCartAPI',
-    async (id: string, { rejectWithValue }) => {
+    async (cartItemId: string, { rejectWithValue }) => {
       try {
         // Gửi DELETE request để xóa sản phẩm khỏi giỏ hàng
-        const response = await axios.delete(`https://65e695fbd7f0758a76e897e1.mockapi.io/api/v1/medicine/${id}`); // Thay URL với endpoint thực tế
+        const response = await axios.delete(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/cart/${cartItemId}`, {
+          withCredentials: true
+        }); // Thay URL với endpoint thực tế
         return response.data; // Giả sử API trả về giỏ hàng đã cập nhật
-      } catch (error) {
-        return rejectWithValue('Failed to remove product from cart');
+      } catch (error:unknown) {
+        if (axios.isAxiosError(error) && error.response) {
+          return rejectWithValue(error.response.data);
+        }
+        return rejectWithValue({ message: 'An unknown error occurred' });
       }
     }
   );
+
+
   export const updateSelectedOptionAPI = createAsyncThunk(
     'cart/updateSelectedOptionAPI',
-    async ({ id, selectedOption }: { id: string; selectedOption: string }, { rejectWithValue }) => {
+      async ({ cartItemId, option_id }: { cartItemId: string; option_id: string}, { rejectWithValue }) => {
       try {
-        // Gửi PUT request để cập nhật tùy chọn đã chọn
-        const response = await axios.put(`https://65e695fbd7f0758a76e897e1.mockapi.io/api/v1/medicine/${id}`, { selectedOption }); // Thay URL với endpoint thực tế
+        // Gửi PATCH request để cập nhật số lượng sản phẩm
+        const response = await axios.patch(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/cart/${cartItemId}`, { option_id },{
+          withCredentials: true
+        }); // Thay URL với endpoint thực tế
         return response.data; // Giả sử API trả về giỏ hàng đã cập nhật
-      } catch (error) {
-        return rejectWithValue('Failed to update product option');
+      } catch (error:unknown) {
+        if (axios.isAxiosError(error) && error.response) {
+          return rejectWithValue(error.response.data);
+        }
+        return rejectWithValue({ message: 'An unknown error occurred' });
       }
     }
   );

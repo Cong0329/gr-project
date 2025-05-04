@@ -1,36 +1,36 @@
 import { FaAngleRight } from "react-icons/fa6";
 import Skeleton from "react-loading-skeleton";
 import { Link } from "react-router-dom";
-import { Order, resetOrderDetail } from "../../../redux/orderSlice";
+import { Order,  resetAdminOrderDetail } from "../../../../redux/orderSlice";
 import { useDispatch } from "react-redux";
 
-interface OrderCustomProps {
+interface OrderTablesChildProps {
     orders: Order[];
     isLoading?: boolean;
 }
 
-export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
+export const OrderTablesChild = ({ orders, isLoading }: OrderTablesChildProps) => {
     const dispatch = useDispatch();
     let content;
     const statusColor = {
-        completed: 'text-green-500',
         confirmed: 'text-orange-500',
+        completed: 'text-green-500',
         cancelled: 'text-red-500',
         pending: 'text-yellow-500',
         shipping: 'text-blue-500',
         return: 'text-gray-500'
     };
     const statusBg = {
-        completed: 'bg-green-500',
         confirmed: 'bg-orange-500',
+        completed: 'bg-green-500',
         cancelled: 'bg-red-500',
         pending: 'bg-yellow-500',
         shipping: 'bg-blue-500',
         return: 'bg-gray-500'
     };
     const statusText = {
-        completed: 'Đã giao',
         confirmed: 'Đã xác nhận',
+        completed: 'Đã giao',
         cancelled: 'Đã hủy',
         pending: 'Đang xử lý',
         shipping: 'Đang giao',
@@ -103,7 +103,7 @@ export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
                                     <div className={`${statusColor[order.status]} font-medium`}>{statusText[order.status]}</div>
                                 </div>
                             </div>
-                            <Link to={`/profile/orders/order-detail/${order.id}`} onClick={() => dispatch(resetOrderDetail())}>
+                            <Link to={`/admin/orders/${order.id}`} onClick={() => dispatch(resetOrderDetail())}>
                                 <div className="pt-4 pb-2 flex justify-between">
                                     <div className="flex items-center">
                                         <img
@@ -125,7 +125,7 @@ export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
                                     <div className="text-gray-500">x{order.items[0].quantity} {order.items[0].option}</div>
                                 </div>
                             </Link>
-                            <Link to={`/profile/orders/order-detail/${order.id}`} onClick={() => dispatch(resetOrderDetail())}>
+                            <Link to={`/admin/orders/${order.id}`} onClick={() => dispatch(resetAdminOrderDetail())}>
                                 <div className="flex justify-between items-center">
                                     <div className="text-blue-700 font-medium gap-1 flex items-center">
                                         Xem chi tiết <FaAngleRight />
@@ -137,11 +137,7 @@ export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
                                 </div>
                             </Link>
 
-                            <div className="border-t pt-2 mt-2 flex justify-end">
-                                <button className="text-white bg-blue-700 px-16 py-2 font-medium gap-1 flex items-center rounded-full">
-                                    Mua lại
-                                </button>
-                            </div>
+                           
                         </div>
                     </div>
                 ))}

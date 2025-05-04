@@ -1,5 +1,8 @@
+
+import { Image } from "./MedicineSlider";
+
 interface ThumbnailSliderProps {
-  images: string[];
+  images: Image[];
   currentIndex: number;
   onThumbnailClick: (index: number) => void;
   openModal: (index: number, boolean: boolean) => void;
@@ -22,7 +25,7 @@ export default function ThumbnailSlider({
                 onClick={() => openModal(3, false)}
               >
                 <img
-                  src={src}
+                  src={src.image}
                   alt={`Thumbnail ${index}`}
                   className="w-full h-full object-cover rounded-md opacity-50"
                 />
@@ -34,7 +37,7 @@ export default function ThumbnailSlider({
               <div className={`md-lg:w-20 md-lg:h-20 border-2 w-28 h-28 rounded-md cursor-pointer transition ${currentIndex === index ? "border-blue-500" : "border-gray-300"}`}>
                 <img
                   key={index}
-                  src={src}
+                  src={src.image}
                   alt={`Thumbnail ${index}`}
                   className="w-full h-full rounded-md"
                   onClick={() => onThumbnailClick(index)}

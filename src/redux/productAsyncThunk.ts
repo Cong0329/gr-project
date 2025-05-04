@@ -108,6 +108,23 @@ export const getProduct = createAsyncThunk(
     }
 );
 
+
+export const getProductBySlug = createAsyncThunk(
+    'products/getProductBySlug',
+    async (slug: string, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/product/${slug}`);
+            return response.data;
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                return rejectWithValue(error.response.data);
+            }
+            return rejectWithValue({ message: 'An unknown error occurred' });
+        }
+    }
+)
+
+
 // Product Image
 
 export const createProductImage = createAsyncThunk(

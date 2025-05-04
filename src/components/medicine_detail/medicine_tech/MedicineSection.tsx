@@ -1,9 +1,9 @@
 import React from "react";
-import { Title, DescriptionType } from "./description";
+import { Title, DescriptionType, IngredientTitle } from "./description";
 
 interface ProductSectionProps {
   id: DescriptionType;
-  section: Title;
+  section: Title | IngredientTitle;
 }
 
 // Hàm tách nội dung theo ký tự xuống dòng
@@ -14,7 +14,7 @@ const formatDescription = (description: string) => {
 const ProductSection: React.FC<ProductSectionProps> = ({ id, section }) => {
   let content;
 
-  if (id === DescriptionType.INGREDIENTS && typeof section.description !== "string") {
+  if (id === DescriptionType.INGREDIENTS && typeof section.descriptions !== "string") {
     content = (
       <>
         <table className="w-full border mt-2 mb-4">
@@ -25,18 +25,18 @@ const ProductSection: React.FC<ProductSectionProps> = ({ id, section }) => {
             </tr>
           </thead>
           <tbody>
-            {section.description.ingredients.map((ing, i) => (
-              <tr key={i}>
+            {section.ingredients.map((ing) => (
+              <tr key={ing.id}>
                 <td className="border px-4 py-2">{ing.name}</td>
                 <td className="border px-4 py-2">{ing.value}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        {section.description.description && (
+        {section.descriptions && (
           <ul className="list-none pl-5 space-y-2">
-            {section.description.description.map((desc, index) => (
-              <li key={index}>{desc}</li>
+            {section.descriptions.map((desc) => (
+              <li key={desc.id}>{desc.text}</li>
             ))}
           </ul>
         )}

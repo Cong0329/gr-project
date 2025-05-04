@@ -57,29 +57,58 @@ const addressSlice = createSlice({
       .addCase(fetchAddresses.fulfilled, (state, action) => {
         state.addresses = action.payload.addresses;
         state.selectedAddress = action.payload.addresses.find(addr => addr.default_address) || null;
-        state.status = "succeeded";
+        state.status = "idle";
+      })
+      .addCase(fetchAddresses.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchAddresses.rejected, (state) => {
+        state.status = "failed";
       })
       .addCase(getAddressById.fulfilled, (state, action) => {
-        state.status = "succeeded";
+        state.status = "idle";
         state.isEdit = action.payload.address;
+      })
+      .addCase(getAddressById.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(getAddressById.rejected, (state) => {
+        state.status = "failed";
       })
       .addCase(addAddressAPI.fulfilled, (state, action) => {
         state.addresses.push(action.payload);
         if (action.payload.default_address) {
           state.selectedAddress = action.payload;
         }
+        state.status = "succeeded";
+      })
+      .addCase(addAddressAPI.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(addAddressAPI.rejected, (state) => {
+        state.status = "failed";
       })
       .addCase(deleteAddressAPI.fulfilled, (state, action) => {
         state.addresses = state.addresses.filter(addr => addr.id !== action.payload);
         if (state.selectedAddress?.id === action.payload) {
           state.selectedAddress = state.addresses.find(addr => addr.default_address) || null;
         }
+        state.status = "succeeded";
+      })
+      .addCase(deleteAddressAPI.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(deleteAddressAPI.rejected, (state) => {
+        state.status = "failed";
       })
       .addCase(updateAddressAPI.pending, (state) => {
         state.status = "loading";
       })
       .addCase(updateAddressAPI.fulfilled, (state) => {
         state.status = "succeeded";
+      })
+      .addCase(updateAddressAPI.rejected, (state) => {
+        state.status = "failed";
       });
   },
 });

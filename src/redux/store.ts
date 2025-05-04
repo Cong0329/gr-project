@@ -17,11 +17,12 @@ import categoryReducer from './categorySlice';
 import medicalObjectReducer from './medicalObjectSlice';
 import indicationReducer from './indicationSlice';
 import productReducer from './productSlice';
+import orderReducer from './orderSlice';
 
-<<<<<<< HEAD
 const cartPersistConfig = {
   key: 'cart',
   storage,
+  whitelist: ['items']
 };
 
 const authPersistConfig = {
@@ -30,17 +31,15 @@ const authPersistConfig = {
   whitelist: ['isAuthenticated', 'isUserAuthenticated', 'user', 'admin', 'verify', 'mail']
 };
 
-const persistedReducer = persistReducer(cartPersistConfig, cartReducer);
-const persistedReducer2 = persistReducer(authPersistConfig, authReducer);
-=======
-const persistConfig = {
-  key: "root",
-  storage, // lưu trữ vào localStorage
+const orderPersistConfig = {
+  key: 'order',
+  storage,
+  whitelist: ['reset']
 };
 
-const persistedReducer = persistReducer(persistConfig, cartReducer);
-
->>>>>>> 839d7a0d1638e7296fdba23a004aaed5f5f54add
+const persistedReducer = persistReducer(cartPersistConfig, cartReducer);
+const persistedReducer2 = persistReducer(authPersistConfig, authReducer);
+const persistedReducer3 = persistReducer(orderPersistConfig, orderReducer);
 // Cấu hình store
 export const store = configureStore({
   reducer: {
@@ -50,6 +49,7 @@ export const store = configureStore({
     departments: departmentReducer,
     servicePackage: servicePackageReducer,
     filters: filterReducer,
+    // cart: cartReducer,
     cart: persistedReducer,
     address: addressReducer,
     profile: profileReducer,
@@ -59,7 +59,9 @@ export const store = configureStore({
     categories: categoryReducer,
     medicalObjects: medicalObjectReducer,
     indications: indicationReducer,
-    products: productReducer
+    products: productReducer,
+    // order: orderReducer
+    order: persistedReducer3
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

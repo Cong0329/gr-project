@@ -1,31 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
-import { FaMagnifyingGlass } from 'react-icons/fa6';
-import { OrderCustom } from './OrderCustom';
-import { useDispatch } from 'react-redux';
-import { fetchOrders } from '../../../redux/orderAsyncThunk';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
+import { useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../../redux/store";
+import { fetchAdminOrders } from "../../../../redux/orderAsyncThunk";
+import { FaMagnifyingGlass } from "react-icons/fa6";
+import { OrderTablesChild } from "./OrderTablesChild";
 
-// export interface Order {
-//     id: number;
-//     date: string;
-//     shippingMethod: string;
-//     orderId: string;
-//     status: 'delivered' | 'canceled' | 'pending' | 'delivering' | 'return';
-//     total: number;
-//     items: { name: string; price: number; quantity: number }[];
-// }
 
-export const OrderPage = () => {
+const OrderTables = () => {
     const [activeTab, setActiveTab] = useState('all');
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
     const [search, setSearch] = useState('');
-    const { orders, status } = useSelector((state: RootState) => state.order);
+    const { adminOrders, status } = useSelector((state: RootState) => state.order);
     const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
     const [isLoading, setIsLoading] = useState(true);
     const dispatch = useDispatch();
     useEffect(() => {
-        dispatch(fetchOrders());
+        dispatch(fetchAdminOrders());
     }, [dispatch]);
 
     useEffect(() => {
@@ -36,13 +26,11 @@ export const OrderPage = () => {
         return () => clearTimeout(timer); // Cleanup on unmount or activeTab change
     }, [activeTab]);
 
-    const filteredOrders = orders.filter((order) => {
+    const filteredOrders = adminOrders.filter((order) => {
         const matchesTab = activeTab === 'all' || order.status === activeTab;
         const matchesSearch =
             search.length === 0 ||
-            order.items.some((item) =>
-                item.Product.name.toLowerCase().includes(search.toLowerCase())
-            );
+            order.id.toString().toLowerCase().includes(search.toLowerCase());
         return matchesTab && matchesSearch;
     });
 
@@ -63,7 +51,7 @@ export const OrderPage = () => {
         setIsLoading(true);
         const timer = setTimeout(() => {
             setIsLoading(false);
-        }, 2000); // Delay để giả lập loading (tuỳ chỉnh 500ms hay 300ms cho mượt)
+        }, 1500); // Delay để giả lập loading (tuỳ chỉnh 500ms hay 300ms cho mượt)
 
         return () => clearTimeout(timer);
     }, [search]);
@@ -74,9 +62,9 @@ export const OrderPage = () => {
     }
 
     return (
-        <div className="pt-2">
+        <div className="pt-2 w-10/12">
             <div className="flex justify-between mb-6">
-                <h2 className="text-2xl font-bold">Đơn hàng của tôi</h2>
+                <h2 className="text-2xl font-bold">Quản lý đơn hàng</h2>
                 <div className="flex items-center w-1/2 py-4 pl-2 pr-1 rounded-full border bg-gray-200 h-10 relative">
                     <input
                         type="text"
@@ -115,8 +103,8 @@ export const OrderPage = () => {
                             {{
                                 all: 'Tất cả',
                                 pending: 'Đang xử lý',
-                                confirmed: 'Đã xác nhận',
                                 shipping: 'Đang giao',
+                                confirmed: 'Đã xác nhận',
                                 completed: 'Đã giao',
                                 cancelled: 'Đã hủy',
                                 return: 'Trả hàng',
@@ -137,7 +125,7 @@ export const OrderPage = () => {
 
             {/* Tab content */}
             {filteredOrders.length > 0 ? (
-                <OrderCustom orders={filteredOrders} isLoading={isLoading} />
+                <OrderTablesChild orders={filteredOrders} isLoading={isLoading} />
             ) : (
                 <div className="flex items-center justify-center flex-col p-12">
                     <div className="w-96 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -150,3 +138,4 @@ export const OrderPage = () => {
         </div>
     );
 };
+export default OrderTables;

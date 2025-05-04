@@ -28,15 +28,19 @@ export interface TextTitle extends TitleBase {
 
 export interface IngredientTitle extends TitleBase {
     type: DescriptionType.INGREDIENTS; // Chỉ sử dụng type Ingredients
-    description: Ingredient;
+    descriptions: Ingredient[] | null;
+    ingredients: Instruction[] | null;
 }
 
 export interface Ingredient {
-    description: string[] | null;
-    ingredients: Instruction[];
+    id: string;
+    section_id: string;
+    text: string;
 }
 
 export interface Instruction {
+    id: string;
+    section_id: string;
     name: string;
     value: string;
 }

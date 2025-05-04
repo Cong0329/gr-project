@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch} from "react-redux";
 import { deleteProduct } from "../../../../../redux/productAsyncThunk";
 import { Link } from "react-router-dom";
-import { resetProduct } from "../../../../../redux/productSlice";
-import { RootState } from "../../../../../redux/store";
+
 
 export interface Product {
     id: string;
@@ -12,6 +11,8 @@ export interface Product {
     quantity: number;
     brand: Brand;
     options: Options[];
+    slug: string;
+    specification: string;
 }
 
 interface Brand {

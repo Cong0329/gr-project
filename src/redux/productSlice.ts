@@ -1,12 +1,13 @@
-import { Product } from "../components/medicine_detail/medicine";
+import { Product } from "../components/admin/pages/Forms/Product/Product";
 import { createSlice } from "@reduxjs/toolkit";
-import { createProduct, createProductImage, createProductDetail, createProductOption, createProductDetailSection, createProductDetailSectionIngredient, fetchProducts, deleteProduct, getProduct, updateProduct, deleteProductImage, deleteProductOption, updateProductOption, getProductDetailProduct, updateProductDetail, deleteProductSection, updateProductDetailSection, deleteProductIngredient, deleteProductDescriptionIngredient, addProductDescriptionIngredient, addProductIngredient } from "./productAsyncThunk";
+import { createProduct, createProductImage, createProductDetail, createProductOption, createProductDetailSection, createProductDetailSectionIngredient, fetchProducts, deleteProduct, getProduct, updateProduct, deleteProductImage, deleteProductOption, updateProductOption, getProductDetailProduct, updateProductDetail, deleteProductSection, updateProductDetailSection, deleteProductIngredient, deleteProductDescriptionIngredient, addProductDescriptionIngredient, addProductIngredient, getProductBySlug } from "./productAsyncThunk";
 import { DescriptionProduct } from "../components/admin/pages/Forms/Product/EditProduct/EditBlog/types";
+import { ProductDetail } from "../components/medicine_detail/medicine";
 
 interface ProductState {
     products: Product[];
     loading: boolean;
-    product: Product;
+    product: ProductDetail;
     detail: DescriptionProduct;
     product_id: string;
     detail_id: string;
@@ -16,7 +17,7 @@ interface ProductState {
 
 const initialState: ProductState = {
     products: [],
-    product: {} as Product, 
+    product: {} as ProductDetail, 
     detail: {} as DescriptionProduct,
     loading: false,
     product_id: '',
@@ -33,7 +34,7 @@ export const productSlice = createSlice({
             state.status = action.payload;
         },
         resetProduct: (state) => {
-            state.product = {} as Product;
+            state.product = {} as ProductDetail;
             state.detail = {} as DescriptionProduct;
         }
     },
@@ -191,6 +192,16 @@ export const productSlice = createSlice({
             state.status = 'succeeded';
         })
         .addCase(deleteProductDescriptionIngredient.rejected, (state) => {
+            state.status = 'failed';
+        })
+        .addCase(getProductBySlug.pending, (state) => {
+            state.status = 'loading';
+        })
+        .addCase(getProductBySlug.fulfilled, (state, action) => {
+            state.status = 'idle';
+            state.product = action.payload;
+        })
+        .addCase(getProductBySlug.rejected, (state) => {
             state.status = 'failed';
         })
     }

@@ -4,8 +4,12 @@ import MainSlider from "./MainSlider";
 import ThumbnailSlider from "./ThumbnailSlider";
 import ImageModal from "./ImageModal";
 
+export interface Image {
+  id: string;
+  image: string;
+}
 interface ProductImageSliderProps {
-  images: string[];
+  images: Image[];
 }
 
 export default function ProductImageSlider({ images }: ProductImageSliderProps) {

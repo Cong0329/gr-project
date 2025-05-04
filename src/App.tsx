@@ -32,14 +32,14 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/medicine-detail" element={<MedicineDetail />} />
+        <Route path="/medicine-detail/:slug" element={<MedicineDetail />} />
         <Route path="/medicine-search" element={<SearchPage />} />
 
 
         <Route element={<UserProtectedRoute />}>
           <Route path="/profile" element={<Navigate to="/profile/personal-info" replace />} />
           <Route path="/profile/:pageId" element={<ProfilePage />} />
-          <Route path="/profile/orders/order-detail/:status" element={<OrderDetailPage />} />
+          <Route path="/profile/orders/order-detail/:id" element={<OrderDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
         </Route>
 

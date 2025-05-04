@@ -10,7 +10,7 @@ import axiosInstance from "../../auth/axiosInstance";
 export const Login = () => {
     const backendURL = import.meta.env.VITE_NODEJS_BACKEND_URL;
     const dispatch = useDispatch();
-    const { isUserAuthenticated, user, isAuthenticated } = useSelector((state: RootState) => state.auth);
+    const { isUserAuthenticated, user} = useSelector((state: RootState) => state.auth);
 
     const handleGoogleLogin = () => {
         window.location.href = `${backendURL}/auth/google`;
@@ -26,7 +26,7 @@ export const Login = () => {
                     });
 
                     if (res.data) {
-                        if (!isAuthenticated && !isUserAuthenticated) {
+                        if (!isUserAuthenticated ) {
                             dispatch(googleLogin(res.data));
                         }
                     }
@@ -37,7 +37,7 @@ export const Login = () => {
 
             fetchUser();
         }
-    }, [dispatch, isUserAuthenticated, isAuthenticated]);
+    }, [dispatch, isUserAuthenticated]);
 
 
     return (

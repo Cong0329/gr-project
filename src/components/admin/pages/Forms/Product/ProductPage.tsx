@@ -2,39 +2,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../../redux/store";
 import { useEffect } from "react";
 import { fetchProducts } from "../../../../../redux/productAsyncThunk";
-
 import { Product } from "./Product";
 
-interface Product {
-    id: string;
-    name: string;
-    images: Images[];
-    quantity: number;
-    brand: Brand;
-    options: Options[];
-}
-
-interface Brand {
-    id: string;
-    name: string;
-}
-
-interface Options {
-    id: string;
-    label: string;
-    price: number;
-    discounted_pricet: number;
-}
-
-interface Images {
-    id: string;
-    image: string;
-}
 
 
-// interface ProductPageProps {
-//     products: Product[];
-// }
 
 
 const ProductPage = () => {

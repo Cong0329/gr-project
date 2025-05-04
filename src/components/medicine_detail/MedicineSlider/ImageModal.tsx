@@ -5,9 +5,10 @@ import { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
+import { Image } from "./MedicineSlider";
 
 interface ImageModalProps {
-    images: string[];
+    images: Image[];
     indexModal: number;
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -68,9 +69,9 @@ export default function ImageModal({ images, indexModal, setShowModal }: ImageMo
                     {images.map((src, index) => (
                         <SwiperSlide key={index} className="flex justify-center items-center">
                             <img
-                                src={src}
+                                src={src.image}
                                 alt={`Product Full ${index}`}
-                                className={`object-cover ${isZoomed ? "w-full h-[500px] ml:h-[325px] " : "w-3/5"}`}
+                                className={` object-contain ${isZoomed ? "w-full h-[500px] ml:h-[325px] " : "w-3/5 h-[350px]"}`}
                             />
                         </SwiperSlide>
                     ))}
@@ -90,9 +91,9 @@ export default function ImageModal({ images, indexModal, setShowModal }: ImageMo
                         {images.map((src, index) => (
                             <SwiperSlide key={index}>
                                 <img
-                                    src={src}
+                                    src={src.image}
                                     alt={`Modal Thumbnail ${index}`}
-                                    className={`w-full h-full border-2 object-contain rounded-md cursor-pointer transition ${modalIndex === index ? "border-blue-500" : "border-gray-300"
+                                    className={`w-full h-[100px] border-2 object-contain rounded-md cursor-pointer transition ${modalIndex === index ? "border-blue-500" : "border-gray-300"
                                         }`}
                                     onClick={() => modalSwiperRef.current?.slideTo(index)}
                                 />

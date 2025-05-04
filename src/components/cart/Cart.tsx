@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NavLink } from "../navlink/NavLink";
 import { RootState } from "../../redux/store";
-import { backToCart, addToCart } from "../../redux/cartSlice";
-import { fetchProducts, addToCartAPI } from "../../redux/cartAsyncThunk";
+import { backToCart } from "../../redux/cartSlice";
 import { useSelector, useDispatch } from "react-redux";
 import Checkout from "./Checkout";
 import CartOder from "./CartOder";
 import { FaAngleLeft } from "react-icons/fa6";
 import CartSummary from "./CartSummary";
 import { RelatedMedicines } from "../medicine_detail/RelatedProducts";
+import { Link } from "react-router-dom";
 
 
 export const Cart = () => {
@@ -16,43 +16,9 @@ export const Cart = () => {
     const [isServiceHovered, setIsServiceHovered] = useState(false);
     const isCheckout = useSelector((state: RootState) => state.cart.isCheckout);
     const cartItems = useSelector((state: RootState) => state.cart.items);
+    const { status } = useSelector((state: RootState) => state.cart);
+    const orderStatus = useSelector((state: RootState) => state.order.status);
 
-    useEffect(() => {
-        if (cartItems.length) {
-            dispatch(fetchProducts());
-        }
-    }, [dispatch, cartItems.length]);
-
-    // const Product = {
-    //     id: "3",
-    //     name: 'Vitamin C 1000mg',
-    //     quantity: 1,
-    //     image: 'https://i.imgur.com/HXN77Ev.png',
-    //     selectedOption: 'hop',
-    //     options: [
-    //         {
-    //             id: 'hop',
-    //             label: 'Hộp',
-    //             price: 165000,
-    //             discountedPrice: 150000,
-    //             isDiscounted: true
-    //         },
-    //         {
-    //             id: 'vi',
-    //             label: 'Vỉ',
-    //             price: 92000
-    //         },
-    //         {
-    //             id: 'ong',
-    //             label: 'Ống',
-    //             price: 9200
-    //         }
-    //     ]
-    // }
-
-    // const handleAddToCart = () => {
-    //     dispatch(addToCartAPI(Product));
-    // }
     return (
         <main className="flex-1 bg-gray-100  ">
             <div className="mx-auto bg-white pt-2 tb:pt-0">
@@ -68,12 +34,12 @@ export const Cart = () => {
                             </span>
                         </button>
                     ) : (
-                        <a href="/" className="text-blue-700 font-semibold">
+                        <Link to="/" className="text-blue-700 font-semibold">
                             <span className="flex items-center gap-1 pt-2">
                                 <FaAngleLeft />
                                 Tiếp tục mua sắm
                             </span>
-                        </a>
+                        </Link>
                     )
                     }
                     {cartItems.length > 0 ? (
@@ -99,9 +65,9 @@ export const Cart = () => {
                             <img className="w-1/4" alt="cart" src="https://i.imgur.com/wJtkO6K.png" />
                             <h2 className="text-xl font-semibold">Giỏ hàng của bạn đang trống</h2>
                             <p className="text-gray-500">Hãy thêm sản phẩm để mua sắm nhé!</p>
-                            <a className="bg-blue-700 text-white font-semibold px-4 py-2 rounded-full" href="/">
+                            <Link className="bg-blue-700 text-white font-semibold px-4 py-2 rounded-full" to="/">
                                 Khám phá ngay
-                            </a>
+                            </Link>
                         </div>
                     )}
 
@@ -111,6 +77,14 @@ export const Cart = () => {
                 {isServiceHovered && (
                     <div className="absolute inset-0 bg-blue-950 bg-opacity-30 z-5">    </div>
                 )}
+                {(status === "loading" || orderStatus === "loading") &&
+                    <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-50">
+                        <div className="flex flex-col items-center">
+                            <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <p className="mt-4 text-white text-sm">Đang tải...</p>
+                        </div>
+                    </div>
+                }
             </div>
         </main>
     )

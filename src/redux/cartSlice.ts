@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { fetchProducts, addToCartAPI, updateQuantityAPI, removeFromCartAPI, updateSelectedOptionAPI } from "./cartAsyncThunk";
+import { fetchCarts, addToCartAPI, updateQuantityAPI, removeFromCartAPI, updateSelectedOptionAPI } from "./cartAsyncThunk";
 
 // Các interface cần thiết
 export interface ProductOption {
@@ -12,10 +12,10 @@ export interface ProductOption {
 
 export interface CartItem {
   id: string;
+  product_id: string;
   name: string;
   image: string;
   quantity: number;
-  options: ProductOption[];
   selectedOption: ProductOption | string;
   selected: boolean;
 }
@@ -24,6 +24,7 @@ interface CartState {
   items: CartItem[];
   isCheckout: boolean;
   status: "idle" | "loading" | "succeeded" | "failed";
+  loading: boolean;
 }
 
 // Initial state của giỏ hàng
@@ -31,6 +32,7 @@ const initialState: CartState = {
   items: [],
   isCheckout: false,
   status: "idle",
+  loading: false,
 };
 
 const cartSlice = createSlice({
@@ -81,16 +83,20 @@ const cartSlice = createSlice({
     resetCart: (state) => {
       state.items = [];
       state.isCheckout = false;
+      state.status = "idle";
+      state.loading = false;
+      
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchProducts.pending, (state) => {
+      .addCase(fetchCarts.pending, (state) => {
         state.status = "loading";
       })
-      .addCase(fetchProducts.fulfilled, (state, action) => {
-        state.status = "succeeded";
-      
+      .addCase(fetchCarts.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.loading = true;
+        // state.items = action.payload.items;
         // Tạo map để tra cứu trạng thái `selected` từ Redux Persist
         const selectedMap = state.items.reduce((acc, item) => {
           acc[item.id] = item.selected;
@@ -98,42 +104,57 @@ const cartSlice = createSlice({
         }, {} as Record<string, boolean>);
       
         // Cập nhật danh sách sản phẩm, giữ lại `selected` nếu tồn tại
-        state.items = action.payload.map((product: CartItem) => ({
+        state.items = action.payload.items.map((product: CartItem) => ({
           id: String(product.id),
-          name: product.name,
-          image: product.image,
+          product_id: String(product.product.id),
+          name: product.product.name,
+          image: product.product.images[0].image,
           quantity: product.quantity,
-          options: product.options,
-          selectedOption:
-            product.options.find((option) => option.id === product.selectedOption) ||
-            product.options[0],
+          selectedOption: product.option,
           selected: selectedMap[product.id] ?? true, // 🔥 Giữ trạng thái cũ hoặc mặc định `false`
         }));
       })      
-      .addCase(fetchProducts.rejected, (state, action) => {
+      .addCase(fetchCarts.rejected, (state, action) => {
         state.status = "failed";
         console.error(action.payload);
-      });
-
-    builder
-      .addCase(addToCartAPI.fulfilled, (state, action) => {
-        state.items.push(action.payload);
       })
-      .addCase(updateQuantityAPI.fulfilled, (state, action) => {
-        const index = state.items.findIndex(item => item.id === action.payload.id);
-        if (index !== -1) {
-          state.items[index].quantity = action.payload.quantity;
-        }
+      .addCase(addToCartAPI.fulfilled, (state) => {
+        state.status = "succeeded";
       })
-      .addCase(removeFromCartAPI.fulfilled, (state, action) => {
-        state.items = state.items.filter(item => item.id !== action.payload.id);
+      .addCase(addToCartAPI.pending, (state) => {
+        state.status = "loading";
       })
-      .addCase(updateSelectedOptionAPI.fulfilled, (state, action) => {
-        const item = state.items.find(item => item.id === action.payload.id);
-        if (item) {
-          const selected = item.options.find(option => option.id === action.payload.selectedOption) || item.options[0];
-          item.selectedOption = selected; // ✅ Gán đúng giá trị
-        }
+      .addCase(addToCartAPI.rejected, (state, action) => {
+        state.status = "failed";
+        console.error(action.payload);
+      })
+      .addCase(updateQuantityAPI.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(updateQuantityAPI.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateQuantityAPI.rejected, (state, action) => {
+        state.status = "failed";
+        console.error(action.payload);
+      })
+      .addCase(removeFromCartAPI.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(removeFromCartAPI.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(removeFromCartAPI.rejected, (state) => {
+        state.status = "failed";
+      })
+      .addCase(updateSelectedOptionAPI.fulfilled, (state) => {
+       state.status = "succeeded";
+      })
+      .addCase(updateSelectedOptionAPI.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(updateSelectedOptionAPI.rejected, (state) => {
+        state.status = "failed";
       });
       
   },

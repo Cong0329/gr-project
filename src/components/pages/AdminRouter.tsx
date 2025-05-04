@@ -28,6 +28,8 @@ import IndicationPage from "../admin/pages/Forms/Product/Brand/IndicationPage";
 import ProductPage from "../admin/pages/Forms/Product/ProductPage";
 import EditProductPage from "../admin/pages/Forms/Product/EditProduct/EditProductPage";
 import {BrandProduct} from "../admin/pages/Forms/Product/Brand/BrandProduct";
+import OrderTables from "../admin/pages/Tables/OrderTables";
+import OrderDetail from "../admin/pages/Tables/OrderDetail";
 
 const adminRoutes = (
     <>
@@ -51,6 +53,8 @@ const adminRoutes = (
             <Route path="/admin/brand/:name" element= {< BrandProduct/>} />
             {/* Tables */}
             <Route path="/admin/basic-tables" element={<BasicTables />} />
+            <Route path="/admin/orders" element={<OrderTables />} />
+            <Route path="/admin/orders/:id" element={<OrderDetail />} />
 
             {/* UI Elements */}
             <Route path="/admin/alerts" element={<Alerts />} />

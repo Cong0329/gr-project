@@ -55,9 +55,9 @@ const navItems: NavItem[] = [
     ],
   },
   {
-    name: "Tables",
+    name: "Đơn hàng",
     icon: <TableIcon />,
-    subItems: [{ name: "Basic Tables", path: "/admin/basic-tables", pro: false }],
+    subItems: [{ name: "Quản lý đơn hàng", path: "/admin/orders", pro: false }],
   },
   {
     name: "Pages",
