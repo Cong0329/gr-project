@@ -1,6 +1,7 @@
+
 const crypto = require('crypto');
 const qs = require('qs');
-const { Order } = require('../models');
+const { Order, PaymentMethod, OrderStatusHistory } = require('../models');
 require('dotenv').config();
 const { sortObject } = require('../utils/sortObjectPayment');
 
@@ -37,8 +38,18 @@ exports.vnpayReturn = async (req, res) => {
 
     if (responseCode === '00') {
       order.status = 'pending'; // thành công, chờ xác nhận
+      await OrderStatusHistory.create({
+        order_id: order.id,
+        status: order.status,
+        changed_at: new Date(),
+      });
     } else {
       order.status = 'cancelled'; // thanh toán thất bại
+      await OrderStatusHistory.create({
+        order_id: order.id,
+        status: order.status,
+        changed_at: new Date(),
+      });
     }
 
     await order.save();
@@ -50,3 +61,18 @@ exports.vnpayReturn = async (req, res) => {
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+exports.getAllPaymentMethods = async (req, res) => {
+  try {
+    const methods = await PaymentMethod.findAll({
+      attributes: ['id', 'method', 'description'], // Tùy theo các cột bạn có
+      order: [['id', 'ASC']]
+    });
+
+    res.status(200).json(methods);
+  } catch (error) {
+    console.error('Get payment methods error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+

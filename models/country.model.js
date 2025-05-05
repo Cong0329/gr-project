@@ -21,12 +21,12 @@ module.exports = (sequelize, DataTypes) => {
         tableName: 'country',
         timestamps: true
     });
-    Country.associate = (models) => {
-        Country.hasMany(models.Product, {
-            foreignKey: 'country_id',
-            as: 'products',
-        });
-    };
+    // Country.associate = (models) => {
+    //     Country.hasMany(models.Product, {
+    //         foreignKey: 'country_id',
+    //         as: 'products',
+    //     });
+    // };
 
     return Country;
 };

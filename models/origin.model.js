@@ -15,11 +15,11 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: true
     }
     );
-    Origin.associate = (models) => {
-        Origin.hasMany(models.Product, {
-            foreignKey: 'origin_id',
-            as: 'products',
-        });
-    };
+    // Origin.associate = (models) => {
+    //     Origin.hasMany(models.Product, {
+    //         foreignKey: 'origin_id',
+    //         as: 'products',
+    //     });
+    // };
     return Origin;
 };

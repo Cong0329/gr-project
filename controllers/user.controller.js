@@ -4,7 +4,7 @@ const { User } = require('../models');
 exports.getProfile = async (req, res) => {
   try {
     const user = await User.findByPk(req.user.id, {
-      attributes: ['id', 'name', 'email', 'avatar_url', 'phone', 'gender']
+      attributes: [ 'name', 'email', 'avatar_url', 'phone', 'gender']
     });
 
     if (!user) return res.status(404).json({ message: 'User not found' });
@@ -79,7 +79,8 @@ exports.updateProfile = async (req, res) => {
     res.json({
       message: 'User updated successfully',
       user: {
-        id: user.id,
+        email: user.email,
+        addEventListener: user.avatar_url,
         name: user.name,
         phone: user.phone,
         gender: user.gender,

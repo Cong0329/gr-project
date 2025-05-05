@@ -3,33 +3,63 @@
 const { Product, ProductOption } = require('../models');
 
 exports.addProductOption = async (req, res) => {
-  const { product_id, label, price, discounted_price } = req.body;
+  const { product_id, options } = req.body;
 
   try {
-    // Kiểm tra xem sản phẩm có tồn tại không
+    // Kiểm tra sản phẩm tồn tại
     const product = await Product.findByPk(product_id);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    const option = await ProductOption.create({
-      product_id,
-      label,
-      price,
-      discounted_price: discounted_price || 0
-    });
+    // Nếu gửi 1 option (không phải mảng)
+    const optionList = Array.isArray(options) ? options : [options];
 
-    return res.status(201).json({ message: 'Option created', option });
+    const createdOptions = await Promise.all(
+      optionList.map(async (opt) => {
+        const { label, price, discounted_price } = opt;
+        return await ProductOption.create({
+          product_id,
+          label,
+          price,
+          discounted_price: discounted_price || 0,
+        });
+      })
+    );
+
+    return res.status(201).json({ message: 'Options created', options: createdOptions });
   } catch (error) {
-    console.error('Error adding option:', error);
+    console.error('Error adding options:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
 
+exports.getOptionsByProductId = async (req, res) => {
+  const { product_id } = req.params;
+
+  try {
+    const options = await ProductOption.findAll({
+      where: { product_id },
+      attributes: ['id', 'label', 'price', 'discounted_price']
+    });
+
+    if (!options.length) {
+      return res.status(404).json({ message: 'No options found for this product' });
+    }
+
+    res.status(200).json(options);
+  } catch (error) {
+    console.error('Get options error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
 exports.updateProductOption = async (req, res) => {
   const { id } = req.params;
   const updateFields = req.body;
-
+  console.log(updateFields);
   try {
     const option = await ProductOption.findByPk(id);
 
@@ -51,7 +81,7 @@ exports.updateProductOption = async (req, res) => {
 
 exports.deleteOption = async (req, res) => {
   const { optionId } = req.params;
-
+  console.log(optionId);
   try {
     const option = await ProductOption.findByPk(optionId);
     if (!option) return res.status(404).json({ message: "Option not found" });

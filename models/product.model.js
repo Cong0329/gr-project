@@ -71,14 +71,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    origin_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    country_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
     medical_object_id: {
       type: DataTypes.INTEGER,
       allowNull: false
@@ -86,6 +78,10 @@ module.exports = (sequelize, DataTypes) => {
     indication_id: {
       type: DataTypes.INTEGER,
       allowNull: false
+    },
+    is_deleted : {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   }, {
     tableName: 'product',
@@ -112,14 +108,14 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'category_id',
       as: 'category'
     });
-    Product.belongsTo(models.Origin, {
-      foreignKey: 'origin_id',
-      as: 'origin'
-    });
-    Product.belongsTo(models.Country, {
-      foreignKey: 'country_id',
-      as: 'country'
-    });
+    // Product.belongsTo(models.Origin, {
+    //   foreignKey: 'origin_id',
+    //   as: 'origin'
+    // });
+    // Product.belongsTo(models.Country, {
+    //   foreignKey: 'country_id',
+    //   as: 'country'
+    // });
     Product.belongsTo(models.MedicalObject, {
       foreignKey: 'medical_object_id',
       as: 'medical_object'
@@ -135,6 +131,18 @@ module.exports = (sequelize, DataTypes) => {
     Product.hasMany(models.ProductOption, {
       foreignKey: 'product_id',
       as: 'options'
+    });
+    Product.hasMany(models.ProductDetail, {
+      foreignKey: 'product_id',
+      as: 'detail'
+    });
+    Product.hasMany(models.CartItem, {
+      foreignKey: 'product_id',
+      as: 'cart_items'
+    });
+    Product.hasMany(models.OrderItem, {
+      foreignKey: 'product_id',
+      as: 'order_items'
     });
   };
 

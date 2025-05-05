@@ -5,6 +5,7 @@ require('dotenv').config();
 const moment = require('moment');
 
 router.get('/vnpay-return', paymentController.vnpayReturn);
+router.get('/', paymentController.getAllPaymentMethods);
 
 
 

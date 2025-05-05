@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const countryController = require('../controllers/country.controller');
-const authenticateToken = require('../middlewares/auth.middleware');
+const {authenticateToken} = require('../middlewares/auth.middleware');
 const requireRole = require('../middlewares/role.middleware');
 
 router.post('/', authenticateToken, requireRole('ROLE_ADMIN'), countryController.createCountry);

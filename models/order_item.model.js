@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID,
         allowNull: false,
       },
-      option_id: {
-        type: DataTypes.INTEGER,
+      option: {
+        type: DataTypes.STRING,
         allowNull: false,
       },
       quantity: {
@@ -32,9 +32,9 @@ module.exports = (sequelize, DataTypes) => {
   });
   
     OrderItem.associate = (models) => {
-      OrderItem.belongsTo(models.Order, { foreignKey: "order_id" });
-      OrderItem.belongsTo(models.Product, { foreignKey: "product_id" });
-      OrderItem.belongsTo(models.ProductOption, { foreignKey: "option_id", as: "option" });
+      OrderItem.belongsTo(models.Order, { foreignKey: "order_id", as: "order" });
+      OrderItem.belongsTo(models.Product, { foreignKey: "product_id" , as: "product" });
+      // OrderItem.belongsTo(models.ProductOption, { foreignKey: "option_id", as: "option" });
     };
   
     return OrderItem;

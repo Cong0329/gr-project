@@ -33,6 +33,7 @@ const CartItemModel = require("./cart_items.model");
 const OrderModel = require("./order.model");
 const OrderItemModel = require("./order_item.model");
 const PaymentMethodModel = require("./payment_method.model");
+const OrderStatusHistoryModel = require("./order_status_history.model");
 
 
 
@@ -72,6 +73,7 @@ const CartItem = CartItemModel(sequelize, DataTypes);
 const Order = OrderModel(sequelize, DataTypes);
 const OrderItem = OrderItemModel(sequelize, DataTypes);
 const PaymentMethod = PaymentMethodModel(sequelize, DataTypes);
+const OrderStatusHistory = OrderStatusHistoryModel(sequelize, DataTypes);
 
 
 
@@ -119,6 +121,7 @@ const db = {
   Order,
   OrderItem,
   PaymentMethod,
+  OrderStatusHistory
 };
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)

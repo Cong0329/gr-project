@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const indicationController = require('../controllers/indication.controller');
-const authenticateToken = require('../middlewares/auth.middleware');
+const {authenticateAdminToken} = require('../middlewares/auth.middleware');
 const requireRole = require('../middlewares/role.middleware');
 
-router.post('/', authenticateToken, requireRole('ROLE_ADMIN'), indicationController.createIndication);
+router.post('/', authenticateAdminToken, requireRole('ROLE_ADMIN'), indicationController.createIndication);
 router.get('/', indicationController.getAllIndications);
 router.get('/:name', indicationController.getProductsByIndicationName);
-router.put('/:id', authenticateToken, requireRole('ROLE_ADMIN'), indicationController.updateIndication);
-router.delete('/:id', authenticateToken, requireRole('ROLE_ADMIN'), indicationController.deleteIndication);
+router.put('/:id', authenticateAdminToken, requireRole('ROLE_ADMIN'), indicationController.updateIndication);
+router.delete('/:id', authenticateAdminToken, requireRole('ROLE_ADMIN'), indicationController.deleteIndication);
 
 module.exports = router;
