@@ -4,13 +4,19 @@ const { Doctor } = require("../models");
 
 router.post("/", async (req, res) => {
   try {
-    const newDoctor = await Doctor.create(req.body);
-    res.status(201).json(newDoctor);
+    // Kiểm tra xem req.body có phải là mảng không
+    const doctorsToCreate = Array.isArray(req.body) ? req.body : [req.body];
+
+    // Sử dụng bulkCreate nếu là mảng, ngược lại sử dụng create
+    const newDoctors = await Doctor.bulkCreate(doctorsToCreate);
+    
+    res.status(201).json(newDoctors);
   } catch (err) {
     console.error("Lỗi khi tạo bác sĩ:", err);
     res.status(500).json({ error: "Lỗi server khi tạo bác sĩ" });
   }
 });
+
 
 router.get("/", async (req, res) => {
   try {

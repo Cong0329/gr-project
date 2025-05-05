@@ -14,18 +14,18 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     date: {
-      type: DataTypes.DATEONLY,  // Thay bằng DATEONLY để lưu ngày tháng chuẩn
+      type: DataTypes.DATEONLY,
       allowNull: false,
       validate: {
         isDate: true
       }
     },
     start_time: {
-      type: DataTypes.TIME,  // Thay bằng TIME để lưu giờ phút chuẩn
+      type: DataTypes.TIME,
       allowNull: false
     },
     end_time: {
-      type: DataTypes.TIME,  // Thay bằng TIME để lưu giờ phút chuẩn
+      type: DataTypes.TIME, 
       allowNull: false,
       validate: {
         isAfterStartTime(value) {
@@ -40,11 +40,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'available',
       validate: {
-        isIn: [['available', 'booked', 'cancelled', 'completed']]  // Thêm trạng thái completed
+        isIn: [['available', 'booked', 'cancelled', 'completed']] 
       }
     },
     type: {
-      type: DataTypes.ENUM('general', 'medical', 'specialist', 'specialist_online'),  // Thêm specialist_online
+      type: DataTypes.ENUM('general', 'medical', 'specialist', 'specialist_online'),
       allowNull: false,
       validate: {
         isValidType(value) {
@@ -64,10 +64,8 @@ module.exports = (sequelize, DataTypes) => {
           let model;
           switch (this.type) {
             case 'general':
-              model = sequelize.models.GeneralPackage;
-              break;
             case 'medical':
-              model = sequelize.models.MedicalPackage;
+              model = sequelize.models.ServicePackage;
               break;
             case 'specialist':
             case 'specialist_online':
@@ -91,7 +89,7 @@ module.exports = (sequelize, DataTypes) => {
     updated_at: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-      onUpdate: sequelize.literal('CURRENT_TIMESTAMP')  // Thêm tự động cập nhật
+      onUpdate: sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     tableName: 'schedule',
@@ -112,7 +110,6 @@ module.exports = (sequelize, DataTypes) => {
     ],
     hooks: {
       beforeValidate: async (schedule) => {
-        // Tự động validate service_id khi type thay đổi
         if (schedule.changed('type') && schedule.service_id) {
           await schedule.validate({ fields: ['service_id'] });
         }
@@ -126,19 +123,14 @@ module.exports = (sequelize, DataTypes) => {
       as: 'doctor'
     });
     
-    // Không thêm association với Service vì service_id tham chiếu đa bảng
-    // Thay vào đó, tạo phương thức helper để lấy service
   };
 
-  // Thêm phương thức helper để lấy service tương ứng
   Schedule.prototype.getService = async function() {
     let model;
     switch (this.type) {
       case 'general':
-        model = sequelize.models.GeneralPackage;
-        break;
       case 'medical':
-        model = sequelize.models.MedicalPackage;
+        model = sequelize.models.ServicePackage;
         break;
       case 'specialist':
       case 'specialist_online':
