@@ -1,3 +1,5 @@
+const { on } = require("nodemailer/lib/xoauth2");
+
 module.exports = (sequelize, DataTypes) => {
     const ProductDetail = sequelize.define('ProductDetail', {
       id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
@@ -10,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
   
     ProductDetail.associate = (models) => {
       ProductDetail.hasMany(models.ProductDetailSection, { foreignKey: 'product_detail_id', as: 'sections', onDelete: 'CASCADE' });
-      ProductDetail.belongsTo(models.Product, { foreignKey: 'product_id', as: 'product' });
+      ProductDetail.belongsTo(models.Product, { foreignKey: 'product_id', as: 'product', onDelete: 'CASCADE' });
     };
   
     return ProductDetail;

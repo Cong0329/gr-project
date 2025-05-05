@@ -57,6 +57,11 @@ module.exports = (sequelize, DataTypes) => {
             as: 'user',
             onDelete: 'CASCADE',
         });
+        Address.hasMany(models.Order, {
+            foreignKey: 'shipping_address_id',
+            as: 'orders',
+            onDelete: 'CASCADE',
+        });
     };
     return Address;
 }

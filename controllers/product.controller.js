@@ -1,6 +1,7 @@
-const { Product } = require('../models');
+const { Product, ProductImage, ProductOption, ProductDetail, ProductDetailSection, Brand } = require('../models');
 const { productExcludeAttributes, productIncludeOptions } = require('../utils/productInclude');
 const  pickProductFields  = require('../utils/productFileds');
+const { where } = require('sequelize');
 
 // Creat Product
 exports.createProduct = async (req, res) => {
@@ -25,7 +26,7 @@ exports.getProductBySlug = async (req, res) => {
 
   try {
     const product = await Product.findOne({
-      where: { slug },
+      where: { slug, is_deleted : false },
       include: productIncludeOptions,
       attributes: productExcludeAttributes
     });
@@ -50,11 +51,36 @@ exports.getProductBySlug = async (req, res) => {
   }
 };
 
+// Get product by id
+exports.getProductById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await Product.findByPk(id, {
+      where: { is_deleted : false },
+      include: productIncludeOptions,
+      attributes: productExcludeAttributes
+    });
+
+    return res.status(200).json(product);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+
+
 // Get all products
 exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.findAll({
+      where: { is_deleted : false },
       include: [
+        {
+          model: Brand,
+          as: 'brand',
+          attributes: ['id', 'name'],
+        },
         {
           model: ProductImage,
           as: 'images',
@@ -82,9 +108,7 @@ exports.getAllProducts = async (req, res) => {
           ],
         },
       ],
-      attributes: {
-        exclude: ['createdAt', 'updatedAt'],
-      },
+      attributes: ['id', 'name', 'quantity', 'slug', 'specification'],
     });
 
     return res.status(200).json(products);
@@ -140,11 +164,12 @@ exports.deleteProduct = async (req, res) => {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    await product.destroy();
+    // Cập nhật is_deleted thành true thay vì xóa
+    await product.update({ is_deleted: true });
 
-    return res.status(200).json({ message: "Product deleted successfully" });
+    return res.status(200).json({ message: "Product hidden successfully" });
   } catch (error) {
-    console.error("Delete product error:", error);
+    console.error("Hide product error:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

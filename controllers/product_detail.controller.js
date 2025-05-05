@@ -36,12 +36,29 @@ exports.getProductDetailByProductId = async (req, res) => {
             return res.status(404).json({ message: 'Product detail not found' });
         }
 
+        // Định nghĩa thứ tự mong muốn
+        const typeOrder = [
+            "Product Description",
+            "Ingredients",
+            "Benefits",
+            "Usage",
+            "Side Effects",
+            "Warnings",
+            "Storage"
+        ];
+
+        // Sắp xếp các section theo typeOrder
+        detail.sections = detail.sections.sort((a, b) => {
+            return typeOrder.indexOf(a.type) - typeOrder.indexOf(b.type);
+        });
+
         res.status(200).json(detail);
     } catch (err) {
         console.error('Get product detail error:', err);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 // update
 exports.updateProductDetail = async (req, res) => {
@@ -52,6 +69,8 @@ exports.updateProductDetail = async (req, res) => {
         if (!detail) return res.status(404).json({ message: "Detail not found" });
 
         const { title } = req.body;
+        console.log(title);
+
 
         if (title !== undefined) detail.title = title;
 

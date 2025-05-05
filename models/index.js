@@ -3,14 +3,14 @@ const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 // Import models
-const DoctorModel = require('./doctor.model');
-const DepartmentModel = require('./department.model');
+// const DoctorModel = require('./doctor.model');
+// const DepartmentModel = require('./department.model');
 const UserModel = require("./user.model");
 const RoleModel = require("./role.model");
 const UserRoleModel = require("./user-role.model"); // (Nếu có model trung gian)
 const GeneralPackageModel = require('./general-pkg.model');
 const MedicalPackageModel = require('./medical-pkg.model');
-const ScheduleModel = require('./schedule.model');
+// const ScheduleModel = require('./schedule.model');
 const AddressModel = require("./address.model")
 const RefreshTokenModel = require("./refresh.model");
 const CountryModel = require("./country.model");
@@ -31,6 +31,7 @@ const CartItemModel = require("./cart_items.model");
 const OrderModel = require("./order.model");
 const OrderItemModel = require("./order_item.model");
 const PaymentMethodModel = require("./payment_method.model");
+const OrderStatusHistoryModel = require("./order_status_history.model");
 
 
 
@@ -44,8 +45,8 @@ const Role = RoleModel(sequelize, DataTypes);
 const UserRole = UserRoleModel(sequelize, DataTypes);
 const Address = AddressModel(sequelize, DataTypes);
 const RefreshToken = RefreshTokenModel(sequelize, DataTypes);
-const Doctor = DoctorModel(sequelize, DataTypes);
-const Department = DepartmentModel(sequelize, DataTypes);
+// const Doctor = DoctorModel(sequelize, DataTypes);
+// const Department = DepartmentModel(sequelize, DataTypes);
 const Country = CountryModel(sequelize, DataTypes);
 const Brand = BrandModel(sequelize, DataTypes);
 const Origin = OriginModel(sequelize, DataTypes);
@@ -59,7 +60,7 @@ const ProductDetail = ProductDetailModel(sequelize, DataTypes);
 const ProductDetailSection = ProductDetailSectionModel(sequelize, DataTypes);
 const SectionIngredient = SectionIngredientModel(sequelize, DataTypes);
 const SectionIngredientDescription = SectionIngredientDescriptionModel(sequelize, DataTypes);
-const Schedule = ScheduleModel(sequelize, DataTypes);
+// const Schedule = ScheduleModel(sequelize, DataTypes);
 const GeneralPackage = GeneralPackageModel(sequelize, DataTypes);
 const MedicalPackage = MedicalPackageModel(sequelize, DataTypes);
 const Cart = CartModel(sequelize, DataTypes);
@@ -67,15 +68,16 @@ const CartItem = CartItemModel(sequelize, DataTypes);
 const Order = OrderModel(sequelize, DataTypes);
 const OrderItem = OrderItemModel(sequelize, DataTypes);
 const PaymentMethod = PaymentMethodModel(sequelize, DataTypes);
+const OrderStatusHistory = OrderStatusHistoryModel(sequelize, DataTypes);
 
 
 
 
-Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
-Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
+// Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
+// Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
 
 // Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
-Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
+// Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
 
 
 
@@ -85,9 +87,9 @@ const db = {
   sequelize,
   User,
   Role,
-  Doctor,
-  Department,
-  Schedule,
+  // Doctor,
+  // Department,
+  // Schedule,
   UserRole,
   GeneralPackage,
   MedicalPackage,
@@ -111,6 +113,7 @@ const db = {
   Order,
   OrderItem,
   PaymentMethod,
+  OrderStatusHistory
 };
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)
