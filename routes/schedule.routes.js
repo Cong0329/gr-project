@@ -182,13 +182,6 @@ router.get('/doctor/:doctorId',  scheduleController.getDoctorSchedules);
 router.get('/:id', scheduleController.getScheduleById);
 
 /**
- * ROUTES YÊU CẦU ĐĂNG NHẬP (bất kỳ role nào)
- */
-
-// Đặt lịch khám thông thường - có thể dùng cho cả user đã đăng nhập và chưa đăng nhập
-router.post('/appointments', scheduleController.createAppointment);
-
-/**
  * ROUTES YÊU CẦU ROLE_USER
  */
 
@@ -240,12 +233,6 @@ router.put('/:id',
   scheduleController.updateSchedule
 );
 
-// Cập nhật trạng thái yêu cầu đặt lịch (ADMIN hoặc DOCTOR với lịch của chính họ)
-router.patch('/appointments/:id', 
-   
-  
-  scheduleController.updateAppointmentStatus
-);
 
 /**
  * ROUTES YÊU CẦU ROLE_ADMIN
@@ -253,8 +240,6 @@ router.patch('/appointments/:id',
 
 // Xóa lịch trình (chỉ ADMIN)
 router.delete('/:id', 
-   
-  
   scheduleController.deleteSchedule
 );
 

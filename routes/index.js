@@ -29,6 +29,8 @@ router.use('/detail-section', require('./detail_section.routes'));
 router.use('/cart', require('./cart.routes'));
 router.use('/order', require('./order.routes'));
 router.use('/payment', require('./payment.routes'));
+router.use('/appointment', require('./appointment.routes'));
+
 
 
 

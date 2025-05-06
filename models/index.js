@@ -35,6 +35,7 @@ const OrderItemModel = require("./order_item.model");
 const PaymentMethodModel = require("./payment_method.model");
 const PackageBookingRequestModel = require("./packageBookingRequest.model");
 const DoctorAssignmentModel = require("./doctorAssignment.model");
+const AppointmentModel = require("./appointment.model");
 
 
 
@@ -77,6 +78,7 @@ const OrderItem = OrderItemModel(sequelize, DataTypes);
 const PaymentMethod = PaymentMethodModel(sequelize, DataTypes);
 const PackageBookingRequest = PackageBookingRequestModel(sequelize, DataTypes);
 const DoctorAssignment = DoctorAssignmentModel(sequelize, DataTypes);
+const Appointment = AppointmentModel(sequelize, DataTypes);
 
 
 // Tạo đối tượng db để xuất tất cả models
@@ -114,6 +116,7 @@ const db = {
   PaymentMethod,
   PackageBookingRequest,
   DoctorAssignment,
+  Appointment,
 };
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)
