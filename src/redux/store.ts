@@ -11,9 +11,7 @@ import addressReducer from './addressSlice';
 import servicePackageReducer from './servicePackageSlice';
 import profileReducer from './profileSlice';
 import navigationReducer from './navigationSlice';
-<<<<<<< HEAD
 import appointmentReducer from './appointmentSlice';
-=======
 import authReducer from './authSlice';
 import brandReducer from './brandSlice';
 import categoryReducer from './categorySlice';
@@ -21,7 +19,6 @@ import medicalObjectReducer from './medicalObjectSlice';
 import indicationReducer from './indicationSlice';
 import productReducer from './productSlice';
 import orderReducer from './orderSlice';
->>>>>>> 65a8bb5370e2d9161001a52e25baadb1dc0850f3
 
 const cartPersistConfig = {
   key: 'cart',
@@ -58,9 +55,7 @@ export const store = configureStore({
     address: addressReducer,
     profile: profileReducer,
     navigation: navigationReducer,
-<<<<<<< HEAD
     appointments: appointmentReducer,
-=======
     auth: persistedReducer2,
     brands: brandReducer,
     categories: categoryReducer,
@@ -69,7 +64,6 @@ export const store = configureStore({
     products: productReducer,
     // order: orderReducer
     order: persistedReducer3
->>>>>>> 65a8bb5370e2d9161001a52e25baadb1dc0850f3
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
