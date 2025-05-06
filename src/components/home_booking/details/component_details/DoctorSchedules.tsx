@@ -6,7 +6,14 @@ import {
   fetchSpecialistSchedules,
   setSpecialistType,
 } from "../../../../redux/scheduleSlice";
-import { format, parseISO, isToday, isTomorrow } from "date-fns";
+import {
+  format,
+  parseISO,
+  isToday,
+  isTomorrow,
+  parse,
+  isAfter,
+} from "date-fns";
 import { vi } from "date-fns/locale";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -19,6 +26,7 @@ import {
   faVideo,
   faClock,
   faMapMarkerAlt,
+  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 
 const DoctorSchedules = () => {
@@ -68,7 +76,6 @@ const DoctorSchedules = () => {
     dispatch(fetchDepartments());
   }, [dispatch]);
 
-  // Fetch schedules whenever relevant parameters change
   // Fetch schedules whenever relevant parameters change
   useEffect(() => {
     if (!hasDispatched && departments.length > 0 && currentType) {
@@ -143,6 +150,43 @@ const DoctorSchedules = () => {
     }
   });
 
+  // Xử lý khi chọn một lịch khám - tự động cập nhật cả bác sĩ và lịch
+  const handleScheduleSelection = (doctor, schedule) => {
+    setSelectedDoctor(doctor);
+    setSelectedSchedule(schedule);
+  };
+
+  // Xử lý khi nhấn nút tiếp tục
+  const handleContinue = () => {
+    if (selectedDoctor && selectedSchedule) {
+      navigate("/booking-home/payment", {
+        state: {
+          packageInfo: {
+            name: `Khám ${department?.name || "Chuyên khoa"} với BS. ${
+              selectedDoctor.name
+            }`,
+            price: selectedDoctor.price || 500000,
+            date: format(selectedDate, "yyyy-MM-dd"),
+            time: `${selectedSchedule.start_time.slice(
+              0,
+              5
+            )} - ${selectedSchedule.end_time.slice(0, 5)}`,
+            formattedDate: formatDisplayDate(selectedDate),
+            doctor: selectedDoctor,
+            department: department,
+            scheduleId: selectedSchedule.id,
+            type: currentType,
+            service_id:
+              currentType === "specialist" ||
+              currentType === "specialist_online"
+                ? department?.id // Nếu là specialist, service_id là department_id
+                : selectedDoctor.service_package_id || department?.id,
+          },
+        },
+      });
+    }
+  };
+
   if (doctorsLoading || departmentsLoading || schedulesLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -178,6 +222,17 @@ const DoctorSchedules = () => {
       </div>
     );
   }
+
+  const isTimePassedCurrent = (timeString) => {
+    const now = new Date();
+    const [hours, minutes] = timeString.split(":").map(Number);
+
+    // So sánh với giờ hiện tại
+    if (hours < now.getHours()) return true;
+    if (hours === now.getHours() && minutes <= now.getMinutes()) return true;
+
+    return false;
+  };
 
   return (
     <div className="bg-gray-50">
@@ -262,10 +317,7 @@ const DoctorSchedules = () => {
               >
                 <div className="p-6 flex flex-col md:flex-row gap-6">
                   {/* Doctor Info */}
-                  <div
-                    className="flex flex-col items-center md:items-start md:w-1/3 cursor-pointer"
-                    onClick={() => setSelectedDoctor(doctor)}
-                  >
+                  <div className="flex flex-col items-center md:items-start md:w-1/3">
                     <img
                       src={doctor.avatar || "/default-doctor-avatar.jpg"}
                       alt={doctor.name}
@@ -300,25 +352,67 @@ const DoctorSchedules = () => {
                     </h3>
 
                     {schedules.length > 0 ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                        {schedules.map((schedule) => (
-                          <button
-                            key={schedule.id}
-                            onClick={() => setSelectedSchedule(schedule)}
-                            disabled={schedule.status === "booked"}
-                            className={`p-2 rounded-lg text-center ${
-                              schedule.status === "booked"
-                                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                : selectedSchedule?.id === schedule.id
-                                ? "bg-blue-600 text-white"
-                                : "bg-blue-50 text-blue-600 hover:bg-blue-100"
-                            }`}
-                          >
-                            {schedule.start_time.slice(0, 5)} -{" "}
-                            {schedule.end_time.slice(0, 5)}
-                          </button>
-                        ))}
-                      </div>
+                      <>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                          {schedules.map((schedule) => {
+                            // Thêm logic kiểm tra thời gian
+                            const isTimeInPast =
+                              isToday(selectedDate) &&
+                              isTimePassedCurrent(schedule.start_time);
+
+                            return (
+                              <button
+                                key={schedule.id}
+                                onClick={() =>
+                                  handleScheduleSelection(doctor, schedule)
+                                }
+                                disabled={
+                                  schedule.status === "booked" || isTimeInPast
+                                }
+                                className={`p-2 rounded-lg text-center ${
+                                  schedule.status === "booked" || isTimeInPast
+                                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                                    : selectedSchedule?.id === schedule.id &&
+                                      selectedDoctor?.id === doctor.id
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                                }`}
+                              >
+                                {schedule.start_time.slice(0, 5)} -{" "}
+                                {schedule.end_time.slice(0, 5)}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Inline Booking Button */}
+                        {selectedDoctor?.id === doctor.id &&
+                          selectedSchedule && (
+                            <div className="mt-4 flex justify-end">
+                              <div className="flex items-center mr-4">
+                                <div className="text-right">
+                                  <p className="font-medium text-gray-800">
+                                    {formatDisplayDate(selectedDate)}
+                                  </p>
+                                  <p className="text-sm text-gray-500">
+                                    {selectedSchedule.start_time.slice(0, 5)} -{" "}
+                                    {selectedSchedule.end_time.slice(0, 5)}
+                                  </p>
+                                </div>
+                              </div>
+                              <button
+                                onClick={handleContinue}
+                                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg shadow-md transition-colors flex items-center"
+                              >
+                                Tiếp tục
+                                <FontAwesomeIcon
+                                  icon={faArrowRight}
+                                  className="ml-2"
+                                />
+                              </button>
+                            </div>
+                          )}
+                      </>
                     ) : (
                       <div className="bg-gray-50 p-4 rounded-lg text-center">
                         <p className="text-gray-500">
@@ -346,40 +440,6 @@ const DoctorSchedules = () => {
             </div>
           )}
         </div>
-
-        {/* Booking Button (fixed at bottom) */}
-        {selectedDoctor && selectedSchedule && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-4 px-6 shadow-lg">
-            <div className="container mx-auto flex justify-between items-center">
-              <div>
-                <h3 className="font-medium text-gray-800">
-                  Đặt lịch với {selectedDoctor.name}
-                </h3>
-                <p className="text-sm text-gray-500">
-                  {formatDisplayDate(selectedDate)} |{" "}
-                  {selectedSchedule.start_time.slice(0, 5)} -{" "}
-                  {selectedSchedule.end_time.slice(0, 5)}
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  navigate("/booking-confirmation", {
-                    state: {
-                      doctor: selectedDoctor,
-                      schedule: selectedSchedule,
-                      department: department,
-                      date: selectedDate,
-                      type: currentType,
-                    },
-                  });
-                }}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg shadow-md transition-colors"
-              >
-                Tiếp tục
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

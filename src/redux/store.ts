@@ -11,6 +11,7 @@ import addressReducer from './addressSlice';
 import servicePackageReducer from './servicePackageSlice';
 import profileReducer from './profileSlice';
 import navigationReducer from './navigationSlice';
+import appointmentReducer from './appointmentSlice';
 
 const persistConfig = {
   key: "root",
@@ -32,6 +33,7 @@ export const store = configureStore({
     address: addressReducer,
     profile: profileReducer,
     navigation: navigationReducer,
+    appointments: appointmentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

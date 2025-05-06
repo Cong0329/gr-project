@@ -23,7 +23,7 @@ import { ProfilePage } from "./components/pages/ProfilePage";
 import InvalidPage from "./components/information/InvalidPage";
 import { OrderDetailPage } from "./components/pages/OrderDetailPage";
 import adminRoutes from "./components/pages/AdminRouter";
-import { BookingAppoinment } from "./components/pages/BookingAppoinment";
+import { BookingPayment } from "./components/pages/BookingPayment";
 
 function App() {
   return (
@@ -74,10 +74,7 @@ function App() {
           path="/booking-home/medicaltest-detail/:name"
           element={<BookingMedicalTestDetail />}
         />
-        <Route
-          path="/booking-home/appointment"
-          element={<BookingAppoinment />}
-        />
+        <Route path="/booking-home/payment" element={<BookingPayment />} />
 
         {adminRoutes}
         <Route path="*" element={<InvalidPage />} />
