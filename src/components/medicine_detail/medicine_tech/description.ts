@@ -28,15 +28,19 @@ export interface TextTitle extends TitleBase {
 
 export interface IngredientTitle extends TitleBase {
     type: DescriptionType.INGREDIENTS; // Chỉ sử dụng type Ingredients
-    description: Ingredient;
+    descriptions: Ingredient[] | null;
+    ingredients: Instruction[] | null;
 }
 
 export interface Ingredient {
-    description: string[] | null;
-    ingredients: Instruction[];
+    id: string;
+    section_id: string;
+    text: string;
 }
 
 export interface Instruction {
+    id: string;
+    section_id: string;
     name: string;
     value: string;
 }
@@ -58,7 +62,7 @@ export const productDescription: Description = {
             title: "Thành phần",
             image: null,
             description: {
-                description:[
+                description: [
                     "Pancreatin: Có tác dụng tăng cường phân giải chất béo, protein, giúp tăng cường hệ miễn dịch.",
                     "Papain: Giúp tiêu hoá các loại protein trong thức ăn và phòng ngừa rối loạn tiêu hoá.",
                     "Bromelain: Giúp tăng cường hệ miễn dịch, phòng ngừa rối loạn tiêu hoá và tăng cường tiêu hoá chất đạm."
@@ -98,6 +102,7 @@ export const productDescription: Description = {
             title: "Bảo quản",
             image: null,
             description: "Bảo quản nơi khô ráo, thoáng mát, tránh ánh nắng trực tiếp."
-        }
+        },
+
     ]
 };

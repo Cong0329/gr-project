@@ -1,16 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavLink } from '../navlink/NavLink';
 import { useParams } from 'react-router-dom';
 import ProductDetail from './MediDetail';
 import Breadcrumb from '../home_booking/details/component_details/BreadCrumb';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { getProductBySlug, getProductDetailProduct } from '../../redux/productAsyncThunk';
 
 
 
 
 
 export const MedicineBody = () => {
+    const dispatch = useDispatch();
     const [isServiceHovered, setIsServiceHovered] = useState(false);
-    const { name } = useParams();
+    const { status, product } = useSelector((state: RootState) => state.products);
+    const { slug } = useParams();
+    useEffect(() => {
+        dispatch(getProductBySlug(slug));
+    }, [dispatch, slug]);
+    useEffect(() => {
+        if (product.id) {
+            dispatch(getProductDetailProduct(product.id));
+        }
+    }, [dispatch, product]);
     return (
         <main className="flex-1 bg-gray-100 ">
             <div className="mx-auto bg-white pt-2">
@@ -19,7 +32,7 @@ export const MedicineBody = () => {
             <div className='relative'>
                 <div className="mx-auto relative ">
                     <div className="w-4/5 tb:w-11/12 container mx-auto bg-gray-100  [&>*]:!bg-gray-100">
-                        <Breadcrumb current={decodeURIComponent(name || "Thực phẩm chức năng")} />
+                        <Breadcrumb current={decodeURIComponent(slug || "Thực phẩm chức năng")} />
                     </div>
                     <ProductDetail />
                 </div>
@@ -30,6 +43,14 @@ export const MedicineBody = () => {
            
 
             </div>
+            {status === "loading" &&
+            <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-50">
+                <div className="flex flex-col items-center">
+                    <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <p className="mt-4 text-white text-sm">Đang tải...</p>
+                </div>
+            </div>
+        }
         </main>
     )
 }

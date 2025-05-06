@@ -3,9 +3,10 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import { Swiper as SwiperType } from "swiper";
 import "swiper/css/navigation";
+import { Image } from "./MedicineSlider";
 
 interface MainSliderProps {
-  images: string[];
+  images: Image[];
   mainSwiperRef: React.MutableRefObject<SwiperType | null>;
   onImageClick: (index: number) => void;
   setCurrentIndex: (index: number) => void;
@@ -27,11 +28,11 @@ export default function MainSlider({
       className="rounded-lg overflow-hidden"
     >
       {images.map((src, index) => (
-        <SwiperSlide key={index} className="flex justify-center items-center">
+        <SwiperSlide key={index} className="flex justify-center items-center mb-2">
             <img
-              src={src}
+              src={src.image}
               alt={`Product ${index}`}
-              className="w-4/5 cursor-pointer object-cover"
+              className="w-4/5 h-[350px] ml:h-[325px] cursor-pointer object-contain"
               onClick={() => onImageClick(index)}
             />
         </SwiperSlide>

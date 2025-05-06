@@ -23,7 +23,12 @@ import { ProfilePage } from "./components/pages/ProfilePage";
 import InvalidPage from "./components/information/InvalidPage";
 import { OrderDetailPage } from "./components/pages/OrderDetailPage";
 import adminRoutes from "./components/pages/AdminRouter";
+<<<<<<< HEAD
 import { BookingPayment } from "./components/pages/BookingPayment";
+=======
+import UserProtectedRoute from "./components/pages/UserProtectedRoute copy";
+import { BookingAppoinment } from "./components/pages/BookingAppoinment";
+>>>>>>> 65a8bb5370e2d9161001a52e25baadb1dc0850f3
 
 function App() {
   return (
@@ -31,8 +36,17 @@ function App() {
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/medicine-detail" element={<MedicineDetail />} />
+        <Route path="/medicine-detail/:slug" element={<MedicineDetail />} />
         <Route path="/medicine-search" element={<SearchPage />} />
+
+
+        <Route element={<UserProtectedRoute />}>
+          <Route path="/profile" element={<Navigate to="/profile/personal-info" replace />} />
+          <Route path="/profile/:pageId" element={<ProfilePage />} />
+          <Route path="/profile/orders/order-detail/:id" element={<OrderDetailPage />} />
+          <Route path="/cart" element={<CartPage />} />
+        </Route>
+
         <Route path="/cart" element={<CartPage />} />
         <Route
           path="/profile"

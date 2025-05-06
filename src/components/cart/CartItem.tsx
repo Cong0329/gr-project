@@ -1,20 +1,21 @@
 import { useDispatch } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { removeFromCartAPI, updateQuantityAPI, updateSelectedOptionAPI } from "../../redux/cartAsyncThunk";
-import { toggleSelectItem, updateQuantity } from "../../redux/cartSlice";
+import { toggleSelectItem } from "../../redux/cartSlice";
 import { FaTrash } from "react-icons/fa6";
 import PackageSelector from "./PackageSelector";
 import { ProductOption } from "./product";
 import { ModalDelete } from "./ModalDelete";
+import axios from "axios";
 
 interface CartItem {
   id: string;
+  product_id: string;
   name: string;
   quantity: number;
   image: string;
   selected: boolean;
   selectedOption: ProductOption;
-  options: ProductOption[];
 }
 
 interface CartItemProps {
@@ -25,10 +26,22 @@ interface CartItemProps {
 const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
-  const { id, name, quantity, image, selected, selectedOption, options } = item;
+  const [newQuantity, setNewQuantity] = useState(item.quantity);
+  const { id, product_id, name, quantity, image, selected, selectedOption } = item;
+  const [options, setOptions] = useState([]);
+  useEffect(() => {
+    setNewQuantity(quantity);
+  }, [quantity]);
+  useEffect(() => {
+    const fetchOptions = async () => {
+      const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/product-option/${product_id}`);
+      setOptions(response.data);
+    };
+    fetchOptions();
+  }, [product_id])
 
   // Tính tổng tiền dựa trên tùy chọn được chọn
-  const totalPrice = (selectedOption.discountedPrice ?? selectedOption.price) * quantity;
+  const totalPrice = selectedOption.discounted_price > 0 ? selectedOption.discounted_price * quantity : selectedOption.price * quantity;
 
   const handleRemove = () => {
     dispatch(removeFromCartAPI(id))
@@ -38,29 +51,31 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
   // Cập nhật tùy chọn gói sản phẩm
   const handleOptionChange = (newOption: string) => {
     const selected = options.find(option => option.label === newOption);
-    if (selected) {
-      dispatch(updateSelectedOptionAPI({ id, selectedOption: selected.id }));
+    if (selected?.id !== selectedOption.id) {
+      dispatch(updateSelectedOptionAPI({ cartItemId: id, option_id: selected?.id }));
     }
-
   };
 
   // Cập nhật số lượng
-  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let newQuantity = Number(e.target.value);
-    if (isNaN(newQuantity) || newQuantity < 1) newQuantity = 1;
-    dispatch(updateQuantityAPI({ id, quantity: newQuantity }));
-  };
   const handleQuantityDecrement = () => {
-    if (quantity > 1) {  // ✅ Kiểm tra tránh số âm
-      const newQuantity = quantity - 1;
-      dispatch(updateQuantityAPI({ id, quantity: newQuantity })); // Gọi API
+    if (newQuantity > 1) {
+      const updated = newQuantity - 1;
+      setNewQuantity(updated);
+      dispatch(updateQuantityAPI({ cartItemId: id, quantity: updated }));
     }
   };
 
   const handleQuantityIncrement = () => {
-    const newQuantity = quantity + 1;
-    dispatch(updateQuantity({ id, quantity: newQuantity }));
-    dispatch(updateQuantityAPI({ id, quantity: newQuantity }));
+    const updated = newQuantity + 1;
+    setNewQuantity(updated);
+    dispatch(updateQuantityAPI({ cartItemId: id, quantity: updated }));
+  };
+
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = Number(e.target.value);
+    if (isNaN(value) || value < 1) value = 1;
+    setNewQuantity(value);
+    dispatch(updateQuantityAPI({ cartItemId: id, quantity: value }));
   };
 
 
@@ -91,7 +106,13 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
         </div>
 
         {/* Giá tiền */}
-        <p className="text-blue-700 w-24 font-semibold text-sm">{totalPrice.toLocaleString()}đ</p>
+        <div>
+          <p className="text-blue-700 w-24 font-semibold text-sm">{selectedOption.discounted_price > 0 ? parseInt(selectedOption.discounted_price).toLocaleString() : parseInt(selectedOption.price).toLocaleString()}đ</p>
+          {selectedOption.discounted_price > 0 && (
+            <p className="text-gray-700 w-24 font-semibold text-[12px] line-through">{parseInt(selectedOption.price).toLocaleString()}đ</p>
+          )}
+
+        </div>
 
         {/* Điều chỉnh số lượng */}
         <div className="w-32">
@@ -99,14 +120,14 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
             <button
               className="px-3 py-1 border-r disabled:opacity-50"
               onClick={handleQuantityDecrement}
-              disabled={quantity <= 1}
+              disabled={newQuantity <= 1}
             >
               -
             </button>
             <input
               type="number"
               className="w-10 text-center outline-none no-spinner"
-              value={quantity}
+              value={newQuantity}
               onChange={handleQuantityChange}
             />
             <button
@@ -157,14 +178,14 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
                 <button
                   className="px-3 py-1 border-r disabled:opacity-50"
                   onClick={handleQuantityDecrement}
-                  disabled={quantity <= 1}
+                  disabled={newQuantity <= 1}
                 >
                   -
                 </button>
                 <input
                   type="number"
                   className="w-10 text-center outline-none no-spinner"
-                  value={quantity}
+                  value={newQuantity}
                   onChange={handleQuantityChange}
                 />
                 <button

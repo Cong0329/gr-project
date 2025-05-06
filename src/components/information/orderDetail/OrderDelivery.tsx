@@ -1,5 +1,7 @@
 
 import logo from '../../../assets/logo.png';
+import { RootState } from "../../../redux/store";
+import { useSelector } from "react-redux";
 
 interface OrderDeliveryProps {
     status?: string;
@@ -7,25 +9,29 @@ interface OrderDeliveryProps {
 }
 
 export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process }) => {
+    const { orderDetail } = useSelector((state: RootState) => state.order);
     const statusColor = {
-        delivered: 'text-green-500',
-        canceled: 'text-red-500',
+        completed: 'text-green-500',
+        confirmed: 'text-orange-500',
+        cancelled: 'text-red-500',
         pending: 'text-yellow-500',
-        delivering: 'text-blue-500',
+        shipping: 'text-blue-500',
         return: 'text-gray-500'
     };
     const statusBg = {
-        delivered: 'bg-green-500',
-        canceled: 'bg-red-500',
+        completed: 'bg-green-500',
+        confirmed: 'bg-orange-500',
+        cancelled: 'bg-red-500',
         pending: 'bg-yellow-500',
-        delivering: 'bg-blue-500',
+        shipping: 'bg-blue-500',
         return: 'bg-gray-500'
     };
     const statusText = {
-        delivered: 'Đã giao',
-        canceled: 'Đã hủy',
+        completed: 'Đã giao',
+        confirmed: 'Đã xác nhận',
+        cancelled: 'Đã hủy',
         pending: 'Đang xử lý',
-        delivering: 'Đang giao',
+        shipping: 'Đang giao',
         return: 'Trả hàng'
     };
 
@@ -34,7 +40,7 @@ export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process })
             {/* Header */}
             <div className="flex items-center justify-between  p-4 border-b">
                 <div className="flex items-center space-x-2">
-                    <h2 className="text-lg font-semibold">Đơn hàng 01/04/2025</h2>
+                    <h2 className="text-lg font-semibold">Đơn hàng {new Date(orderDetail.createdAt).toLocaleDateString()}</h2>
                     <span className="text-blue-600">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
@@ -42,7 +48,7 @@ export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process })
                     </span>
                     <div className="flex items-center font-semibold space-x-4 text-sm">
                         <span className="text-gray-600">Giao hàng tận nơi</span>
-                        <span className="text-gray-600">#7212016 <button className="text-blue-600">Sao chép</button></span>
+                        <span className="text-gray-600">{orderDetail.id}</span>
                     </div>
                 </div>
 
@@ -73,8 +79,8 @@ export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process })
                         </div>
                         <h4 className="text-gray-600">Thông tin người nhận</h4>
                     </div>
-                    <p className="font-medium">Phạm Quốc Nguyên</p>
-                    <p className="text-gray-600">0362 696 258</p>
+                    <p className="font-medium">{orderDetail.shipping_address.name}</p>
+                    <p className="text-gray-600">{orderDetail.shipping_address.phone}</p>
                 </div>
 
                 {/* Delivery Location */}
@@ -87,7 +93,7 @@ export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process })
                         </div>
                         <h4 className="text-gray-600">Nhận hàng tại</h4>
                     </div>
-                    <p className="font-medium">18/27 Nguyên Trãi, Phường Tây Sơn, Thị Xã An Khê, Tỉnh Gia Lai</p>
+                    <p className="font-medium">{orderDetail.shipping_address.street}, {orderDetail.shipping_address.ward}, {orderDetail.shipping_address.district}, {orderDetail.shipping_address.province}</p>
                 </div>
 
                 {/* Pharmacy Info */}

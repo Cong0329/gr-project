@@ -1,6 +1,9 @@
 
 import Skeleton from "react-loading-skeleton";
 import { ProductOption } from "./product";
+import { useDispatch } from "react-redux";
+import { addCartItemId } from "../../redux/orderSlice";
+import { useEffect } from "react";
 
 interface CheckoutItem {
   id: string;
@@ -20,7 +23,10 @@ interface CheckoutItemProps {
 
 export const CheckoutItem: React.FC<CheckoutItemProps> = ({ isFirst, item, isLoading }) => {
   const { name, quantity, image, selectedOption } = item;
-
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(addCartItemId(Number(item.id)));
+  }, [dispatch, item]);
   // Tính tổng tiền của sản phẩm dựa trên tùy chọn được chọn
   const totalPrice = (selectedOption.discountedPrice ?? selectedOption.price) * quantity;
 
@@ -34,11 +40,11 @@ export const CheckoutItem: React.FC<CheckoutItemProps> = ({ isFirst, item, isLoa
           {/* Product image skeleton */}
           <Skeleton className="w-16 h-16 rounded-xl  bg-gray-200"></Skeleton>
 
-         
-            {/* Product name skeleton */}
-            <Skeleton className=" w-60 md-lg:w-52 h-10 max-h-10 ms:w-44 mm:w-32 bg-gray-200 rounded"></Skeleton>
 
-     
+          {/* Product name skeleton */}
+          <Skeleton className=" w-60 md-lg:w-52 h-10 max-h-10 ms:w-44 mm:w-32 bg-gray-200 rounded"></Skeleton>
+
+
         </div>
 
         {/* Price skeleton (shown on mobile) */}

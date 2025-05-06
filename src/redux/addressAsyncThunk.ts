@@ -6,7 +6,11 @@ export const addAddressAPI = createAsyncThunk(
     "addresses/addAddress",
     async (newAddress: Address, { rejectWithValue }) => {
       try {
-        const response = await axios.post("https://65e695fbd7f0758a76e897e1.mockapi.io/api/v1/address", newAddress);
+        const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/address`, newAddress,
+          {
+            withCredentials: true
+          }
+        );
         return response.data;
       } catch (error) {
         return rejectWithValue(error.response.data);
@@ -19,9 +23,14 @@ export const addAddressAPI = createAsyncThunk(
     "addresses/fetchAddresses",
     async (_, { rejectWithValue }) => {
       try {
-        const response = await axios.get("https://65e695fbd7f0758a76e897e1.mockapi.io/api/v1/address");
+        const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/address`,
+          {
+            withCredentials: true
+          }
+        );
         return response.data;
-      } catch (error) {
+        
+      } catch (error : any) {
         return rejectWithValue(error.response.data);
       }
     }
@@ -32,9 +41,13 @@ export const addAddressAPI = createAsyncThunk(
     "addresses/deleteAddress",
     async (id: string, { rejectWithValue }) => {
       try {
-        await axios.delete(`https://65e695fbd7f0758a76e897e1.mockapi.io/api/v1/address/${id}`);
+        await axios.delete(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/address/${id}`,
+          {
+            withCredentials: true
+          }
+        );
         return id;
-      } catch (error) {
+      } catch (error : any) {
         return rejectWithValue(error.response.data);
       }
     }
@@ -46,22 +59,30 @@ export const addAddressAPI = createAsyncThunk(
     async ({ id, updatedFields }: { id: string; updatedFields: any }, { rejectWithValue }) => {
       try {
         const response = await axios.put(
-          `https://65e695fbd7f0758a76e897e1.mockapi.io/api/v1/address/${id}`,
-          updatedFields // Truyền trực tiếp updatedFields
+          `${import.meta.env.VITE_NODEJS_BACKEND_URL}/address/${id}`,
+          updatedFields, // Truyền trực tiếp updatedFields
+          {
+            withCredentials: true
+          }
         );
         return response.data;
-      } catch (error) {
+      } catch (error : any) {
         return rejectWithValue(error.response?.data || "Lỗi không xác định");
       }
     }
   );
+
   export const getAddressById = createAsyncThunk(
     "addresses/getById",
     async (id: string, { rejectWithValue }) => {
       try {
-        const response = await axios.get<Address>(`https://65e695fbd7f0758a76e897e1.mockapi.io/api/v1/address/${id}`);
+        const response = await axios.get<Address>(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/address/${id}`,
+          {
+            withCredentials: true
+          }
+        );
         return response.data;
-      } catch (error) {
+      } catch (error : any) {
         return rejectWithValue(error.response?.data || "Lỗi không xác định");
       }
     }

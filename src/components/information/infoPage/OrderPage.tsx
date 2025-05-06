@@ -1,74 +1,32 @@
 import { useEffect, useRef, useState } from 'react';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import { OrderCustom } from './OrderCustom';
+import { useDispatch } from 'react-redux';
+import { fetchOrders } from '../../../redux/orderAsyncThunk';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
 
-export interface Order {
-    id: number;
-    date: string;
-    shippingMethod: string;
-    orderId: string;
-    status: 'delivered' | 'canceled' | 'pending' | 'delivering' | 'return';
-    total: number;
-    items: { name: string; price: number; quantity: number }[];
-}
+// export interface Order {
+//     id: number;
+//     date: string;
+//     shippingMethod: string;
+//     orderId: string;
+//     status: 'delivered' | 'canceled' | 'pending' | 'delivering' | 'return';
+//     total: number;
+//     items: { name: string; price: number; quantity: number }[];
+// }
 
 export const OrderPage = () => {
     const [activeTab, setActiveTab] = useState('all');
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
     const [search, setSearch] = useState('');
-
+    const { orders, status } = useSelector((state: RootState) => state.order);
     const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
     const [isLoading, setIsLoading] = useState(true);
-
-    const orders: Order[] = [
-        {
-            id: 1,
-            date: '01/04/2025',
-            shippingMethod: 'Giao hàng tận nơi',
-            orderId: '#7212016',
-            status: 'canceled',
-            total: 948000,
-            items: [{ name: 'Thực phẩm bảo vệ sức khỏe OMEGA 3 PLUS', price: 920000, quantity: 1 }]
-        },
-        {
-            id: 2,
-            date: '02/04/2025',
-            shippingMethod: 'Giao hàng tận nơi',
-            orderId: '#7212017',
-            status: 'delivered',
-            total: 1488000,
-            items: [
-                { name: 'Thực phẩm chức năng', price: 920000, quantity: 1 },
-            ]
-        },
-        {
-            id: 3,
-            date: '03/04/2025',
-            shippingMethod: 'Giao hàng tận nơi',
-            orderId: '#7212018',
-            status: 'pending',
-            total: 948000,
-            items: [{ name: 'Thực phẩm sức khỏe OMEGA 3 PLUS', price: 920000, quantity: 1 }]
-        },
-        {
-            id: 4,
-            date: '04/04/2025',
-            shippingMethod: 'Giao hàng tận nơi',
-            orderId: '#7212019',
-            status: 'delivering',
-            total: 948000,
-            items: [{ name: 'Thuốc bảo vệ sức khỏe OMEGA 3 PLUS', price: 920000, quantity: 1 }]
-        },
-        {
-            id: 5,
-            date: '05/04/2025',
-            shippingMethod: 'Giao hàng tận nơi',
-            orderId: '#7212020',
-            status: 'return',
-            total: 948000,
-            items: [{ name: 'Bảo vệ sức khỏe OMEGA 3 PLUS', price: 920000, quantity: 1 }]
-        },
-    ];
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(fetchOrders());
+    }, [dispatch]);
 
     useEffect(() => {
         setIsLoading(true)
@@ -83,7 +41,7 @@ export const OrderPage = () => {
         const matchesSearch =
             search.length === 0 ||
             order.items.some((item) =>
-                item.name.toLowerCase().includes(search.toLowerCase())
+                item.Product.name.toLowerCase().includes(search.toLowerCase())
             );
         return matchesTab && matchesSearch;
     });
@@ -105,7 +63,7 @@ export const OrderPage = () => {
         setIsLoading(true);
         const timer = setTimeout(() => {
             setIsLoading(false);
-        }, 500); // Delay để giả lập loading (tuỳ chỉnh 500ms hay 300ms cho mượt)
+        }, 2000); // Delay để giả lập loading (tuỳ chỉnh 500ms hay 300ms cho mượt)
 
         return () => clearTimeout(timer);
     }, [search]);
@@ -147,7 +105,7 @@ export const OrderPage = () => {
             {/* Tabs */}
             <div className="relative border-b bg-white rounded-t-xl mb-2">
                 <div className="flex justify-between relative">
-                    {['all', 'pending', 'delivering', 'delivered', 'canceled', 'return'].map((tab) => (
+                    {['all', 'pending', 'confirmed', 'shipping', 'completed', 'cancelled', 'return'].map((tab) => (
                         <button
                             key={tab}
                             ref={(el) => (tabRefs.current[tab] = el)}
@@ -157,9 +115,10 @@ export const OrderPage = () => {
                             {{
                                 all: 'Tất cả',
                                 pending: 'Đang xử lý',
-                                delivering: 'Đang giao',
-                                delivered: 'Đã giao',
-                                canceled: 'Đã hủy',
+                                confirmed: 'Đã xác nhận',
+                                shipping: 'Đang giao',
+                                completed: 'Đã giao',
+                                cancelled: 'Đã hủy',
                                 return: 'Trả hàng',
                             }[tab]}
                         </button>

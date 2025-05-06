@@ -8,6 +8,7 @@ interface PackageSelectorProps {
 
 const PackageSelector: React.FC<PackageSelectorProps> = ({ selectedOption, options, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(selectedOption);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Đóng dropdown khi bấm ra ngoài
@@ -28,7 +29,7 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({ selectedOption, optio
         className="flex items-center justify-between border border-gray-300 rounded-full ml:px-2 ml:py-1 px-4 py-2 text-gray-700 hover:bg-gray-100 w-24"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {selectedOption} <span className="ml-2">▼</span>
+        {selected} <span className="ml-2">▼</span>
       </button>
 
       {isOpen && (
@@ -38,6 +39,7 @@ const PackageSelector: React.FC<PackageSelectorProps> = ({ selectedOption, optio
               key={option}
               className="px-4 py-2 hover:bg-gray-200 cursor-pointer hover:bg-blue-100"
               onClick={() => {
+                setSelected(option);
                 onChange(option);  // Gọi hàm onChange khi chọn option
                 setIsOpen(false);
               }}

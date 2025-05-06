@@ -3,11 +3,14 @@ import MainContent from './MainContent';
 import { useState, useEffect } from 'react';
 import { NavLink } from '../navlink/NavLink';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { useDispatch } from 'react-redux';
 import { setActivePage } from '../../redux/navigationSlice';
 import { validPageIds } from './menuItems';
 import Breadcrumb from '../home_booking/details/component_details/BreadCrumb';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { fetchCarts } from '../../redux/cartAsyncThunk';
+import { resetOrder } from '../../redux/orderSlice';
 
 
 export const InformationBody = () => {
@@ -15,6 +18,13 @@ export const InformationBody = () => {
     const { pageId } = useParams<{ pageId: string }>();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { reset } = useSelector((state: RootState) => state.order);
+    useEffect(() => {
+        if (reset) {
+            dispatch(fetchCarts());
+            dispatch(resetOrder());
+        }
+    }, [dispatch, reset]);
 
     useEffect(() => {
         if (pageId && validPageIds.includes(pageId as any)) {
@@ -31,7 +41,7 @@ export const InformationBody = () => {
             <div className='relative'>
                 <div className="mx-auto relative w-4/5 bg-gray-100 pb-4 container">
                     <div className="  mx-auto bg-gray-100  [&>*]:!bg-gray-100">
-                        <Breadcrumb  />
+                        <Breadcrumb />
                     </div>
                     <div className="flex  w-full gap-10">
                         <div className='w-1/5'>

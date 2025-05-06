@@ -10,24 +10,26 @@ import { MedicineComment } from "./medicine_comment/MedicineComment";
 import { FaRocketchat } from 'react-icons/fa';
 import { motion } from "framer-motion";
 import { useState } from "react";
-
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 
 
 
 export default function ProductDetail() {
   const [isOpen, setIsOpen] = useState(false);
+  const { product, detail } = useSelector((state: RootState) => state.products);
   return (
     <div className="w-4/5 tb:w-full mx-auto container pb-10">
       <div className="bg-white rounded-xl tb:rounded-none flex p-4 tb:flex-col ">
         <div className="w-2/5 tb:w-full">
           {/* Image Slider */}
-          <ProductImageSlider images={productData[0].images} />
+          {product.images && <ProductImageSlider images={product.images} />}
         </div>
-        <MedicineDescription medicineData={productData[0]} isOpen={isOpen} setIsOpen={setIsOpen} />
+        {product.name && <MedicineDescription medicineData={product} isOpen={isOpen} setIsOpen={setIsOpen} />}
       </div>
       <div className="mt-6 bg-white rounded-xl tb:rounded-none">
-        <MedicineTech />
+        {detail.product_id && <MedicineTech />}
       </div>
       <div className="">
         <RelatedMedicines />

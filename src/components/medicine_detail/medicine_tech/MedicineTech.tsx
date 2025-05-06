@@ -2,19 +2,21 @@ import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import ProductSection from "./MedicineSection";
 import ExpandableText from "./ExpandableText";
-import { productDescription } from "./description";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
 const MedicineTech: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
+  const { detail } = useSelector((state: RootState) => state.products);
   return (
     <div className="pb-4">
       <div className="flex">
-        <Sidebar sections={productDescription.description} isCollapsed={expanded} />
+        <Sidebar sections={detail.sections.map((section) => ({ type: section.type }))} isCollapsed={expanded} />
         <div className="flex-1 pt-4 pr-4 tb:pl-4">
-          <h2 className="text-3xl ms:text-xl font-bold border-b pb-3" id="introduction">{productDescription.title}</h2>
+          <h2 className="text-3xl ms:text-xl font-bold border-b pb-3" id="introduction">{detail.title}</h2>
           <div className="relative z-10">
             <ExpandableText expanded={expanded} setExpanded={setExpanded}>
-              {productDescription.description.map((section) => (
+              {detail.sections.map((section) => (
                 <ProductSection  key={section.type} id={section.type} section={section} />
               ))}
             </ExpandableText>

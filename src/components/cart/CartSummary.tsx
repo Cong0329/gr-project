@@ -4,8 +4,8 @@ import { RootState } from "../../redux/store";
 import { FaAngleRight, FaQuestion } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import { VoucherModal } from "./VoucherModal";
-import Skeleton from "react-loading-skeleton";
 import { CartSummartSkeleton } from "./CartSummartSkeleton";
+import { createOrder } from "../../redux/orderAsyncThunk";
 
 interface CartSummaryProps {
   isDetail?: boolean | null;
@@ -18,6 +18,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({ isDetail, status, isLoading }
   const [message, setMessage] = useState('');
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isCheckout = useSelector((state: RootState) => state.cart.isCheckout);
+  const {orderForm} = useSelector((state: RootState) => state.order);
   const [isOpen, setIsOpen] = useState(false);
 
 
@@ -33,14 +34,14 @@ const CartSummary: React.FC<CartSummaryProps> = ({ isDetail, status, isLoading }
 
   const checkoutPrice = cartItems
     .filter(item => item.selected) // Chỉ lấy các sản phẩm được chọn
-    .reduce((acc, item) => acc + (item.selectedOption.discountedPrice ?? item.selectedOption.price) * item.quantity, 0);
+    .reduce((acc, item) => acc + (item.selectedOption.discounted_price > 0 ? item.selectedOption.discounted_price : item.selectedOption.price) * item.quantity, 0);
 
   const totalDiscount = cartItems
     .filter(item => item.selected) // Chỉ lấy các sản phẩm được chọn
     .reduce((acc, item) => {
-      if (item.selectedOption.isDiscounted && item.selectedOption.discountedPrice) {
+      if (item.selectedOption.discounted_price > 0) {
         // Tính số tiền giảm cho từng sản phẩm
-        const discountAmount = (item.selectedOption.price - item.selectedOption.discountedPrice) * item.quantity;
+        const discountAmount = (item.selectedOption.price - item.selectedOption.discounted_price) * item.quantity;
         return acc + discountAmount;
       }
       return acc;
@@ -50,12 +51,23 @@ const CartSummary: React.FC<CartSummaryProps> = ({ isDetail, status, isLoading }
   }, [totalPrice]);
 
   const handleCheckout = () => {
-    if (totalPrice > 0) {
-      dispatch(goToCheckout());
+    if (!isCheckout) {
+      if (totalPrice > 0) {
+        dispatch(goToCheckout());
+      } else {
+        setMessage('Vui lòng chọn sản phẩm');
+      }
+      return;
+    }
+  
+    // Nếu đang ở bước checkout
+    if (orderForm.shipping_address_id && orderForm.payment_method) {
+      dispatch(createOrder(orderForm));
     } else {
-      setMessage('Vui lòng chọn sản phẩm');
+      setMessage('Vui lòng chọn địa chỉ giao hàng và phương thức thanh toán');
     }
   };
+  
 
 
   let buy;

@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef} from "react";
 import { DescriptionType } from "./description";
+import { descriptionTypeLabels } from "../../admin/pages/Forms/Product/Blog/type";
 
 interface SidebarProps {
-  sections: { title: string | null; type: DescriptionType }[];
+  sections: {type: DescriptionType }[];
   isCollapsed: boolean;
 }
 
@@ -11,20 +12,21 @@ const Sidebar: React.FC<SidebarProps> = ({ sections, isCollapsed }) => {
     sections.length > 0 ? sections[0].type : null
   );
 
-  const firstRender = useRef(true);
+  const hasInitializedSection = useRef(false);
 
   useEffect(() => {
-    if (firstRender.current) {
-      // Bỏ qua lần chạy đầu tiên (nghĩa là khi user truy cập vào trang)
-      firstRender.current = false;
+    if (!hasInitializedSection.current && sections.length > 0) {
+      // Bỏ qua lần đầu tiên sections có dữ liệu
+      hasInitializedSection.current = true;
       return;
     }
-
-    if ( sections.length > 0) {
+  
+    if (sections.length > 0) {
       setActiveSection(sections[0].type);
       document.getElementById("introduction")?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [isCollapsed, sections]);
+  }, [isCollapsed]);
+  
 
   useEffect(() => {
     if (isCollapsed) {
@@ -66,7 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sections, isCollapsed }) => {
             document.getElementById(item.type)?.scrollIntoView({ behavior: "smooth" });
           }}
         >
-          {item.title}
+          {descriptionTypeLabels[item.type]}
         </a>
       ))}
     </div>

@@ -10,15 +10,15 @@ import { MedicinePage } from './infoPage/MedicinePage';
 
 const MainContent: React.FC = () => {
   const activePage = useSelector((state: RootState) => state.navigation.activePage);
+  const {user} = useSelector((state: RootState) => state.auth);
 
   const contentMap: Record<PageId, React.ReactNode> = {
-    'personal-info':<ProfilePage name='Nguyên' phone='0362696258'/>,
+    'personal-info':<ProfilePage name={user?.name} phone={user.phone} gender={user.gender}/>,
     'orders': <OrderPage/>,
     'addresses': <AddressPage/>,
     'vaccinations': <div>Vaccinations Content</div>,
     'vaccination-orders': <div>Vaccination Orders Content</div>,
-    'prescriptions': <MedicinePage/>,
-    'logout': <div>Logout Content</div>,
+    'prescriptions': <MedicinePage/>
   };
 
   return (

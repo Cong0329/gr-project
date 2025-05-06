@@ -3,19 +3,29 @@ import { useDispatch, useSelector } from "react-redux";
 import AddressModal from "./AddressModal";
 import { RootState } from "../../redux/store"; // Đảm bảo import đúng đường dẫn
 import { fetchAddresses } from "../../redux/addressAsyncThunk";
-
+import { addShippingAddressId } from "../../redux/orderSlice";
+import { addNote } from "../../redux/orderSlice";
 const AddressSelection = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const dispatch = useDispatch();
 
     // Lấy selectedAddress từ Redux store
     const selectedAddress = useSelector((state: RootState) => state.address.selectedAddress);
-    const status = useSelector((state: RootState) => state.address.status);
-    useEffect(() => {
-        dispatch(fetchAddresses());
-    }, [dispatch,status]);
 
-   
+    const {status, addresses} = useSelector((state: RootState) => state.address);
+    useEffect(() => {
+        if (addresses.length === 0) {
+            dispatch(fetchAddresses());
+        } else if(status === "succeeded"){
+            dispatch(fetchAddresses());
+        }
+    }, [dispatch,status,addresses.length]);
+
+   useEffect(() => {
+    if(selectedAddress){
+        dispatch(addShippingAddressId(selectedAddress?.id));
+    }
+   }, [selectedAddress,dispatch]);
 
     return (
         <div className="bg-white p-4 rounded-lg border container">
@@ -45,15 +55,14 @@ const AddressSelection = () => {
             </div>
             <div className="px-4 py-2 rounded-xl border mx-4 my-2 focus-within:border-blue-700 font-semibold text-gray-500">
                 <label htmlFor="note" className="text-sm">Ghi chú (Không bắt buộc)</label>
-                <textarea name="note" id="" rows={3} placeholder="Ví dụ: Hãy gọi cho tôi khi đến nơi " className="w-full focus:outline-none font-normal"></textarea>
+                <textarea name="note" id="" rows={3} placeholder="Ví dụ: Hãy gọi cho tôi khi đến nơi " className="w-full focus:outline-none font-normal" onChange={(e) => dispatch(addNote(e.target.value))}></textarea>
             </div>
             <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center gap-2">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 shrink-0 grow-0"><path fillRule="evenodd" clipRule="evenodd" d="M3 13C3 8.02944 7.02944 4 12 4C16.9706 4 21 8.02944 21 13C21 17.9706 16.9706 22 12 22C7.02944 22 3 17.9706 3 13ZM14 16.0058C14.2666 16.0058 14.5222 15.8993 14.71 15.71C14.8993 15.5222 15.0058 15.2666 15.0058 15C15.0058 14.7334 14.8993 14.4778 14.71 14.29L13 12.59V9C13 8.44772 12.5523 8 12 8C11.4477 8 11 8.44772 11 9V13C10.9985 13.2658 11.1028 13.5213 11.29 13.71L13.29 15.71C13.4778 15.8993 13.7334 16.0058 14 16.0058Z" fill="url(#paint0_linear_3708_96162)"></path><path d="M14 16.0058C14.2666 16.0058 14.5222 15.8993 14.71 15.71C14.8993 15.5222 15.0058 15.2666 15.0058 15C15.0058 14.7334 14.8993 14.4778 14.71 14.29L13 12.59V9C13 8.44772 12.5523 8 12 8C11.4477 8 11 8.44772 11 9V13C10.9985 13.2658 11.1028 13.5213 11.29 13.71L13.29 15.71C13.4778 15.8993 13.7334 16.0058 14 16.0058Z" fill="url(#paint1_linear_3708_96162)"></path><path d="M12 8.5V12.4458C12 12.7905 12.1776 13.111 12.47 13.2938L16 15.5" stroke="white" strokeWidth="1.5" strokeLinecap="round"></path><path d="M18.9992 5.99997C18.8026 6.00221 18.6102 5.94276 18.4492 5.82997L15.4492 3.82997C15.1148 3.65059 14.9107 3.29739 14.9224 2.91808C14.934 2.53878 15.1593 2.19875 15.5041 2.0402C15.8489 1.88166 16.2537 1.93192 16.5492 2.16997L19.5492 4.16997C19.9132 4.41457 20.0754 4.86781 19.9492 5.28782C19.8229 5.70784 19.4378 5.99658 18.9992 5.99997Z" fill="#ACC0F3"></path><path d="M5.00017 5.99997C4.56161 5.99658 4.17644 5.70784 4.0502 5.28782C3.92397 4.86781 4.08614 4.41457 4.45017 4.16997L7.45017 2.16997C7.74569 1.93192 8.1505 1.88166 8.49527 2.0402C8.84004 2.19875 9.06538 2.53878 9.07701 2.91808C9.08864 3.29739 8.88457 3.65059 8.55017 3.82997L5.55017 5.82997C5.38912 5.94276 5.19677 6.00221 5.00017 5.99997Z" fill="#ACC0F3"></path><defs><linearGradient id="paint0_linear_3708_96162" x1="21" y1="22" x2="3" y2="4" gradientUnits="userSpaceOnUse"><stop stopColor="#1250DC"></stop><stop offset="1" stopColor="#306DE4"></stop></linearGradient><linearGradient id="paint1_linear_3708_96162" x1="21" y1="22" x2="3" y2="4" gradientUnits="userSpaceOnUse"><stop stopColor="#1250DC"></stop><stop offset="1" stopColor="#306DE4"></stop></linearGradient></defs></svg>
-                    <p className="text-gray-500 font-semibold">Thời gian nhận hàng dự kiến</p>
+                    <p>Dự kiến giao hàng</p>
                 </div>
                 <div>
-                    <p>05/04/2025</p>
+                    <p>{new Date(Date.now()+1000*60*60*24*5).toLocaleDateString()}</p>
                 </div>
             </div>
 

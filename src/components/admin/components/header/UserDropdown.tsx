@@ -1,11 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../../redux/store";
+import axiosInstance from "../../../../auth/axiosInstance";
 import avatar from "../../../../assets/images/user/owner.jpg"
+import { adminLogin } from "../../../../redux/authSlice";
 
 export default function UserDropdown() {
+  const { admin, isAuthenticated } = useSelector((state: RootState) => state.auth);
+
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -14,6 +21,34 @@ export default function UserDropdown() {
   function closeDropdown() {
     setIsOpen(false);
   }
+
+  useEffect(() => {
+    if (isAuthenticated && Object.keys(admin).length === 0) {
+      const fetchAdmin = async () => {
+        console.log("Fetching user..."); // ✅ log
+
+        try {
+          const res = await axiosInstance.get(`/user/admin/me`, {
+            withCredentials: true
+          });
+
+          if (res.data) {
+
+            dispatch(adminLogin(res.data.user));
+
+          }
+        } catch (error) {
+          console.log("Fetch user failed", error);
+        }
+      };
+
+      fetchAdmin();
+    }
+  }, [dispatch, isAuthenticated, admin]);
+
+
+
+
   return (
     <div className="relative">
       <button
@@ -24,11 +59,10 @@ export default function UserDropdown() {
           <img src={avatar} alt="User" />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Musharof</span>
+        <span className="block mr-1 font-medium text-theme-sm">{admin.name}</span>
         <svg
-          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
           width="18"
           height="20"
           viewBox="0 0 18 20"
@@ -52,10 +86,10 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Musharof Chowdhury
+            {admin.name}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            randomuser@pimjo.com
+            {admin.email}
           </span>
         </div>
 
