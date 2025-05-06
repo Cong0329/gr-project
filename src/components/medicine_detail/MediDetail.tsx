@@ -1,12 +1,10 @@
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { productData } from "./medicine";
 import ProductImageSlider from "./MedicineSlider/MedicineSlider";
 import { MedicineDescription } from "./MedicineDescription";
 import MedicineTech from "./medicine_tech/MedicineTech";
 import { RelatedMedicines } from "./RelatedProducts";
 import ReviewSection from "./medicine_reviews/ReviewSection";
-import { MedicineComment } from "./medicine_comment/MedicineComment";
 import { FaRocketchat } from 'react-icons/fa';
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -18,7 +16,7 @@ import { RootState } from "../../redux/store";
 
 export default function ProductDetail() {
   const [isOpen, setIsOpen] = useState(false);
-  const { product, detail } = useSelector((state: RootState) => state.products);
+  const { product, detail, review } = useSelector((state: RootState) => state.products);
   return (
     <div className="w-4/5 tb:w-full mx-auto container pb-10">
       <div className="bg-white rounded-xl tb:rounded-none flex p-4 tb:flex-col ">
@@ -36,9 +34,6 @@ export default function ProductDetail() {
       </div>
       <div className="">
         <ReviewSection />
-      </div>
-      <div className="">
-        <MedicineComment />
       </div>
       <div className="fixed bottom-0 left-0 w-full bg-white shadow-lg p-4 z-30 hidden tb:flex items-center justify-between gap-4">
         {/* Nút Chat */}

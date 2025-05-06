@@ -28,8 +28,8 @@ axiosInstance.interceptors.response.use(
       const originalRequest = error.config;
   
       const isTokenExpired =
-        error.response?.status === 403 &&
-        error.response?.data?.message === "jwt expired"; // ← kiểm tra kỹ message
+        error.response?.status === 401 &&
+        error.response?.data?.message === "Access token missing"; // ← kiểm tra kỹ message
   
       if (isTokenExpired && !originalRequest._retry) {
         originalRequest._retry = true;

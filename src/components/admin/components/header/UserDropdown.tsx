@@ -23,7 +23,6 @@ export default function UserDropdown() {
   }
 
   useEffect(() => {
-    if (isAuthenticated && Object.keys(admin).length === 0) {
       const fetchAdmin = async () => {
         console.log("Fetching user..."); // ✅ log
 
@@ -40,11 +39,9 @@ export default function UserDropdown() {
         } catch (error) {
           console.log("Fetch user failed", error);
         }
-      };
-
-      fetchAdmin();
     }
-  }, [dispatch, isAuthenticated, admin]);
+    fetchAdmin();
+  }, [dispatch]);
 
 
 

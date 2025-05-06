@@ -10,7 +10,7 @@ const OrderTables = () => {
     const [activeTab, setActiveTab] = useState('all');
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
     const [search, setSearch] = useState('');
-    const { adminOrders, status } = useSelector((state: RootState) => state.order);
+    const { adminOrders } = useSelector((state: RootState) => state.order);
     const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
     const [isLoading, setIsLoading] = useState(true);
     const dispatch = useDispatch();
@@ -62,7 +62,8 @@ const OrderTables = () => {
     }
 
     return (
-        <div className="pt-2 w-10/12">
+        
+        <div className="pt-2 w-full">
             <div className="flex justify-between mb-6">
                 <h2 className="text-2xl font-bold">Quản lý đơn hàng</h2>
                 <div className="flex items-center w-1/2 py-4 pl-2 pr-1 rounded-full border bg-gray-200 h-10 relative">
@@ -97,7 +98,7 @@ const OrderTables = () => {
                         <button
                             key={tab}
                             ref={(el) => (tabRefs.current[tab] = el)}
-                            className={`px-6 py-2 transition-colors font-semibold duration-300 w-[200px] ${activeTab === tab ? 'text-blue-600 font-medium' : 'text-gray-500'}`}
+                            className={`px-6 py-2 transition-colors font-semibold duration-300 w-1/2 ${activeTab === tab ? 'text-blue-600 font-medium' : 'text-gray-500'}`}
                             onClick={() => handleClickTab(tab)}
                         >
                             {{

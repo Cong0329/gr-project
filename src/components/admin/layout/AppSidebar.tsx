@@ -14,6 +14,7 @@ import {
   PlugInIcon,
   TableIcon,
   UserCircleIcon,
+  ChatIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -48,7 +49,7 @@ const navItems: NavItem[] = [
     name: "Danh Mục",
     icon: <ListIcon />,
     subItems: [
-      { name: "Thương hiệu", path: "/admin/brand", pro: false }, 
+      { name: "Thương hiệu", path: "/admin/brand", pro: false },
       { name: "Danh mục ", path: "/admin/category", pro: false },
       { name: "Đối tượng ", path: "/admin/medical-object", pro: false },
       { name: "Chỉ định ", path: "/admin/indication", pro: false },
@@ -58,6 +59,13 @@ const navItems: NavItem[] = [
     name: "Đơn hàng",
     icon: <TableIcon />,
     subItems: [{ name: "Quản lý đơn hàng", path: "/admin/orders", pro: false }],
+  },
+  {
+    name: "Chat",
+    icon: <ChatIcon />,
+    subItems: [{ name: "Quản lý đánh giá", path: "/admin/reviews", pro: false },
+      { name: "Quản lý chat", path: "/admin/chat", pro: false },
+    ],
   },
   {
     name: "Pages",

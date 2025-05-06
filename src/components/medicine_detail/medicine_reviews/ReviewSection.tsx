@@ -1,107 +1,85 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ReviewItem from "./ReviewItem";
 import ReviewModal from "./ReviewModal";
-import ReplyModal from "./ReplyModal";
 import RatingSummary from "./RatingSumary";
 import ExpandableText from "../medicine_tech/ExpandableText";
-
-export interface Review {
-  id: number;
-  author: string;
-  content: string;
-  rating: number | null;
-  date: string;
-  replies: Reply[];
-}
-
-export interface Reply {
-  id: number;
-  author: string;
-  role: string;
-  content: string;
-  date: string;
-}
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { createReview } from "../../../redux/reviewsAsyncThunk";
+import { toast } from "react-toastify";
+import { Review } from "../../../redux/reviewsSlice";
 
 const ReviewSection: React.FC = () => {
-  const [reviews, setReviews] = useState<Review[]>([
-    {
-      id: 1,
-      author: "An Luu",
-      content: "Ổn",
-      rating: 4,
-      date: "2023-06-01",
-      replies: [{ id: 1, author: "Vi Trần", role: "Dược Sĩ", content: "Cảm ơn bạn!", date: "2023-06-02" }],
-    },
-    {
-      id: 2,
-      author: "Hào Bắc",
-      content: "Đây là men tiêu hóa hay men vi sinh?",
-      rating: 5,
-      date: "2023-06-02",
-      replies: [{ id: 2, author: "Mai Phương", role: "Dược Sĩ", content: "Sản phẩm là men vi sinh.", date: "2023-06-03" }],
-    },
-  ]);
-
+  const { user } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
+  const { product, review } = useSelector((state: RootState) => state.products);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [showReplyModal, setShowReplyModal] = useState(false);
-  const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
   const [filterRating, setFilterRating] = useState<number | null>(null);
   const [expanded, setExpanded] = useState(false);
   const isReviews = true;
 
+  useEffect(() => {
+    if (review?.length > 0) {
+      setReviews(review);
+    } else {
+      setReviews([]);
+    }
+  }, [review]);
 
   const handleReviewSubmit = (content: string, rating: number) => {
+    if (content.trim() === "") {
+      toast.error("Vui lòng nhập đánh giá");
+      return;
+    }
+    if (rating === null) {
+      toast.error("Vui lòng chọn đánh giá");
+      return;
+    }
+
     const newReview: Review = {
-      id: Date.now(),
-      author: "Bạn",
-      content,
+      id: String(Date.now()),
+      comment: content, // Đổi từ content -> comment
       rating,
-      date: new Date().toISOString().split("T")[0],
-      replies: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      reply: null, // Thay replies bằng reply (null khi mới tạo)
+      user: {
+        id: user?.id || "", // Giả định user đã đăng nhập
+        name: user?.name || "Bạn", // Lấy từ user nếu có
+        email: user?.email || "",
+        avatar_url: user?.avatar_url || "",
+      },
+      product: {
+        id: product.id,
+        name: product.name || "Tên sản phẩm", // Lấy từ product thực tế
+      }
     };
+
     setReviews([newReview, ...reviews]);
+    dispatch(createReview({
+      productId: product.id,
+      rating: rating,
+      comment: content
+    }));
+    toast.success("Đánh giá đã được gửi");
     setShowReviewModal(false);
   };
 
-  const handleReplySubmit = (reviewId: number, replyContent: string) => {
-    setReviews((prevReviews) =>
-      prevReviews.map((review) =>
-        review.id === reviewId
-          ? {
-            ...review,
-            replies: [
-              ...review.replies,
-              {
-                id: Date.now(),
-                author: "Bạn",
-                role: "Người dùng",
-                content: replyContent,
-                date: new Date().toISOString().split("T")[0],
-              },
-            ],
-          }
-          : review
-      )
-    );
-    setShowReplyModal(false);
-  };
 
-  const openReplyModal = (reviewId: number) => {
-    setSelectedReviewId(reviewId);
-    setShowReplyModal(true);
-  };
+
 
   const filteredReviews = filterRating
-    ? reviews.filter((review) => review.rating === filterRating)
+    ? reviews.filter((review) => parseFloat(review.rating) === filterRating)
     : reviews;
 
   return (
-    <div className=" mx-auto p-4 bg-white  rounded-xl mt-5 tb:rounded-none">
+    <div className=" mx-auto p-4 bg-white  rounded-xl mt-5 tb:rounded-none" id="reviews">
       {/* Thống kê rating */}
       <p className="text-black font-semibold text-xl border-b-2 pb-2">
         Đánh giá sản phẩm <span className="text-gray-600 text-sm">({reviews.length} đánh giá)</span>
       </p>
-      <RatingSummary reviews={reviews} setShowModal={setShowReviewModal} />
+      <RatingSummary reviews={reviews} setShowModal={setShowReviewModal} user={user} />
 
 
 
@@ -129,7 +107,7 @@ const ReviewSection: React.FC = () => {
       <div className="mt-4 space-y-4">
         <ExpandableText expanded={expanded} setExpanded={setExpanded}>
           {filteredReviews.map((review) => (
-            <ReviewItem key={review.id} review={review} onReply={openReplyModal} isReview={isReviews} />
+            <ReviewItem key={review.id} review={review} isReview={isReviews} />
           ))}
         </ExpandableText>
       </div>
@@ -140,13 +118,6 @@ const ReviewSection: React.FC = () => {
         <ReviewModal onClose={() => setShowReviewModal(false)} onSubmit={handleReviewSubmit} isReview={isReviews} />
       )}
 
-      {/* Modal trả lời */}
-      {showReplyModal && selectedReviewId !== null && (
-        <ReplyModal
-          onClose={() => setShowReplyModal(false)}
-          onSubmit={(replyContent) => handleReplySubmit(selectedReviewId, replyContent)}
-        />
-      )}
     </div>
   );
 };

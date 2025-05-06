@@ -30,6 +30,8 @@ import EditProductPage from "../admin/pages/Forms/Product/EditProduct/EditProduc
 import {BrandProduct} from "../admin/pages/Forms/Product/Brand/BrandProduct";
 import OrderTables from "../admin/pages/Tables/OrderTables";
 import OrderDetail from "../admin/pages/Tables/OrderDetail";
+import AdminReview from "../admin/components/chat/AdminReview";
+import AdminChatInterface from "../admin/components/chat/AdminChat/AdminChatInterface";
 
 const adminRoutes = (
     <>
@@ -51,10 +53,15 @@ const adminRoutes = (
             <Route path="/admin/products" element= {< ProductPage/>} />
             <Route path="/admin/edit-product/:id" element= {< EditProductPage/>} />
             <Route path="/admin/brand/:name" element= {< BrandProduct/>} />
-            {/* Tables */}
-            <Route path="/admin/basic-tables" element={<BasicTables />} />
             <Route path="/admin/orders" element={<OrderTables />} />
             <Route path="/admin/orders/:id" element={<OrderDetail />} />
+            <Route path="/admin/reviews" element={<AdminReview />} />
+            <Route path="/admin/chat" element={<AdminChatInterface />} />
+            
+            
+            {/* Tables */}
+            <Route path="/admin/basic-tables" element={<BasicTables />} />
+          
 
             {/* UI Elements */}
             <Route path="/admin/alerts" element={<Alerts />} />

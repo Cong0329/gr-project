@@ -2,8 +2,10 @@ import { useState } from "react";
 import { ProductDetail, ProductOption, policies } from "./medicine";
 import { Sheet } from "react-modal-sheet";
 import { FaXmark } from "react-icons/fa6";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCartAPI } from "../../redux/cartAsyncThunk";
+import { RootState } from "../../redux/store";
+import { toast } from "react-toastify";
 interface ProductProps {
     medicineData: ProductDetail;
     setIsOpen: (value: boolean) => void;
@@ -12,19 +14,24 @@ interface ProductProps {
 export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: ProductProps) => {
     const dispatch = useDispatch();
     const [selectedOption, setSelectedOption] = useState(medicineData.options[0]);
+    const {review} = useSelector((state: RootState) => state.products);
+    const { user } = useSelector((state: RootState) => state.auth);
     const [quantity, setQuantity] = useState(1);
     const increaseQuantity = () => setQuantity((prev) => prev + 1);
     const decreaseQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
+    const rating = review.length > 0 ? (review.reduce((sum, r) => sum + (parseFloat(r.rating ?? "0") ?? 0), 0) / review.length).toFixed(1) : "0.0";
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value, 10);
         setQuantity(isNaN(value) || value < 1 ? 1 : value);
     };
     const addToCart = () => {
-        if (medicineData.quantity > quantity) {
+        if (medicineData.quantity > quantity && Object.keys(user).length > 0) {
             dispatch(addToCartAPI({ product_id: medicineData.id, quantity: quantity, option_id: selectedOption.id }));
-            alert("Thêm vào giỏ hàng thành công");
+            toast.success("Thêm vào giỏ hàng thành công");
+        } else if (Object.keys(user).length === 0) {
+            toast.warning("Vui lòng đăng nhập để thêm vào giỏ hàng");
         } else {
-            alert("Số lượng sản phẩm không đủ");
+            toast.warning("Số lượng sản phẩm không đủ");
         }
     };
     return (
@@ -34,11 +41,9 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
             <div className="flex items-center gap-2 ms:text-sm mm:text-[12px]">
                 <span className="text-gray-500 cursor-pointer">{medicineData.code}</span>
                 <span className="bg-gray-300 w-1.5 h-1.5 rounded-full"></span>
-                <span className="text-gray-500 cursor-pointer">{medicineData.rating} ⭐</span>
+                <span className="text-gray-500 cursor-pointer">{rating} ⭐</span>
                 <span className="bg-gray-300 w-1.5 h-1.5 rounded-full"></span>
-                <a href="#" className="text-blue-700 capitalize">{medicineData.review_count} đánh giá</a>
-                <span className="bg-gray-300 w-1.5 h-1.5 rounded-full"></span>
-                <a href="#" className="text-blue-700 capitalize">{medicineData.comments_count} bình luận</a>
+                <a href="#reviews" className="text-blue-700 capitalize">{review.length} đánh giá</a>
             </div>
             <div>
                 {/* Hiển thị giá */}

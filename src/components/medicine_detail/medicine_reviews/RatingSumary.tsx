@@ -1,18 +1,31 @@
+
+import { toast } from "react-toastify";
+
+
 interface RatingSummaryProps {
   reviews: { rating: number | null }[];
   setShowModal: (value: boolean) => void;
+  user: any;
 }
 
-const RatingSummary: React.FC<RatingSummaryProps> = ({ reviews, setShowModal }) => {
+const RatingSummary: React.FC<RatingSummaryProps> = ({ reviews, setShowModal, user }) => {
   const totalReviews = reviews.length;
   const ratingCounts = [5, 4, 3, 2, 1].map(
-    (star) => reviews.filter((r) => r.rating === star).length
+    (star) => reviews.filter((r) => parseFloat(r.rating ?? "0") === star).length
   );
 
   const averageRating =
     totalReviews > 0
-      ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / totalReviews).toFixed(1)
+      ? (reviews.reduce((sum, r) => sum + (parseFloat(r.rating ?? "0") ?? 0), 0) / totalReviews).toFixed(1)
       : "0.0";
+  
+  const handleRatingSubmit = () => {
+    if (!user || Object.keys(user).length === 0) {
+      toast.warning("Vui lòng đăng nhập để đánh giá");
+      return;
+    }
+    setShowModal(true);
+  }    
 
   return (
     <div className=" bg-white flex pt-3 border-b-2 pb-2 tb:flex-col">
@@ -26,7 +39,7 @@ const RatingSummary: React.FC<RatingSummaryProps> = ({ reviews, setShowModal }) 
         </div>
         <button
           className="mt-3 bg-blue-700 text-white px-4 py-2 rounded-full font-semibold"
-          onClick={() => setShowModal(true)}
+          onClick={handleRatingSubmit}
         >
           Gửi đánh giá
         </button>

@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { Product } from "../../../components/admin/pages/Forms/Product/Product";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { resetProduct } from "../../../redux/productSlice";
 import { addToCartAPI } from "../../../redux/cartAsyncThunk";
+import { toast } from "react-toastify";
+import { RootState } from "../../../redux/store";
 interface PromotionChildProps {
     product: Product;
     handleTypeClick: (type: string, productId: string) => void;
@@ -12,6 +14,7 @@ interface PromotionChildProps {
 export const PromotionChild: React.FC<PromotionChildProps> = ({ product, handleTypeClick, selectedType }) => {
     const columns = product.options.length;
     const dispatch = useDispatch();
+    const { user } = useSelector((state: RootState) => state.auth);
 
     // Tìm option đang được chọn theo product.id
     const selectedLabel = selectedType[product.id];
@@ -26,11 +29,15 @@ export const PromotionChild: React.FC<PromotionChildProps> = ({ product, handleT
         : null;
 
     const addToCart = () => {
+        if (!user || Object.keys(user).length === 0) {
+            toast.warning("Vui lòng đăng nhập để thêm vào giỏ hàng");
+            return;
+        }
         if (product.quantity > 1) {
             dispatch(addToCartAPI({product_id: product.id, quantity: 1, option_id: selectedOption.id}));
-            alert("Thêm vào giỏ hàng thành công");
+            toast.success("Thêm vào giỏ hàng thành công");
         } else {
-            alert("Số lượng sản phẩm không đủ");
+            toast.error("Số lượng sản phẩm không đủ");
         }
     };
 

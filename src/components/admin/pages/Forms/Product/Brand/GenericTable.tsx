@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { BaseEntity, EntityConfig } from './types';
-
+import { useDispatch } from 'react-redux';
+import { resetBrand } from '../../../../../../redux/brandSlice';
 interface GenericTableProps<T extends BaseEntity> {
   items: T[];
   config: EntityConfig<T>;
@@ -16,6 +17,7 @@ function GenericTable<T extends BaseEntity>({
   onEdit, 
   onDelete 
 }: GenericTableProps<T>) {
+    const dispatch = useDispatch();
   return (
     <div className="overflow-x-auto bg-white rounded-lg shadow">
       <table className="min-w-full divide-y divide-gray-200">
@@ -50,6 +52,9 @@ function GenericTable<T extends BaseEntity>({
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <Link 
                   to={`/admin/brand/${item.name}`}
+                  onClick={() => {
+                    dispatch(resetBrand());
+                  }}
                   className="text-blue-600 hover:text-blue-900 mr-3"
                 >
                   Xem

@@ -18,6 +18,7 @@ import medicalObjectReducer from './medicalObjectSlice';
 import indicationReducer from './indicationSlice';
 import productReducer from './productSlice';
 import orderReducer from './orderSlice';
+import reviewsReducer from './reviewsSlice';
 
 const cartPersistConfig = {
   key: 'cart',
@@ -61,7 +62,8 @@ export const store = configureStore({
     indications: indicationReducer,
     products: productReducer,
     // order: orderReducer
-    order: persistedReducer3
+    order: persistedReducer3,
+    reviews: reviewsReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

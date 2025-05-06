@@ -16,6 +16,7 @@ export interface CartItem {
   name: string;
   image: string;
   quantity: number;
+  slug: string;
   selectedOption: ProductOption | string;
   selected: boolean;
 }
@@ -110,6 +111,7 @@ const cartSlice = createSlice({
           name: product.product.name,
           image: product.product.images[0].image,
           quantity: product.quantity,
+          slug: product.product.slug,
           selectedOption: product.option,
           selected: selectedMap[product.id] ?? true, // 🔥 Giữ trạng thái cũ hoặc mặc định `false`
         }));

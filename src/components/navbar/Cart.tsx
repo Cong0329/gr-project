@@ -7,21 +7,21 @@ import { fetchCarts } from "../../redux/cartAsyncThunk"
 
 export const Cart = () => {
     const { isUserAuthenticated } = useSelector((state: RootState) => state.auth);
-    const { items, status, loading } = useSelector((state: RootState) => state.cart);
+    const { items, status } = useSelector((state: RootState) => state.cart);
 
 
     const dispatch = useDispatch();
     useEffect(() => {
-        if (items.length === 0 && !loading) {
-            dispatch(fetchCarts());
-        } else if (status === 'succeeded') {
-            dispatch(fetchCarts());
-        } 
-    }, [dispatch, items.length, status, loading]);
+        dispatch(fetchCarts());
+    }, [dispatch]);
 
-   
-      
-    
+    useEffect(() => {
+        if (status === 'succeeded') {
+            dispatch(fetchCarts());
+        }
+    }, [dispatch, status]);
+
+
     return (
         <Link to="/cart" className="flex items-center justify-center border-2  rounded-full py-2 px-4 bg-blue-700 border-transparent relative">
             {(isUserAuthenticated) && <span className="absolute top-1 left-3 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">{items.length}</span>}

@@ -25,11 +25,15 @@ import { OrderDetailPage } from "./components/pages/OrderDetailPage";
 import adminRoutes from "./components/pages/AdminRouter";
 import UserProtectedRoute from "./components/pages/UserProtectedRoute copy";
 import { BookingAppoinment } from "./components/pages/BookingAppoinment";
+import { ToastContainer } from "react-toastify";
+import ChatBoxWrapper from "./components/chatbox/chatboWrap";
 
 function App() {
   return (
     <Router>
       <ScrollToTop />
+      <ToastContainer />
+      <ChatBoxWrapper />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/medicine-detail/:slug" element={<MedicineDetail />} />

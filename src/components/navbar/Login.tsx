@@ -15,8 +15,9 @@ export const Login = () => {
     const handleGoogleLogin = () => {
         window.location.href = `${backendURL}/auth/google`;
     };
+    
+
     useEffect(() => {
-        if (!isUserAuthenticated) {
             const fetchUser = async () => {
                 console.log("Fetching user..."); // ✅ log
 
@@ -26,18 +27,17 @@ export const Login = () => {
                     });
 
                     if (res.data) {
-                        if (!isUserAuthenticated ) {
+                        
                             dispatch(googleLogin(res.data));
                         }
-                    }
+                    
                 } catch (error) {
                     console.log("Fetch user failed", error);
                 }
             };
 
             fetchUser();
-        }
-    }, [dispatch, isUserAuthenticated]);
+    }, [dispatch]);
 
 
     return (

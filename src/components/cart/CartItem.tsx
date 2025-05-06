@@ -7,6 +7,8 @@ import PackageSelector from "./PackageSelector";
 import { ProductOption } from "./product";
 import { ModalDelete } from "./ModalDelete";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { resetProduct } from "../../redux/productSlice";
 
 interface CartItem {
   id: string;
@@ -27,7 +29,7 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const [newQuantity, setNewQuantity] = useState(item.quantity);
-  const { id, product_id, name, quantity, image, selected, selectedOption } = item;
+  const { id, product_id, name, quantity, image, selected, selectedOption, slug } = item;
   const [options, setOptions] = useState([]);
   useEffect(() => {
     setNewQuantity(quantity);
@@ -96,7 +98,9 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
 
         {/* Ảnh và tên sản phẩm */}
         <div className="flex items-center gap-x-2 flex-1">
+          <Link to={`/medicine-detail/${slug}`} onClick={() => dispatch(resetProduct())}>
           <img src={image} alt={name} className="w-16 h-16 rounded-xl border p-1" loading="lazy" />
+          </Link>
           <p
             className="text-sm text-left w-60 md-lg:w-52 overflow-hidden h-10 max-h-10"
             title={name}

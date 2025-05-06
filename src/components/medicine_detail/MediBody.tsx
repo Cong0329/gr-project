@@ -5,7 +5,7 @@ import ProductDetail from './MediDetail';
 import Breadcrumb from '../home_booking/details/component_details/BreadCrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { getProductBySlug, getProductDetailProduct } from '../../redux/productAsyncThunk';
+import { getProductBySlug, getProductDetailProduct, getProductReview } from '../../redux/productAsyncThunk';
 
 
 
@@ -22,6 +22,7 @@ export const MedicineBody = () => {
     useEffect(() => {
         if (product.id) {
             dispatch(getProductDetailProduct(product.id));
+            dispatch(getProductReview(product.id));
         }
     }, [dispatch, product]);
     return (

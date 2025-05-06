@@ -1,15 +1,50 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
+import socket from "../../../../auth/socket";
 import { Link } from "react-router-dom";
-import avatar1 from '../../../../assets/images/user/user-02.jpg'
-
+import { formatDistanceToNow } from 'date-fns';
+import { vi } from 'date-fns/locale';
+import { useDispatch, useSelector } from "react-redux";
+import { getPendingReviews } from "../../../../redux/reviewsAsyncThunk";
+import { RootState } from "../../../../redux/store";
+import { addNotification, markAsRead } from "../../../../redux/reviewsSlice";
 
 export default function NotificationDropdown() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [notifying, setNotifying] = useState(true);
+  const [isOpen, setIsOpen] = useState(false)
+  const dispatch = useDispatch();
+  const { pendingReviews, notifying } = useSelector((state: RootState) => state.reviews);
+  useEffect(() => {
+    dispatch(getPendingReviews());
+  }, [dispatch])
+
+  useEffect(() => {
+    socket.emit("register-admin");
+
+    socket.on("new-review", (data) => {
+      const newNotification = {
+        id: Date.now(),
+        user: {id: data.user.id, name: data.user.name, email: data.user.email, avatar_url: data.user.avatar_url},
+        product: {id: data.product.id, name: data.product.name},
+        comment: data.comment,
+        rating: data.rating,
+        createdAt: data.createdAt,
+        updatedAt: data.createdAt,
+        reply: null
+      };
+
+      dispatch(addNotification(newNotification));
+    });
+
+    return () => {
+      socket.off("new-review");
+    };
+  }, [dispatch]);
+
+
 
   function toggleDropdown() {
+    dispatch(markAsRead(false));
     setIsOpen(!isOpen);
   }
 
@@ -19,7 +54,6 @@ export default function NotificationDropdown() {
 
   const handleClick = () => {
     toggleDropdown();
-    setNotifying(false);
   };
   return (
     <div className="relative z-[999]">
@@ -81,18 +115,17 @@ export default function NotificationDropdown() {
           {/* Example notification items */}
 
 
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            < li key={i}>
+          {pendingReviews.map((item) => (
+            <li key={item.id}>
               <DropdownItem
                 onItemClick={closeDropdown}
-                
                 className="flex gap-3 rounded-lg border-b border-gray-100 p-3 px-4.5 py-3 hover:bg-gray-100 "
               >
                 <span className="relative block w-full h-10 rounded-full z-1 max-w-10">
                   <img
                     width={40}
                     height={40}
-                    src={avatar1}
+                    src={item.user.avatar_url}
                     alt="User"
                     className="overflow-hidden rounded-full"
                   />
@@ -102,24 +135,26 @@ export default function NotificationDropdown() {
                 <span className="block">
                   <span className="mb-1.5 block space-x-1 text-theme-sm text-gray-500 ">
                     <span className="font-medium text-gray-800 ">
-                      Brandon Philips
+                      {item.user.name}
                     </span>
-                    <span>requests permission to change</span>
+                    <span>đánh giá sản phẩm:</span>
                     <span className="font-medium text-gray-800 ">
-                      Project - Nganter App
+                      "{item.product.name}" ({item.rating}⭐)
                     </span>
                   </span>
-
                   <span className="flex items-center gap-2 text-gray-500 text-theme-xs ">
-                    <span>Project</span>
+                    <span>Đánh giá</span>
                     <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                    <span>1 hr ago</span>
+                    <span>{formatDistanceToNow(new Date(item.createdAt), {
+                      addSuffix: true,
+                      locale: vi,
+                    })}</span>
                   </span>
                 </span>
               </DropdownItem>
             </li>
-          )
-          )}
+          ))}
+
 
 
           {/* Add more items as needed */}

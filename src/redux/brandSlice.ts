@@ -34,6 +34,9 @@ const brandSlice = createSlice({
     setBrands: (state, action) => {
       state.brands = action.payload;
     },
+    resetBrand : (state) => {
+      state.products = [];
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(fetchBrands.fulfilled, (state, action) => {
@@ -83,5 +86,5 @@ const brandSlice = createSlice({
   }
 });
 
-export const { setBrands } = brandSlice.actions;
+export const { setBrands, resetBrand } = brandSlice.actions;
 export default brandSlice.reducer;

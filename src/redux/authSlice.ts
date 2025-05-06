@@ -3,7 +3,7 @@ import { adminLoginAPI, updateProfileAPI, vefifyEmailAPI } from "./userAsyncThun
 import { tr } from "date-fns/locale";
 
 interface UserInfo {
-  id: number;
+  id: string;
   name: string;
   email: string;
   avatar_url: string;
