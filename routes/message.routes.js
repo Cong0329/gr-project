@@ -1,0 +1,20 @@
+const express = require('express');
+const router = express.Router();
+const messageController = require('../controllers/message.controller');
+const {authenticateToken, authenticateAdminToken} = require('../middlewares/auth.middleware');
+const requireRole = require('../middlewares/role.middleware');
+const upload = require('../middlewares/upload.middleware');
+
+
+
+router.post('/user', authenticateToken,upload.array('images'), messageController.sendMessage);
+router.post('/admin', authenticateAdminToken,upload.array('images'), requireRole('ROLE_ADMIN'), messageController.sendMessage);
+router.get('/all', authenticateAdminToken, requireRole('ROLE_ADMIN'), messageController.getAllMessages);
+router.get('/:id/user', authenticateToken, messageController.getMessageItems);
+router.get('/:id/admin', authenticateAdminToken, requireRole('ROLE_ADMIN'), messageController.getAdminMessageItems);
+router.patch('/hidden/:id/admin/', authenticateAdminToken, requireRole('ROLE_ADMIN'), messageController.hideMessage);
+router.patch('/unlock/:id/admin/', authenticateAdminToken, requireRole('ROLE_ADMIN'), messageController.unlockMessage);
+
+
+
+module.exports = router;

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Joi = require('joi');
 const packageController = require('../controllers/service_pkg.controller');
-const authenticateToken = require('../middlewares/auth.middleware');
+const {authenticateToken} = require('../middlewares/auth.middleware');
 const requireRole = require('../middlewares/role.middleware');
 const validateRequest = require('../middlewares/validateRequest.middleware');
 

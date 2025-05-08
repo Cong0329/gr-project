@@ -10,7 +10,7 @@ router.get('/me', authenticateToken, userController.getProfile);
 // Cập nhật thông tin cá nhân
 router.put('/me', authenticateToken, userController.updateProfile);
 
-router.get('/admin/me', authenticateAdminToken, userController.updateProfile);
+router.get('/admin/me', authenticateAdminToken, userController.getProfile);
 
 // Lấy danh sách tất cả user (chỉ admin)
 router.get('/users', authenticateToken, requireRole('ROLE_ADMIN'), userController.getAllUsers);
