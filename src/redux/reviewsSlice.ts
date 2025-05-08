@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createReview, getPendingReviews, getReviews, replyReview, upadateReplyReview } from "./reviewsAsyncThunk";
+import { getAllMessagesAdmin, fetchMessagesAdmin, fetchMessagesUser, hidenMessage, sendMessageUser, sendMessageAdmin, unlockedMessages } from "./messageAsyncThunk";
 
 export interface Review {
     id: string;
@@ -20,7 +21,7 @@ export interface Review {
     }
 }
 
-interface Reply {
+export interface Reply {
     id: string;
     reply: string;
     createdAt: string;
@@ -32,8 +33,41 @@ interface Reply {
     }
 }
 
-interface ReviewState {
+
+export interface Message {
+    id: string;
+    user_id: string;
+    createdAt: string;
+    updatedAt: string;
+    locked_by: string;
+    User: {
+        id: string;
+        name: string;
+        email: string;
+        avatar_url: string;
+    }
+}
+
+export interface MessageItem {
+    id: string;
+    message_id: string;
+    sender_id: string;
+    content: string | null;
+    image_url: string | null;
+    createdAt: string;
+    updatedAt: string;
+    User: {
+        id: string;
+        name: string;
+        avatar_url: string;
+    }
+}
+
+export interface ReviewState {
+    messages: Message[];
     reviews: Review[];
+    messageItems: MessageItem[];
+    messageItemsAdmin: MessageItem[];
     pendingReviews: Review[];
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
@@ -41,6 +75,9 @@ interface ReviewState {
 }
 
 const initialState: ReviewState = {
+    messages: [],
+    messageItems: [],
+    messageItemsAdmin: [],
     reviews: [],
     pendingReviews: [],
     status: 'idle',
@@ -65,6 +102,38 @@ const reviewsSlice = createSlice({
         clearNotifications(state) {
             state.pendingReviews = [];
         },
+        addMessage(state, action) {
+            state.messages.push(action.payload);
+        },
+        addMessageAdmin(state, action) {
+            state.messageItemsAdmin.push(action.payload);
+        },
+        addMessageUser(state, action) {
+            state.messageItems.push(action.payload);
+        },
+        clearMessages(state) {
+            state.messageItems = [];
+        },
+        clearMessagesAdmin(state) {
+            state.messageItemsAdmin = [];
+        },
+        moveUserToTopOrAdd: (state, action) => {
+            const newUserMessage = action.payload;
+
+            const existingIndex = state.messages.findIndex(
+                (item) => item.User.id === newUserMessage.User.id
+            );
+
+            if (existingIndex > -1) {
+                // Nếu đã có, di chuyển lên đầu
+                const [existing] = state.messages.splice(existingIndex, 1);
+                state.messages.unshift(existing);
+            } else {
+                // Nếu chưa có, thêm mới vào đầu
+                state.messages.unshift(newUserMessage);
+            }
+        }
+
     },
     extraReducers: (builder) => {
         builder.addCase(createReview.fulfilled, (state) => {
@@ -113,9 +182,75 @@ const reviewsSlice = createSlice({
             })
             .addCase(upadateReplyReview.rejected, (state) => {
                 state.status = 'failed';
-            });
+            })
+            .addCase(getAllMessagesAdmin.fulfilled, (state, action) => {
+                state.messages = action.payload;
+                state.status = 'idle';
+            })
+            .addCase(getAllMessagesAdmin.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(getAllMessagesAdmin.rejected, (state) => {
+                state.status = 'failed';
+            })
+            .addCase(fetchMessagesAdmin.fulfilled, (state, action) => {
+                state.messageItemsAdmin = action.payload;
+                state.status = 'idle';
+            })
+            .addCase(fetchMessagesAdmin.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchMessagesAdmin.rejected, (state) => {
+                state.status = 'failed';
+            })
+            .addCase(fetchMessagesUser.fulfilled, (state, action) => {
+                state.messageItems = action.payload;
+                state.status = 'idle';
+            })
+            .addCase(fetchMessagesUser.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchMessagesUser.rejected, (state) => {
+                state.status = 'failed';
+            })
+            .addCase(hidenMessage.fulfilled, (state) => {
+                state.status = 'succeeded';
+            })
+            .addCase(hidenMessage.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(hidenMessage.rejected, (state) => {
+                state.status = 'failed';
+            })
+            .addCase(sendMessageAdmin.fulfilled, (state) => {
+                state.status = 'succeeded';
+            })
+            .addCase(sendMessageAdmin.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(sendMessageAdmin.rejected, (state) => {
+                state.status = 'failed';
+            })
+            .addCase(sendMessageUser.fulfilled, (state) => {
+                state.status = 'succeeded';
+            })
+            .addCase(sendMessageUser.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(sendMessageUser.rejected, (state) => {
+                state.status = 'failed';
+            })
+            .addCase(unlockedMessages.fulfilled, (state) => {
+                state.status = 'succeeded';
+            })
+            .addCase(unlockedMessages.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(unlockedMessages.rejected, (state) => {
+                state.status = 'failed';
+            })
     },
 });
 
-export const { addReview, addNotification, markAsRead, clearNotifications} = reviewsSlice.actions;
+export const { addReview, addNotification, markAsRead, clearNotifications, addMessage, addMessageAdmin, addMessageUser, clearMessages, clearMessagesAdmin, moveUserToTopOrAdd } = reviewsSlice.actions;
 export default reviewsSlice.reducer;

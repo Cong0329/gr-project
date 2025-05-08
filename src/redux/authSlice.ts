@@ -37,6 +37,9 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
+      setChatId: (state, action) => {
+        state.chat_id = action.payload;
+      },
       googleLogin: (state, actions) => {
         state.isUserAuthenticated = true;
         state.user = actions.payload;
@@ -100,5 +103,5 @@ const authSlice = createSlice({
   });
 
 
-  export const { login, logout, googleLogin, vefify, lockVerify, reset, adminLogin } = authSlice.actions;
+  export const { login, logout, googleLogin, vefify, lockVerify, reset, adminLogin} = authSlice.actions;
   export default authSlice.reducer;

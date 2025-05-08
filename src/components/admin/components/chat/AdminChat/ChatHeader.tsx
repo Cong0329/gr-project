@@ -1,26 +1,37 @@
-import { User } from './types';
+import { useDispatch } from 'react-redux';
+import { Message } from '../../../../../redux/reviewsSlice';
+import { X } from 'lucide-react';
+import { AppDispatch } from '../../../../../redux/store';
+import { unlockedMessages } from '../../../../../redux/messageAsyncThunk';
 
 interface Props {
-    user: User;
+    user: Message;
+    setSelectedUser: (user: Message | null) => void;
 }
 
-export default function ChatHeader({ user }: Props) {
+export default function ChatHeader({ user, setSelectedUser }: Props) {
+    const dispatch: AppDispatch = useDispatch();
+    const handleUnlockedMessages = () => {
+
+        dispatch(unlockedMessages(user.id));
+        setSelectedUser(null);
+    };
     return (
         <div className="p-4 bg-white border-b border-gray-200 flex items-center justify-between">
             <div className="flex items-center">
                 <div className="relative">
                     <img
                         className="w-10 h-10 rounded-full object-cover"
-                        src={user.avatar}
-                        alt={user.name}
+                        src={user.User.avatar_url}
+                        alt={user.User.name}
                     />
-                    {user.isOnline && (
+                    {/* {user.User.isOnline && (
                         <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
-                    )}
+                    )} */}
                 </div>
                 <div className="ml-3">
-                    <h2 className="font-semibold text-gray-800">{user.name}</h2>
-                    <p className="text-sm text-gray-600">{user.role}</p>
+                    <h2 className="font-semibold text-gray-800">{user.User.name}</h2>
+                    {/* <p className="text-sm text-gray-600">{user.User.role}</p> */}
                 </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -38,6 +49,9 @@ export default function ChatHeader({ user }: Props) {
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
                     </svg>
+                </button>
+                <button className="text-gray-500 hover:text-gray-700" onClick={handleUnlockedMessages}>
+                    <X className="w-6 h-6" />
                 </button>
             </div>
         </div>

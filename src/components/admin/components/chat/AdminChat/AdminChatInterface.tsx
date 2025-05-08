@@ -1,123 +1,134 @@
 import { useState, useEffect } from 'react';
-import { User, Message } from './types';
+import { MessageItem, Message } from '../../../../../redux/reviewsSlice';
 import UserList from './UserList';
 import ChatHeader from './ChatHeader';
 import MessageList from './MessageList';
 import MessageInput from './MessageInput';
-
-// Giữ nguyên mockUsers, mockMessages như cũ
-const mockUsers: User[] = [
-    {
-        id: '1',
-        name: 'Lindsey Curtis',
-        role: 'Content Writer',
-        avatar: '/api/placeholder/50/50',
-        isOnline: true,
-    },
-    {
-        id: '2',
-        name: 'Carla George',
-        role: 'Front-end Developer',
-        avatar: '/api/placeholder/50/50',
-        isOnline: true,
-    },
-    {
-        id: '3',
-        name: 'Abram Schleifer',
-        role: 'Digital Marketer',
-        avatar: '/api/placeholder/50/50',
-        isOnline: true,
-    },
-    {
-        id: '4',
-        name: 'Lincoln Donin',
-        role: 'Project Manager/Product Designer',
-        avatar: '/api/placeholder/50/50',
-        isOnline: true,
-    },
-    {
-        id: '5',
-        name: 'Erin Geidthem',
-        role: 'Copywriter',
-        avatar: '/api/placeholder/50/50',
-        isOnline: true,
-    },
-    {
-        id: '6',
-        name: 'Alena Baptista',
-        role: 'SEO Expert',
-        avatar: '/api/placeholder/50/50',
-        isOnline: false,
-    },
-];
-
-const mockMessages: Record<string, Message[]> = {
-    '1': [
-        {
-            id: 'm1',
-            senderId: '1',
-            text: 'I want more detailed information.',
-            timestamp: '2 hours ago',
-            isAdmin: false,
-        },
-        {
-            id: 'm2',
-            senderId: 'admin',
-            text: "If don't like something, I'll stay away from it.",
-            timestamp: '2 hours ago',
-            isAdmin: true,
-        },
-        {
-            id: 'm3',
-            senderId: 'admin',
-            text: 'They got there early, and got really good seats.',
-            timestamp: '2 hours ago',
-            isAdmin: true,
-        },
-    ],
-};
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../../../../../redux/store';
+import socket from '../../../../../auth/socket';
+import {
+    getAllMessagesAdmin,
+    fetchMessagesAdmin,
+    sendMessageAdmin
+} from '../../../../../redux/messageAsyncThunk';
+import { toast } from 'react-toastify';
 
 export default function AdminChatInterface() {
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    const [messages, setMessages] = useState<Message[]>([]);
+    const dispatch: AppDispatch = useDispatch();
+    const { admin } = useSelector((state: RootState) => state.auth);
+    const messagesUser = useSelector((state: RootState) => state.reviews.messages);
+
+    const [selectedUser, setSelectedUser] = useState<Message | null>(null);
+    const [messages, setMessages] = useState<MessageItem[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
 
+    // Load toàn bộ messages khi admin đăng nhập
+    useEffect(() => {
+        if (admin?.id) {
+            dispatch(getAllMessagesAdmin());
+        }
+    }, [admin?.id, dispatch]);
+
+    // Lắng nghe socket events
+    useEffect(() => {
+        if (!admin?.id) return;
+
+        const handleNewMessage = (data: MessageItem) => {
+            toast.success('New message received');
+            dispatch(getAllMessagesAdmin());
+            if (selectedUser?.User?.id === data.sender_id) {
+                setMessages(prev => [...prev, data]);
+            }
+        };
+
+        const handleUnlock = () => dispatch(getAllMessagesAdmin());
+        const handleAdminSend = () => dispatch(getAllMessagesAdmin());
+
+        socket.on('admin_new_message', handleNewMessage);
+        socket.on('messageUnlocked', handleUnlock);
+        socket.on('admin_send_message', handleAdminSend);
+
+        return () => {
+            socket.off('admin_new_message', handleNewMessage);
+            socket.off('messageUnlocked', handleUnlock);
+            socket.off('admin_send_message', handleAdminSend);
+        };
+    }, [admin?.id, selectedUser, dispatch]);
+
+    // Khi chọn user, lấy messages tương ứng
     useEffect(() => {
         if (selectedUser) {
-            setMessages(mockMessages[selectedUser.id] || []);
+            dispatch(fetchMessagesAdmin(selectedUser.id)).then((res: any) => {
+                if (res?.payload) {
+                    setMessages(res.payload);
+                }
+            });
+        } else {
+            setMessages([]);
         }
-    }, [selectedUser]);
+    }, [selectedUser, dispatch]);
 
+    // Gửi tin nhắn
     const handleSendMessage = () => {
-        if (newMessage.trim() && selectedUser) {
-            const newMsg: Message = {
-                id: `m${Date.now()}`,
-                senderId: 'admin',
-                text: newMessage,
-                timestamp: 'Just now',
-                isAdmin: true,
-            };
-            setMessages([...messages, newMsg]);
-            setNewMessage('');
-        }
+        if (!newMessage.trim() || !selectedUser || !admin) return;
+
+        const tempMessage: MessageItem = {
+            id: `${Date.now()}`, // ID tạm
+            message_id: `${Date.now()}`,
+            sender_id: admin.id,
+            content: newMessage,
+            image_url: null,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            User: {
+                id: admin.id,
+                name: admin.name,
+                avatar_url: admin.avatar_url
+            }
+        };
+
+        setMessages(prev => [...prev, tempMessage]); // hiển thị ngay
+        setNewMessage('');
+
+        dispatch(sendMessageAdmin({
+            content: newMessage,
+            recipientId: selectedUser.User.id,
+        })).then((res: any) => {
+            // Optional: Replace tempMessage with res.payload.item if needed
+            if (res?.payload?.item) {
+                // Optional logic: update message list to replace temp message
+            }
+        });
     };
+
+
+    // Lọc user theo searchTerm
+    const filteredUsers = messagesUser.filter(u =>
+        u.User?.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <div className="flex h-[570px]">
             <UserList
-                users={mockUsers.filter(u => u.name.toLowerCase().includes(searchTerm.toLowerCase()))}
+                users={filteredUsers}
                 searchTerm={searchTerm}
                 onSearch={setSearchTerm}
+                onMessage={setNewMessage}
                 onSelectUser={setSelectedUser}
                 selectedUserId={selectedUser?.id}
             />
             <div className="flex-1 flex flex-col">
                 {selectedUser ? (
                     <>
-                        <ChatHeader user={selectedUser} />
+                        <ChatHeader user={selectedUser} setSelectedUser={setSelectedUser} />
                         <MessageList messages={messages} user={selectedUser} />
-                        <MessageInput message={newMessage} onChange={setNewMessage} onSend={handleSendMessage} />
+                        <MessageInput
+                            message={newMessage}
+                            onChange={setNewMessage}
+                            onSend={handleSendMessage}
+                        />
                     </>
                 ) : (
                     <div className="flex-1 flex items-center justify-center bg-gray-50">
@@ -134,7 +145,7 @@ export default function AdminChatInterface() {
                                     strokeLinejoin="round"
                                     strokeWidth="2"
                                     d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                                ></path>
+                                />
                             </svg>
                             <h3 className="mt-2 text-sm font-medium text-gray-900">No chat selected</h3>
                             <p className="mt-1 text-sm text-gray-500">

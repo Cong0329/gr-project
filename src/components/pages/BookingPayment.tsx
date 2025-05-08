@@ -1,13 +1,13 @@
 import { Footer } from "../footer/Footer";
 import { Header } from "../header/Header";
-import AppointmentPage from "../home_booking/Appointment";
+import PaymentPage from "../home_booking/Payment";
 
-export const BookingAppoinment = () => {
+export const BookingPayment = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
       <div className="flex-grow">
-        <AppointmentPage />
+        <PaymentPage />
       </div>
       <Footer />
     </div>

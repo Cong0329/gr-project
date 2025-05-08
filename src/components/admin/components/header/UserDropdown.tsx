@@ -9,7 +9,7 @@ import avatar from "../../../../assets/images/user/owner.jpg"
 import { adminLogin } from "../../../../redux/authSlice";
 
 export default function UserDropdown() {
-  const { admin, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { admin } = useSelector((state: RootState) => state.auth);
 
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
@@ -33,7 +33,7 @@ export default function UserDropdown() {
 
           if (res.data) {
 
-            dispatch(adminLogin(res.data.user));
+            dispatch(adminLogin(res.data));
 
           }
         } catch (error) {

@@ -223,7 +223,7 @@
 // export default PackageSchedule;
 
 import { useState, useEffect } from "react";
-import { format, addDays, isSameDay } from "date-fns";
+import { format, addDays, isSameDay, isAfter, parse, isToday } from "date-fns";
 import { vi } from "date-fns/locale";
 import { Calendar } from "lucide-react";
 import { motion } from "framer-motion";
@@ -235,6 +235,7 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
   const [selectedTime, setSelectedTime] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
 
   const navigate = useNavigate();
 
@@ -262,8 +263,8 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
     addDays(new Date(), index)
   );
 
-  // Available time slots with availability status
-  const timeSlots = [
+  // Base time slots
+  const baseTimeSlots = [
     { time: "08:00 - 09:00", available: true },
     { time: "09:00 - 10:00", available: true },
     { time: "10:00 - 11:00", available: true },
@@ -273,6 +274,45 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
     { time: "15:30 - 16:30", available: true },
     { time: "16:30 - 17:30", available: true },
   ];
+
+  // Update available time slots based on selected date
+  useEffect(() => {
+    // If selected date is today, filter out past time slots
+    if (isToday(selectedDate)) {
+      const now = new Date();
+
+      // Update time slots availability
+      const updatedTimeSlots = baseTimeSlots.map((slot) => {
+        // Parse the start time (e.g., "08:00" from "08:00 - 09:00")
+        const startTime = slot.time.split(" - ")[0];
+
+        // Create a date object for the slot's start time today
+        const [hours, minutes] = startTime.split(":");
+        const slotTime = new Date(selectedDate);
+        slotTime.setHours(parseInt(hours), parseInt(minutes), 0);
+
+        // Check if this time is in the past
+        const isPastTime = !isAfter(slotTime, now);
+
+        return {
+          ...slot,
+          available: slot.available && !isPastTime,
+          isPast: isPastTime,
+        };
+      });
+
+      setAvailableTimeSlots(updatedTimeSlots);
+    } else {
+      // For future dates, use the base time slots
+      setAvailableTimeSlots(baseTimeSlots);
+    }
+
+    // Clear selected time when date changes
+    if (selectedTime) {
+      setSelectedTime(null);
+      setValue("time", "");
+    }
+  }, [selectedDate, setValue]);
 
   // Check if date is weekend
   const isWeekend = (date) => {
@@ -298,7 +338,7 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
 
     setTimeout(() => {
       // Sau khi xử lý dữ liệu xong thì chuyển trang
-      navigate("/booking-home/appointment", {
+      navigate("/booking-home/payment", {
         state: {
           packageInfo: {
             name: currentPackage.name,
@@ -324,17 +364,6 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
       return "Ngày mai";
     }
     return format(date, "dd/MM/yyyy");
-  };
-
-  const handleCreateAppointment = () => {
-    navigate("/booking-home/appointment", {
-      state: {
-        packageInfo: {
-          name: currentTest.name,
-          price: currentTest.price,
-        },
-      },
-    });
   };
 
   return (
@@ -426,7 +455,7 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
               Chọn giờ
             </label>
             <div className="grid grid-cols-4 gap-2">
-              {timeSlots.map((slot, index) => (
+              {availableTimeSlots.map((slot, index) => (
                 <button
                   type="button"
                   key={index}
@@ -434,7 +463,9 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
                   disabled={!slot.available}
                   className={`p-2 rounded-md text-center border ${
                     !slot.available
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
+                      ? `bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200 ${
+                          slot.isPast ? "line-through" : ""
+                        }`
                       : selectedTime === slot.time
                       ? "bg-blue-600 text-white border-blue-600"
                       : "bg-white hover:bg-blue-50 text-gray-700 border-gray-300"
@@ -444,6 +475,11 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
                 </button>
               ))}
             </div>
+            {isToday(selectedDate) && (
+              <p className="text-sm text-gray-500 mt-2">
+                Các khung giờ đã qua sẽ không thể chọn
+              </p>
+            )}
           </div>
         </div>
 

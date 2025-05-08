@@ -24,9 +24,10 @@ import InvalidPage from "./components/information/InvalidPage";
 import { OrderDetailPage } from "./components/pages/OrderDetailPage";
 import adminRoutes from "./components/pages/AdminRouter";
 import UserProtectedRoute from "./components/pages/UserProtectedRoute copy";
-import { BookingAppoinment } from "./components/pages/BookingAppoinment";
+// import { BookingAppoinment } from "./components/pages/BookingAppoinment";
 import { ToastContainer } from "react-toastify";
 import ChatBoxWrapper from "./components/chatbox/chatboWrap";
+import { BookingPayment } from "./components/pages/BookingPayment";
 
 function App() {
   return (
@@ -39,11 +40,16 @@ function App() {
         <Route path="/medicine-detail/:slug" element={<MedicineDetail />} />
         <Route path="/medicine-search" element={<SearchPage />} />
 
-
         <Route element={<UserProtectedRoute />}>
-          <Route path="/profile" element={<Navigate to="/profile/personal-info" replace />} />
+          <Route
+            path="/profile"
+            element={<Navigate to="/profile/personal-info" replace />}
+          />
           <Route path="/profile/:pageId" element={<ProfilePage />} />
-          <Route path="/profile/orders/order-detail/:id" element={<OrderDetailPage />} />
+          <Route
+            path="/profile/orders/order-detail/:id"
+            element={<OrderDetailPage />}
+          />
           <Route path="/cart" element={<CartPage />} />
         </Route>
 
@@ -88,10 +94,7 @@ function App() {
           path="/booking-home/medicaltest-detail/:name"
           element={<BookingMedicalTestDetail />}
         />
-        <Route
-          path="/booking-home/appointment"
-          element={<BookingAppoinment />}
-        />
+        <Route path="/booking-home/payment" element={<BookingPayment />} />
 
         {adminRoutes}
         <Route path="*" element={<InvalidPage />} />

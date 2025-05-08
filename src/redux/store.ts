@@ -11,6 +11,7 @@ import addressReducer from './addressSlice';
 import servicePackageReducer from './servicePackageSlice';
 import profileReducer from './profileSlice';
 import navigationReducer from './navigationSlice';
+import appointmentReducer from './appointmentSlice';
 import authReducer from './authSlice';
 import brandReducer from './brandSlice';
 import categoryReducer from './categorySlice';
@@ -55,6 +56,7 @@ export const store = configureStore({
     address: addressReducer,
     profile: profileReducer,
     navigation: navigationReducer,
+    appointments: appointmentReducer,
     auth: persistedReducer2,
     brands: brandReducer,
     categories: categoryReducer,
