@@ -57,20 +57,13 @@ module.exports = (sequelize, DataTypes) => {
     service_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-     
     },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-      onUpdate: sequelize.literal('CURRENT_TIMESTAMP')
-    }
+    
   }, {
     tableName: 'schedule',
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
     indexes: [
       {
         fields: ['doctor_id']
@@ -102,6 +95,32 @@ module.exports = (sequelize, DataTypes) => {
       as: 'doctor'
     });
     
+    Schedule.belongsTo(models.ServicePackage, {
+      foreignKey: 'service_id',
+      constraints: false,
+      as: 'servicePackage',
+      scope: {
+        type: {
+          $in: ['general', 'medical']
+        }
+      }
+    });
+    
+    Schedule.belongsTo(models.Department, {
+      foreignKey: 'service_id',
+      constraints: false,
+      as: 'department',
+      scope: {
+        type: {
+          $in: ['specialist', 'specialist_online']
+        }
+      }
+    });
+    
+    Schedule.hasOne(models.PackageBookingRequest, {
+      foreignKey: 'schedule_id',
+      as: 'bookingRequest'
+    });
   };
 
   Schedule.prototype.getService = async function() {

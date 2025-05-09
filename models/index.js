@@ -33,8 +33,8 @@ const CartItemModel = require("./cart_items.model");
 const OrderModel = require("./order.model");
 const OrderItemModel = require("./order_item.model");
 const PaymentMethodModel = require("./payment_method.model");
-const PackageBookingRequestModel = require("./packageBookingRequest.model");
-const DoctorAssignmentModel = require("./doctorAssignment.model");
+const PackageBookingRequestModel = require("./package-booking-request.model");
+const DoctorAssignmentModel = require("./doctor-assignment.model");
 const AppointmentModel = require("./appointment.model");
 
 

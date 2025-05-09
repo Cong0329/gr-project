@@ -30,6 +30,8 @@ router.use('/cart', require('./cart.routes'));
 router.use('/order', require('./order.routes'));
 router.use('/payment', require('./payment.routes'));
 router.use('/appointment', require('./appointment.routes'));
+router.use('/pkg-booking-request', require('./package_booking_request.routes'));
+router.use('/doctor-assignment', require('./doctor_assignment.routes'));
 
 
 

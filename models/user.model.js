@@ -22,5 +22,13 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true
   });
 
+  User.associate = function(models) {
+    User.hasMany(models.PackageBookingRequest, {
+      foreignKey: 'user_id',
+      as: 'bookingRequests'
+    });
+  };
+  
+
   return User;
 };

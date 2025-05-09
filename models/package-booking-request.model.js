@@ -38,18 +38,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-      onUpdate: sequelize.literal('CURRENT_TIMESTAMP')
-    },
   }, {
     tableName: 'package_booking_request',
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    hooks: {
+      beforeUpdate: async (bookingRequest) => {
+        if (bookingRequest.changed('schedule_id') && bookingRequest.schedule_id) {
+          bookingRequest.status = 'assigned';
+        }
+      }
+    }
   });
 
   PackageBookingRequest.associate = function(models) {
@@ -72,6 +72,27 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'schedule_id',
       as: 'schedule'
     });
+  };
+
+  PackageBookingRequest.prototype.createSchedule = async function(doctor_id, start_time, end_time) {
+    const Schedule = sequelize.models.Schedule;
+    
+    const schedule = await Schedule.create({
+      doctor_id,
+      date: this.requested_date,
+      start_time,
+      end_time,
+      status: 'booked',
+      type: this.package_type,
+      service_id: this.package_id
+    });
+    
+    await this.update({
+      schedule_id: schedule.id,
+      status: 'assigned'
+    });
+    
+    return schedule;
   };
 
   return PackageBookingRequest;

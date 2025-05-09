@@ -181,34 +181,7 @@ router.get('/doctor/:doctorId',  scheduleController.getDoctorSchedules);
 // Lấy chi tiết lịch trình
 router.get('/:id', scheduleController.getScheduleById);
 
-/**
- * ROUTES YÊU CẦU ROLE_USER
- */
 
-// Tạo yêu cầu đặt lịch khám Package - Dành cho USER
-router.post('/package-booking-requests', 
-   
-  
-  scheduleController.createPackageBookingRequest
-);
-
-/**
- * ROUTES YÊU CẦU ROLE_DOCTOR HOẶC ROLE_ADMIN
- */
-
-// Lấy danh sách yêu cầu đặt lịch gói dịch vụ
-router.get('/package-booking-requests',
-  
-  
-  scheduleController.getPackageBookingRequests
-);
-
-// Bác sĩ đăng ký nhận yêu cầu khám gói dịch vụ
-router.post('/doctor-assignments',
-  
-  
-  scheduleController.requestAssignment
-);
 
 // Tạo lịch trình mới (ADMIN hoặc DOCTOR với điều kiện là lịch của chính họ)
 router.post(
