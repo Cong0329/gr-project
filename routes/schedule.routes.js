@@ -144,6 +144,9 @@
 const express = require('express');
 const router = express.Router();
 const scheduleController = require('../controllers/schedule.controller');
+const {authenticateToken} = require('../middlewares/auth.middleware');
+const requireRole = require('../middlewares/role.middleware');
+
 const {
   validateServiceTypeAndId,
   validateCreateSchedule

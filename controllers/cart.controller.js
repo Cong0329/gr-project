@@ -56,7 +56,7 @@ exports.getCartByUser = async (req, res) => {
             {
               model: Product,
               as: 'product',
-              attributes: ['id', 'name'],
+              attributes: ['id', 'name', 'slug'],
               include: [
                 {
                   model: ProductImage,

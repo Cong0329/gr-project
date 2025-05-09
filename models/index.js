@@ -37,7 +37,10 @@ const PackageBookingRequestModel = require("./package-booking-request.model");
 const DoctorAssignmentModel = require("./doctor-assignment.model");
 const AppointmentModel = require("./appointment.model");
 const OrderStatusHistoryModel = require("./order_status_history.model");
-
+const ReviewModel = require("./reviews.model");
+const ReviewReplyModel = require("./review_replies.model");
+const MessageModel = require("./message.model");
+const MessageItemModel = require("./message_item.model");
 
 
 
@@ -81,6 +84,10 @@ const PackageBookingRequest = PackageBookingRequestModel(sequelize, DataTypes);
 const DoctorAssignment = DoctorAssignmentModel(sequelize, DataTypes);
 const Appointment = AppointmentModel(sequelize, DataTypes);
 const OrderStatusHistory = OrderStatusHistoryModel(sequelize, DataTypes);
+const Review = ReviewModel(sequelize, DataTypes);
+const ReviewReply = ReviewReplyModel(sequelize, DataTypes);
+const Message = MessageModel(sequelize, DataTypes);
+const MessageItem = MessageItemModel(sequelize, DataTypes);
 
 
 
@@ -88,7 +95,7 @@ const OrderStatusHistory = OrderStatusHistoryModel(sequelize, DataTypes);
 Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
 Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
 
-// Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
+Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
 Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
 
 
@@ -127,6 +134,11 @@ const db = {
   Order,
   OrderItem,
   PaymentMethod,
+  OrderStatusHistory,
+  Review,
+  ReviewReply,
+  Message,
+  MessageItem,
   PackageBookingRequest,
   DoctorAssignment,
   Appointment,

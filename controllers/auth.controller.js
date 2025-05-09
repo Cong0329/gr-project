@@ -344,6 +344,7 @@ exports.refreshToken = async (req, res) => {
       sameSite: 'Strict',  // Ngăn chặn CSRF
       maxAge: 24 * 60 * 60 * 1000  // Cookie hết hạn sau 1 ngày
     });
+    return res.sendStatus(200); 
   } catch (err) {
     return res.status(403).json({ message: 'Invalid refresh token' });
   }

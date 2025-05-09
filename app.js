@@ -4,19 +4,54 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const indexRouter = require('./routes/index');
-// const db = require('./config/db_connect');
 require('dotenv').config();
+const http = require('http');
+const socketio = require('socket.io');
 const passport = require('passport');
-const { sequelize } = require('./models');
 require('./config/passport');
 require('./jods/orderCancelJob');
-// db.connect();
+
+
 
 const app = express();
+
+const server = http.createServer(app);
+const io = socketio(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    credentials: true,
+  },
+});
+
+
 app.use(cors({
   origin: 'http://localhost:5173', // đúng địa chỉ frontend
   credentials: true               // cho phép gửi cookie
 }));
+
+app.use((req, res, next) => {
+  req.io = io; // inject vào req
+  next();
+});
+
+io.on('connection', (socket) => {
+  console.log("Client connected");
+
+  socket.on("register-admin", () => {
+    socket.join("admins");
+    console.log("Admin joined room");
+  });
+
+  socket.on('join_room', (userId) => {
+    socket.join(userId); // Tham gia room riêng
+    console.log(`User ${userId} joined room`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log("Client disconnected");
+  });
+});
+
 
 
 app.use(logger('dev'));
@@ -31,12 +66,12 @@ app.use('/api/v1', indexRouter);
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -46,4 +81,4 @@ app.use(function(err, req, res, next) {
   res.json({ message: err.message });
 });
 
-module.exports = app;
+module.exports = { app, server, io };
