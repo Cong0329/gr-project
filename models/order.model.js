@@ -18,6 +18,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
       },
+      discout_price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+      },
       shipping_address_id: {
         type: DataTypes.UUID,
         allowNull: false,
@@ -29,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       note: {
         type: DataTypes.STRING,
         allowNull: true,
-      }
+      },
     },
     {
         "tableName": "order",
@@ -38,10 +42,11 @@ module.exports = (sequelize, DataTypes) => {
 );
   
     Order.associate = (models) => {
-      Order.belongsTo(models.User, { foreignKey: "user_id" });
-      Order.belongsTo(models.Address, { foreignKey: "shipping_address_id" });
-      Order.belongsTo(models.PaymentMethod, { foreignKey: 'payment_method_id' });
+      Order.belongsTo(models.User, { foreignKey: "user_id" , as: "user"} );
+      Order.belongsTo(models.Address, { foreignKey: "shipping_address_id", as: "shipping_address" });
+      Order.belongsTo(models.PaymentMethod, { foreignKey: 'payment_method_id', as: 'payment_method' });
       Order.hasMany(models.OrderItem, { foreignKey: "order_id", as: "items" });
+      Order.hasMany(models.OrderStatusHistory, { foreignKey: 'order_id', as: 'status_history' });
     };
   
     return Order;

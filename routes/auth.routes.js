@@ -1,7 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
-const authenticateToken = require('../middlewares/auth.middleware');
+const {authenticateToken} = require('../middlewares/auth.middleware');
 const authController = require('../controllers/auth.controller');
 
 // Google Authentication
@@ -13,6 +13,8 @@ router.get(
   passport.authenticate('google', { session: false, failureRedirect: '/' }),
   authController.googleCallback
 );
+
+
 
 // Login
 router.post('/login', authController.login);

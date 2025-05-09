@@ -36,6 +36,7 @@ const PaymentMethodModel = require("./payment_method.model");
 const PackageBookingRequestModel = require("./package-booking-request.model");
 const DoctorAssignmentModel = require("./doctor-assignment.model");
 const AppointmentModel = require("./appointment.model");
+const OrderStatusHistoryModel = require("./order_status_history.model");
 
 
 
@@ -79,6 +80,18 @@ const PaymentMethod = PaymentMethodModel(sequelize, DataTypes);
 const PackageBookingRequest = PackageBookingRequestModel(sequelize, DataTypes);
 const DoctorAssignment = DoctorAssignmentModel(sequelize, DataTypes);
 const Appointment = AppointmentModel(sequelize, DataTypes);
+const OrderStatusHistory = OrderStatusHistoryModel(sequelize, DataTypes);
+
+
+
+
+Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
+Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
+
+// Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
+Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
+
+
 
 
 // Tạo đối tượng db để xuất tất cả models
@@ -117,6 +130,7 @@ const db = {
   PackageBookingRequest,
   DoctorAssignment,
   Appointment,
+  OrderStatusHistory
 };
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)

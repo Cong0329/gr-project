@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM('Product Description', 'Ingredients', 'Benefits', 'Usage', 'Side Effects', 'Warnings', 'Storage'),
       title: DataTypes.STRING,
       image: DataTypes.TEXT,
-      text_description: DataTypes.TEXT
+      description: DataTypes.TEXT
     }, {
       tableName: 'product_detail_sections',
       timestamps: false

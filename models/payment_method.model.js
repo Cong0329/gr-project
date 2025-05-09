@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
 );
 
     PaymentMethod.associate = (models) => {
-        PaymentMethod.hasMany(models.Order, { foreignKey: 'payment_method_id' });
+        PaymentMethod.hasMany(models.Order, { foreignKey: 'payment_method_id', as: 'orders' });
     };
 
     return PaymentMethod;

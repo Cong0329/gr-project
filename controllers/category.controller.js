@@ -18,8 +18,8 @@ exports.createCategory = async (req, res) => {
 
 exports.getAllCategorys = async (req, res) => {
     try {
-        const categorys = await Category.findAll();
-        res.json({ categorys });
+        const categories = await Category.findAll();
+        res.json({ categories });
     } catch (err) {
         console.error('Get Categorys error:', err);
         res.status(500).json({ message: 'Internal server error' });

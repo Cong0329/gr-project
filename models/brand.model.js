@@ -14,6 +14,14 @@ module.exports = (sequelize, DataTypes) => {
         logo: {
             type: DataTypes.STRING,
             allowNull: true
+        },
+        country: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        original: {
+            type: DataTypes.STRING,
+            allowNull: false
         }
     }, {
         tableName: 'brand',

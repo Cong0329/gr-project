@@ -36,7 +36,7 @@ exports.getAddressesByUser = async (req, res) => {
   
       const addresses = await Address.findAll({
         where: { user_id },
-        order: [['createdAt', 'DESC']],
+        order: [['createdAt', 'DESC']], 
         attributes : { exclude: ['user_id', 'createdAt', 'updatedAt'] },
       });
   
@@ -105,6 +105,30 @@ exports.updateAddress = async (req, res) => {
     res.json({ message: "Address updated", address });
   } catch (err) {
     console.error("Update address error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getAddressById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user_id = req.user.id;
+
+    const address = await Address.findByPk(id);
+ 
+
+    if (!address) {
+      return res.status(404).json({ message: "Address not found" });
+    }
+
+    if (address.user_id !== user_id) {
+      return res.status(403).json({ message: "You do not have permission to see this address." });
+    }
+
+    res.json({ address , message: "Address found" });
+    
+  } catch (err) {
+    console.error("Delete address error:", err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
