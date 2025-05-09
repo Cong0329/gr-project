@@ -57,43 +57,13 @@ module.exports = (sequelize, DataTypes) => {
     service_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      validate: {
-        async isValidServiceId(value) {
-          if (!this.type) return;
-          
-          let model;
-          switch (this.type) {
-            case 'general':
-            case 'medical':
-              model = sequelize.models.ServicePackage;
-              break;
-            case 'specialist':
-            case 'specialist_online':
-              model = sequelize.models.Department;
-              break;
-            default:
-              throw new Error('Invalid service type');
-          }
-          
-          const exists = await model.findByPk(value);
-          if (!exists) {
-            throw new Error(`Service ID not found in ${this.type} table`);
-          }
-        }
-      }
     },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-      onUpdate: sequelize.literal('CURRENT_TIMESTAMP')
-    }
+    
   }, {
     tableName: 'schedule',
-    timestamps: false,
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
     indexes: [
       {
         fields: ['doctor_id']
@@ -110,8 +80,10 @@ module.exports = (sequelize, DataTypes) => {
     ],
     hooks: {
       beforeValidate: async (schedule) => {
-        if (schedule.changed('type') && schedule.service_id) {
+        if (schedule.changed('type') && schedule.service_id && !schedule._validatingServiceId) {
+          schedule._validatingServiceId = true;
           await schedule.validate({ fields: ['service_id'] });
+          schedule._validatingServiceId = false;
         }
       }
     }
@@ -123,6 +95,32 @@ module.exports = (sequelize, DataTypes) => {
       as: 'doctor'
     });
     
+    Schedule.belongsTo(models.ServicePackage, {
+      foreignKey: 'service_id',
+      constraints: false,
+      as: 'servicePackage',
+      scope: {
+        type: {
+          $in: ['general', 'medical']
+        }
+      }
+    });
+    
+    Schedule.belongsTo(models.Department, {
+      foreignKey: 'service_id',
+      constraints: false,
+      as: 'department',
+      scope: {
+        type: {
+          $in: ['specialist', 'specialist_online']
+        }
+      }
+    });
+    
+    Schedule.hasOne(models.PackageBookingRequest, {
+      foreignKey: 'schedule_id',
+      as: 'bookingRequest'
+    });
   };
 
   Schedule.prototype.getService = async function() {

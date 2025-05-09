@@ -67,6 +67,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'categoryId',
       as: 'category'
     });
+
+    ServicePackage.hasMany(models.PackageBookingRequest, {
+      foreignKey: 'package_id',
+      as: 'bookingRequests'
+    });
+    
     
   };
 

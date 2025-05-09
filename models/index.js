@@ -3,13 +3,13 @@ const { Sequelize, DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 // Import models
-// const DoctorModel = require('./doctor.model');
-// const DepartmentModel = require('./department.model');
+const DoctorModel = require('./doctor.model');
+const DepartmentModel = require('./department.model');
 const UserModel = require("./user.model");
 const RoleModel = require("./role.model");
 const UserRoleModel = require("./user-role.model"); // (Nếu có model trung gian)
 const ServicePackageModel = require('./service-pkg.model');
-// const ScheduleModel = require('./schedule.model');
+const ScheduleModel = require('./schedule.model');
 const AddressModel = require("./address.model")
 const RefreshTokenModel = require("./refresh.model");
 const CountryModel = require("./country.model");
@@ -33,6 +33,9 @@ const CartItemModel = require("./cart_items.model");
 const OrderModel = require("./order.model");
 const OrderItemModel = require("./order_item.model");
 const PaymentMethodModel = require("./payment_method.model");
+const PackageBookingRequestModel = require("./package-booking-request.model");
+const DoctorAssignmentModel = require("./doctor-assignment.model");
+const AppointmentModel = require("./appointment.model");
 const OrderStatusHistoryModel = require("./order_status_history.model");
 const ReviewModel = require("./reviews.model");
 const ReviewReplyModel = require("./review_replies.model");
@@ -40,9 +43,10 @@ const MessageModel = require("./message.model");
 const MessageItemModel = require("./message_item.model");
 
 
+
 // Import hàm thiết lập quan hệ
 const setupUserRoleAssociations = require("../associations/user-role.association");
-const setupPackageServiceAssociations = require("../associations/package-item.association")
+const setupPackageServiceAssociations = require("../associations/package-item.association");
 
 
 // Khởi tạo models
@@ -51,8 +55,8 @@ const Role = RoleModel(sequelize, DataTypes);
 const UserRole = UserRoleModel(sequelize, DataTypes);
 const Address = AddressModel(sequelize, DataTypes);
 const RefreshToken = RefreshTokenModel(sequelize, DataTypes);
-// const Doctor = DoctorModel(sequelize, DataTypes);
-// const Department = DepartmentModel(sequelize, DataTypes);
+const Doctor = DoctorModel(sequelize, DataTypes);
+const Department = DepartmentModel(sequelize, DataTypes);
 const Country = CountryModel(sequelize, DataTypes);
 const Brand = BrandModel(sequelize, DataTypes);
 const Origin = OriginModel(sequelize, DataTypes);
@@ -66,7 +70,7 @@ const ProductDetail = ProductDetailModel(sequelize, DataTypes);
 const ProductDetailSection = ProductDetailSectionModel(sequelize, DataTypes);
 const SectionIngredient = SectionIngredientModel(sequelize, DataTypes);
 const SectionIngredientDescription = SectionIngredientDescriptionModel(sequelize, DataTypes);
-// const Schedule = ScheduleModel(sequelize, DataTypes);
+const Schedule = ScheduleModel(sequelize, DataTypes);
 const ServicePackage = ServicePackageModel(sequelize, DataTypes);
 const ServiceCategory = ServiceCategoryModel(sequelize, DataTypes);
 const ServiceItem = ServiceItemModel(sequelize, DataTypes);
@@ -76,6 +80,9 @@ const CartItem = CartItemModel(sequelize, DataTypes);
 const Order = OrderModel(sequelize, DataTypes);
 const OrderItem = OrderItemModel(sequelize, DataTypes);
 const PaymentMethod = PaymentMethodModel(sequelize, DataTypes);
+const PackageBookingRequest = PackageBookingRequestModel(sequelize, DataTypes);
+const DoctorAssignment = DoctorAssignmentModel(sequelize, DataTypes);
+const Appointment = AppointmentModel(sequelize, DataTypes);
 const OrderStatusHistory = OrderStatusHistoryModel(sequelize, DataTypes);
 const Review = ReviewModel(sequelize, DataTypes);
 const ReviewReply = ReviewReplyModel(sequelize, DataTypes);
@@ -85,12 +92,11 @@ const MessageItem = MessageItemModel(sequelize, DataTypes);
 
 
 
-// Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
-// Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
+Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
+Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
 
-// Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
-// Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
-
+Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
+Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
 
 
 
@@ -100,9 +106,9 @@ const db = {
   sequelize,
   User,
   Role,
-  // Doctor,
-  // Department,
-  // Schedule,
+  Doctor,
+  Department,
+  Schedule,
   UserRole,
   ServicePackage,
   Address,
@@ -132,7 +138,11 @@ const db = {
   Review,
   ReviewReply,
   Message,
-  MessageItem
+  MessageItem,
+  PackageBookingRequest,
+  DoctorAssignment,
+  Appointment,
+  OrderStatusHistory
 };
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)
