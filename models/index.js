@@ -33,13 +33,17 @@ const CartItemModel = require("./cart_items.model");
 const OrderModel = require("./order.model");
 const OrderItemModel = require("./order_item.model");
 const PaymentMethodModel = require("./payment_method.model");
+const PackageBookingRequestModel = require("./package-booking-request.model");
+const DoctorAssignmentModel = require("./doctor-assignment.model");
+const AppointmentModel = require("./appointment.model");
 const OrderStatusHistoryModel = require("./order_status_history.model");
+
 
 
 
 // Import hàm thiết lập quan hệ
 const setupUserRoleAssociations = require("../associations/user-role.association");
-const setupPackageServiceAssociations = require("../associations/package-item.association")
+const setupPackageServiceAssociations = require("../associations/package-item.association");
 
 
 // Khởi tạo models
@@ -73,6 +77,9 @@ const CartItem = CartItemModel(sequelize, DataTypes);
 const Order = OrderModel(sequelize, DataTypes);
 const OrderItem = OrderItemModel(sequelize, DataTypes);
 const PaymentMethod = PaymentMethodModel(sequelize, DataTypes);
+const PackageBookingRequest = PackageBookingRequestModel(sequelize, DataTypes);
+const DoctorAssignment = DoctorAssignmentModel(sequelize, DataTypes);
+const Appointment = AppointmentModel(sequelize, DataTypes);
 const OrderStatusHistory = OrderStatusHistoryModel(sequelize, DataTypes);
 
 
@@ -83,7 +90,6 @@ Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
 
 // Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
 Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
-
 
 
 
@@ -121,6 +127,9 @@ const db = {
   Order,
   OrderItem,
   PaymentMethod,
+  PackageBookingRequest,
+  DoctorAssignment,
+  Appointment,
   OrderStatusHistory
 };
 

@@ -1,4 +1,4 @@
-const { Schedule, Doctor, Department, GeneralPackage, MedicalPackage, Appointment } = require('../models');
+const { Schedule, Doctor, Department, ServicePackage, Appointment, PackageBookingRequest, DoctorAssignment, User } = require('../models');
 const { Op } = require('sequelize');
 const { validationResult } = require('express-validator');
 
@@ -69,24 +69,53 @@ exports.getAllSchedules = async (req, res, next) => {
  */
 exports.getSpecialistSchedules = async (req, res, next) => {
   try {
-    const { type, department_id } = req.query;
+    // Định nghĩa ánh xạ giữa type của Doctor và type của Schedule
+    const typeMapping = {
+      'specialty': 'specialist',
+      'online': 'specialist_online'
+    };
+    
+    const { type, service_id, date, startDate, endDate, doctor_id, status } = req.query;
 
-    // Validate type
-    if (!type || (type !== 'specialty' && type !== 'online')) {
-      return res.status(400).json({
-        error: 'Invalid type parameter. Must be "specialty" or "online"'
-      });
+    // Kiểm tra và map type từ request
+    let doctorType, scheduleType;
+    
+    if (type && (type === 'specialty' || type === 'online')) {
+      doctorType = type; // Giá trị trong DB của Doctor
+      scheduleType = typeMapping[type]; // Ánh xạ tới giá trị trong Schedule
+    } else {
+      // Nếu không có type hoặc type không hợp lệ, lấy cả hai loại
+      doctorType = ['specialty', 'online'];
+      scheduleType = ['specialist', 'specialist_online'];
     }
 
-    // Tạo object where cho Doctor
-    const doctorWhere = { type };
+    console.log(`Tìm lịch: doctorType=${doctorType}, scheduleType=${scheduleType}`);
 
-    // Nếu có department_id thì thêm điều kiện vào where
-    if (department_id) {
-      doctorWhere.department_id = department_id;
+    // Điều kiện cho Schedule
+    const scheduleWhere = {
+      type: scheduleType
+    };
+
+    // Thêm các điều kiện lọc khác
+    if (date) {
+      scheduleWhere.date = date;
+    } else if (startDate && endDate) {
+      scheduleWhere.date = {
+        [Op.between]: [startDate, endDate] 
+      };
     }
+    if (status) scheduleWhere.status = status;
+
+    // Điều kiện cho Doctor
+    const doctorWhere = {
+      type: doctorType
+    };
+    
+    if (doctor_id) doctorWhere.id = doctor_id;
+    if (service_id) scheduleWhere.service_id = service_id;
 
     const schedules = await Schedule.findAll({
+      where: scheduleWhere,
       include: [
         {
           model: Doctor,
@@ -114,22 +143,45 @@ exports.getSpecialistSchedules = async (req, res, next) => {
       order: [['date', 'ASC'], ['start_time', 'ASC']]
     });
 
-    res.json(schedules);
+    res.status(200).json({
+      success: true,
+      count: schedules.length,
+      data: schedules
+    });
   } catch (error) {
     console.error('Error in getSpecialistSchedules:', error);
-    next(error);
+    return res.status(500).json({
+      success: false,
+      message: 'Có lỗi xảy ra khi lấy danh sách lịch chuyên khoa',
+      error: error.message
+    });
   }
 };
 
 /**
- * Lấy lịch trình bác sĩ khám tổng quát
+ * Lấy lịch trình cho các gói dịch vụ (cả general và medical)
  */
-exports.getGeneralSchedules = async (req, res, next) => {
+exports.getServicePackageSchedules = async (req, res, next) => {
   try {
+    const { package_type } = req.query;
+    
+    const whereClause = {
+      type: 'service_package'
+    };
+    
+    // Nếu có chỉ định loại gói, thêm điều kiện để join với loại package tương ứng
+    const packageInclude = {
+      model: ServicePackage,
+      as: 'service_package',
+      attributes: ['id', 'name', 'price', 'description', 'type']
+    };
+    
+    if (package_type) {
+      packageInclude.where = { type: package_type };
+    }
+
     const schedules = await Schedule.findAll({
-      where: {
-        type: 'general'
-      },
+      where: whereClause,
       include: [
         { 
           model: Doctor, 
@@ -143,49 +195,14 @@ exports.getGeneralSchedules = async (req, res, next) => {
             }
           ]
         },
-        {
-          model: GeneralPackage,
-          as: 'general_pkg',
-          attributes: ['id', 'name', 'price', 'description']
-        }
+        packageInclude
       ],
       order: [['date', 'ASC'], ['start_time', 'ASC']]
     });
 
     res.json(schedules);
   } catch (error) {
-    console.error('Error in getGeneralSchedules:', error);
-    next(error);
-  }
-};
-
-/**
- * Lấy lịch trình khám gói y tế
- */
-exports.getMedicalSchedules = async (req, res, next) => {
-  try {
-    const schedules = await Schedule.findAll({
-      where: {
-        type: 'medical'
-      },
-      include: [
-        { 
-          model: Doctor, 
-          as: 'doctor',
-          attributes: ['id', 'name', 'avatar', 'position']
-        },
-        {
-          model: MedicalPackage,
-          as: 'medical_pkg',
-          attributes: ['id', 'name', 'price', 'description']
-        }
-      ],
-      order: [['date', 'ASC'], ['start_time', 'ASC']]
-    });
-
-    res.json(schedules);
-  } catch (error) {
-    console.error('Error in getMedicalSchedules:', error);
+    console.error('Error in getServicePackageSchedules:', error);
     next(error);
   }
 };
@@ -306,13 +323,9 @@ exports.getScheduleById = async (req, res) => {
     let service = null;
     
     switch (schedule.type) {
-      case 'general':
-        service = await GeneralPackage.findByPk(schedule.service_id);
-        schedule.dataValues.general_pkg = service;
-        break;
-      case 'medical':
-        service = await MedicalPackage.findByPk(schedule.service_id);
-        schedule.dataValues.medical_pkg = service;
+      case 'service_package':
+        service = await ServicePackage.findByPk(schedule.service_id);
+        schedule.dataValues.service_package = service;
         break;
       case 'specialist':
       case 'specialist_online':
@@ -336,6 +349,9 @@ exports.getScheduleById = async (req, res) => {
  */
 exports.createSchedule = async (req, res) => {
   try {
+    console.log('🔥 User:', req.user);
+    console.log('🔥 Roles:', req.user?.roles);
+    console.log('🔥 Body:', req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ 
@@ -493,9 +509,9 @@ exports.deleteSchedule = async (req, res) => {
 };
 
 /**
- * Tạo yêu cầu đặt lịch khám - Có thể dùng cho USER và PUBLIC
+ * Admin phê duyệt/từ chối đăng ký của bác sĩ
  */
-exports.createAppointment = async (req, res) => {
+exports.approveAssignment = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -505,15 +521,68 @@ exports.createAppointment = async (req, res) => {
       });
     }
 
-    // Thêm user_id nếu user đã đăng nhập
-    let appointmentData = { ...req.body, status: 'pending' };
-    if (req.user) {
-      appointmentData.user_id = req.user.id;
+    const { id } = req.params;
+    const { status, admin_note } = req.body;
+
+    // Chỉ cho phép các trạng thái hợp lệ
+    if (status !== 'approved' && status !== 'rejected_by_admin') {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Invalid status. Must be approved or rejected_by_admin' 
+      });
     }
 
-    const appointment = await Appointment.create(appointmentData);
+    // Kiểm tra xem assignment có tồn tại không
+    const assignment = await DoctorAssignment.findByPk(id, {
+      include: [
+        {
+          model: PackageBookingRequest,
+          as: 'bookingRequest'
+        }
+      ]
+    });
 
-    res.status(201).json(appointment);
+    if (!assignment) {
+      return res.status(404).json({ 
+        success: false,
+        message: 'Assignment not found' 
+      });
+    }
+
+    // Cập nhật trạng thái assignment
+    await assignment.update({
+      status,
+      admin_note
+    });
+
+    // Nếu phê duyệt, cập nhật trạng thái booking request và tạo lịch
+    if (status === 'approved') {
+      // Cập nhật trạng thái booking request
+      await assignment.bookingRequest.update({
+        status: 'assigned'
+      });
+
+      // Tạo lịch mới cho bác sĩ và bệnh nhân
+      const schedule = await Schedule.create({
+        doctor_id: assignment.doctor_id,
+        date: assignment.bookingRequest.requested_date,
+        start_time: assignment.bookingRequest.requested_time_slot.split('-')[0],
+        end_time: assignment.bookingRequest.requested_time_slot.split('-')[1],
+        type: 'service_package',
+        service_id: assignment.bookingRequest.package_id,
+        status: 'booked'
+      });
+
+      // Cập nhật schedule_id vào booking request
+      await assignment.bookingRequest.update({
+        schedule_id: schedule.id
+      });
+
+      // Bổ sung thông tin lịch vào kết quả trả về
+      assignment.dataValues.schedule = schedule;
+    }
+
+    res.json(assignment);
   } catch (error) {
     console.error(error);
     res.status(500).json({ 
@@ -524,9 +593,9 @@ exports.createAppointment = async (req, res) => {
 };
 
 /**
- * Cập nhật trạng thái yêu cầu đặt lịch - Yêu cầu ADMIN hoặc DOCTOR
+ * Admin chủ động phân công bác sĩ
  */
-exports.updateAppointmentStatus = async (req, res) => {
+exports.assignDoctor = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -536,24 +605,59 @@ exports.updateAppointmentStatus = async (req, res) => {
       });
     }
 
-    const appointment = await Appointment.findByPk(req.params.id);
-    if (!appointment) {
+    const { booking_request_id, doctor_id, admin_note } = req.body;
+
+    // Kiểm tra xem yêu cầu đặt lịch có tồn tại không
+    const bookingRequest = await PackageBookingRequest.findByPk(booking_request_id);
+    if (!bookingRequest) {
       return res.status(404).json({ 
         success: false,
-        message: 'Appointment not found' 
+        message: 'Booking request not found' 
       });
     }
 
-    // Kiểm tra nếu là DOCTOR thì chỉ được cập nhật các lịch hẹn của họ
-    if (req.user && req.user.role === 'ROLE_DOCTOR' && appointment.doctor_id !== req.user.id) {
-      return res.status(403).json({
+    // Kiểm tra xem bác sĩ có tồn tại không
+    const doctor = await Doctor.findByPk(doctor_id);
+    if (!doctor) {
+      return res.status(404).json({ 
         success: false,
-        message: 'You can only update appointments assigned to you'
+        message: 'Doctor not found' 
       });
     }
 
-    await appointment.update({ status: req.body.status });
-    res.json(appointment);
+    // Tạo mới assignment với trạng thái admin_assigned
+    const assignment = await DoctorAssignment.create({
+      booking_request_id,
+      doctor_id,
+      admin_note,
+      status: 'admin_assigned'
+    });
+
+    // Cập nhật trạng thái booking request
+    await bookingRequest.update({
+      status: 'assigned'
+    });
+
+    // Tạo lịch mới cho bác sĩ và bệnh nhân
+    const schedule = await Schedule.create({
+      doctor_id: doctor_id,
+      date: bookingRequest.requested_date,
+      start_time: bookingRequest.requested_time_slot.split('-')[0],
+      end_time: bookingRequest.requested_time_slot.split('-')[1],
+      type: 'service_package',
+      service_id: bookingRequest.package_id,
+      status: 'booked'
+    });
+
+    // Cập nhật schedule_id vào booking request
+    await bookingRequest.update({
+      schedule_id: schedule.id
+    });
+
+    // Bổ sung thông tin lịch vào kết quả trả về
+    assignment.dataValues.schedule = schedule;
+
+    res.status(201).json(assignment);
   } catch (error) {
     console.error(error);
     res.status(500).json({ 
