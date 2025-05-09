@@ -179,8 +179,9 @@ const DoctorSchedules = () => {
             service_id:
               currentType === "specialist" ||
               currentType === "specialist_online"
-                ? department?.id // Nếu là specialist, service_id là department_id
+                ? department?.id
                 : selectedDoctor.service_package_id || department?.id,
+            specialtyName: department?.name || "Chuyên khoa",
           },
         },
       });
