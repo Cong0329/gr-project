@@ -1,6 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { adminLoginAPI, updateProfileAPI, vefifyEmailAPI } from "./userAsyncThunk";
-import { tr } from "date-fns/locale";
+import { adminLoginAPI, doctorLoginAPI, updateProfileAPI, vefifyEmailAPI } from "./userAsyncThunk";
+
+const getSafeErrorMessage = (payload) => {
+  if (!payload) return "Đã xảy ra lỗi";
+  if (typeof payload === 'string') return payload;
+  if (payload.message) return payload.message;
+  return "Lỗi không xác định";
+};
 
 interface UserInfo {
   id: string;
@@ -16,6 +22,7 @@ interface AuthState {
   isAuthenticated: boolean;
   user: UserInfo;
   admin: UserInfo;
+  doctor: UserInfo;
   verify: boolean;
   message: string;
   mail: string;
@@ -27,6 +34,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   user: {} as UserInfo,
   admin: {} as UserInfo,
+  doctor: {} as UserInfo,
   verify: false,
   message: '',
   mail:'',
@@ -65,8 +73,15 @@ const authSlice = createSlice({
         state.admin = {} as UserInfo;
         localStorage.clear();
       },
+      resetLoginStatus: (state) => {
+        state.status = "idle";
+        state.message = "";
+      },
       adminLogin: (state, action) => {
         state.admin = action.payload;
+      },
+      doctorLogin: (state, action) => {
+        state.doctor = action.payload;
       }
     },
     extraReducers: (builder) => {
@@ -86,7 +101,22 @@ const authSlice = createSlice({
         .addCase(adminLoginAPI.rejected, (state, action) => {
           state.status = "failed";
           state.verify = false;
-          state.message = action.payload.message;
+          state.message = getSafeErrorMessage(action.payload);
+        })
+
+        .addCase(doctorLoginAPI.fulfilled, (state, action) => {
+          state.status = "succeeded"
+          state.verify = true;
+          state.mail = action.payload.email;
+        })
+        .addCase(doctorLoginAPI.pending, (state) => {
+          state.isAuthenticated = false;
+          state.status = "loading";
+        })
+        .addCase(doctorLoginAPI.rejected, (state, action) => {
+          state.status = "failed";
+          state.verify = false;
+          state.message = getSafeErrorMessage(action.payload);
         })
         .addCase(vefifyEmailAPI.fulfilled, (state) => {
           state.status = "succeeded";
@@ -97,11 +127,11 @@ const authSlice = createSlice({
           state.status = "loading";
         })
         .addCase(vefifyEmailAPI.rejected, (state, action) => {
-          state.message = action.payload.message;
+          state.message = getSafeErrorMessage(action.payload);
         })
     },
   });
 
 
-  export const { login, logout, googleLogin, vefify, lockVerify, reset, adminLogin} = authSlice.actions;
+  export const { login, logout, googleLogin,resetLoginStatus , vefify, lockVerify, reset, adminLogin} = authSlice.actions;
   export default authSlice.reducer;

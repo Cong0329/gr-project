@@ -1,4 +1,3 @@
-// src/AppRoutes.tsx
 import { Route } from "react-router";
 import SignIn from "../admin/pages/AuthPages/SignIn";
 import SignUp from "../admin/pages/AuthPages/SignUp";
@@ -15,11 +14,8 @@ import Calendar from "../admin/pages/Calendar";
 import BasicTables from "../admin/pages/Tables/BasicTables";
 import FormElements from "../admin/pages/Forms/FormElements";
 import Blank from "../admin/pages/Blank";
-import AppLayout from "../admin/layout/AppLayout";
 import Home from "../admin/pages/Dashboard/Home";
-import AdminProtectedRoute from '../../components/pages/AdminProtectedRoute';
 import { VerifyCodePage } from "../admin/pages/AuthPages/VerifyCodePage";
-import VerifyProtectedRoute from "./VerifyProtected";
 import ProductCreationForm from "../admin/pages/Forms/Product/AddProduct/ProductCreationForm";
 import BrandPage from "../admin/pages/Forms/Product/Brand/BrandPage";
 import CategoryPage from "../admin/pages/Forms/Product/Brand/CategoryPage";
@@ -27,64 +23,59 @@ import MedicalObjectPage from "../admin/pages/Forms/Product/Brand/MedicalObjectP
 import IndicationPage from "../admin/pages/Forms/Product/Brand/IndicationPage";
 import ProductPage from "../admin/pages/Forms/Product/ProductPage";
 import EditProductPage from "../admin/pages/Forms/Product/EditProduct/EditProductPage";
-import {BrandProduct} from "../admin/pages/Forms/Product/Brand/BrandProduct";
+import { BrandProduct } from "../admin/pages/Forms/Product/Brand/BrandProduct";
 import OrderTables from "../admin/pages/Tables/OrderTables";
 import OrderDetail from "../admin/pages/Tables/OrderDetail";
 import AdminReview from "../admin/components/chat/AdminReview";
 import AdminChatInterface from "../admin/components/chat/AdminChat/AdminChatInterface";
 
 const adminRoutes = (
-    <>
-        {/* Dashboard Layout */}
+  <Route>
+    {/* Các route trong admin */}
+    <Route index element={<Home />} />
+    <Route path="profile" element={<UserProfiles />} />
+    <Route path="calendar" element={<Calendar />} />
+    <Route path="blank" element={<Blank />} />
 
-        <Route element={<AdminProtectedRoute><AppLayout /></AdminProtectedRoute>}>
-            <Route path="/admin" element={<Home />} />
-            <Route path="/admin/profile" element={<UserProfiles />} />
-            <Route path="/admin/calendar" element={<Calendar />} />
-            <Route path="/admin/blank" element={<Blank />} />
+    {/* Forms */}
+    <Route path="form-elements" element={<FormElements />} />
+    <Route path="create-product" element={<ProductCreationForm />} />
+    <Route path="brand" element={<BrandPage />} />
+    <Route path="category" element={<CategoryPage />} />
+    <Route path="medical-object" element={<MedicalObjectPage />} />
+    <Route path="indication" element={<IndicationPage />} />
+    <Route path="products" element={<ProductPage />} />
+    <Route path="edit-product/:id" element={<EditProductPage />} />
+    <Route path="brand/:name" element={<BrandProduct />} />
+    <Route path="orders" element={<OrderTables />} />
+    <Route path="orders/:id" element={<OrderDetail />} />
+    <Route path="reviews" element={<AdminReview />} />
+    <Route path="chat" element={<AdminChatInterface />} />
 
-            {/* Forms */}
-            <Route path="/admin/form-elements" element={<FormElements />} />
-            <Route path="/admin/create-product" element= {< ProductCreationForm/>} />
-            <Route path="/admin/brand" element= {< BrandPage/>} />
-            <Route path="/admin/category" element= {< CategoryPage/>} />
-            <Route path="/admin/medical-object" element= {< MedicalObjectPage/>} />
-            <Route path="/admin/indication" element= {< IndicationPage/>} />
-            <Route path="/admin/products" element= {< ProductPage/>} />
-            <Route path="/admin/edit-product/:id" element= {< EditProductPage/>} />
-            <Route path="/admin/brand/:name" element= {< BrandProduct/>} />
-            <Route path="/admin/orders" element={<OrderTables />} />
-            <Route path="/admin/orders/:id" element={<OrderDetail />} />
-            <Route path="/admin/reviews" element={<AdminReview />} />
-            <Route path="/admin/chat" element={<AdminChatInterface />} />
-            
-            
-            {/* Tables */}
-            <Route path="/admin/basic-tables" element={<BasicTables />} />
-          
+    {/* Tables */}
+    <Route path="basic-tables" element={<BasicTables />} />
 
-            {/* UI Elements */}
-            <Route path="/admin/alerts" element={<Alerts />} />
-            <Route path="/admin/avatars" element={<Avatars />} />
-            <Route path="/admin/badge" element={<Badges />} />
-            <Route path="/admin/buttons" element={<Buttons />} />
-            <Route path="/admin/images" element={<Images />} />
-            <Route path="/admin/videos" element={<Videos />} />
+    {/* UI Elements */}
+    <Route path="alerts" element={<Alerts />} />
+    <Route path="avatars" element={<Avatars />} />
+    <Route path="badge" element={<Badges />} />
+    <Route path="buttons" element={<Buttons />} />
+    <Route path="images" element={<Images />} />
+    <Route path="videos" element={<Videos />} />
 
-            {/* Charts */}
-            <Route path="/line-chart" element={<LineChart />} />
-            <Route path="/bar-chart" element={<BarChart />} />
-        </Route>
+    {/* Charts */}
+    <Route path="line-chart" element={<LineChart />} />
+    <Route path="bar-chart" element={<BarChart />} />
+  </Route>
+);
 
-        {/* Auth Routes */}
-        <Route path="admin/signin" element={<SignIn />} />
-        <Route path="admin/signup" element={<SignUp />} />
+// Auth Routes đặt riêng để AppRoutes sử dụng
+export const adminAuthRoutes = (
+  <>
+    <Route path="/admin/signin" element={<SignIn />} />
+    <Route path="/admin/signup" element={<SignUp />} />
+    <Route path="/admin/verify" element={<VerifyCodePage />} />
+  </>
+);
 
-        <Route element={<VerifyProtectedRoute />}>
-            <Route path="admin/verify" element={<VerifyCodePage />} />
-
-        </Route>
-
-    </>
-)
 export default adminRoutes;
