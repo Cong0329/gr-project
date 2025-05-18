@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { adminLoginAPI, updateProfileAPI, vefifyEmailAPI } from "./userAsyncThunk";
+import { adminLoginAPI, doctorLoginAPI, updateProfileAPI, vefifyEmailAPI } from "./userAsyncThunk";
 import { tr } from "date-fns/locale";
 
 interface UserInfo {
@@ -16,6 +16,7 @@ interface AuthState {
   isAuthenticated: boolean;
   user: UserInfo;
   admin: UserInfo;
+  doctor: UserInfo;
   verify: boolean;
   message: string;
   mail: string;
@@ -27,6 +28,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   user: {} as UserInfo,
   admin: {} as UserInfo,
+  doctor: {} as UserInfo,
   verify: false,
   message: '',
   mail:'',
@@ -84,6 +86,20 @@ const authSlice = createSlice({
           state.status = "loading";
         })
         .addCase(adminLoginAPI.rejected, (state, action) => {
+          state.status = "failed";
+          state.verify = false;
+          state.message = action.payload.message;
+        })
+        .addCase(doctorLoginAPI.fulfilled, (state, action) => {
+          state.status = "succeeded"
+          state.verify = true;
+          state.mail = action.payload.email;
+        })
+        .addCase(doctorLoginAPI.pending, (state) => {
+          state.isAuthenticated = false;
+          state.status = "loading";
+        })
+        .addCase(doctorLoginAPI.rejected, (state, action) => {
           state.status = "failed";
           state.verify = false;
           state.message = action.payload.message;
