@@ -1,18 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchMedicalObjects, createMedicalObject, updateMedicalObject, deleteMedicalObject } from "./medicalObjectAsyncThunk";
-
+import { fetchMedicalObjects, createMedicalObject, updateMedicalObject, deleteMedicalObject, getMedicalObjectProductByName } from "./medicalObjectAsyncThunk";
+import { Product } from "../components/admin/pages/Forms/Product/Product";
 interface MedicalObject {
     name: string;
 }
 
 interface MedicalObjectState {
     medicalObjects: MedicalObject[];
-    status: 'idle' | 'loading' | 'succeeded' | 'failed';
+    products: Product[];
+    status: 'idle' | 'loading' | 'succeeded' | 'failed' ;
 }
 
 
 const initialState: MedicalObjectState = {
     medicalObjects: [],
+    products: [],
     status: 'idle'
 }
 
@@ -20,7 +22,12 @@ const initialState: MedicalObjectState = {
 const medicalObjectSlice = createSlice({
     name: 'medicalObject',
     initialState,
-    reducers: {},
+    reducers: {
+        resetMedicalObject: (state) => {
+            state.products = [];
+            state.status = 'idle';
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchMedicalObjects.fulfilled, (state, action) => {
@@ -60,8 +67,18 @@ const medicalObjectSlice = createSlice({
             .addCase(deleteMedicalObject.rejected, (state) => {
                 state.status = 'failed';
             })
+            .addCase(getMedicalObjectProductByName.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(getMedicalObjectProductByName.fulfilled, (state, action) => {
+                state.status = 'idle';
+                state.products = action.payload.products;
+            })
+            .addCase(getMedicalObjectProductByName.rejected, (state) => {
+                state.status = 'failed';
+            })
     }
 })
-
+export const { resetMedicalObject } = medicalObjectSlice.actions;
 export default medicalObjectSlice.reducer;
 

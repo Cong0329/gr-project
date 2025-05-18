@@ -2,26 +2,11 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../../redux/store";
+import { fetchBrands } from "../../../redux/brandAsyncThunk";
 
-interface Product {
-    id: number;
-    name: string;
-    image: string;
-    logo: string;
-}
-
-const specialties: Product[] = [
-    { id: 1, name: "Sản phẩm 1", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
-    { id: 2, name: "Sản phẩm 2", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
-    { id: 3, name: "Sản phẩm 3", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
-    { id: 4, name: "Sản phẩm 4", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
-    { id: 5, name: "Sản phẩm 5", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
-    { id: 6, name: "Sản phẩm 6", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
-    { id: 7, name: "Sản phẩm 7", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
-    { id: 8, name: "Sản phẩm 8", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
-    { id: 9, name: "Sản phẩm 9", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
-    { id: 10, name: "Sản phẩm 10", image: "https://i.imgur.com/v5hrLHF.png", logo: "https://i.imgur.com/RqChwMC.png" },
-];
 
 // Định nghĩa kiểu dữ liệu cho nút Prev & Next
 interface ArrowProps {
@@ -55,6 +40,16 @@ const PrevArrow: React.FC<ArrowProps> = ({ onClick, currentSlide }) => {
 };
 
 export default function ProductSlider() {
+    const dispatch:AppDispatch = useDispatch();
+    const {brands} = useSelector((state:RootState)=>state.brands);
+
+    useEffect(()=>{
+        dispatch(fetchBrands());
+    },[dispatch])
+
+
+
+
     const settings = {
         dots: false, // Không hiện dots phía dưới
         infinite: false, // Không lặp vô hạn
@@ -87,19 +82,19 @@ export default function ProductSlider() {
                 <span className="text-blue-600 text-2xl">💊</span> Thương hiệu yêu thích
             </div>
             <Slider {...settings}>
-                {specialties.map((specialty) => (
-                    <div key={specialty.id} className="pr-2">
+                {brands.slice(0,10).map((brand) => (
+                    <div key={brand.id} className="pr-2">
                         <div className="border-2 border-transparent hover:border-blue-500 rounded-lg transition-all duration-300">
                             <div className="flex flex-col justify-center items-center">
-                                <div className="w-full  bg-white flex flex-col items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
+                                <div className="w-full pt-2  bg-white flex flex-col items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                                     <img
-                                        src={specialty.image}
-                                        className="w-40 h-auto tb:w-24 object-fit"
+                                        src={brand.products[0].images[0].image}
+                                        className="w-28 h-auto tb:w-24 object-fit"
                                         loading="lazy"
-                                        alt={specialty.name}
+                                        alt={brand.name}
                                     />
-                                    <div className="border-2 rounded-lg border-gray-200 py-2 px-3">
-                                        <img src={specialty.logo} alt="logo" className="w-36 tb:w-20 object-fit" loading="lazy" />
+                                    <div className="border-2 rounded-lg border-gray-200 py-2 px-3 mt-2">
+                                        <img src={brand.logo} alt="logo" className="w-20 tb:w-16 object-fit " loading="lazy" />
                                     </div>
                                     <div className="text-lg font-semibold text-blue-700 my-5 tb:text-sm">Giảm đến 20%</div>
                                 </div>

@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import ProductDetail from './MediDetail';
 import Breadcrumb from '../home_booking/details/component_details/BreadCrumb';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { RootState, AppDispatch } from '../../redux/store';
 import { getProductBySlug, getProductDetailProduct, getProductReview } from '../../redux/productAsyncThunk';
 
 
@@ -12,7 +12,7 @@ import { getProductBySlug, getProductDetailProduct, getProductReview } from '../
 
 
 export const MedicineBody = () => {
-    const dispatch = useDispatch();
+    const dispatch:AppDispatch = useDispatch();
     const [isServiceHovered, setIsServiceHovered] = useState(false);
     const { status, product } = useSelector((state: RootState) => state.products);
     const { slug } = useParams();

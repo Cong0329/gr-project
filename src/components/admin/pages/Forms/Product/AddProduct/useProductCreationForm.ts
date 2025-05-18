@@ -76,6 +76,7 @@ export const useProductCreationForm = () => {
                 [name]: name === "price" ? parseFloat(value) || 0 : value,
             },
         });
+        console.log(formData.basicInfo)
     };
 
     const addImage = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -195,11 +196,11 @@ export const useProductCreationForm = () => {
                     description.trim() !== "" &&
                     manufacturer.trim() !== "" &&
                     quantity > 0 &&
-                    brand_id.trim() !== "" &&
-                    category_id.trim() !== "" &&
+                    brand_id !== null &&
+                    category_id !== null &&
                     type.trim() !== "" &&
-                    indication_id.trim() !== "" &&
-                    medical_object_id.trim() !== ""
+                    indication_id !== null &&
+                    medical_object_id !== null
                 );
             case 2:
                 return formData.images.length > 0;

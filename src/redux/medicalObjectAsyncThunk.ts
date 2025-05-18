@@ -54,3 +54,17 @@ export const deleteMedicalObject = createAsyncThunk(
       }
     }
   );
+
+export const getMedicalObjectProductByName = createAsyncThunk(
+    "medicalObject/getMedicalObjectProductByName",
+    async (name: string, { rejectWithValue }) => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/medical-object/${name}`, {
+          withCredentials: true,
+        });
+        return res.data;
+      } catch (error: any) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  );

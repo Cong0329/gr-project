@@ -3,14 +3,16 @@ import Skeleton from "react-loading-skeleton";
 import { Link } from "react-router-dom";
 import { Order, resetOrderDetail } from "../../../redux/orderSlice";
 import { useDispatch } from "react-redux";
-
+import { repurchaseOrderAPI } from "../../../redux/cartAsyncThunk";
+import { AppDispatch } from "../../../redux/store";
+import { toast } from "react-toastify";
 interface OrderCustomProps {
     orders: Order[];
     isLoading?: boolean;
 }
 
 export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     let content;
     const statusColor = {
         completed: 'text-green-500',
@@ -35,6 +37,11 @@ export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
         pending: 'Đang xử lý',
         shipping: 'Đang giao',
         return: 'Trả hàng'
+    };
+    const handleRepurchaseOrder = (order_id: string) => {
+        console.log(order_id);
+        toast.success('Sản phẩm đã được thêm lại vào giỏ hàng của bạn');
+        dispatch(repurchaseOrderAPI(order_id));
     };
     if (isLoading) {
         content = (
@@ -138,9 +145,11 @@ export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
                             </Link>
 
                             <div className="border-t pt-2 mt-2 flex justify-end">
-                                <button className="text-white bg-blue-700 px-16 py-2 font-medium gap-1 flex items-center rounded-full">
-                                    Mua lại
-                                </button>
+                                {(order.status === 'completed' || order.status === 'cancelled' || order.status === 'return') && (
+                                    <button onClick={() => handleRepurchaseOrder(order.id.toString())} className="text-white bg-blue-700 px-16 py-2 font-medium gap-1 flex items-center rounded-full">
+                                        Mua lại
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

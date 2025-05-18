@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { fetchOrders } from '../../../redux/orderAsyncThunk';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
+import { AppDispatch } from '../../../redux/store';
 
 // export interface Order {
 //     id: number;
@@ -20,10 +21,10 @@ export const OrderPage = () => {
     const [activeTab, setActiveTab] = useState('all');
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
     const [search, setSearch] = useState('');
-    const { orders, status } = useSelector((state: RootState) => state.order);
+    const { orders } = useSelector((state: RootState) => state.order);
     const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
     const [isLoading, setIsLoading] = useState(true);
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     useEffect(() => {
         dispatch(fetchOrders());
     }, [dispatch]);
@@ -41,7 +42,7 @@ export const OrderPage = () => {
         const matchesSearch =
             search.length === 0 ||
             order.items.some((item) =>
-                item.Product.name.toLowerCase().includes(search.toLowerCase())
+                item.product.name.toLowerCase().includes(search.toLowerCase())
             );
         return matchesTab && matchesSearch;
     });

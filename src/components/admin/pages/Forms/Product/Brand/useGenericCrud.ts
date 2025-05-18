@@ -6,6 +6,7 @@ import { createBrand, updateBrand, deleteBrand } from '../../../../../../redux/b
 import { createCategory, updateCategory, deleteCategory } from '../../../../../../redux/categoryAsyncThunk';
 import { createMedicalObject, updateMedicalObject, deleteMedicalObject } from '../../../../../../redux/medicalObjectAsyncThunk';
 import { createIndication, updateIndication, deleteIndication } from '../../../../../../redux/indicationAsyncThunk';
+import { AppDispatch } from '../../../../../../redux/store';
 
 export function useGenericCrud<T extends BaseEntity>(
   initialItems: T[],
@@ -15,7 +16,7 @@ export function useGenericCrud<T extends BaseEntity>(
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState<T>(entityConfig.initialState());
   const [modalType, setModalType] = useState<ModalType>('create');
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   // Mở modal tạo mới
   const handleCreateClick = () => {
     setCurrentItem({
@@ -125,9 +126,10 @@ export function useGenericCrud<T extends BaseEntity>(
       return;
     }
     if (modalType === 'create') {
-      dispatch(createCategory(currentItem.name));
+      dispatch(createCategory({ name: currentItem.name, parent_id: currentItem.parent_id }));
     } else {
-      dispatch(updateCategory({ id: currentItem.id, name: currentItem.name }));
+      dispatch(updateCategory({ id: currentItem.id, name: currentItem.name, parent_id: currentItem.parent_id }));
+
     }
 
     setIsModalOpen(false);

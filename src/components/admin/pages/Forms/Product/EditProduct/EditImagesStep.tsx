@@ -6,7 +6,7 @@ import { RootState } from "../../../../../../redux/store";
 import { useState, useEffect } from "react";
 import { ProductImage } from "../AddProduct/ProductCreationForm";
 import { createProductImage, deleteProductImage, getProduct } from "../../../../../../redux/productAsyncThunk";
-
+import { AppDispatch } from "../../../../../../redux/store";
 // interface ImagesStepProps {
 //   images: ProductImage[];
 //   onAddImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -15,9 +15,10 @@ import { createProductImage, deleteProductImage, getProduct } from "../../../../
 
 export const EditImagesStep = () => {
   const { product } = useSelector((state: RootState) => state.products);
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const onRemoveImage = (imageId: string) => {
     dispatch(deleteProductImage(imageId));
+    console.log(imageId);
   };
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -60,7 +61,7 @@ export const EditImagesStep = () => {
               <ImageThumbnail
                 key={image.id}
                 image={image.image}
-                onRemove={onRemoveImage}
+                onRemove={() => onRemoveImage(image.id)}
               />
             ))}
           </div>

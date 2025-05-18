@@ -28,8 +28,8 @@ export const Body = () => {
                     <HealthSection/>
                     <CategoriesSection/>
                     <ProductForAge/>
-                    <ProductList/>
-                    <DiseaseList/>
+                    {/* <ProductList/> */}
+                    {/* <DiseaseList/> */}
                 </div>
                 {isServiceHovered && (
                     <div className="absolute inset-0 bg-blue-950 bg-opacity-30 z-5">    </div>

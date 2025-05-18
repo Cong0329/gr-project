@@ -1,12 +1,17 @@
 import { useState } from "react";
 import ProductSlider from "./MedicineSlider";
 import { categories } from "./Medical";
-import { medicines } from "./Medical";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
 
 
 export default function ProductForAge() {
-    const [selectedCategory, setSelectedCategory] = useState<string>("kids");
+    const [selectedCategory, setSelectedCategory] = useState<string>("Trẻ em");
+    const {products} = useSelector((state: RootState) => state.products);
+    const filteredProducts = products.filter(
+        (product) => product.medical_object?.name === selectedCategory
+    );
 
     return (
         <div className="w-4/5 md-lg:w-11/12 tb:w-11/12 mx-auto container bg-gray-100 mt-5 rounded-xl relative">
@@ -32,7 +37,7 @@ export default function ProductForAge() {
 
             {/* Hiển thị ảnh danh mục được chọn */}
             <div className="flex tb:flex-col mb-4 h-[475px] tb:h-full">
-                <div className="w-1/6 tb:w-full h-full tb:h-[235px] ">
+                {/* <div className="w-1/6 tb:w-full h-full tb:h-[235px] ">
                     {categories.find((c) => c.id === selectedCategory) && (
                         <img
                             src={categories.find((c) => c.id === selectedCategory)?.image}
@@ -41,11 +46,11 @@ export default function ProductForAge() {
                             className="w-full h-full object-cover rounded-lg"
                         />
                     )}
-                </div>
+                </div> */}
 
                 {/* Slider hiển thị sản phẩm */}
-                <div className="w-5/6 tb:w-full tb:mt-5 relative h-full">
-                    <ProductSlider products={medicines[selectedCategory] || []} show={5} />
+                <div className="w-full tb:w-full tb:mt-5 relative h-full">
+                    <ProductSlider products={filteredProducts || []} show={6} />
                 </div>
             </div>
         </div>

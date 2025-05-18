@@ -1,25 +1,26 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { ServiceHover } from './ServiceHover';
+import { CategoryGroup } from './NavLink';
 
 export const Service = ({ 
     item, 
     setIsServiceHovered 
 }: { 
-    item: { name: string, id: number },
+    item: CategoryGroup,
     setIsServiceHovered: (isHovered: boolean) => void
 }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     const handleMouseEnter = () => {
-        if (item.id !== 6) {
+        if (item.id !== 4 && item.id !== 5) {
             setIsHovered(true);
             setIsServiceHovered(true);
         }
     };
 
     const handleMouseLeave = () => {
-        if (item.id !== 6) {
+        if (item.id !== 4 && item.id !== 5) {
             setIsHovered(false);
             setIsServiceHovered(false);
         }
@@ -34,7 +35,7 @@ export const Service = ({
             >
                 <Link to={`/`} className="flex items-center group-hover:border-b-[3px] pb-2 group-hover:border-blue-700 group-hover:text-blue-600">
                     {item.name}
-                    {item.id !== 6 && (
+                    {item.id !== 4 && item.id !== 5 && (
                         <svg
                             className="w-4 h-4 ml-1 transform transition-transform duration-200 group-hover:rotate-180"
                             fill="none"
@@ -46,8 +47,8 @@ export const Service = ({
                         </svg>
                     )}
                 </Link>
-                {isHovered && item.id !== 6 && (
-                    <ServiceHover />
+                {isHovered && item.id !== 4 && item.id !== 5 && (
+                    <ServiceHover items={item.categories} />
                 )}
             </button>
         </li>

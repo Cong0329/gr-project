@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import GenericTable from './GenericTable';
 import GenericModal from './GenericModal';
@@ -6,19 +6,28 @@ import { useGenericCrud } from './useGenericCrud';
 import { categoryConfig } from './entityConfigs';
 import { Category } from './types';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../../../../redux/store';
-import { fetchCategories } from '../../../../../../redux/categoryAsyncThunk';
+import { RootState, AppDispatch } from '../../../../../../redux/store';
+import { fetchCategories, getParentCategory } from '../../../../../../redux/categoryAsyncThunk';
+import { resetCategory } from '../../../../../../redux/categorySlice';
+import SearchBar from './GenericSearch';
+
 
 const CategoryPage: React.FC = () => {
-  const dispatch = useDispatch();
-  const { categories, status } = useSelector((state: RootState) => state.categories);
+  const dispatch:AppDispatch = useDispatch();
+  const { categories, parent, status } = useSelector((state: RootState) => state.categories);
+  const [searchTerm, setSearchTerm] = useState('');
   useEffect(() => {
     if (categories.length == 0) {
       dispatch(fetchCategories());
+      dispatch(getParentCategory());
     } else if (status === 'succeeded') {
       dispatch(fetchCategories());
+      dispatch(getParentCategory());
     }
-  }, [dispatch, categories, status])
+  }, [dispatch, categories, status]);
+  const filteredCategories = categories.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const {
     items: category,
     isModalOpen,
@@ -33,7 +42,20 @@ const CategoryPage: React.FC = () => {
     handleCategorySaveItem: handleSaveCategory,
     handleCategoryDeleteItem: handleDeleteCategory
   } = useGenericCrud<Category>(categories, categoryConfig);
-
+  const updatedConfig = {
+    ...categoryConfig,
+    fields: categoryConfig.fields.map(field =>
+      field.name === 'parent_id'
+        ? {
+            ...field,
+            options: parent.map(cat => ({
+              value: cat.id,
+              label: cat.name,
+            }))
+          }
+        : field
+    )
+  };
   return (
     <>
       <div className="container mx-auto p-6">
@@ -42,10 +64,16 @@ const CategoryPage: React.FC = () => {
           onCreateClick={handleCreateClick}
           entityName={categoryConfig.name}
         />
-
+        <SearchBar
+            searchTerm={searchTerm}
+            onChange={setSearchTerm}
+            placeholder="Tìm kiếm danh mục..."
+        />
         <GenericTable
-          items={categories}
-          config={categoryConfig}
+          items={filteredCategories}
+          config={updatedConfig}
+          onReset={() => dispatch(resetCategory())}
+          link="category"
           onView={handleViewClick}
           onEdit={handleEditClick}
           onDelete={handleDeleteClick}
@@ -55,7 +83,7 @@ const CategoryPage: React.FC = () => {
           isOpen={isModalOpen}
           modalType={modalType}
           item={currentCategory}
-          config={categoryConfig}
+          config={updatedConfig}
           onClose={handleCloseModal}
           onChange={handleInputChange}
           onSave={handleSaveCategory}

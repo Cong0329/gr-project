@@ -32,6 +32,9 @@ import OrderTables from "../admin/pages/Tables/OrderTables";
 import OrderDetail from "../admin/pages/Tables/OrderDetail";
 import AdminReview from "../admin/components/chat/AdminReview";
 import AdminChatInterface from "../admin/components/chat/AdminChat/AdminChatInterface";
+import { CategoryProduct } from "../admin/pages/Forms/Product/Brand/CategoryProduct";
+import { MedicalObjectProduct } from "../admin/pages/Forms/Product/Brand/MedicalObjectProduct";
+import { IndicationProduct } from "../admin/pages/Forms/Product/Brand/IndicationProduct";
 
 const adminRoutes = (
     <>
@@ -57,6 +60,9 @@ const adminRoutes = (
             <Route path="/admin/orders/:id" element={<OrderDetail />} />
             <Route path="/admin/reviews" element={<AdminReview />} />
             <Route path="/admin/chat" element={<AdminChatInterface />} />
+            <Route path="/admin/category/:name" element={<CategoryProduct />} />
+            <Route path="/admin/medical-object/:name" element={<MedicalObjectProduct />} />
+            <Route path="/admin/indication/:name" element={<IndicationProduct />} />
             
             
             {/* Tables */}

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { fetchCarts, addToCartAPI, updateQuantityAPI, removeFromCartAPI, updateSelectedOptionAPI } from "./cartAsyncThunk";
+import { fetchCarts, addToCartAPI, updateQuantityAPI, removeFromCartAPI, updateSelectedOptionAPI, repurchaseOrderAPI } from "./cartAsyncThunk";
 
 // Các interface cần thiết
 export interface ProductOption {
@@ -157,7 +157,16 @@ const cartSlice = createSlice({
       })
       .addCase(updateSelectedOptionAPI.rejected, (state) => {
         state.status = "failed";
-      });
+      })
+      .addCase(repurchaseOrderAPI.fulfilled, (state) => {
+        state.status = "succeeded";
+      })
+      .addCase(repurchaseOrderAPI.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(repurchaseOrderAPI.rejected, (state) => {
+        state.status = "failed";
+      })
       
   },
 });

@@ -1,15 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Indication } from "../components/admin/pages/Forms/Product/Brand/types";
-import { fetchIndications, createIndication, updateIndication, deleteIndication } from "./indicationAsyncThunk";
+import { fetchIndications, createIndication, updateIndication, deleteIndication, getIndicationProductByName } from "./indicationAsyncThunk";
+import { Product } from "../components/admin/pages/Forms/Product/Product";
 
 interface IndicationState {
   indications: Indication[];
+  products: Product[];
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: string;
 }
 
 const initialState: IndicationState = {
   indications: [],
+  products: [],
   status: "idle",
   error: '',
 };
@@ -18,7 +21,12 @@ const initialState: IndicationState = {
 const indicationSlice = createSlice({
   name: "indication",
   initialState,
-  reducers: {},
+  reducers: {
+    resetIndication: (state) => {
+      state.products = [];
+      state.status = 'idle';
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchIndications.fulfilled, (state, action) => {
       state.indications = action.payload.indications;
@@ -45,8 +53,15 @@ const indicationSlice = createSlice({
         state.status = 'succeeded';
     }).addCase(deleteIndication.rejected, (state) => {
         state.status = 'failed';
+    }).addCase(getIndicationProductByName.pending, (state) => {
+        state.status = 'loading';
+    }).addCase(getIndicationProductByName.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.products = action.payload.products;
+    }).addCase(getIndicationProductByName.rejected, (state) => {
+        state.status = 'failed';
     })
   }
 })
-
+export const { resetIndication } = indicationSlice.actions;
 export default indicationSlice.reducer;

@@ -128,10 +128,10 @@ export interface Category {
 }
 
 export const categories: Category[] = [
-    { id: "kids", name: "Trẻ em", image: "https://i.imgur.com/w0ltsqF.png" },
-    { id: "mom", name: "Mẹ và bé", image: "https://i.imgur.com/AJHFtoL.png" },
-    { id: "old", name: "Người cao tuổi", image: "https://i.imgur.com/PDtX6oA.png" },
-    { id: "diabetes", name: "Người tiểu đường", image: "https://i.imgur.com/Nv4hnxI.png" },
+    { id: "Trẻ em", name: "Trẻ em", image: "https://i.imgur.com/w0ltsqF.png" },
+    { id: "Mẹ và bé", name: "Mẹ và bé", image: "https://i.imgur.com/w0ltsqF.png" },
+    { id: "Người lớn", name: "Người lớn", image: "https://i.imgur.com/w0ltsqF.png" },
+    { id: "Người cao tuổi", name: "Người cao tuổi", image: "https://i.imgur.com/PDtX6oA.png" },
 ];
 
 export const medicines: Record<string, Medicine[]> = {

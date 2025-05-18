@@ -31,13 +31,20 @@ export const categoryConfig: EntityConfig<Category> = {
   pluralName: 'danh mục',
   fields: [
     { name: 'name', label: 'Tên danh mục', type: 'text', required: true },
+    { name: 'parent_id', label: 'Danh mục cha', type: 'select', required: true },
   ],
   initialState: () => ({
     name: '',
+    parent_id: '',
   }),
   tableColumns: [
     { key: 'id', header: 'ID' },
     { key: 'name', header: 'Tên danh mục' },
+    {
+      key: 'parent_id',
+      header: 'Danh mục cha',
+      render: (item: Category) => item.parent?.name ?? 'Không có'
+    }
   ]
 };
 

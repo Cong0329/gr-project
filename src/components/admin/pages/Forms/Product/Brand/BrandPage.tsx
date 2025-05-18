@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import GenericTable from './GenericTable';
 import GenericModal from './GenericModal';
@@ -8,17 +8,27 @@ import { Brand } from './types';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchBrands } from '../../../../../../redux/brandAsyncThunk';
 import { RootState } from '../../../../../../redux/store';
+import { AppDispatch } from '../../../../../../redux/store';
+import SearchBar from './GenericSearch';
+import { resetBrand } from '../../../../../../redux/brandSlice';
 
 const BrandPage: React.FC = () => {
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const { brands, status } = useSelector((state: RootState) => state.brands);
+    const [searchTerm, setSearchTerm] = useState('');
+
     useEffect(() => {
         if (brands.length == 0) {
             dispatch(fetchBrands());
         } else if (status === 'succeeded') {
             dispatch(fetchBrands());
         }
-    }, [dispatch, brands, status])
+    }, [dispatch, brands, status]);
+
+    const filteredBrands = brands.filter(item =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     const {
         items: brand,
         isModalOpen,
@@ -43,9 +53,17 @@ const BrandPage: React.FC = () => {
                     entityName={brandConfig.name}
                 />
 
+                <SearchBar
+                    searchTerm={searchTerm}
+                    onChange={setSearchTerm}
+                    placeholder="Tìm kiếm thương hiệu..."
+                />
+
                 <GenericTable
-                    items={brands}
+                    items={filteredBrands}
                     config={brandConfig}
+                    onReset={() => dispatch(resetBrand())}
+                    link="brand"
                     onView={handleViewClick}
                     onEdit={handleEditClick}
                     onDelete={handleDeleteClick}

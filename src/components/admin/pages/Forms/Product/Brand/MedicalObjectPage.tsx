@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import GenericTable from './GenericTable';
 import GenericModal from './GenericModal';
@@ -6,19 +6,25 @@ import { useGenericCrud } from './useGenericCrud';
 import { medicalObjectConfig } from './entityConfigs';
 import { MedicalObject } from './types';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../../../../redux/store';
+import { RootState, AppDispatch } from '../../../../../../redux/store';
 import { fetchMedicalObjects } from '../../../../../../redux/medicalObjectAsyncThunk';
+import SearchBar from './GenericSearch';
+import { resetMedicalObject } from '../../../../../../redux/medicalObjectSlice';
 
 const MedicalObjectPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const { medicalObjects, status } = useSelector((state: RootState) => state.medicalObjects);
+  const [searchTerm, setSearchTerm] = useState('');
   useEffect(() => {
     if (medicalObjects.length == 0) {
       dispatch(fetchMedicalObjects());
     } else if (status === 'succeeded') {
       dispatch(fetchMedicalObjects());
     }
-  }, [dispatch, medicalObjects, status])
+  }, [dispatch, medicalObjects, status]);
+  const filteredMedicalObjects = medicalObjects.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const {
     items: medicalObject,
     isModalOpen,
@@ -42,10 +48,16 @@ const MedicalObjectPage: React.FC = () => {
           onCreateClick={handleCreateClick}
           entityName={medicalObjectConfig.name}
         />
-
+        <SearchBar
+            searchTerm={searchTerm}
+            onChange={setSearchTerm}
+            placeholder="Tìm kiếm danh mục..."
+        />
         <GenericTable
-          items={medicalObjects}
+          items={filteredMedicalObjects}
           config={medicalObjectConfig}
+          onReset={() => dispatch(resetMedicalObject())}
+          link='medical-object'
           onView={handleViewClick}
           onEdit={handleEditClick}
           onDelete={handleDeleteClick}

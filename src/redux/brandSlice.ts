@@ -14,6 +14,18 @@ interface Brand {
   logo: string;
   country: string;
   original: string;
+  products: [
+    {
+      id: string;
+      slug: string;
+      images: [
+        {
+          id: string;
+          image: string;
+        }
+      ]
+    }
+  ];
 }
 
 

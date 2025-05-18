@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { ProductFormData } from "../ProductCreationForm";
 import { Check } from "lucide-react";
 

@@ -59,3 +59,16 @@ export const deleteIndication = createAsyncThunk(
   }
 )
 
+export const getIndicationProductByName = createAsyncThunk(
+  "product/getIndicationByName",
+  async(name: string, {rejectWithValue}) => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/indication/${name}`, {
+        withCredentials: true
+      })
+      return res.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+)

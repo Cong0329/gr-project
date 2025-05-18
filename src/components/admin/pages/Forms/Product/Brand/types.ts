@@ -30,6 +30,7 @@ export interface Brand extends BaseEntity {
 }
 
 export interface Category extends BaseEntity {
+  parent_id: string;
   name: string;
 }
 

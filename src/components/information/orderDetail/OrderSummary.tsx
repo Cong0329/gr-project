@@ -1,24 +1,27 @@
-import {  useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import {  useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "../../../redux/store";
 import { FaAngleRight, FaQuestion } from "react-icons/fa6";
 
 import { CartSummartSkeleton } from "../../cart/CartSummartSkeleton";
-
+import { repurchaseOrderAPI } from "../../../redux/cartAsyncThunk";
+import { toast } from "react-toastify";
+import { updateOrderCancelled, updateOrderCompleted } from "../../../redux/orderAsyncThunk";
 
 interface OrderSummaryProps {
+  id?: string | null;
   isDetail?: boolean | null;
   status?: string | null;
   isLoading?: boolean | null;
 }
 
-const OrderSummary: React.FC<OrderSummaryProps> = ({ isDetail, status, isLoading }) => {
+const OrderSummary: React.FC<OrderSummaryProps> = ({ id, isDetail, status, isLoading }) => {
   const methodImages: Record<string, string> = {
     "cod": "https://i.imgur.com/9GxNvdb.png",
     "vnpay": "https://i.imgur.com/GIYkroG.png",
   };
   const {orderDetail} = useSelector((state: RootState) => state.order);
   const isCheckout = false;
-
+  const dispatch: AppDispatch = useDispatch();
 
   const totalPrice = parseFloat(orderDetail.discout_price);
 
@@ -27,9 +30,18 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ isDetail, status, isLoading
   const totalDiscount =  parseFloat(orderDetail.discout_price) - parseFloat(orderDetail.total_price);
 
 
-  const handleCheckout = () => {
-   
+  const handleRepurchaseOrder = () => {
+    toast.success("Đã thêm sản phẩm vào giỏ hàng");
+    dispatch(repurchaseOrderAPI(id?.toString() ?? ''))
   };
+
+  const handleCancelOrder = () => {
+    dispatch(updateOrderCancelled(id?.toString() ?? ''))
+  }
+
+  const handleCompletedOrder = () => {
+    dispatch(updateOrderCompleted(id?.toString() ?? ''))
+  }
   
   let content;
 
@@ -98,14 +110,28 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ isDetail, status, isLoading
           </div>
         )}
 
-
-        <button
-          onClick={handleCheckout}
-          className="w-full mt-4 bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700"
-        >
-          Mua lại
-        </button>
-
+        {(status === 'cancelled' || status === 'return'|| status === 'completed') ? (
+          <button
+            onClick={handleRepurchaseOrder}
+            className="w-full mt-4 bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700"
+          >
+            Mua lại
+          </button>
+        ) : (status === 'pending' || status === 'confirmed') ? (
+          <button
+            onClick={handleCancelOrder}
+            className="w-full mt-4 bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700"
+          >
+            Hủy đặt hàng
+          </button>
+        ) : (
+          <button
+            onClick={handleCompletedOrder}
+            className="w-full mt-4 bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700"
+          >
+            Đã nhận hàng
+          </button>
+        )}
       </div>
     )
   }

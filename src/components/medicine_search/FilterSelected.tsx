@@ -5,6 +5,7 @@ import { clearFilters, removeFilter } from "./../../redux/filterSlice";
 const FilterSelected: React.FC = () => {
    const dispatch = useDispatch();
     const selectedFilters = useSelector((state: RootState) => state.filters.selectedFilters);
+    console.log(selectedFilters);
 
   // Lấy danh sách filter đã chọn, bỏ "Tất cả"
   const activeFilters = Object.entries(selectedFilters).flatMap(([category, values]) =>

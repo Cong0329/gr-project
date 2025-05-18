@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import GenericTable from './GenericTable';
 import GenericModal from './GenericModal';
@@ -6,19 +6,25 @@ import { useGenericCrud } from './useGenericCrud';
 import { indicationConfig } from './entityConfigs';
 import { Indication } from './types';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../../../../redux/store';
+import { RootState, AppDispatch } from '../../../../../../redux/store';
 import { fetchIndications } from '../../../../../../redux/indicationAsyncThunk';
+import { resetIndication } from '../../../../../../redux/indicationSlice';
+import SearchBar from './GenericSearch';
 
 const IndicationPage: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const { indications, status } = useSelector((state: RootState) => state.indications);
+  const [searchTerm, setSearchTerm] = useState('');
   useEffect(() => {
     if (indications.length == 0) {
       dispatch(fetchIndications());
     } else if (status === 'succeeded') {
       dispatch(fetchIndications());
     }
-  }, [dispatch, indications, status])
+  }, [dispatch, indications, status]);
+  const filteredIndications = indications.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const {
     items: indication,
     isModalOpen,
@@ -42,10 +48,17 @@ const IndicationPage: React.FC = () => {
           onCreateClick={handleCreateClick}
           entityName={indicationConfig.name}
         />
+        <SearchBar
+            searchTerm={searchTerm}
+            onChange={setSearchTerm}
+            placeholder="Tìm kiếm danh mục..."
+        />
 
         <GenericTable
-          items={indications}
+          items={filteredIndications}
           config={indicationConfig}
+          onReset={() => dispatch(resetIndication())}
+          link='indication'
           onView={handleViewClick}
           onEdit={handleEditClick}
           onDelete={handleDeleteClick}

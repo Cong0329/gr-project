@@ -5,6 +5,8 @@ import { resetBrand } from '../../../../../../redux/brandSlice';
 interface GenericTableProps<T extends BaseEntity> {
   items: T[];
   config: EntityConfig<T>;
+  link: string;
+  onReset: () => void;
   onView: (item: T) => void;
   onEdit: (item: T) => void;
   onDelete: (item: T) => void;
@@ -13,6 +15,8 @@ interface GenericTableProps<T extends BaseEntity> {
 function GenericTable<T extends BaseEntity>({ 
   items, 
   config, 
+  link,
+  onReset,
   onView, 
   onEdit, 
   onDelete 
@@ -51,10 +55,8 @@ function GenericTable<T extends BaseEntity>({
               ))}
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <Link 
-                  to={`/admin/brand/${item.name}`}
-                  onClick={() => {
-                    dispatch(resetBrand());
-                  }}
+                  to={`/admin/${link}/${item.name}`}
+                  onClick={onReset}
                   className="text-blue-600 hover:text-blue-900 mr-3"
                 >
                   Xem

@@ -6,7 +6,16 @@ import FilterItem from "./FilterSection";
 import { FaFilter } from "react-icons/fa6";
 import "./sidebar.css"
 
-const FilterSideBar: React.FC = () => {
+interface FilterSidebarProps {
+    category: string[];
+    brand: string[];
+    country: string[];
+    original: string[];
+    medical_object: string[];
+    indication: string[];
+}
+
+const FilterSideBar: React.FC<FilterSidebarProps> = ({ category, brand, country, original, medical_object, indication }) => {
   const dispatch = useDispatch();
   const selectedFilters = useSelector((state: RootState) => state.filters.selectedFilters);
 
@@ -22,13 +31,13 @@ const FilterSideBar: React.FC = () => {
       <div className="mt-4 px-4 space-y-4 overflow-y-auto h-[450px]  scroll-smooth custom-scrollbar md-lg:text-sm">
         <FilterItem
           title="Loại sản phẩm"
-          options={["Tất cả", "Thuốc tim mạch huyết áp", "Dầu cá, Omega 3, DHA", "Sữa", "Thuốc trị mỡ máu"]}
+          options={["Tất cả", ...category]}
           selected={selectedFilters["Loại sản phẩm"]}
           onChange={(value) => handleFilterChange("Loại sản phẩm", value)}
         />
         <FilterItem
           title="Đối tượng sử dụng"
-          options={["Tất cả", "Người cao tuổi", "Trẻ em", "Người lớn", "Phụ nữ có thai"]}
+          options={["Tất cả", ...medical_object]}
           hasSearch
           selected={selectedFilters["Đối tượng sử dụng"]}
           onChange={(value) => handleFilterChange("Đối tượng sử dụng", value)}
@@ -47,28 +56,28 @@ const FilterSideBar: React.FC = () => {
         />
         <FilterItem
           title="Nước sản xuất"
-          options={["Tất cả", "Việt Nam", "Hoa Kỳ", "Ấn Độ", "Thái Lan"]}
+          options={["Tất cả", ...country]}
           hasSearch
           selected={selectedFilters["Nước sản xuất"]}
           onChange={(value) => handleFilterChange("Nước sản xuất", value)}
         />
         <FilterItem
           title="Chỉ định"
-          options={["Tất cả", "Cao huyết áp", "Cholesterol máu cao", "Cơn đau thắt ngực", "Mỡ máu"]}
+          options={["Tất cả", ...indication]}
           hasSearch
           selected={selectedFilters["Chỉ định"]}
           onChange={(value) => handleFilterChange("Chỉ định", value)}
         />
         <FilterItem
           title="Thương hiệu"
-          options={["Tất cả", "MEGA We care", "Dược 3-2", "OMEXXEL", "Stella Pharm"]}
+          options={["Tất cả", ...brand]}
           hasSearch
           selected={selectedFilters["Thương hiệu"]}
           onChange={(value) => handleFilterChange("Thương hiệu", value)}
         />
         <FilterItem
           title="Xuất xứ thương hiệu"
-          options={["Tất cả", "Việt Nam", "Thái Lan", "Hoa Kỳ", "Úc"]}
+          options={["Tất cả", ...original]}
           hasSearch
           selected={selectedFilters["Xuất xứ thương hiệu"]}
           onChange={(value) => handleFilterChange("Xuất xứ thương hiệu", value)}

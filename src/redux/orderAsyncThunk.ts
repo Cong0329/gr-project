@@ -147,12 +147,12 @@ export const updateOrderConfirm = createAsyncThunk(
     "order/updateOrderCompleted",
     async (id: string, { rejectWithValue }) => {
       try {
-        const response = await axios.patch(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/order/${id}/admin/completed`,{}, {
+        const response = await axios.patch(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/order/${id}/completed`,{}, {
           withCredentials: true
         });
         const data = response.data;
         if(data.order.status === 'completed') {
-            window.location.href = '/admin/orders';
+            window.location.href = '/profile/orders';
         }
         return data;
       } catch (error:unknown) {
@@ -168,12 +168,12 @@ export const updateOrderConfirm = createAsyncThunk(
     "order/updateOrderCancelled",
     async (id: string, { rejectWithValue }) => {
       try {
-        const response = await axios.patch(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/order/${id}/admin/cancel`,{}, {
+        const response = await axios.patch(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/order/${id}/cancel`,{}, {
           withCredentials: true
         });
         const data = response.data;
         if(data.order.status === 'cancelled') {
-            window.location.href = '/admin/orders';
+            window.location.href = '/profile/orders';
         }
         return data;
       } catch (error:unknown) {

@@ -5,7 +5,7 @@ export const fetchBrands = createAsyncThunk(
   "product/brands",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/brand`, {
+      const res = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/brand?limit=100`, {
         withCredentials: true,
       });
       return res.data; // ✅ TRẢ VỀ ở đây

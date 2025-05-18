@@ -90,3 +90,21 @@ export const updateQuantityAPI = createAsyncThunk(
       }
     }
   );
+
+ export const repurchaseOrderAPI = createAsyncThunk(
+    'cart/repurchaseOrderAPI',
+    async (order_id: string, { rejectWithValue }) => {
+      try {
+        // Gửi DELETE request để xóa sản phẩm khỏi giỏ hàng
+        const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/cart/repurchase/${order_id}`,{}, {
+          withCredentials: true
+        }); // Thay URL với endpoint thực tế
+        return response.data; // Giả sử API trả về giỏ hàng đã cập nhật
+      } catch (error:unknown) {
+        if (axios.isAxiosError(error) && error.response) {
+          return rejectWithValue(error.response.data);
+        }
+        return rejectWithValue({ message: 'An unknown error occurred' });
+      }
+    }
+  ); 

@@ -15,11 +15,25 @@ export const fetchCategories = createAsyncThunk(
   }
 );
 
+export const getParentCategory = createAsyncThunk(
+  "product/getParentCategory",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/category/parent`, {
+        withCredentials: true,
+      });
+      return res.data; // ✅ TRẢ VỀ ở đây
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const createCategory = createAsyncThunk(
   "product/createCategories",
-  async(name: string , {rejectWithValue}) => {
+  async({name, parent_id}: {name: string, parent_id?: string} , {rejectWithValue}) => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/category`, {name}, {
+      const res = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/category`, {name, parent_id}, {
         withCredentials: true
       })
       return res.data;
@@ -31,9 +45,9 @@ export const createCategory = createAsyncThunk(
 
 export const updateCategory = createAsyncThunk(
   "product/updateCategories",
-  async({id, name }: {id: number, name: string}, {rejectWithValue}) => {
+  async({id, name, parent_id }: {id: string, name: string, parent_id?: string}, {rejectWithValue}) => {
     try {
-      const res = await axios.put(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/category/${id}`, {name}, {
+      const res = await axios.put(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/category/${id}`, {name, parent_id}, {
         withCredentials: true
       })
       return res.data;
@@ -48,6 +62,20 @@ export const deleteCategory = createAsyncThunk (
   async(id: number, {rejectWithValue}) => {
     try {
       const res = await axios.delete(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/category/${id}`, {
+        withCredentials: true
+      })
+      return res.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+)
+
+export const getCategoryProduct = createAsyncThunk(
+  "product/getCategoryProduct",
+  async(name: string, {rejectWithValue}) => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/category/${name}`, {
         withCredentials: true
       })
       return res.data;

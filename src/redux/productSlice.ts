@@ -39,7 +39,7 @@ export const productSlice = createSlice({
         resetProduct: (state) => {
             state.product = {} as ProductDetail;
             state.detail = {} as DescriptionProduct;
-            state.review = {} as Review;
+            state.review = [];
         }
     },
     extraReducers: (builder) => {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../redux/store";
+import { AppDispatch, RootState } from "../../../redux/store";
 import { NavLink } from "../../navlink/NavLink";
 import { CheckoutItemOrder } from "./CheckoutItemOrder";
 import Breadcrumb from "../../home_booking/details/component_details/BreadCrumb";
@@ -15,7 +15,7 @@ export const OrderDetailBody = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { id } = useParams<{ id: string }>();
     const { orderDetail } = useSelector((state: RootState) => state.order);
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const canceled = orderDetail?.status_history?.filter((item) => item.status === 'cancelled');
     const completed = orderDetail?.status_history?.filter((item) => item.status === 'completed');
 
@@ -126,7 +126,7 @@ export const OrderDetailBody = () => {
                         {/* CartSummary luôn nằm dưới màn hình */}
                         <div className="tb:fixed tb:bottom-0 tb:left-0 tb:z-10 w-2/6 tb:w-full">
                             {orderDetail.items && orderDetail.items.length > 0 && (
-                                <OrderSummary isDetail={true} isLoading={isLoading} status={orderDetail.status} />
+                                <OrderSummary isDetail={true} isLoading={isLoading} status={orderDetail.status} id={orderDetail.id.toString()} />
                             )}
                         </div>
                     </div>

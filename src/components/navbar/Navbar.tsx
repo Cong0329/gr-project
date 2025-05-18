@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import logo from '../../assets/logo.png';
-import { Search } from './Search';
+import Search  from './Search';
 import { Login } from './Login';
 import { Cart } from './Cart';
 import './Navbar.css';

@@ -74,7 +74,11 @@ const filterSlice = createSlice({
   },
   clearFilters: (state) => {
     Object.keys(state.selectedFilters).forEach((key) => {
-      state.selectedFilters[key] = ["Tất cả"];
+      if (key === "Giá bán") {
+        state.selectedFilters[key] = [];
+      } else {
+        state.selectedFilters[key] = ["Tất cả"];
+      }
     });
   },
   applyFilters: (state, action: PayloadAction<{ [key: string]: string[] }>) => {

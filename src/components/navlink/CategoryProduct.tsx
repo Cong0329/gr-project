@@ -1,47 +1,16 @@
-import medicine from "../../assets/category-icons/paracetamol.png";
+
 import { Link } from "react-router-dom";
 
-interface CategoryProductProps {
+export interface CategoryProductProps {
   id: number;
   name: string;
   image: string;
   price: number;
 }
 
-const medicines: CategoryProductProps[] = [
-  {
-    id: 1,
-    name: "Cetirizine",
-    image: medicine,
-    price: 100000,
-  },
-  {
-    id: 2,
-    name: "Thuốc Telfor 60 DHG điều trị các triệu chứng viêm mũi dị ứng (2 vỉ x 10 viên)",
-    image: medicine,
-    price: 100000,
-  },
-  {
-    id: 3,
-    name: "Cetirizine",
-    image: medicine,
-    price: 100000,
-  },
-  {
-    id: 4,
-    name: "Cetirizine",
-    image: medicine,
-    price: 100000,
-  },
-  {
-    id: 5,
-    name: "Cetirizine",
-    image: medicine,
-    price: 100000,
-  },
-];
 
-export const CategoryProduct = () => {
+
+export const CategoryProduct = ({products}: {products: CategoryProductProps[]}) => {
   return (
     <div className="">
       <div className="flex items-center">
@@ -66,21 +35,21 @@ export const CategoryProduct = () => {
         </Link>
       </div>
       <div className="grid grid-cols-5 gap-2 w-full">
-        {medicines.map((medicine: CategoryProductProps) => (
-          <div className="flex flex-col items-start" key={medicine.id}>
+        {products.map((product: CategoryProductProps) => (
+          <div className="flex flex-col items-start" key={product.id}>
             <img
-              src={medicine.image}
-              alt={medicine.name}
+              src={product.image}
+              alt={product.name}
               loading="lazy"
               className="w-32 h-32 bg-white rounded-lg p-4"
             />
             <div className="w-full mt-2 h-16 text-sm overflow-hidden text-ellipsis">
-              <p className="line-clamp-3">{medicine.name}</p>
+              <p className="line-clamp-3">{product.name}</p>
             </div>
 
             <div className="flex">
               <span className="mt-1 font-bold text-blue-700 mr-1">
-                {medicine.price.toLocaleString()} đ
+                {product.price.toLocaleString()} đ
               </span>
               <span className="text-blue-700 mt-1 text-sm">/ hộp</span>
             </div>

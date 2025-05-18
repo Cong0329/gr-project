@@ -53,7 +53,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
         </Route>
 
-        <Route path="/cart" element={<CartPage />} />
+        {/* <Route path="/cart" element={<CartPage />} /> */}
         <Route
           path="/profile"
           element={<Navigate to="/profile/personal-info" replace />}
