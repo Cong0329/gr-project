@@ -4,28 +4,46 @@ const cloudinary = require('../utils/cloudinary');
 // Get all brands
 exports.getAllBrands = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;       // Trang hiện tại
-    const limit = parseInt(req.query.limit) || 10;    // Số brand mỗi trang
-    const offset = (page - 1) * limit;                // Bỏ qua bao nhiêu dòng
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
 
     const { count, rows } = await Brand.findAndCountAll({
       attributes: ['id', 'name', 'logo', 'country', 'original'],
       limit,
       offset,
-      order: [['id', 'ASC']], // hoặc 'createdAt' nếu muốn sắp theo ngày tạo
+      order: [['id', 'ASC']],
+      include: [
+        {
+          model: Product,
+          as: 'products',
+          attributes: ['id', 'slug'],
+          limit: 1, // Lấy 1 sản phẩm
+          separate: true, // để áp dụng limit chính xác cho từng brand
+          include: [
+            {
+              model: ProductImage,
+              as: 'images',
+              attributes: ['id', 'image'],
+              limit: 1 // Lấy 1 ảnh
+            }
+          ]
+        }
+      ]
     });
 
     res.status(200).json({
-      total: count,             // Tổng số brand
+      total: count,
       currentPage: page,
       totalPages: Math.ceil(count / limit),
-      brands: rows              // Danh sách brand theo trang
+      brands: rows
     });
   } catch (err) {
     console.error('Get brands error:', err);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 
 // Create a new brand
@@ -177,7 +195,7 @@ exports.getProductsByBrandName = async (req, res) => {
         },
       ],
     });
-    
+
 
     if (!brand) return res.status(404).json({ message: 'Brand not found' });
 

@@ -92,11 +92,11 @@ const MessageItem = MessageItemModel(sequelize, DataTypes);
 
 
 
-Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
-Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
+// Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
+// Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
 
-Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
-Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
+// Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
+// Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
 
 
 

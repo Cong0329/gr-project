@@ -1,7 +1,7 @@
-const { Product, ProductImage, ProductOption, ProductDetail, ProductDetailSection, Brand } = require('../models');
+const { Product, ProductImage, ProductOption, ProductDetail, ProductDetailSection, Brand, Category, MedicalObject, Indication } = require('../models');
 const { productExcludeAttributes, productIncludeOptions } = require('../utils/productInclude');
-const  pickProductFields  = require('../utils/productFileds');
-const { where } = require('sequelize');
+const pickProductFields = require('../utils/productFileds');
+const { Op } = require('sequelize');
 
 // Creat Product
 exports.createProduct = async (req, res) => {
@@ -26,7 +26,7 @@ exports.getProductBySlug = async (req, res) => {
 
   try {
     const product = await Product.findOne({
-      where: { slug, is_deleted : false },
+      where: { slug, is_deleted: false },
       include: productIncludeOptions,
       attributes: productExcludeAttributes
     });
@@ -56,7 +56,7 @@ exports.getProductById = async (req, res) => {
   const { id } = req.params;
   try {
     const product = await Product.findByPk(id, {
-      where: { is_deleted : false },
+      where: { is_deleted: false },
       include: productIncludeOptions,
       attributes: productExcludeAttributes
     });
@@ -74,7 +74,7 @@ exports.getProductById = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   try {
     const products = await Product.findAll({
-      where: { is_deleted : false },
+      where: { is_deleted: false },
       include: [
         {
           model: Brand,
@@ -82,10 +82,16 @@ exports.getAllProducts = async (req, res) => {
           attributes: ['id', 'name'],
         },
         {
+          model: MedicalObject,
+          as: 'medical_object',
+          attributes: ['id', 'name'],
+        },
+        {
           model: ProductImage,
           as: 'images',
           attributes: ['id', 'image'],
           required: true, // Phải có ảnh
+          limit: 1
         },
         {
           model: ProductOption,
@@ -171,5 +177,64 @@ exports.deleteProduct = async (req, res) => {
   } catch (error) {
     console.error("Hide product error:", error);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+// search
+exports.searchProductsByName = async (req, res) => {
+  try {
+    const { name } = req.params;
+    if (!name) {
+      return res.status(400).json({ message: 'Thiếu từ khóa tìm kiếm "name"' });
+    }
+
+    const products = await Product.findAll({
+      where: {
+        name: {
+          [Op.like]: `%${name}%`
+        },
+        is_deleted: false
+      },
+      include: [
+        { model: Brand, as: 'brand', attributes: ['id', 'name', 'country', 'original'] },
+        { model: Category, as: 'category', attributes: ['id', 'name'] },
+        { model: MedicalObject, as: 'medical_object', attributes: ['id', 'name'] },
+        { model: Indication, as: 'indication', attributes: ['id', 'name'] },
+        {
+          model: ProductImage,
+          as: 'images',
+          attributes: ['id', 'image'],
+          required: true, // Phải có ảnh
+          limit: 1
+        },
+        {
+          model: ProductOption,
+          as: 'options',
+          attributes: ['id', 'label', 'price', 'discounted_price'],
+          required: true, // Phải có option
+        },
+        {
+          model: ProductDetail,
+          as: 'detail',
+          attributes: [], // Không trả về data
+          required: true,
+          include: [
+            {
+              model: ProductDetailSection,
+              as: 'sections',
+              attributes: [], // Không trả về sections
+              required: true, // Bắt buộc phải có ít nhất 1 section
+            },
+          ],
+        },
+      ],
+      attributes: ['id', 'name', 'quantity', 'slug', 'specification', 'type'],
+    });
+
+    return res.status(200).json(products);
+  } catch (error) {
+    console.error('Lỗi tìm kiếm sản phẩm:', error);
+    return res.status(500).json({ message: 'Đã xảy ra lỗi server' });
   }
 };

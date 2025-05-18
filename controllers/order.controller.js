@@ -344,10 +344,10 @@ exports.getUserOrders = async (req, res) => {
 
 // Shipping order
 exports.shippingOrder = async (req, res) => {
-  const orderId = req.params.id;
+  const id = req.params.id;
 
   try {
-    const order = await Order.findOne({ where: { id: orderId } });
+    const order = await Order.findOne({ where: { id: id } });
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
@@ -377,11 +377,11 @@ exports.shippingOrder = async (req, res) => {
 }
 
 exports.completeOrder = async (req, res) => {
-  const orderId = req.params.id;
+  const id = req.params.id;
   const userId = req.user.id; // từ middleware auth
 
   try {
-    const order = await Order.findOne({ where: { id: orderId, user_id: userId } });
+    const order = await Order.findOne({ where: { id: id, user_id: userId } });
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
@@ -412,12 +412,12 @@ exports.completeOrder = async (req, res) => {
 
 // Cancel order
 exports.cancelOrder = async (req, res) => {
-  const orderId = req.params.id;
+  const id = req.params.id;
   const userId = req.user.id; // từ middleware auth
 
   try {
     const order = await Order.findOne({
-      where: { id: orderId, user_id: userId },
+      where: { id: id, user_id: userId },
       include: {
         model: OrderItem, as: 'items',
         include: [{ model: Product, as: 'product' }]
@@ -443,7 +443,7 @@ exports.cancelOrder = async (req, res) => {
           }
         }));
       } else {
-        console.warn(`Order ${orderId} is confirmed but has no items. Stock not reversed.`);
+        console.warn(`Order ${id} is confirmed but has no items. Stock not reversed.`);
       }
 
     }
