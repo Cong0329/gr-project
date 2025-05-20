@@ -9,6 +9,7 @@ import SignUp from "../admin/pages/AuthPages/SignUp";
 import { VerifyCodePage } from "../admin/pages/AuthPages/VerifyCodePage";
 import RoleRedirect from "./RoleRedirect";
 import AuthWrapper from "./AuthWrapper";
+import VerifyProtectedRoute from "./VerifyProtected";
 
 const appRoutes = (
   <>
@@ -53,7 +54,11 @@ const appRoutes = (
         </AuthWrapper>
       }
     />
-    <Route path="/doctor/verify" element={<VerifyCodePage />} />
+    <Route path="/doctor/verify" element={
+      <VerifyProtectedRoute>
+        <VerifyCodePage />
+      </VerifyProtectedRoute>
+    } />
 
     {/* Auth Admin */}
     <Route
@@ -72,7 +77,11 @@ const appRoutes = (
         </AuthWrapper>
       }
     />
-    <Route path="/admin/verify" element={<VerifyCodePage />} />
+    <Route path="/admin/verify" element={
+      <VerifyProtectedRoute>
+        <VerifyCodePage />
+      </VerifyProtectedRoute>
+    } />
 
     {/* Default redirect */}
     <Route path="/" element={<RoleRedirect />} />

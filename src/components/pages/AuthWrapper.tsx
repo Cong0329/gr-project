@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Navigate } from "react-router-dom";
-import { RootState } from "../../redux/store";
+import { RootState, AppDispatch } from "../../redux/store";
 import { reset } from "../../redux/authSlice";
 
 interface AuthWrapperProps {
@@ -11,10 +11,11 @@ interface AuthWrapperProps {
 }
 
 const AuthWrapper = ({ children, role, redirectTo }: AuthWrapperProps) => {
-  const dispatch = useDispatch();
-  const { isAuthenticated, userInfo, verify } = useSelector(
+  const dispatch: AppDispatch = useDispatch();
+  const { isAuthenticated, verify } = useSelector(
     (state: RootState) => state.auth
   );
+  const userRole = useSelector((state: RootState) => state.auth.role);
 
   // Reset auth state when mounting auth pages
   useEffect(() => {
@@ -31,14 +32,14 @@ const AuthWrapper = ({ children, role, redirectTo }: AuthWrapperProps) => {
     // Log the current auth state for debugging - can be removed in production
     console.log("Auth state:", {
       isAuthenticated,
-      userRole: userInfo?.role,
+      userRole,
       verify,
       expectedRole: role,
     });
-  }, [isAuthenticated, userInfo, verify, role]);
+  }, [isAuthenticated, userRole, verify, role]);
 
   // Chỉ chuyển hướng người dùng khi họ đã được xác thực đúng
-  if (isAuthenticated && verify && userInfo?.role === role) {
+  if (isAuthenticated && verify && userRole === role) {
     console.log(
       `User authenticated with correct role (${role}), redirecting to ${redirectTo}`
     );
@@ -61,11 +62,11 @@ const AuthWrapper = ({ children, role, redirectTo }: AuthWrapperProps) => {
   }
 
   // If user is authenticated but has a different role, redirect to appropriate signin
-  if (isAuthenticated && userInfo?.role && userInfo.role !== role) {
+  if (isAuthenticated && userRole && userRole !== role) {
     const signinPath =
-      userInfo.role === "ROLE_ADMIN" ? "/admin/signin" : "/doctor/signin";
+      userRole === "ROLE_ADMIN" ? "/admin/signin" : "/doctor/signin";
     console.log(
-      `User has incorrect role (${userInfo.role}), redirecting to ${signinPath}`
+      `User has incorrect role (${userRole}), redirecting to ${signinPath}`
     );
     return <Navigate to={signinPath} replace />;
   }

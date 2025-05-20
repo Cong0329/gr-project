@@ -3,16 +3,17 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../../redux/store";
+import { RootState, AppDispatch } from "../../../../redux/store";
 import axiosInstance from "../../../../auth/axiosInstance";
 import avatar from "../../../../assets/images/user/owner.jpg"
-import { adminLogin } from "../../../../redux/authSlice";
+import { adminLogin, logout } from "../../../../redux/authSlice";
+import { logoutApi } from "../../../../redux/userAsyncThunk";
 
 export default function UserDropdown() {
-  const { admin } = useSelector((state: RootState) => state.auth);
+  const { admin, role } = useSelector((state: RootState) => state.auth);
 
   const [isOpen, setIsOpen] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -168,7 +169,11 @@ export default function UserDropdown() {
           </li>
         </ul>
         <Link
-          to="/signin"
+          to={role === "ROLE_ADMIN" ? "/admin/signin" : "/doctor/signin"}
+          onClick={() => {
+            dispatch(logout());
+            dispatch(logoutApi());
+          }}
           className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
         >
           <svg

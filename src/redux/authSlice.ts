@@ -24,6 +24,7 @@ interface AuthState {
   admin: UserInfo;
   doctor: UserInfo;
   verify: boolean;
+  role: string;
   message: string;
   mail: string;
   status: "idle" | "loading" | "succeeded" | "failed";
@@ -36,6 +37,7 @@ const initialState: AuthState = {
   admin: {} as UserInfo,
   doctor: {} as UserInfo,
   verify: false,
+  role: '',
   message: '',
   mail:'',
   status: "idle"
@@ -58,6 +60,7 @@ const authSlice = createSlice({
       reset: (state) => {
         state.isAuthenticated = false;
         state.isUserAuthenticated = false;
+        state.status = "idle";
       },
       vefify: (state) => {
         state.isAuthenticated = true;
@@ -71,6 +74,9 @@ const authSlice = createSlice({
         state.isUserAuthenticated = false;
         state.user = {} as UserInfo;
         state.admin = {} as UserInfo;
+        state.doctor = {} as UserInfo;
+        state.role = '';
+        state.status = "idle";
         localStorage.clear();
       },
       resetLoginStatus: (state) => {
@@ -118,15 +124,17 @@ const authSlice = createSlice({
           state.verify = false;
           state.message = getSafeErrorMessage(action.payload);
         })
-        .addCase(vefifyEmailAPI.fulfilled, (state) => {
+        .addCase(vefifyEmailAPI.fulfilled, (state, action) => {
           state.status = "succeeded";
           state.verify = false;
           state.isAuthenticated = true;
+          state.role = action.payload.roles;
         })
         .addCase(vefifyEmailAPI.pending, (state) => {
           state.status = "loading";
         })
         .addCase(vefifyEmailAPI.rejected, (state, action) => {
+          state.status = "failed";
           state.message = getSafeErrorMessage(action.payload);
         })
     },

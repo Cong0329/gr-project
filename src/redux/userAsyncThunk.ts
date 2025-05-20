@@ -77,3 +77,17 @@ export const doctorLoginAPI =  createAsyncThunk(
     }
   }
 ) ;
+
+export const logoutApi = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/logout`, {
+        withCredentials: true
+      });
+      return true;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);

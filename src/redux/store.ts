@@ -30,7 +30,7 @@ const cartPersistConfig = {
 const authPersistConfig = {
   key: 'auth',
   storage,
-  whitelist: ['isAuthenticated', 'isUserAuthenticated', 'user', 'admin', 'verify', 'mail']
+  whitelist: ['isAuthenticated', 'isUserAuthenticated', 'user', 'admin', 'verify', 'mail', 'role']
 };
 
 const orderPersistConfig = {

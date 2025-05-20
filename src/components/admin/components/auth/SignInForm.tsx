@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { adminLoginAPI } from "../../../../redux/userAsyncThunk";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
-import { RootState } from "../../../../redux/store";
+import { RootState, AppDispatch } from "../../../../redux/store";
 import logo from "../../../../assets/logo.png";
 import Label from "../form/Label";
 import Checkbox from "../form/input/Checkbox";
@@ -15,7 +15,7 @@ export interface SignInForm {
 
 export default function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { status } = useSelector((state: RootState) => state.auth);
