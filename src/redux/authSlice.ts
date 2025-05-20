@@ -61,6 +61,7 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.isUserAuthenticated = false;
         state.status = "idle";
+        state.role = '';
       },
       vefify: (state) => {
         state.isAuthenticated = true;
@@ -69,13 +70,15 @@ const authSlice = createSlice({
       lockVerify: (state) => {
         state.verify = false;
       },
+      refreshRole : (state, action) => {
+        state.role = action.payload;
+      },
       logout: (state) => {
         state.isAuthenticated = false;
         state.isUserAuthenticated = false;
         state.user = {} as UserInfo;
         state.admin = {} as UserInfo;
         state.doctor = {} as UserInfo;
-        state.role = '';
         state.status = "idle";
         localStorage.clear();
       },
@@ -141,5 +144,5 @@ const authSlice = createSlice({
   });
 
 
-  export const { login, logout, googleLogin,resetLoginStatus , vefify, lockVerify, reset, adminLogin} = authSlice.actions;
+  export const { login, logout, googleLogin,resetLoginStatus , vefify, lockVerify, reset, adminLogin, refreshRole} = authSlice.actions;
   export default authSlice.reducer;

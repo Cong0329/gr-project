@@ -87,7 +87,7 @@ const appRoutes = (
     <Route path="/" element={<RoleRedirect />} />
 
     {/* 404 */}
-    <Route path="*" element={<Navigate to="/admin/signin" replace />} />
+    {/* <Route path="*" element={<Navigate to="/admin/signin" replace />} /> */}
   </>
 );
 

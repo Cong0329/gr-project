@@ -36,6 +36,7 @@ const AuthWrapper = ({ children, role, redirectTo }: AuthWrapperProps) => {
       verify,
       expectedRole: role,
     });
+    
   }, [isAuthenticated, userRole, verify, role]);
 
   // Chỉ chuyển hướng người dùng khi họ đã được xác thực đúng

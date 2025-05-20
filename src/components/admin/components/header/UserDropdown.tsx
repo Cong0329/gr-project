@@ -11,6 +11,7 @@ import { logoutApi } from "../../../../redux/userAsyncThunk";
 
 export default function UserDropdown() {
   const { admin, role } = useSelector((state: RootState) => state.auth);
+  const userRole = Array.isArray(role) ? role[0] : role || "";
 
   const [isOpen, setIsOpen] = useState(false);
   const dispatch:AppDispatch = useDispatch();
@@ -169,7 +170,7 @@ export default function UserDropdown() {
           </li>
         </ul>
         <Link
-          to={role === "ROLE_ADMIN" ? "/admin/signin" : "/doctor/signin"}
+          to={userRole === "ROLE_ADMIN" ? "/admin/signin" : "/doctor/signin"}
           onClick={() => {
             dispatch(logout());
             dispatch(logoutApi());
