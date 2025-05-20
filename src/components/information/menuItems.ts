@@ -3,7 +3,7 @@ export const menuItems = [
   { id: 'personal-info', icon: 'user', label: 'Thông tin cá nhân' },
   { id: 'orders', icon: 'box', label: 'Đơn hàng của tôi' },
   { id: 'addresses', icon: 'map-pin', label: 'Quản lý số địa chỉ' },
-  { id: 'vaccinations', icon: 'syringe', label: 'Lịch hẹn tiêm chủng' },
+  { id: 'health-check', icon: 'syringe', label: 'Lịch khám sức khoẻ' },
   { id: 'vaccination-orders', icon: 'clipboard', label: 'Đơn hàng tiêm chủng' },
   { id: 'prescriptions', icon: 'pill', label: 'Đơn thuốc của tôi' },
   { id: 'logout', icon: 'log-out', label: 'Đăng xuất' }
