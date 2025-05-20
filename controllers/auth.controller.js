@@ -249,7 +249,12 @@ exports.verifyCode = async (req, res) => {
 
 
     // Trả về token
-    res.status(200).json({ message: 'Verification successful' });
+    const roleCodes = roles.map(role => role.code);
+
+    res.status(200).json({
+      message: 'Verification successful',
+      roles: roleCodes
+    });
 
     // Xóa mã xác minh sau khi xác minh thành công
     await user.update({ verify_code: null, verify_code_expires_at: null });
@@ -335,7 +340,7 @@ exports.refreshToken = async (req, res) => {
       sameSite: 'Strict',  // Ngăn chặn CSRF
       maxAge: 24 * 60 * 60 * 1000  // Cookie hết hạn sau 1 ngày
     });
-    return res.sendStatus(200); 
+    return res.sendStatus(200);
   } catch (err) {
     return res.status(403).json({ message: 'Invalid refresh token' });
   }
