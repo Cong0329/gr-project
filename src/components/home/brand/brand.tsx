@@ -88,7 +88,7 @@ export default function ProductSlider() {
                             <div className="flex flex-col justify-center items-center">
                                 <div className="w-full pt-2  bg-white flex flex-col items-center justify-center rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
                                     <img
-                                        src={brand.products[0].images[0].image}
+                                        src={brand.products[0]?.images[0]?.image}
                                         className="w-28 h-auto tb:w-24 object-fit"
                                         loading="lazy"
                                         alt={brand.name}

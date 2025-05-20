@@ -13,18 +13,22 @@ import SearchBar from './GenericSearch';
 
 
 const CategoryPage: React.FC = () => {
-  const dispatch:AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const { categories, parent, status } = useSelector((state: RootState) => state.categories);
   const [searchTerm, setSearchTerm] = useState('');
   useEffect(() => {
-    if (categories.length == 0) {
-      dispatch(fetchCategories());
-      dispatch(getParentCategory());
-    } else if (status === 'succeeded') {
+
+    dispatch(fetchCategories());
+    dispatch(getParentCategory());
+
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (status === 'succeeded') {
       dispatch(fetchCategories());
       dispatch(getParentCategory());
     }
-  }, [dispatch, categories, status]);
+  }, [dispatch, status]);
   const filteredCategories = categories.filter(item =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -47,12 +51,12 @@ const CategoryPage: React.FC = () => {
     fields: categoryConfig.fields.map(field =>
       field.name === 'parent_id'
         ? {
-            ...field,
-            options: parent.map(cat => ({
-              value: cat.id,
-              label: cat.name,
-            }))
-          }
+          ...field,
+          options: parent.map(cat => ({
+            value: cat.id,
+            label: cat.name,
+          }))
+        }
         : field
     )
   };
@@ -65,9 +69,9 @@ const CategoryPage: React.FC = () => {
           entityName={categoryConfig.name}
         />
         <SearchBar
-            searchTerm={searchTerm}
-            onChange={setSearchTerm}
-            placeholder="Tìm kiếm danh mục..."
+          searchTerm={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Tìm kiếm danh mục..."
         />
         <GenericTable
           items={filteredCategories}

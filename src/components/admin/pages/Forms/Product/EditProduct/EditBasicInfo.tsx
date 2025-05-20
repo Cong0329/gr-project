@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../../../../redux/store";
+import { RootState, AppDispatch } from "../../../../../../redux/store";
 import { useEffect, useState } from "react";
 import { fetchBrands } from "../../../../../../redux/brandAsyncThunk";
 import { fetchCategories } from "../../../../../../redux/categoryAsyncThunk";
 import { fetchMedicalObjects } from "../../../../../../redux/medicalObjectAsyncThunk";
 import { fetchIndications } from "../../../../../../redux/indicationAsyncThunk";
 import { updateProduct } from "../../../../../../redux/productAsyncThunk";
+import CustomSelect from "../AddProduct/Step/CustomSelect";
 
 
 // interface EditBasicInfoStepProps {
@@ -20,7 +21,7 @@ export const EditBasicInfoStep = () => {
     const { indications } = useSelector((state: RootState) => state.indications);
     const { product } = useSelector((state: RootState) => state.products);
     const [initialFormData, setInitialFormData] = useState({});
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const [formData, setFormData] = useState({
         name: '',
         code: '',
@@ -209,74 +210,50 @@ export const EditBasicInfoStep = () => {
                     required
                 />
             </div>
-            <div>
-                <label className="block mb-1 font-medium">Danh mục *</label>
-                <select
-                    name="category_id"
-                    value={formData.category_id}
-                    onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
-                    className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                >
-                    <option value="">Chọn danh mục</option>
-                    {categories.map((category) => (
-                        <option key={category.id} value={category.id}>
-                            {category.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <div>
-                <label className="block mb-1 font-medium">Thương hiệu *</label>
-                <select
-                    name="brand_id"
-                    value={formData.brand_id}
-                    onChange={(e) => setFormData({ ...formData, brand_id: e.target.value })}
-                    className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                >
-                    <option value="">Chọn danh mục</option>
-                    {brands.map((brand) => (
-                        <option key={brand.id} value={brand.id}>
-                            {brand.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <div>
-                <label className="block mb-1 font-medium">Chỉ định *</label>
-                <select
-                    name="indication_id"
-                    value={formData.indication_id}
-                    onChange={(e) => setFormData({ ...formData, indication_id: e.target.value })}
-                    className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                >
-                    <option value="">Chọn danh mục</option>
-                    {indications.map((indication) => (
-                        <option key={indication.id} value={indication.id}>
-                            {indication.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
-            <div>
-                <label className="block mb-1 font-medium">Đối tượng *</label>
-                <select
-                    name="medical_object_id"
-                    value={formData.medical_object_id}
-                    onChange={(e) => setFormData({ ...formData, medical_object_id: e.target.value })}
-                    className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                >
-                    <option value="">Chọn danh mục</option>
-                    {medicalObjects.map((medicalObject) => (
-                        <option key={medicalObject.id} value={medicalObject.id}>
-                            {medicalObject.name}
-                        </option>
-                    ))}
-                </select>
-            </div>
+            <CustomSelect
+                name="category_id"
+                value={formData.category_id?.toString() || ''}
+                options={categories.map((category) => ({ value: String(category.id), label: category.name }))}
+                onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+                label="Danh mục"
+                required
+            />
+            <CustomSelect
+                name="brand_id"
+                value={formData.brand_id?.toString() || ''}
+                onChange={(e) => setFormData({ ...formData, brand_id: e.target.value })}
+                options={brands.map((brand) => ({
+                    value: String(brand.id), // đảm bảo là string
+                    label: brand.name,
+                }))}
+                label="Thương hiệu"
+                required
+                placeholder="Chọn thương hiệu..."
+            />
+            <CustomSelect
+                name="indication_id"
+                value={formData.indication_id?.toString() || ''}
+                onChange={(e) => setFormData({ ...formData, indication_id: e.target.value })}
+                options={indications.map((indication) => ({
+                    value: String(indication.id), // đảm bảo là string
+                    label: indication.name,
+                }))}
+                label="Chỉ định"
+                required
+                placeholder="Chọn chỉ định..."
+            />
+            <CustomSelect
+                name="medical_object_id"
+                value={formData.medical_object_id?.toString() || ''}
+                onChange={(e) => setFormData({ ...formData, medical_object_id: e.target.value })}
+                options={medicalObjects.map((medicalObject) => ({
+                    value: String(medicalObject.id), // đảm bảo là string
+                    label: medicalObject.name,
+                }))}
+                label="Đối tượng"
+                required
+                placeholder="Chọn đối tượng..."
+            />
             <div>
                 <label className="block mb-1 font-medium">Loại thuốc *</label>
                 <select
