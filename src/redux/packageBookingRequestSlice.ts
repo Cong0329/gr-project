@@ -3,6 +3,68 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/api/v1';
 
+export interface PackageBooking {
+  id: number;
+  user_id: string;
+  package_type: 'general' | 'medical';
+  package_id: number;
+  requested_date: string;
+  requested_time_slot: string;
+  status: 'pending' | 'doctor_requested' | 'assigned' | 'rejected' | 'cancelled';
+  notes?: string;
+  schedule_id?: number;
+  package?: {
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    duration: number;
+    type: string;
+    features?: any[];
+  };
+  schedule?: {
+    id: number;
+    date: string;
+    start_time: string;
+    end_time: string;
+    doctor?: {
+      id: string;
+      name: string;
+      avatar_url: string;
+      specialization: string;
+    };
+  };
+  doctorAssignments?: any[];
+}
+
+interface PackageBookingState {
+  bookingRequests: PackageBooking[];
+  currentBookingRequest: PackageBooking | null;
+  loading: boolean;
+  error: any;
+  success: boolean;
+  message: string;
+  pagination: {
+    total: number;
+    totalPages: number;
+    currentPage: number;
+  };
+}
+
+export const getUserPackageBooking = createAsyncThunk(
+  'packageBooking/getUserPackageBookings',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_URL}/pkg-booking-request/me/a`, {
+        withCredentials: true // Đảm bảo cookie được gửi
+      });
+      return response.data.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi khi lấy lịch đặt gói khám' });
+    }
+  }
+);
+
 // Create booking request
 export const createBookingRequest = createAsyncThunk(
   'packageBooking/createBookingRequest',
@@ -35,19 +97,6 @@ export const getAllBookingRequests = createAsyncThunk(
   async (params, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_URL}/pkg-booking-request`, { params });
-      return response.data;
-    } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi khi lấy danh sách yêu cầu đặt lịch' });
-    }
-  }
-);
-
-// Get user booking requests
-export const getUserBookingRequests = createAsyncThunk(
-  'packageBooking/getUserBookingRequests',
-  async ({ userId, params }, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${API_URL}/pkg-booking-request/users/${userId}`, { params });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi khi lấy danh sách yêu cầu đặt lịch' });
@@ -112,6 +161,14 @@ const packageBookingSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(getUserPackageBooking.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserPackageBooking.fulfilled, (state, action) => {
+        state.loading = false;
+        state.bookingRequests = action.payload;
+      })
       // Create booking request
       .addCase(createBookingRequest.pending, (state) => {
         state.loading = true;
@@ -157,25 +214,6 @@ const packageBookingSlice = createSlice({
         };
       })
       .addCase(getAllBookingRequests.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      
-      // Get user booking requests
-      .addCase(getUserBookingRequests.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(getUserBookingRequests.fulfilled, (state, action) => {
-        state.loading = false;
-        state.bookingRequests = action.payload.bookingRequests;
-        state.pagination = {
-          total: action.payload.total,
-          totalPages: action.payload.total_pages,
-          currentPage: action.payload.current_page,
-        };
-      })
-      .addCase(getUserBookingRequests.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

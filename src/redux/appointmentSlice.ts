@@ -9,11 +9,19 @@ export interface Appointment {
   date: string;
   start_time: string;
   end_time: string;
-  type: 'specialist' | 'specialist_online';
+  type: 'specialist' | 'specialist_online' | 'general' | 'medical';
   service_id: number;
   payment_method: 'cash' | 'online';
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'rejected';
+  status: 'pending_payment' | 'confirmed' | 'cancelled' | 'completed' | 'rejected';
   reason?: string;
+  doctor?: {
+    id: string;
+    name: string;
+    avatar_url: string;
+    specialization: string;
+  };
+  schedule?: any;
+  serviceInfo?: any;
 }
 
 interface AppointmentState {
@@ -23,6 +31,8 @@ interface AppointmentState {
   creating: boolean;
   createSuccess: boolean;
   createError: string | null;
+  confirming?: boolean;
+  confirmSuccess?: boolean;
 }
 
 const initialState: AppointmentState = {
@@ -99,6 +109,20 @@ export const cancelAppointment = createAsyncThunk(
   }
 );
 
+export const getUserAppointment = createAsyncThunk(
+  'appointment/getUserAppointments',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/v1/appointment/me/a', {
+        withCredentials: true
+      });
+      return response.data.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch appointments');
+    }
+  }
+);
+
 const appointmentSlice = createSlice({
   name: 'appointments',
   initialState,
@@ -110,6 +134,14 @@ const appointmentSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+     .addCase(getUserAppointment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserAppointment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.appointments = action.payload;
+      })
       .addCase(createAppointment.pending, (state) => {
         state.creating = true;
         state.createSuccess = false;

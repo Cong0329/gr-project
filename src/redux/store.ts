@@ -20,6 +20,7 @@ import indicationReducer from './indicationSlice';
 import productReducer from './productSlice';
 import orderReducer from './orderSlice';
 import reviewsReducer from './reviewsSlice';
+import packageBookingReducer from './packageBookingRequestSlice'
 
 const cartPersistConfig = {
   key: 'cart',
@@ -65,7 +66,8 @@ export const store = configureStore({
     products: productReducer,
     // order: orderReducer
     order: persistedReducer3,
-    reviews: reviewsReducer
+    reviews: reviewsReducer,
+    packages: packageBookingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
