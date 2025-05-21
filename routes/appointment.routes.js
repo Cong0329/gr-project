@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const appointmentController = require('../controllers/appointment.controller');
 const { check } = require('express-validator');
+const {authenticateToken} = require('../middlewares/auth.middleware');
+
 
 // Validations
 const appointmentValidation = [
@@ -39,5 +41,7 @@ router.post('/:id/cancel',
   [check('reason').optional().isString().withMessage('Reason must be a string')],
   appointmentController.cancelAppointment
 );
+
+router.get('/me/a', authenticateToken, appointmentController.getUserAppointment)
 
 module.exports = router;

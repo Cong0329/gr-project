@@ -1,4 +1,4 @@
-const { PackageBookingRequest, Schedule, ServicePackage } = require('../models');
+const { PackageBookingRequest, Schedule, ServicePackage, Doctor } = require('../models');
 
 // Hàm tạo booking request
 exports.createBookingRequest = async (req, res) => {
@@ -175,54 +175,53 @@ exports.getAllBookingRequests = async (req, res) => {
   }
 };
 
-// Hàm lấy booking requests của một user cụ thể
-exports.getUserBookingRequests = async (req, res) => {
+// Get user package booking requests
+exports.getUserPackageBooking = async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { status, page = 1, limit = 10 } = req.query;
-    
-    // Xây dựng điều kiện tìm kiếm
-    const whereConditions = { user_id: userId };
-    if (status) whereConditions.status = status;
-    
-    // Tính toán offset cho phân trang
-    const offset = (page - 1) * limit;
-    
-    // Thực hiện truy vấn với phân trang
-    const { count, rows: bookingRequests } = await PackageBookingRequest.findAndCountAll({
-      where: whereConditions,
+    // Lấy user_id từ request (từ middleware xác thực JWT)
+    const userId = req.user.id;
+
+    // Tìm tất cả các đặt gói khám của user
+    const bookings = await PackageBookingRequest.findAll({
+      where: {
+        user_id: userId
+      },
       include: [
-        { 
+        {
+
           model: ServicePackage,
           as: 'package',
-          attributes: ['id', 'name', 'type', 'description', 'price']
+          attributes: ['id', 'name', 'description', 'price', 'totalDuration', 'type']
         },
         {
           model: Schedule,
           as: 'schedule',
           include: [
             {
-              association: 'doctor',
-              attributes: ['id', 'name', 'type', 'avatar']
+              model: Doctor,
+              as: 'doctor',
+              attributes: ['id', 'name', 'avatar', 'type']
             }
           ]
         }
       ],
-      limit: parseInt(limit),
-      offset: offset,
-      order: [['createdAt', 'DESC']]
+      order: [
+        ['requested_date', 'DESC'],
+        ['created_at', 'DESC']
+      ]
     });
-    
-    // Trả về kết quả với thông tin phân trang
-    return res.status(200).json({
-      total: count,
-      total_pages: Math.ceil(count / limit),
-      current_page: parseInt(page),
-      bookingRequests
+
+    res.status(200).json({
+      success: true,
+      data: bookings
     });
   } catch (error) {
-    console.error('Error getting user booking requests:', error);
-    return res.status(500).json({ message: 'Đã xảy ra lỗi khi lấy danh sách yêu cầu đặt lịch' });
+    console.error('Error fetching user package bookings:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching package bookings',
+      error: error.message
+    });
   }
 };
 
@@ -271,4 +270,5 @@ exports.cancelBookingRequest = async (req, res) => {
     return res.status(500).json({ message: 'Đã xảy ra lỗi khi hủy yêu cầu đặt lịch' });
   }
 };
+
 
