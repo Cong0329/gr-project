@@ -90,6 +90,7 @@ const Message = MessageModel(sequelize, DataTypes);
 const MessageItem = MessageItemModel(sequelize, DataTypes);
 
 
+
 // Tạo đối tượng db để xuất tất cả models
 const db = {
   sequelize,
