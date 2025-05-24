@@ -1,29 +1,21 @@
-import { Navigate, Route, useLocation } from "react-router";
-import SignIn from "../admin/pages/AuthPages/SignIn";
-import SignUp from "../admin/pages/AuthPages/SignUp";
-import { useAuthRole } from "../admin/hooks/useAuthRole";
-import { PrivateRoute } from "./PrivateRoute";
+
+// AppRoutes.tsx
+import { Route, Navigate } from "react-router-dom";
+import { PrivateRoute } from "./PrivateRouter";
 import AppLayout from "../admin/layout/AppLayout";
 import adminRoutes from "./AdminRouter";
 import doctorRoutes from "./DoctorRouter";
-import VerifyProtectedRoute from "./VerifyProtected";
+import SignIn from "../admin/pages/AuthPages/SignIn";
+import SignUp from "../admin/pages/AuthPages/SignUp";
 import { VerifyCodePage } from "../admin/pages/AuthPages/VerifyCodePage";
-
-const RoleBasedRedirect = () => {
-  const { isAdmin, isDoctor } = useAuthRole();
-  const location = useLocation();
-
-  if (isAdmin) {
-    return <Navigate to="/admin" replace state={{ from: location }} />;
-  }
-  if (isDoctor) {
-    return <Navigate to="/doctor" replace state={{ from: location }} />;
-  }
-  return <Navigate to="/admin/signin" replace />;
-};
+import RoleRedirect from "./RoleRedirect";
+import AuthWrapper from "./AuthWrapper";
+import VerifyProtectedRoute from "./VerifyProtected";
 
 const appRoutes = (
   <>
+    {/* Doctor */}
+
     <Route
       path="/doctor/*"
       element={
@@ -35,6 +27,7 @@ const appRoutes = (
       {doctorRoutes}
     </Route>
 
+    {/* Admin */}
     <Route
       path="/admin/*"
       element={
@@ -46,14 +39,57 @@ const appRoutes = (
       {adminRoutes}
     </Route>
 
-    <Route path="signin" element={<SignIn />} />
-    <Route path="signup" element={<SignUp />} />
+    {/* Auth Doctor */}
+    <Route
+      path="/doctor/signin"
+      element={
+        <AuthWrapper role="ROLE_DOCTOR" redirectTo="/doctor">
+          <SignIn />
+        </AuthWrapper>
+      }
+    />
+    <Route
+      path="/doctor/signup"
+      element={
+        <AuthWrapper role="ROLE_DOCTOR" redirectTo="/doctor">
+          <SignUp />
+        </AuthWrapper>
+      }
+    />
+    <Route path="/doctor/verify" element={
+      <VerifyProtectedRoute>
+        <VerifyCodePage />
+      </VerifyProtectedRoute>
+    } />
 
-    <Route path="/" element={<RoleBasedRedirect />} />
+    {/* Auth Admin */}
+    <Route
+      path="/admin/signin"
+      element={
+        <AuthWrapper role="ROLE_ADMIN" redirectTo="/admin">
+          <SignIn />
+        </AuthWrapper>
+      }
+    />
+    <Route
+      path="/admin/signup"
+      element={
+        <AuthWrapper role="ROLE_ADMIN" redirectTo="/admin">
+          <SignUp />
+        </AuthWrapper>
+      }
+    />
+    <Route path="/admin/verify" element={
+      <VerifyProtectedRoute>
+        <VerifyCodePage />
+      </VerifyProtectedRoute>
+    } />
 
-    <Route element={<VerifyProtectedRoute />}>
-      <Route path="verify" element={<VerifyCodePage />} />
-    </Route>
+    {/* Default redirect */}
+    <Route path="/" element={<RoleRedirect />} />
+
+    {/* 404 */}
+    {/* <Route path="*" element={<Navigate to="/admin/signin" replace />} /> */}
   </>
 );
 

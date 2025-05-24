@@ -1,7 +1,6 @@
-// src/AppRoutes.tsx
 import { Route } from "react-router";
-// import SignIn from "../admin/pages/AuthPages/SignIn";
-// import SignUp from "../admin/pages/AuthPages/SignUp";
+import SignIn from "../admin/pages/AuthPages/SignIn";
+import SignUp from "../admin/pages/AuthPages/SignUp";
 import UserProfiles from "../admin/pages/UserProfiles";
 import Videos from "../admin/pages/UiElements/Videos";
 import Images from "../admin/pages/UiElements/Images";
@@ -16,6 +15,7 @@ import BasicTables from "../admin/pages/Tables/BasicTables";
 import FormElements from "../admin/pages/Forms/FormElements";
 import Blank from "../admin/pages/Blank";
 import Home from "../admin/pages/Dashboard/Home";
+import { VerifyCodePage } from "../admin/pages/AuthPages/VerifyCodePage";
 import ProductCreationForm from "../admin/pages/Forms/Product/AddProduct/ProductCreationForm";
 import BrandPage from "../admin/pages/Forms/Product/Brand/BrandPage";
 import CategoryPage from "../admin/pages/Forms/Product/Brand/CategoryPage";
@@ -30,49 +30,53 @@ import AdminReview from "../admin/components/chat/AdminReview";
 import AdminChatInterface from "../admin/components/chat/AdminChat/AdminChatInterface";
 
 const adminRoutes = (
+  <Route>
+    {/* Các route trong admin */}
+    <Route index element={<Home />} />
+    <Route path="profile" element={<UserProfiles />} />
+    <Route path="calendar" element={<Calendar />} />
+    <Route path="blank" element={<Blank />} />
+
+    {/* Forms */}
+    <Route path="form-elements" element={<FormElements />} />
+    <Route path="create-product" element={<ProductCreationForm />} />
+    <Route path="brand" element={<BrandPage />} />
+    <Route path="category" element={<CategoryPage />} />
+    <Route path="medical-object" element={<MedicalObjectPage />} />
+    <Route path="indication" element={<IndicationPage />} />
+    <Route path="products" element={<ProductPage />} />
+    <Route path="edit-product/:id" element={<EditProductPage />} />
+    <Route path="brand/:name" element={<BrandProduct />} />
+    <Route path="orders" element={<OrderTables />} />
+    <Route path="orders/:id" element={<OrderDetail />} />
+    <Route path="reviews" element={<AdminReview />} />
+    <Route path="chat" element={<AdminChatInterface />} />
+
+    {/* Tables */}
+    <Route path="basic-tables" element={<BasicTables />} />
+
+    {/* UI Elements */}
+    <Route path="alerts" element={<Alerts />} />
+    <Route path="avatars" element={<Avatars />} />
+    <Route path="badge" element={<Badges />} />
+    <Route path="buttons" element={<Buttons />} />
+    <Route path="images" element={<Images />} />
+    <Route path="videos" element={<Videos />} />
+
+    {/* Charts */}
+    <Route path="line-chart" element={<LineChart />} />
+    <Route path="bar-chart" element={<BarChart />} />
+  </Route>
+);
+
+// Auth Routes đặt riêng để AppRoutes sử dụng
+export const adminAuthRoutes = (
   <>
-    {/* Dashboard Layout */}
-
-    <Route>
-      <Route index element={<Home />} />
-      <Route path="profile" element={<UserProfiles />} />
-      <Route path="calendar" element={<Calendar />} />
-      <Route path="blank" element={<Blank />} />
-
-      {/* Forms */}
-      <Route path="form-elements" element={<FormElements />} />
-      <Route path="create-product" element={<ProductCreationForm />} />
-      <Route path="brand" element={<BrandPage />} />
-      <Route path="category" element={<CategoryPage />} />
-      <Route path="medical-object" element={<MedicalObjectPage />} />
-      <Route path="indication" element={<IndicationPage />} />
-      <Route path="products" element={<ProductPage />} />
-      <Route path="edit-product/:id" element={<EditProductPage />} />
-      <Route path="brand/:name" element={<BrandProduct />} />
-      <Route path="orders" element={<OrderTables />} />
-      <Route path="orders/:id" element={<OrderDetail />} />
-      <Route path="reviews" element={<AdminReview />} />
-      <Route path="chat" element={<AdminChatInterface />} />
-
-      {/* Tables */}
-      <Route path="basic-tables" element={<BasicTables />} />
-
-      {/* UI Elements */}
-      <Route path="alerts" element={<Alerts />} />
-      <Route path="avatars" element={<Avatars />} />
-      <Route path="badge" element={<Badges />} />
-      <Route path="buttons" element={<Buttons />} />
-      <Route path="images" element={<Images />} />
-      <Route path="videos" element={<Videos />} />
-
-      {/* Charts */}
-      <Route path="line-chart" element={<LineChart />} />
-      <Route path="bar-chart" element={<BarChart />} />
-    </Route>
-
-    {/* Auth Routes */}
-    {/* <Route path="admin/signin" element={<SignIn />} />
-    <Route path="admin/signup" element={<SignUp />} /> */}
+    <Route path="/admin/signin" element={<SignIn />} />
+    <Route path="/admin/signup" element={<SignUp />} />
+    <Route path="/admin/verify" element={<VerifyCodePage />} />
   </>
 );
+
+
 export default adminRoutes;

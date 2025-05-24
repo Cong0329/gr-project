@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { createAppointment } from "../../redux/appointmentSlice";
@@ -6,6 +6,7 @@ import { createBookingRequest } from "../../redux/packageBookingRequestSlice";
 import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
 import SuccessAnimation from "../../components/home_booking/details/component_details/AnimationBooked";
+import { RootState } from "../../redux/store";
 
 // Component LoadingSpinner
 const LoadingSpinner = ({ size = "medium" }) => {
@@ -24,6 +25,8 @@ const PaymentPage = () => {
   const location = useLocation();
   const { packageInfo } = location.state || {};
 
+  const { user } = useSelector((state: RootState) => state.auth);
+
   const [showSuccess, setShowSuccess] = useState(false);
 
   const dispatch = useDispatch();
@@ -32,7 +35,7 @@ const PaymentPage = () => {
   const appointmentsState = useSelector((state) => state.appointments || {});
   const packageBookingState = useSelector(
     (state) => state.packageBooking || {}
-  ); // Chỉnh sửa tên state để khớp với reducer
+  );
 
   // Kiểm tra trạng thái loading cho cả hai luồng
   const isLoading =
@@ -249,22 +252,25 @@ const PaymentPage = () => {
     }
 
     setIsSubmitting(true);
-    const userId = "2d46df95-1a24-407a-a9be-65e7343ddb72";
 
     try {
-      const packageInfo = location.state?.packageInfo || {};
+      // KHÔNG dùng useSelector ở đây nữa, sử dụng user đã lấy từ trên
+      if (!user || !user.id) {
+        toast.error("Vui lòng đăng nhập để tiếp tục");
+        return;
+      }
 
-      // Xác định loại gói dịch vụ
+      // Sử dụng packageInfo từ trên hoặc location.state
+      const bookingInfo = packageInfo || location.state?.packageInfo || {};
+
       const isSpecialistType =
-        packageInfo.type === "specialist" ||
-        packageInfo.type === "specialist_online";
+        bookingInfo.type === "specialist" ||
+        bookingInfo.type === "specialist_online";
 
       if (isSpecialistType) {
-        // Xử lý cho chuyên khoa - dùng appointment slice
-        await handleSpecialistBooking(userId, packageInfo);
+        await handleSpecialistBooking(user.id, bookingInfo);
       } else {
-        // Xử lý cho gói khám - dùng packageBooking slice
-        await handlePackageBooking(userId, packageInfo);
+        await handlePackageBooking(user.id, bookingInfo);
       }
     } catch (error) {
       console.error("Payment process error:", error);
@@ -323,8 +329,7 @@ const PaymentPage = () => {
       // Thêm trường status vào appointmentData
       appointmentData = {
         user_id: userId,
-        doctor_id:
-          packageInfo.doctor?.id || "0961976a-ac57-49d7-8db1-af9272058159",
+        doctor_id: packageInfo.doctor?.id,
         schedule_id: schedule_id,
         date: packageInfo.date,
         start_time: start_time,
@@ -366,26 +371,28 @@ const PaymentPage = () => {
 
       newAppointmentId = createResult.id;
 
+      const previousPageInfo = packageInfo.previousPage || {};
+      const backUrl =
+        previousPageInfo.url ||
+        `/booking-home/${
+          previousPageInfo.type || "specialty-detail"
+        }/${encodeURIComponent(previousPageInfo.name || "Chuyên khoa")}`;
+
       if (userInfo.paymentMethod === "vnpay") {
         await processAppointmentVNPayPayment(newAppointmentId);
       } else {
         setShowSuccess(true);
 
         setTimeout(() => {
-          navigate(
-            `/booking-home/specialty-detail/${encodeURIComponent(
-              location.state.packageInfo.specialtyName
-            )}`,
-            {
-              state: {
-                appointment: {
-                  ...createResult,
-                  status: "confirmed",
-                  payment_status: "confirmed",
-                },
+          navigate(backUrl, {
+            state: {
+              appointment: {
+                ...createResult,
+                status: "confirmed",
+                payment_status: "confirmed",
               },
-            }
-          );
+            },
+          });
         }, 2000);
       }
     } catch (error) {
@@ -457,6 +464,13 @@ const PaymentPage = () => {
 
       newBookingRequestId = createResult.id;
 
+      const previousPageInfo = packageInfo.previousPage || {};
+      const backUrl =
+        previousPageInfo.url ||
+        `/booking-home/${
+          previousPageInfo.type || "generalex-detail"
+        }/${encodeURIComponent(previousPageInfo.name || "Gói khám")}`;
+
       if (userInfo.paymentMethod === "vnpay") {
         await processBookingRequestVNPayPayment(newBookingRequestId);
       } else {
@@ -464,20 +478,15 @@ const PaymentPage = () => {
 
         // Điều hướng sau khi đặt thành công
         setTimeout(() => {
-          navigate(
-            `/packages/${packageInfo.type}/${encodeURIComponent(
-              packageInfo.name
-            )}`,
-            {
-              state: {
-                bookingRequest: {
-                  ...createResult,
-                  status: "pending", // Giữ nguyên trạng thái như ban đầu
-                  payment_status: "confirmed",
-                },
+          navigate(backUrl, {
+            state: {
+              bookingRequest: {
+                ...createResult,
+                status: "pending",
+                payment_status: "confirmed",
               },
-            }
-          );
+            },
+          });
         }, 2000);
       }
     } catch (error) {

@@ -1,6 +1,4 @@
 import { useSelector } from "react-redux";
-
-// hooks/useAuthRole.ts
 export const useAuthRole = () => {
   const authState = useSelector((state: any) => state.auth);
   
@@ -9,7 +7,6 @@ export const useAuthRole = () => {
   
   const roles = authState.admin?.roles || authState.user?.roles || [];
   console.log('Extracted roles:', roles);
-
   return {
     roles,
     isAdmin: roles.some((role: any) => role.code === "ROLE_ADMIN"),
@@ -17,7 +14,6 @@ export const useAuthRole = () => {
     isUser: roles.some((role: any) => role.code === "ROLE_USER")
   };
 };
-
 // src/hooks/useAuth.ts
 export const useAuth = () => {
   const authState = useSelector((state: any) => state.auth);

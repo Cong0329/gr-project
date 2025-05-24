@@ -24,19 +24,29 @@ export const updateProfileAPI = createAsyncThunk(
     }
   );
 
-export const adminLoginAPI =  createAsyncThunk(
+export const adminLoginAPI = createAsyncThunk(
   "admin/loginAdmin",
-  async (formLogin:SignInForm, { rejectWithValue  }) => {
+  async (formLogin: SignInForm, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/login`, formLogin,
+      console.log("Calling login API with data:", formLogin);
+      console.log("API URL:", `${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/login`);
+      
+      const response = await axios.post(
+        `${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/login`, 
+        formLogin,
         { withCredentials: true }
       );
+      
+      console.log("API response:", response.data);
       return response.data;
-    } catch (error : any) {
-      return rejectWithValue(error.response.data);
+    } catch (error: any) {
+      console.error("API error:", error);
+      console.error("Response data:", error.response?.data);
+      console.error("Status code:", error.response?.status);
+      return rejectWithValue(error.response?.data || { message: "Không thể kết nối đến máy chủ" });
     }
   }
-) ;
+);
 
 export const vefifyEmailAPI = createAsyncThunk(
   "verify/verify-email",
@@ -68,3 +78,17 @@ export const doctorLoginAPI =  createAsyncThunk(
   }
 ) ;
 
+
+export const logoutApi = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/logout`, {
+        withCredentials: true
+      });
+      return true;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);

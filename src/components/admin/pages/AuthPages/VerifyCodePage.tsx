@@ -1,39 +1,47 @@
-import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { RootState } from '../../../../redux/store';
-import { vefifyEmailAPI } from '../../../../redux/userAsyncThunk';
-import { vefify } from '../../../../redux/authSlice';
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import { RootState } from "../../../../redux/store";
+import { vefifyEmailAPI } from "../../../../redux/userAsyncThunk";
 
-interface VerifyCodeProps {
-  email?: string;
-}
-
-export const VerifyCodePage = ({ email }: VerifyCodeProps) => {
+export const VerifyCodePage = () => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const { status, isAuthenticated, verify } = useSelector((state: RootState) => state.auth);
+  const { status, isAuthenticated, verify, mail } = useSelector(
+    (state: RootState) => state.auth
+  );
   const navigate = useNavigate();
 
+  // Determine the role from the URL path
+  const isAdmin = location.pathname.includes("/admin");
+  const redirectPath = isAdmin ? "/admin" : "/doctor";
 
-  const [verificationCode, setVerificationCode] = useState(['', '', '', '', '', '']);
+  const [verificationCode, setVerificationCode] = useState([
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+  ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes countdown
   const [isResending, setIsResending] = useState(false);
-  const { message, mail } = useSelector((state: RootState) => state.auth);
+  const { message } = useSelector((state: RootState) => state.auth);
 
-  // useEffect(()=> {
-  //   if(isAuthenticated && !verify) {
-  //     navigate("/admin");
-  //   }
-  // },[isAuthenticated, navigate, verify]);
+  // Redirect after successful verification
+  useEffect(() => {
+    if (isAuthenticated && verify) {
+      navigate(redirectPath);
+    }
+  }, [isAuthenticated, navigate, verify, redirectPath]);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const codeParam = params.get('code');
+    const codeParam = params.get("code");
     if (codeParam && codeParam.length === 6) {
-      setVerificationCode(codeParam.split(''));
+      setVerificationCode(codeParam.split(""));
     }
   }, [location.search]);
 
@@ -49,7 +57,7 @@ export const VerifyCodePage = ({ email }: VerifyCodeProps) => {
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
   // Handle input change
@@ -69,7 +77,7 @@ export const VerifyCodePage = ({ email }: VerifyCodeProps) => {
 
   // Handle key down (for backspace navigation)
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === 'Backspace' && !verificationCode[index] && index > 0) {
+    if (e.key === "Backspace" && !verificationCode[index] && index > 0) {
       const prevInput = document.getElementById(`code-${index - 1}`);
       if (prevInput) prevInput.focus();
     }
@@ -77,18 +85,26 @@ export const VerifyCodePage = ({ email }: VerifyCodeProps) => {
 
   // Handle code submission
   const handleSubmit = async () => {
-    setError('');
-    const code = verificationCode.join('');
+    setError("");
+    const code = verificationCode.join("");
 
     if (code.length !== 6) {
-      setError('Please enter the complete 6-digit verification code');
+      setError("Please enter the complete 6-digit verification code");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      await dispatch(vefifyEmailAPI({ email: mail, verifyCode: code }));
+      // Include role information for verification
+      const role = isAdmin ? "ROLE_ADMIN" : "ROLE_DOCTOR";
+      await dispatch(
+        vefifyEmailAPI({
+          email: mail,
+          verifyCode: code,
+          role,
+        })
+      );
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -101,33 +117,38 @@ export const VerifyCodePage = ({ email }: VerifyCodeProps) => {
     if (timeLeft > 0) return;
 
     setIsResending(true);
-    setError('');
+    setError("");
 
     try {
-      // Replace with your actual resend API call
-      const response = await fetch(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/resend-code`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email || ''
-        }),
-        credentials: 'include'
-      });
+      // Include role information for resend
+      const role = isAdmin ? "ROLE_ADMIN" : "ROLE_DOCTOR";
+      const response = await fetch(
+        `${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/resend-code`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: mail || "",
+            role,
+          }),
+          credentials: "include",
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to resend code');
+        throw new Error(data.message || "Failed to resend code");
       }
 
       // Reset timer
       setTimeLeft(120);
       // Reset input fields
-      setVerificationCode(['', '', '', '', '', '']);
+      setVerificationCode(["", "", "", "", "", ""]);
     } catch (err: any) {
-      setError(err.message || 'Failed to resend verification code');
+      setError(err.message || "Failed to resend verification code");
     } finally {
       setIsResending(false);
     }
@@ -137,11 +158,13 @@ export const VerifyCodePage = ({ email }: VerifyCodeProps) => {
     <>
       <div className="flex flex-col items-center justify-center min-h-screen bg-blue-600 p-4">
         <div className="w-full max-w-md bg-white rounded-xl shadow-md p-6">
-          <h2 className="text-2xl font-bold text-center mb-6">Verification Code</h2>
+          <h2 className="text-2xl font-bold text-center mb-6">
+            {isAdmin ? "Admin Verification Code" : "Doctor Verification Code"}
+          </h2>
 
           <p className="text-gray-600 text-center mb-8">
-            Please enter the 6-digit verification code sent to{' '}
-            <span className="font-medium">{email || 'your email'}</span>
+            Please enter the 6-digit verification code sent to{" "}
+            <span className="font-medium">{mail || "your email"}</span>
           </p>
 
           <div className="flex justify-center space-x-2 mb-6">
@@ -159,7 +182,7 @@ export const VerifyCodePage = ({ email }: VerifyCodeProps) => {
             ))}
           </div>
 
-          {error || message && (
+          {(error || message) && (
             <div className="text-red-500 text-center mb-4">
               {error} {message}
             </div>
@@ -167,41 +190,43 @@ export const VerifyCodePage = ({ email }: VerifyCodeProps) => {
 
           <button
             onClick={handleSubmit}
-            disabled={isSubmitting || verificationCode.join('').length !== 6}
-            className={`w-full py-3 rounded-full font-semibold ${isSubmitting || verificationCode.join('').length !== 6
-              ? 'bg-gray-300 text-gray-500'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
-              } transition-colors duration-200 mb-4`}
+            disabled={isSubmitting || verificationCode.join("").length !== 6}
+            className={`w-full py-3 rounded-full font-semibold ${
+              isSubmitting || verificationCode.join("").length !== 6
+                ? "bg-gray-300 text-gray-500"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            } transition-colors duration-200 mb-4`}
           >
-            {isSubmitting ? 'Verifying...' : 'Verify Code'}
+            {isSubmitting ? "Verifying..." : "Verify Code"}
           </button>
 
           <div className="text-center">
             <p className="text-gray-600 mb-2">
-              Didn't receive the code? {timeLeft > 0 && `(${formatTime(timeLeft)})`}
+              Didn't receive the code?{" "}
+              {timeLeft > 0 && `(${formatTime(timeLeft)})`}
             </p>
             <button
               onClick={handleResendCode}
               disabled={timeLeft > 0 || isResending}
-              className={`font-semibold ${timeLeft > 0 || isResending
-                ? 'text-gray-400'
-                : 'text-blue-600 hover:text-blue-800'
-                } transition-colors duration-200`}
+              className={`font-semibold ${
+                timeLeft > 0 || isResending
+                  ? "text-gray-400"
+                  : "text-blue-600 hover:text-blue-800"
+              } transition-colors duration-200`}
             >
-              {isResending ? 'Sending...' : 'Resend Code'}
+              {isResending ? "Sending..." : "Resend Code"}
             </button>
           </div>
         </div>
       </div>
-      {status === "loading" &&
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="flex flex-col items-center">
-          <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-          <p className="mt-4 text-white text-sm">Đang tải...</p>
+      {status === "loading" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="flex flex-col items-center">
+            <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+            <p className="mt-4 text-white text-sm">Đang tải...</p>
+          </div>
         </div>
-      </div>
-    }
+      )}
     </>
- 
   );
 };
