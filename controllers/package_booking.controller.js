@@ -1,4 +1,5 @@
-const { PackageBookingRequest, Schedule, ServicePackage, Doctor } = require('../models');
+const { PackageBookingRequest, Schedule, ServicePackage, Doctor, DoctorAssignment, sequelize } = require('../models');
+const { Op } = require('sequelize');
 
 // Hàm tạo booking request
 exports.createBookingRequest = async (req, res) => {
@@ -9,6 +10,24 @@ exports.createBookingRequest = async (req, res) => {
     const servicePackage = await ServicePackage.findByPk(package_id);
     if (!servicePackage) {
       return res.status(404).json({ message: 'Không tìm thấy gói dịch vụ' });
+    }
+    
+    const existingBooking = await PackageBookingRequest.findOne({
+      where: {
+        package_id,
+        requested_date,
+        requested_time_slot,
+        status: {
+          [Op.in]: ['pending', 'doctor_requested', 'assigned']
+        }
+      }
+    });
+    
+    if (existingBooking) {
+      return res.status(409).json({ 
+        message: 'Khung giờ này đã được đặt bởi người khác. Vui lòng chọn khung giờ khác.',
+        error_code: 'SLOT_ALREADY_BOOKED'
+      });
     }
     
     // Tạo booking request
@@ -109,7 +128,6 @@ exports.getBookingRequestDetails = async (req, res) => {
 // Hàm lấy tất cả booking requests (cho admin/staff)
 exports.getAllBookingRequests = async (req, res) => {
   try {
-    // Lấy tham số query cho việc lọc và phân trang
     const { status, from_date, to_date, page = 1, limit = 10 } = req.query;
     
     // Xây dựng điều kiện tìm kiếm
@@ -230,44 +248,95 @@ exports.cancelBookingRequest = async (req, res) => {
   try {
     const { id } = req.params;
     const { cancellation_reason } = req.body;
-    
+
     // Tìm booking request
     const bookingRequest = await PackageBookingRequest.findByPk(id);
     if (!bookingRequest) {
       return res.status(404).json({ message: 'Không tìm thấy yêu cầu đặt lịch' });
     }
-    
+
     // Kiểm tra quyền hạn: người dùng chỉ có thể hủy yêu cầu của chính họ
     if (req.user.role === 'user' && bookingRequest.user_id !== req.user.id) {
       return res.status(403).json({ message: 'Bạn không có quyền hủy yêu cầu này' });
     }
-    
-    // Chỉ có thể hủy yêu cầu ở trạng thái pending hoặc assigned
-    if (bookingRequest.status !== 'pending' && bookingRequest.status !== 'assigned') {
-      return res.status(400).json({ message: `Không thể hủy yêu cầu ở trạng thái ${bookingRequest.status}` });
+
+    // ✅ Check trạng thái có được huỷ không
+    const cancellableStatuses = ['pending', 'doctor_requested', 'assigned'];
+    if (!cancellableStatuses.includes(bookingRequest.status)) {
+      return res.status(400).json({
+        message: `Không thể hủy yêu cầu ở trạng thái ${bookingRequest.status}`
+      });
     }
-    
-    // Nếu đã có schedule được gán, cần hủy schedule
+
     if (bookingRequest.schedule_id) {
       const schedule = await Schedule.findByPk(bookingRequest.schedule_id);
       if (schedule) {
+        const scheduleDateTime = new Date(`${schedule.date}T${schedule.start_time}`);
+        const now = new Date();
+        const hoursUntilAppointment = (scheduleDateTime - now) / (1000 * 60 * 60);
+
+        if (hoursUntilAppointment < 2) {
+          return res.status(400).json({
+            message: 'Không thể hủy lịch khám khi còn ít hơn 2 giờ'
+          });
+        }
+
+        // Huỷ lịch nếu có
         await schedule.update({ status: 'cancelled' });
       }
     }
-    
+
     // Cập nhật trạng thái booking request
     await bookingRequest.update({
       status: 'cancelled',
       cancellation_reason: cancellation_reason || 'Hủy bởi người dùng'
     });
-    
-    return res.status(200).json({ 
+
+    return res.status(200).json({
       message: 'Đã hủy yêu cầu đặt lịch thành công',
       bookingRequest
     });
   } catch (error) {
     console.error('Error cancelling booking request:', error);
     return res.status(500).json({ message: 'Đã xảy ra lỗi khi hủy yêu cầu đặt lịch' });
+  }
+};
+
+
+exports.getBookingRequests = async (req, res) => {
+  try {
+    const { date, package_id } = req.query;
+    
+    const whereClause = {};
+    
+    if (date) {
+      whereClause.requested_date = date;
+    }
+    
+    // ✅ Thêm điều kiện package_id nếu có
+    if (package_id) {
+      whereClause.package_id = package_id; 
+    }
+    
+    console.log('Query conditions:', whereClause);
+    
+    const bookings = await PackageBookingRequest.findAll({
+      where: whereClause,
+      attributes: [
+        'requested_date', 
+        'requested_time_slot', 
+        'status',
+        'package_id'
+      ],
+    });
+    
+    return res.status(200).json(bookings);
+  } catch (error) {
+    console.error('Error fetching booking requests:', error);
+    return res.status(500).json({ 
+      message: 'Đã xảy ra lỗi khi lấy danh sách yêu cầu đặt lịch',
+      error: error.message 
+    });
   }
 };
 

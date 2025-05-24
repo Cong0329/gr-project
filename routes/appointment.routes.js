@@ -37,11 +37,9 @@ router.patch('/:id/status',
 );
 
 // Cancel appointment
-router.post('/:id/cancel',
-  [check('reason').optional().isString().withMessage('Reason must be a string')],
-  appointmentController.cancelAppointment
+router.post('/:id/cancel', authenticateToken, appointmentController.cancelAppointment
 );
 
-router.get('/me/a', authenticateToken, appointmentController.getUserAppointment)
+router.get('/user/me', authenticateToken, appointmentController.getUserAppointment)
 
 module.exports = router;

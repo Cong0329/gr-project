@@ -319,7 +319,7 @@ exports.cancelAppointment = async (req, res) => {
     }
 
     // Kiểm tra trạng thái - chỉ có thể hủy những lịch chưa hoàn thành
-    if (['completed', 'cancelled'].includes(appointment.status)) {
+    if (['completed', 'cancelled' ].includes(appointment.status)) {
       await transaction.rollback();
       return res.status(400).json({
         success: false,

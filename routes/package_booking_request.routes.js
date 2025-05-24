@@ -28,7 +28,7 @@ router.post(
 // Chỉ admin và staff mới có thể truy cập
 // Bạn cần thêm hàm này vào controller
 router.get(
-  '/', 
+  '/a', 
   (req, res) => {
     // Placeholder cho hàm getAllBookingRequests
     res.status(501).json({ message: 'Chức năng đang được phát triển' });
@@ -38,18 +38,14 @@ router.get(
 // Route để lấy tất cả các yêu cầu đặt lịch của một user
 // Người dùng chỉ có thể xem yêu cầu của chính họ
 router.get(
-  '/me/a', authenticateToken, bookingRequestController.getUserPackageBooking
+  '/user/me', authenticateToken, bookingRequestController.getUserPackageBooking
 );
 
 // Route để huỷ booking request
-router.put(
-  '/:id/cancel',
-  (req, res) => {
-    // Placeholder cho hàm cancelBookingRequest
-    res.status(501).json({ message: 'Chức năng đang được phát triển' });
-  }
+router.put('/:id/cancel', authenticateToken, bookingRequestController.cancelBookingRequest);
+
+router.get(
+  '/', bookingRequestController.getBookingRequests
 );
-
-
 
 module.exports = router;
