@@ -371,26 +371,28 @@ const PaymentPage = () => {
 
       newAppointmentId = createResult.id;
 
+      const previousPageInfo = packageInfo.previousPage || {};
+      const backUrl =
+        previousPageInfo.url ||
+        `/booking-home/${
+          previousPageInfo.type || "specialty-detail"
+        }/${encodeURIComponent(previousPageInfo.name || "Chuyên khoa")}`;
+
       if (userInfo.paymentMethod === "vnpay") {
         await processAppointmentVNPayPayment(newAppointmentId);
       } else {
         setShowSuccess(true);
 
         setTimeout(() => {
-          navigate(
-            `/booking-home/specialty-detail/${encodeURIComponent(
-              location.state.packageInfo.specialtyName
-            )}`,
-            {
-              state: {
-                appointment: {
-                  ...createResult,
-                  status: "confirmed",
-                  payment_status: "confirmed",
-                },
+          navigate(backUrl, {
+            state: {
+              appointment: {
+                ...createResult,
+                status: "confirmed",
+                payment_status: "confirmed",
               },
-            }
-          );
+            },
+          });
         }, 2000);
       }
     } catch (error) {
@@ -462,6 +464,13 @@ const PaymentPage = () => {
 
       newBookingRequestId = createResult.id;
 
+      const previousPageInfo = packageInfo.previousPage || {};
+      const backUrl =
+        previousPageInfo.url ||
+        `/booking-home/${
+          previousPageInfo.type || "generalex-detail"
+        }/${encodeURIComponent(previousPageInfo.name || "Gói khám")}`;
+
       if (userInfo.paymentMethod === "vnpay") {
         await processBookingRequestVNPayPayment(newBookingRequestId);
       } else {
@@ -469,20 +478,15 @@ const PaymentPage = () => {
 
         // Điều hướng sau khi đặt thành công
         setTimeout(() => {
-          navigate(
-            `/packages/${packageInfo.type}/${encodeURIComponent(
-              packageInfo.name
-            )}`,
-            {
-              state: {
-                bookingRequest: {
-                  ...createResult,
-                  status: "pending", // Giữ nguyên trạng thái như ban đầu
-                  payment_status: "confirmed",
-                },
+          navigate(backUrl, {
+            state: {
+              bookingRequest: {
+                ...createResult,
+                status: "pending",
+                payment_status: "confirmed",
               },
-            }
-          );
+            },
+          });
         }, 2000);
       }
     } catch (error) {

@@ -182,6 +182,14 @@ const DoctorSchedules = () => {
                 ? department?.id
                 : selectedDoctor.service_package_id || department?.id,
             specialtyName: department?.name || "Chuyên khoa",
+            previousPage: {
+              url: window.location.pathname,
+              type:
+                currentType === "specialist_online"
+                  ? "onlex-detail"
+                  : "specialty-detail",
+              name: department?.name || "Chuyên khoa",
+            },
           },
         },
       });

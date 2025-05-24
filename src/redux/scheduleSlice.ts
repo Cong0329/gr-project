@@ -55,7 +55,7 @@ export const fetchSpecialistSchedules = createAsyncThunk(
         ...(service_id && { service_id })
       };
 
-      const response = await axios.get('http://localhost:3000/api/v1/schedule/specialist', { params });
+      const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/schedule/specialist`, { params });
 
       // Đảm bảo cấu trúc response thống nhất với backend
       if (!response.data.success) {

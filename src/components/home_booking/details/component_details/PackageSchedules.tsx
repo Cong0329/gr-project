@@ -4,7 +4,9 @@ import { vi } from "date-fns/locale";
 import { Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { getAllBookingRequests } from "../../../../redux/packageBookingRequestSlice";
 
 const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -12,6 +14,16 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+
+  const dispatch = useDispatch();
+
+  const bookingRequests = useSelector(
+    (state: RootState) => state.packages.bookingRequests
+  );
+
+  const packages = useSelector(
+    (state: RootState) => state.servicePackage.packages
+  );
 
   const navigate = useNavigate();
 
@@ -39,6 +51,16 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
     addDays(new Date(), index)
   );
 
+  useEffect(() => {
+    const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
+    const packageId = currentPackage?.id || currentTest?.id;
+
+    // ✅ Truyền thêm packageId để chỉ lấy booking của gói hiện tại
+    dispatch(getAllBookingRequests(selectedDateStr, packageId));
+
+    console.log("Fetching bookings for:", { date: selectedDateStr, packageId });
+  }, [dispatch, selectedDate, currentPackage?.id, currentTest?.id]);
+
   // Base time slots
   const baseTimeSlots = [
     { time: "08:00 - 09:00", available: true },
@@ -53,42 +75,62 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
 
   // Update available time slots based on selected date
   useEffect(() => {
-    // If selected date is today, filter out past time slots
-    if (isToday(selectedDate)) {
-      const now = new Date();
+    const now = new Date();
+    const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
+    const currentPackageId = currentPackage?.id || currentTest?.id;
 
-      // Update time slots availability
-      const updatedTimeSlots = baseTimeSlots.map((slot) => {
-        // Parse the start time (e.g., "08:00" from "08:00 - 09:00")
-        const startTime = slot.time.split(" - ")[0];
+    // ✅ FIX: Lọc booking theo cả ngày VÀ packageId
+    const occupiedSlots =
+      bookingRequests && Array.isArray(bookingRequests)
+        ? bookingRequests
+            .filter(
+              (b) =>
+                b.status !== "cancelled" &&
+                b.requested_date === selectedDateStr &&
+                // ✅ QUAN TRỌNG: Chỉ lấy booking của gói hiện tại
+                (b.service_id === currentPackageId ||
+                  b.package_id === currentPackageId)
+            )
+            .map((b) => b.requested_time_slot)
+        : [];
 
-        // Create a date object for the slot's start time today
-        const [hours, minutes] = startTime.split(":");
-        const slotTime = new Date(selectedDate);
-        slotTime.setHours(parseInt(hours), parseInt(minutes), 0);
+    const updatedTimeSlots = baseTimeSlots.map((slot) => {
+      const startTime = slot.time.split(" - ")[0];
+      const [hours, minutes] = startTime.split(":");
+      const slotTime = new Date(selectedDate);
+      slotTime.setHours(parseInt(hours), parseInt(minutes), 0);
 
-        // Check if this time is in the past
-        const isPastTime = !isAfter(slotTime, now);
+      const isPastTime = isToday(selectedDate) && !isAfter(slotTime, now);
+      const isBooked = occupiedSlots.includes(slot.time);
 
-        return {
-          ...slot,
-          available: slot.available && !isPastTime,
-          isPast: isPastTime,
-        };
-      });
+      return {
+        ...slot,
+        available: slot.available && !isPastTime && !isBooked,
+        isPast: isPastTime,
+        isBooked: isBooked,
+      };
+    });
 
-      setAvailableTimeSlots(updatedTimeSlots);
-    } else {
-      // For future dates, use the base time slots
-      setAvailableTimeSlots(baseTimeSlots);
-    }
+    setAvailableTimeSlots(updatedTimeSlots);
 
-    // Clear selected time when date changes
+    console.log("Selected Date:", selectedDateStr);
+    console.log("Current Package ID:", currentPackageId);
+    console.log("All bookingRequests:", bookingRequests);
+    console.log("Filtered occupiedSlots for this package:", occupiedSlots);
+    console.log("updatedTimeSlots:", updatedTimeSlots);
+
+    // Reset time khi đổi ngày
     if (selectedTime) {
       setSelectedTime(null);
       setValue("time", "");
     }
-  }, [selectedDate, setValue]);
+  }, [
+    selectedDate,
+    setValue,
+    bookingRequests,
+    currentPackage?.id,
+    currentTest?.id,
+  ]);
 
   // Check if date is weekend
   const isWeekend = (date) => {
@@ -101,6 +143,7 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
     setValue("date", format(date, "yyyy-MM-dd"));
     setSelectedTime(null);
     setValue("time", "");
+    // ✅ API sẽ được gọi tự động thông qua useEffect
   };
 
   const handleTimeSelect = (timeSlot) => {
@@ -121,9 +164,17 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
             price: currentPackage.price,
             date: format(selectedDate, "yyyy-MM-dd"),
             time: selectedTime,
-            type: "general",
+            type: currentPackage.type,
             service_id: currentPackage.id,
             notes: currentPackage.notes,
+            previousPage: {
+              url: window.location.pathname,
+              type:
+                currentPackage.type === "general"
+                  ? "generalex-detail"
+                  : "medicaltest-detail",
+              name: currentPackage.name,
+            },
           },
         },
       });
@@ -240,7 +291,7 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
                   key={index}
                   onClick={() => handleTimeSelect(slot)}
                   disabled={!slot.available}
-                  className={`p-2 rounded-md text-center border ${
+                  className={`p-2 rounded-md text-center border relative ${
                     !slot.available
                       ? `bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200 ${
                           slot.isPast ? "line-through" : ""
@@ -251,6 +302,10 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
                   }`}
                 >
                   {slot.time}
+                  {/* ✅ Thêm indicator để biết slot nào đã được đặt */}
+                  {slot.isBooked && (
+                    <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full transform translate-x-1 -translate-y-1"></span>
+                  )}
                 </button>
               ))}
             </div>
@@ -259,6 +314,13 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
                 Các khung giờ đã qua sẽ không thể chọn
               </p>
             )}
+            {/* ✅ Thêm legend */}
+            <div className="flex items-center gap-4 mt-2 text-sm">
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                <span className="text-gray-600">Đã có người đặt</span>
+              </div>
+            </div>
           </div>
         </div>
 
