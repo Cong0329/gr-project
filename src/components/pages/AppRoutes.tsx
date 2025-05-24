@@ -1,3 +1,4 @@
+
 // AppRoutes.tsx
 import { Route, Navigate } from "react-router-dom";
 import { PrivateRoute } from "./PrivateRouter";
@@ -14,6 +15,7 @@ import VerifyProtectedRoute from "./VerifyProtected";
 const appRoutes = (
   <>
     {/* Doctor */}
+
     <Route
       path="/doctor/*"
       element={

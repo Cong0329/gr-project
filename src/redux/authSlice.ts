@@ -127,7 +127,7 @@ const authSlice = createSlice({
           state.verify = false;
           state.message = getSafeErrorMessage(action.payload);
         })
-        .addCase(vefifyEmailAPI.fulfilled, (state, action) => {
+        .addCase(vefifyEmailAPI.fulfilled, (state) => {
           state.status = "succeeded";
           state.verify = false;
           state.isAuthenticated = true;

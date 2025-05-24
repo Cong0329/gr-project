@@ -1,3 +1,5 @@
+
+// src/AppRoutes.tsx
 import { Route } from "react-router";
 import UserProfiles from "../admin/pages/UserProfiles";
 import { Calendar, Home } from "lucide-react";
