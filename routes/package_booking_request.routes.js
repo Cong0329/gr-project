@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const bookingRequestController = require('../controllers/package_booking.controller');
+const {authenticateToken} = require('../middlewares/auth.middleware');
+
 
 // Chỉ người dùng đã đăng nhập mới có thể tạo
 router.post(
@@ -26,7 +28,7 @@ router.post(
 // Chỉ admin và staff mới có thể truy cập
 // Bạn cần thêm hàm này vào controller
 router.get(
-  '/', 
+  '/a', 
   (req, res) => {
     // Placeholder cho hàm getAllBookingRequests
     res.status(501).json({ message: 'Chức năng đang được phát triển' });
@@ -36,30 +38,14 @@ router.get(
 // Route để lấy tất cả các yêu cầu đặt lịch của một user
 // Người dùng chỉ có thể xem yêu cầu của chính họ
 router.get(
-  '/user/:userId', 
-  (req, res, next) => {
-    // Middleware kiểm tra người dùng chỉ truy cập dữ liệu của chính họ
-    const requestedUserId = req.params.userId;
-    if (req.user.role === 'user' && req.user.id !== parseInt(requestedUserId)) {
-      return res.status(403).json({ message: 'Không được phép truy cập dữ liệu của người dùng khác' });
-    }
-    next();
-  },
-  (req, res) => {
-    // Placeholder cho hàm getUserBookingRequests
-    res.status(501).json({ message: 'Chức năng đang được phát triển' });
-  }
+  '/user/me', authenticateToken, bookingRequestController.getUserPackageBooking
 );
 
 // Route để huỷ booking request
-router.put(
-  '/:id/cancel',
-  (req, res) => {
-    // Placeholder cho hàm cancelBookingRequest
-    res.status(501).json({ message: 'Chức năng đang được phát triển' });
-  }
+router.put('/:id/cancel', authenticateToken, bookingRequestController.cancelBookingRequest);
+
+router.get(
+  '/', bookingRequestController.getBookingRequests
 );
-
-
 
 module.exports = router;

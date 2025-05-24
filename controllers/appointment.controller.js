@@ -1,4 +1,4 @@
-const { Appointment, Schedule, User, Doctor, sequelize } = require('../models');
+const { Appointment, Schedule, User, Doctor, sequelize, Department, ServicePackage } = require('../models');
 const { validationResult } = require('express-validator');
 
 /**
@@ -202,7 +202,7 @@ exports.getAppointments = async (req, res) => {
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'name', 'email', 'phone', 'avatar']
+          attributes: ['id', 'name', 'email', 'phone', 'avatar_url']
         },
         {
           model: Doctor,
@@ -245,7 +245,7 @@ exports.getAppointmentById = async (req, res) => {
         {
           model: User,
           as: 'user',
-          attributes: ['id', 'name', 'email', 'phone', 'avatar']
+          attributes: ['id', 'name', 'email', 'phone', 'avatar_url']
         },
         {
           model: Doctor,
@@ -319,7 +319,7 @@ exports.cancelAppointment = async (req, res) => {
     }
 
     // Kiểm tra trạng thái - chỉ có thể hủy những lịch chưa hoàn thành
-    if (['completed', 'cancelled'].includes(appointment.status)) {
+    if (['completed', 'cancelled' ].includes(appointment.status)) {
       await transaction.rollback();
       return res.status(400).json({
         success: false,
@@ -356,6 +356,77 @@ exports.cancelAppointment = async (req, res) => {
     res.status(500).json({ 
       success: false,
       message: 'Server Error' 
+    });
+  }
+};
+
+
+exports.getUserAppointment = async (req, res) => {
+  try {
+    // Lấy user_id từ request (từ middleware xác thực JWT)
+    const userId = req.user.id;
+    console.log("User ID:", userId); // Debug
+
+
+    // Tìm tất cả các cuộc hẹn của user
+    const appointments = await Appointment.findAll({
+      where: {
+        user_id: userId
+      },
+      include: [
+        {
+          model: Doctor,
+          as: 'doctor',
+          attributes: ['id', 'name', 'avatar', 'type']
+        },
+        {
+          model: Schedule,
+          as: 'schedule'
+        }
+      ],
+      order: [
+        ['date', 'DESC'],
+        ['start_time', 'DESC']
+      ]
+    });
+
+    // Lấy thông tin service cho mỗi appointment
+    const enrichedAppointments = await Promise.all(appointments.map(async (appointment) => {
+      const appointmentData = appointment.toJSON();
+      let serviceInfo = null;
+      
+      try {
+        // Lấy thông tin service dựa trên loại appointment
+        if (appointment.type === 'specialist' || appointment.type === 'specialist_online') {
+          serviceInfo = await Department.findByPk(appointment.service_id, {
+            attributes: ['id', 'name', 'price']
+          });
+        } else if (appointment.type === 'general' || appointment.type === 'medical') {
+          serviceInfo = await ServicePackage.findByPk(appointment.service_id, {
+            attributes: ['id', 'name', 'description', 'price']
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching service info:', error);
+      }
+
+      return {
+        ...appointmentData,
+        serviceInfo: serviceInfo ? serviceInfo.toJSON() : null
+      };
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: enrichedAppointments
+
+    });
+  } catch (error) {
+    console.error('Error fetching user appointments:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching appointments',
+      error: error.message
     });
   }
 };

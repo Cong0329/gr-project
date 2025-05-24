@@ -9,12 +9,24 @@ exports.getProfile = async (req, res) => {
 
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    res.json(user);
+    // Lấy thông tin role
+    const roles = await req.user.getRoles();
+    const rolesList = roles.map(role => ({
+      id: role.id,
+      name: role.name,
+      code: role.code
+    }));
+
+    res.json({
+      ...user.toJSON(),
+      roles: rolesList
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 
 // Lấy danh sách user (chỉ admin mới có quyền)
 exports.getAllUsers = async (req, res) => {

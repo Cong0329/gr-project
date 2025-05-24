@@ -3,12 +3,6 @@ const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const { User, Role, RefreshToken } = require('../models');
 
-
-
-
-
-
-
 // Google Callback
 exports.googleCallback = async (req, res) => {
   try {
@@ -74,8 +68,6 @@ exports.googleCallback = async (req, res) => {
 };
 
 
-
-
 // Login
 exports.login = async (req, res) => {
   try {
@@ -95,7 +87,7 @@ exports.login = async (req, res) => {
 
     // Kiểm tra vai trò người dùng
     const roles = await user.getRoles();
-    const hasValidRole = roles.some(role => ['ROLE_ADMIN', 'ROLE_PHARMACIST'].includes(role.code));
+    const hasValidRole = roles.some(role => ['ROLE_ADMIN', 'ROLE_PHARMACIST', 'ROLE_DOCTOR'].includes(role.code));
     if (!hasValidRole) {
       return res.status(403).json({ message: 'User does not have valid role' });
     }
@@ -138,7 +130,6 @@ exports.login = async (req, res) => {
   }
 };
 
-
 // Resend code
 
 exports.resendCode = async (req, res) => {
@@ -153,7 +144,7 @@ exports.resendCode = async (req, res) => {
 
     // (Optional) Kiểm tra role nếu cần giống login
     const roles = await user.getRoles();
-    const hasValidRole = roles.some(role => ['ROLE_ADMIN', 'ROLE_PHARMACIST'].includes(role.code));
+    const hasValidRole = roles.some(role => ['ROLE_ADMIN', 'ROLE_PHARMACIST', 'ROLE_DOCTOR'].includes(role.code));
     if (!hasValidRole) {
       return res.status(403).json({ message: 'User does not have valid role' });
     }
@@ -205,6 +196,13 @@ exports.verifyCode = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    const roles = await user.getRoles();
+    const hasValidRole = roles.some(role =>
+      ['ROLE_ADMIN', 'ROLE_PHARMACIST', 'ROLE_DOCTOR'].includes(role.code)
+    );
+    if (!hasValidRole) {
+      return res.status(403).json({ message: 'User does not have valid role' });
+    }
     // Kiểm tra mã xác minh và thời gian hết hạn
     if (user.verify_code !== parseInt(verifyCode)) {
       return res.status(400).json({ message: 'Invalid verification code' });
@@ -251,7 +249,12 @@ exports.verifyCode = async (req, res) => {
 
 
     // Trả về token
-    res.status(200).json({ message: 'Verification successful' });
+    const roleCodes = roles.map(role => role.code);
+
+    res.status(200).json({
+      message: 'Verification successful',
+      roles: roleCodes
+    });
 
     // Xóa mã xác minh sau khi xác minh thành công
     await user.update({ verify_code: null, verify_code_expires_at: null });
@@ -263,20 +266,13 @@ exports.verifyCode = async (req, res) => {
 };
 
 
-
-
-
-
-
-
-
 // Register
 exports.register = async (req, res) => {
   try {
     const { name, email, password, roleCode } = req.body;
 
     // Kiểm tra role được phép tạo
-    const allowedRoles = ['ROLE_ADMIN', 'ROLE_PHARMACIST'];
+    const allowedRoles = ['ROLE_ADMIN', 'ROLE_PHARMACIST', 'ROLE_DOCTOR'];
     if (!allowedRoles.includes(roleCode)) {
       return res.status(400).json({ message: 'Invalid role for registration' });
     }
@@ -344,7 +340,7 @@ exports.refreshToken = async (req, res) => {
       sameSite: 'Strict',  // Ngăn chặn CSRF
       maxAge: 24 * 60 * 60 * 1000  // Cookie hết hạn sau 1 ngày
     });
-    return res.sendStatus(200); 
+    return res.sendStatus(200);
   } catch (err) {
     return res.status(403).json({ message: 'Invalid refresh token' });
   }

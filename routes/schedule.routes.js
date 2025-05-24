@@ -184,8 +184,6 @@ router.get('/doctor/:doctorId',  scheduleController.getDoctorSchedules);
 // Lấy chi tiết lịch trình
 router.get('/:id', scheduleController.getScheduleById);
 
-
-
 // Tạo lịch trình mới (ADMIN hoặc DOCTOR với điều kiện là lịch của chính họ)
 router.post(
   '/',
