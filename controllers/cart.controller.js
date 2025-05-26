@@ -1,4 +1,4 @@
-const { Cart, CartItem, Product, ProductOption, ProductImage } = require('../models');
+const { Cart, CartItem, Product, ProductOption, ProductImage, Order, OrderItem } = require('../models');
 
 exports.addToCart = async (req, res) => {
   try {
@@ -86,6 +86,167 @@ exports.getCartByUser = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+exports.repurchase = async (req, res) => {
+  try {
+    const { items } = req.body; // items: [{ product_id, option_id, quantity }, ...]
+    const user_id = req.user.id;
+
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: 'No items provided for repurchase' });
+    }
+
+    // 1. Tìm hoặc tạo cart
+    let cart = await Cart.findOne({ where: { user_id } });
+    if (!cart) {
+      cart = await Cart.create({ user_id });
+    }
+
+    const results = [];
+
+    // 2. Lặp qua từng item và xử lý
+    for (const { product_id, option_id, quantity } of items) {
+      if (!product_id || !option_id || !quantity || quantity <= 0) {
+        results.push({ product_id, status: 'invalid item data' });
+        continue;
+      }
+
+      const [item, created] = await CartItem.findOrCreate({
+        where: {
+          cart_id: cart.id,
+          product_id,
+          option_id,
+        },
+        defaults: {
+          quantity,
+        },
+      });
+
+      if (!created) {
+        item.quantity += quantity;
+        await item.save();
+      }
+
+      results.push({
+        product_id,
+        option_id,
+        quantity: item.quantity,
+        status: created ? 'created' : 'updated',
+      });
+    }
+
+    return res.status(200).json({
+      message: 'Repurchase processed',
+      cart_items: results,
+    });
+
+  } catch (error) {
+    console.error('Error in repurchase:', error);
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+
+exports.repurchaseFromOrder = async (req, res) => {
+  try {
+    const { order_id } = req.params;
+    const user_id = req.user.id;
+
+    if (!order_id) {
+      return res.status(400).json({ message: 'order_id is required' });
+    }
+
+    // 1. Lấy đơn hàng và item
+    const order = await Order.findOne({
+      where: { id: order_id, user_id },
+      include: [{
+        model: OrderItem,
+        as: 'items',
+      }]
+    });
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    const items = order.items;
+    if (!items || items.length === 0) {
+      return res.status(400).json({ message: 'No items in the order to repurchase' });
+    }
+
+    // 2. Tìm hoặc tạo cart
+    let cart = await Cart.findOne({ where: { user_id } });
+    if (!cart) {
+      cart = await Cart.create({ user_id });
+    }
+
+    const results = [];
+
+    for (const orderItem of items) {
+      const { product_id, quantity, option } = orderItem;
+
+      if (!option) {
+        results.push({
+          product_id,
+          status: 'missing option label in order item',
+        });
+        continue;
+      }
+
+      const optionProduct = await ProductOption.findOne({
+        where: {
+          product_id,
+          label: option, // ✅ đổi key này là label
+        },
+      });
+
+      if (!optionProduct) {
+        results.push({
+          product_id,
+          option,
+          status: 'option not found',
+        });
+        continue;
+      }
+
+      const option_id = optionProduct.id;
+
+      const [cartItem, created] = await CartItem.findOrCreate({
+        where: {
+          cart_id: cart.id,
+          product_id,
+          option_id,
+        },
+        defaults: {
+          quantity,
+        },
+      });
+
+      if (!created) {
+        cartItem.quantity += quantity;
+        await cartItem.save();
+      }
+
+      results.push({
+        product_id,
+        option_id,
+        quantity: cartItem.quantity,
+        option,
+        status: created ? 'created' : 'updated',
+      });
+    }
+
+    return res.status(200).json({
+      message: 'Re-added items from previous order to cart',
+      cart_items: results,
+    });
+
+  } catch (error) {
+    console.error('Error in repurchaseFromOrder:', error);
+    return res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
 
 
 

@@ -7,8 +7,9 @@ const upload = require('../middlewares/upload.middleware');
 
 
 
-router.post('/user', authenticateToken,upload.array('images'), messageController.sendMessage);
-router.post('/admin', authenticateAdminToken,upload.array('images'), requireRole('ROLE_ADMIN'), messageController.sendMessage);
+router.post('/user', authenticateToken,upload.single('image'), messageController.sendMessage);
+router.post('/ai/user', authenticateToken,upload.single('image'), messageController.sendAIMessage);
+router.post('/admin', authenticateAdminToken,upload.single('image'), requireRole('ROLE_ADMIN'), messageController.sendMessage);
 router.get('/all', authenticateAdminToken, requireRole('ROLE_ADMIN'), messageController.getAllMessages);
 router.get('/:id/user', authenticateToken, messageController.getMessageItems);
 router.get('/:id/admin', authenticateAdminToken, requireRole('ROLE_ADMIN'), messageController.getAdminMessageItems);

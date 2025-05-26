@@ -4,6 +4,7 @@ const cartController = require('../controllers/cart.controller');
 const {authenticateToken} = require('../middlewares/auth.middleware');
 
 router.post('/', authenticateToken, cartController.addToCart);
+router.post('/repurchase/:order_id', authenticateToken, cartController.repurchaseFromOrder);
 router.get('/', authenticateToken, cartController.getCartByUser);
 router.patch('/:cartItemId', authenticateToken, cartController.updateCartItem);
 router.delete('/:cartItemId', authenticateToken, cartController.deleteCartItem);

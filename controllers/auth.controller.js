@@ -191,7 +191,9 @@ exports.verifyCode = async (req, res) => {
     const { email, verifyCode } = req.body;
 
     // Tìm người dùng theo email
+    
     const user = await User.findOne({ where: { email } });
+    const roles = await user.getRoles();
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }

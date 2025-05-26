@@ -34,7 +34,7 @@ router.use('/message', require('./message.routes'));
 router.use('/appointment', require('./appointment.routes'));
 router.use('/pkg-booking-request', require('./package_booking_request.routes'));
 router.use('/doctor-assignment', require('./doctor_assignment.routes'));
-
+router.use('/statistics', require('./statistics.routes'));
 
 
 

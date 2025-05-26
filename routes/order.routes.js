@@ -9,9 +9,14 @@ router.post('/', authenticateToken, orderController.createOrder);
 router.get('/admin/all', authenticateAdminToken, requireRole('ROLE_ADMIN'), orderController.getAllOrders);
 router.get('/:id/admin', authenticateAdminToken, requireRole('ROLE_ADMIN'), orderController.getOrderById);
 router.get('/:id/me', authenticateToken, orderController.getOrderById);
+router.get("/stats/monthly-revenue", authenticateAdminToken, requireRole('ROLE_ADMIN'), orderController.getMonthlyRevenueStats);
+router.get("/stats/revenue", authenticateAdminToken, requireRole('ROLE_ADMIN'), orderController.getRevenueStats);
 router.patch('/:id/admin/confirm', authenticateAdminToken, requireRole('ROLE_ADMIN'), orderController.confirmOrder);
 router.patch('/:id/admin/shipping', authenticateAdminToken, requireRole('ROLE_ADMIN'), orderController.shippingOrder);
-router.patch('/:id/admin/completed', authenticateToken, orderController.completeOrder);
+router.patch('/:id/completed', authenticateToken, orderController.completeOrder);
+router.patch('/:id/cancel', authenticateToken, orderController.cancelOrder);
+
+
 router.get('/me', authenticateToken,  orderController.getUserOrders);
 router.put('/me/:id/cancel', authenticateToken, orderController.cancelOrder);
 

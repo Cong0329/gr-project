@@ -3,6 +3,7 @@
 const { Order, CartItem, Address, PaymentMethod, OrderItem, Cart, ProductOption, User, Product, ProductImage, OrderStatusHistory } = require('../models');
 const { buildVNPayUrl } = require('../utils/vnpay');
 const { sendOrderConfirmedEmail } = require('../utils/mailService');
+const { fn, col, Op, literal } = require("sequelize");
 // POST /orders
 // Create Order with vnpay payment method
 exports.createOrder = async (req, res) => {
@@ -344,10 +345,10 @@ exports.getUserOrders = async (req, res) => {
 
 // Shipping order
 exports.shippingOrder = async (req, res) => {
-  const orderId = req.params.id;
+  const id = req.params.id;
 
   try {
-    const order = await Order.findOne({ where: { id: orderId } });
+    const order = await Order.findOne({ where: { id: id } });
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
@@ -377,11 +378,11 @@ exports.shippingOrder = async (req, res) => {
 }
 
 exports.completeOrder = async (req, res) => {
-  const orderId = req.params.id;
+  const id = req.params.id;
   const userId = req.user.id; // từ middleware auth
 
   try {
-    const order = await Order.findOne({ where: { id: orderId, user_id: userId } });
+    const order = await Order.findOne({ where: { id: id, user_id: userId } });
 
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
@@ -412,12 +413,12 @@ exports.completeOrder = async (req, res) => {
 
 // Cancel order
 exports.cancelOrder = async (req, res) => {
-  const orderId = req.params.id;
+  const id = req.params.id;
   const userId = req.user.id; // từ middleware auth
 
   try {
     const order = await Order.findOne({
-      where: { id: orderId, user_id: userId },
+      where: { id: id, user_id: userId },
       include: {
         model: OrderItem, as: 'items',
         include: [{ model: Product, as: 'product' }]
@@ -443,7 +444,7 @@ exports.cancelOrder = async (req, res) => {
           }
         }));
       } else {
-        console.warn(`Order ${orderId} is confirmed but has no items. Stock not reversed.`);
+        console.warn(`Order ${id} is confirmed but has no items. Stock not reversed.`);
       }
 
     }
@@ -462,8 +463,94 @@ exports.cancelOrder = async (req, res) => {
   }
 };
 
+exports.getMonthlyRevenueStats = async (req, res) => {
+  try {
+    const rawData = await Order.findAll({
+      attributes: [
+        [fn("DATE_FORMAT", col("createdAt"), "%Y-%m"), "month"],
+        [fn("COUNT", col("id")), "order_count"],
+        [fn("SUM", col("total_price")), "total_revenue"],
+        [fn("SUM", col("discout_price")), "total_discount"]
+      ],
+      where: {
+        status: "completed" // Lọc đơn hàng đã hoàn thành
+      },
+      group: [literal("DATE_FORMAT(createdAt, '%Y-%m')")],
+      order: [[literal("DATE_FORMAT(createdAt, '%Y-%m')"), "ASC"]]
+    });
+
+    const stats = rawData.map(row => ({
+      month: row.get("month"),
+      order_count: parseInt(row.get("order_count"), 10),
+      total_revenue: parseFloat(row.get("total_revenue")),
+      total_discount: parseFloat(row.get("total_discount"))
+    }));
+
+    // Tính phần trăm tăng trưởng doanh thu theo tháng
+    const result = stats.map((item, index) => {
+      if (index === 0) {
+        return { ...item, revenue_growth: null };
+      }
+
+      const prevRevenue = stats[index - 1].total_revenue;
+      const growth = prevRevenue === 0
+        ? null
+        : parseFloat(((item.total_revenue - prevRevenue) / prevRevenue * 100).toFixed(2));
+
+      return { ...item, revenue_growth: growth };
+    });
+
+    res.json(result);
+  } catch (error) {
+    console.error("Error in getMonthlyRevenueStats:", error);
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
 
 
 
+exports.getRevenueStats = async (req, res) => {
+  try {
+    const { date, month } = req.query;
 
+    let startDate, endDate;
 
+    if (date) {
+      // Nếu truyền ngày: tính từ 00:00 đến 23:59 ngày đó
+      startDate = new Date(`${date}T00:00:00.000Z`);
+      endDate = new Date(`${date}T23:59:59.999Z`);
+    } else if (month) {
+      // Nếu truyền tháng: tính từ đầu tháng đến cuối tháng
+      const [year, mon] = month.split("-");
+      const monthInt = parseInt(mon, 10);
+      startDate = new Date(year, monthInt - 1, 1, 0, 0, 0, 0);
+      endDate = new Date(year, monthInt, 0, 23, 59, 59, 999); // ngày cuối tháng
+    } else {
+      return res.status(400).json({ message: "Bạn cần truyền 'date' hoặc 'month'." });
+    }
+
+    const data = await Order.findOne({
+      attributes: [
+        [fn("SUM", col("total_price")), "total_revenue"],
+        [fn("SUM", col("discout_price")), "total_discount"],
+        [fn("COUNT", col("id")), "order_count"]
+      ],
+      where: {
+        status: "completed",
+        createdAt: {
+          [Op.between]: [startDate, endDate]
+        }
+      }
+    });
+
+    res.json({
+      time_range: date || month,
+      total_revenue: parseFloat(data.get("total_revenue")) || 0,
+      total_discount: parseFloat(data.get("total_discount")) || 0,
+      order_count: parseInt(data.get("order_count"), 10) || 0
+    });
+  } catch (error) {
+    console.error("Error in getRevenueStats:", error);
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};

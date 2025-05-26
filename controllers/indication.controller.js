@@ -1,4 +1,4 @@
-const { Indication, Product } = require('../models');
+const { Indication, Product, ProductImage, ProductOption, ProductDetail, ProductDetailSection, Brand } = require('../models');
 
 exports.createIndication = async (req, res) => {
     try {
@@ -76,9 +76,43 @@ exports.getProductsByIndicationName = async (req, res) => {
                 {
                     model: Product,
                     as: 'products',
-                    attributes: ['id', 'name', 'slug', 'code', 'rating']
-                }
-            ]
+                    where: { is_deleted: false }, // 💥 Chỉ lấy sản phẩm chưa bị ẩn
+                    attributes: ['id', 'name', 'quantity'],
+                    include: [
+                        {
+                            model: Brand,
+                            as: 'brand',
+                            attributes: ['id', 'name'],
+                        },
+                        {
+                            model: ProductImage,
+                            as: 'images',
+                            attributes: ['id', 'image'],
+                            required: true, // Phải có ảnh
+                        },
+                        {
+                            model: ProductOption,
+                            as: 'options',
+                            attributes: ['id', 'label', 'price', 'discounted_price'],
+                            required: true, // Phải có option
+                        },
+                        {
+                            model: ProductDetail,
+                            as: 'detail',
+                            attributes: [],
+                            required: true,
+                            include: [
+                                {
+                                    model: ProductDetailSection,
+                                    as: 'sections',
+                                    attributes: [],
+                                    required: true, // Phải có section
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
         });
 
         if (!indication) return res.status(404).json({ message: 'Indication not found' });
