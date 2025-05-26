@@ -22,12 +22,12 @@ import { CartPage } from "./components/pages/CartPage";
 import { ProfilePage } from "./components/pages/ProfilePage";
 import InvalidPage from "./components/information/InvalidPage";
 import { OrderDetailPage } from "./components/pages/OrderDetailPage";
-import adminRoutes from "./components/pages/AdminRouter";
 import UserProtectedRoute from "./components/pages/UserProtectedRoute copy";
 // import { BookingAppoinment } from "./components/pages/BookingAppoinment";
 import { ToastContainer } from "react-toastify";
 import ChatBoxWrapper from "./components/chatbox/chatboWrap";
 import { BookingPayment } from "./components/pages/BookingPayment";
+import appRoutes from "./components/pages/AppRoutes";
 
 function App() {
   return (
@@ -96,7 +96,7 @@ function App() {
         />
         <Route path="/booking-home/payment" element={<BookingPayment />} />
 
-        {adminRoutes}
+        {appRoutes}
         <Route path="*" element={<InvalidPage />} />
       </Routes>
     </Router>

@@ -1,6 +1,7 @@
 
 import { BaseEntity, EntityConfig, ModalType } from './types';
 import GenericForm from './GenericForm';
+import { User } from './types';
 
 interface GenericModalProps<T extends BaseEntity> {
   isOpen: boolean;
@@ -34,7 +35,18 @@ function GenericModal<T extends BaseEntity>({
       default: return '';
     }
   };
-
+  const userConfig: EntityConfig<T> = {
+    name: 'người dùng',
+    pluralName: 'người dùng',
+    fields: [
+      { name: 'id', label: 'ID', type: 'text', required: true },
+      { name: 'name', label: 'Tên người dùng', type: 'text', required: true },
+      { name: 'email', label: 'Email', type: 'text', required: true },
+      { name: 'roles', label: 'Vai trò', type: 'text', required: true },
+      { name: 'phone', label: 'Số điện thoại', type: 'text', required: true },
+      { name: 'gender', label: 'Giới tính', type: 'text', required: true },
+    ]
+  };
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center z-[100000] justify-center p-4">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
@@ -45,24 +57,44 @@ function GenericModal<T extends BaseEntity>({
         <div className="px-6 py-4">
           {(modalType === 'create' || modalType === 'edit' || modalType === 'view') && (
             item.roles?.[0].code ? (
+              modalType === 'create' ? (
+                <GenericForm
+                  item={item}
+                  config={config}
+                  onChange={onChange}
+                  readOnly={modalType === 'create'}
+                />
+              ) : modalType === 'edit' ? (
+                <GenericForm
+                  item={item}
+                  config={config}
+                  onChange={onChange}
+                  readOnly={modalType === 'edit'}
+                />
+              ) : (
+                <GenericForm
+                  item={item}
+                  config={userConfig}
+                  onChange={onChange}
+                  readOnly={modalType === 'view'}
+                />
+              )
+            ) : (
               <GenericForm
                 item={item}
                 config={config}
                 onChange={onChange}
                 readOnly={modalType === 'view'}
               />
-            ) : (
-              <>
-                <GenericForm
-                  item={item}
-                  config={config}
-                  onChange={onChange}
-                  readOnly={modalType === 'view'}
-                />
-              </>
             )
           )}
+          {modalType === 'delete' && (
+            <p className="text-center">
+              Bạn có chắc chắn muốn xóa {config.name} <span className="font-semibold">{item.name}</span>?
+            </p>
+          )}
         </div>
+
 
 
         <div className="px-6 py-4 bg-gray-50 border-t flex justify-end space-x-3">

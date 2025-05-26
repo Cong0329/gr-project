@@ -17,7 +17,16 @@ import {
   ChatIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
+const getRoleBasedPath = (path: string) => {
+ 
+  const { role } = useSelector((state: RootState) => state.auth);
+  const userRole = Array.isArray(role) ? role[0] : role || "";
+  if (userRole === "ROLE_ADMIN") return path;
+  return path.replace("/admin/", "/doctor/");
+};
 
 type NavItem = {
   name: string;
@@ -63,7 +72,8 @@ const navItems: NavItem[] = [
   {
     name: "Chat",
     icon: <ChatIcon />,
-    subItems: [{ name: "Quản lý đánh giá", path: "/admin/reviews", pro: false },
+    subItems: [
+      { name: "Quản lý đánh giá", path: "/admin/reviews", pro: false },
       { name: "Quản lý chat", path: "/admin/chat", pro: false },
     ],
   },
@@ -109,7 +119,35 @@ const othersItems: NavItem[] = [
 ];
 
 const AppSidebar: React.FC = () => {
+  const {role} = useSelector((state: RootState) => state.auth);
+  const userRole = Array.isArray(role) ? role[0] : role || "";
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
+
+  const isAdmin = userRole === "ROLE_ADMIN";
+  const isDoctor = userRole === "ROLE_DOCTOR";
+
+  const filteredNavItems = navItems
+    .filter((item) => {
+      if (isAdmin) return true;
+      if (isDoctor) return item.path === "/admin/profile";
+      return false;
+    })
+    .map((item) => ({
+      ...item,
+      path:
+        isDoctor && item.path
+          ? item.path.replace("/admin/", "/doctor/")
+          : item.path,
+      subItems: item.subItems?.map((subItem) => ({
+        ...subItem,
+        path: isDoctor
+          ? subItem.path.replace("/admin/", "/doctor/")
+          : subItem.path,
+      })),
+    }));
+
+  // Ẩn othersItems nếu không phải admin
+  const filteredOthersItems = isAdmin ? othersItems : [];
   const location = useLocation();
 
   const [openSubmenu, setOpenSubmenu] = useState<{
@@ -183,20 +221,24 @@ const AppSidebar: React.FC = () => {
           {nav.subItems ? (
             <button
               onClick={() => handleSubmenuToggle(index, menuType)}
-              className={`menu-item text-md font-semibold group py-2 px-4 flex gap-2 items-center justify-between ${openSubmenu?.type === menuType && openSubmenu?.index === index
-                ? "bg-blue-100 text-blue-600  rounded-md"
-                : "menu-item-inactive"
-                } cursor-pointer ${!isExpanded && !isHovered
+              className={`menu-item text-md font-semibold group py-2 px-4 flex gap-2 items-center justify-between ${
+                openSubmenu?.type === menuType && openSubmenu?.index === index
+                  ? "bg-blue-100 text-blue-600  rounded-md"
+                  : "menu-item-inactive"
+              } cursor-pointer ${
+                !isExpanded && !isHovered
                   ? "lg:justify-center"
                   : "lg:justify-start"
-                }`}
+              }`}
             >
               <div className="flex items-center gap-2">
                 <span
-                  className={`menu-item-icon-size text-xl ${openSubmenu?.type === menuType && openSubmenu?.index === index
-                    ? "menu-item-icon-active"
-                    : "menu-item-icon-inactive"
-                    }`}
+                  className={`menu-item-icon-size text-xl ${
+                    openSubmenu?.type === menuType &&
+                    openSubmenu?.index === index
+                      ? "menu-item-icon-active"
+                      : "menu-item-icon-inactive"
+                  }`}
                 >
                   {nav.icon}
                 </span>
@@ -207,26 +249,31 @@ const AppSidebar: React.FC = () => {
 
               {(isExpanded || isHovered || isMobileOpen) && (
                 <ChevronDownIcon
-                  className={` w-5 h-5 transition-transform duration-200 ${openSubmenu?.type === menuType &&
+                  className={` w-5 h-5 transition-transform duration-200 ${
+                    openSubmenu?.type === menuType &&
                     openSubmenu?.index === index
-                    ? "rotate-180 text-brand-500"
-                    : ""
-                    }`}
+                      ? "rotate-180 text-brand-500"
+                      : ""
+                  }`}
                 />
               )}
             </button>
           ) : (
             nav.path && (
               <Link
-                to={nav.path}
-                className={`menu-item group flex items-center px-4 py-2 rounded-md font-semibold text-md gap-2 ${isActive(nav.path) ? "bg-blue-100 text-blue-600" : "menu-item-inactive"
-                  }`}
+                to={getRoleBasedPath(nav.path || "")}
+                className={`menu-item group flex items-center px-4 py-2 rounded-md font-semibold text-md gap-2 ${
+                  isActive(nav.path)
+                    ? "bg-blue-100 text-blue-600"
+                    : "menu-item-inactive"
+                }`}
               >
                 <span
-                  className={`menu-item-icon-size text-lg ${isActive(nav.path)
-                    ? "menu-item-icon-active"
-                    : "menu-item-icon-inactive"
-                    }`}
+                  className={`menu-item-icon-size text-lg ${
+                    isActive(nav.path)
+                      ? "menu-item-icon-active"
+                      : "menu-item-icon-inactive"
+                  }`}
                 >
                   {nav.icon}
                 </span>
@@ -253,15 +300,15 @@ const AppSidebar: React.FC = () => {
                 {nav.subItems.map((subItem) => (
                   <li key={subItem.name}>
                     <Link
-                      to={subItem.path}
-                      className={`menu-dropdown-item text-sm  px-4 py-2 font-semibold  ${isActive(subItem.path)
-                        ? "bg-blue-100 text-blue-600 px-4 py-2 rounded-md w-[210px]"
-                        : "menu-dropdown-item-inactive"
-                        } block`} // 👈 Thêm class "block" ở đây
+                      to={getRoleBasedPath(subItem.path)}
+                      className={`menu-dropdown-item text-sm  px-4 py-2 font-semibold  ${
+                        isActive(subItem.path)
+                          ? "bg-blue-100 text-blue-600 px-4 py-2 rounded-md w-[210px]"
+                          : "menu-dropdown-item-inactive"
+                      } block`} // 👈 Thêm class "block" ở đây
                     >
                       {subItem.name}
                     </Link>
-
                   </li>
                 ))}
               </ul>
@@ -275,9 +322,10 @@ const AppSidebar: React.FC = () => {
   return (
     <aside
       className={` fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white  text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
-        ${isExpanded || isMobileOpen
-          ? "w-[290px]"
-          : isHovered
+        ${
+          isExpanded || isMobileOpen
+            ? "w-[290px]"
+            : isHovered
             ? "w-[290px]"
             : "w-[90px]"
         }
@@ -287,8 +335,9 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`py-8 flex ${!isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
-          }`}
+        className={`py-8 flex ${
+          !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
+        }`}
       >
         <Link to="/admin">
           {isExpanded || isHovered || isMobileOpen ? (
@@ -309,15 +358,16 @@ const AppSidebar: React.FC = () => {
           )}
         </Link>
       </div>
-      <div className="flex flex-col overflow-y-auto scrollbar-hide  duration-300 ease-linear no-scrollbar">
+      <div className="flex flex-col overflow-y-auto scrollbar-hide duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
             <div>
               <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
-                  ? "lg:justify-center"
-                  : "justify-start"
-                  }`}
+                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+                  !isExpanded && !isHovered
+                    ? "lg:justify-center"
+                    : "justify-start"
+                }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? (
                   "Menu"
@@ -325,28 +375,31 @@ const AppSidebar: React.FC = () => {
                   <HorizontaLDots className="size-6" />
                 )}
               </h2>
-              {renderMenuItems(navItems, "main")}
+              {renderMenuItems(filteredNavItems, "main")}
             </div>
-            <div className="">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded && !isHovered
-                  ? "lg:justify-center"
-                  : "justify-start"
+
+            {isAdmin && ( // Chỉ hiển thị others menu nếu là admin
+              <div className="">
+                <h2
+                  className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
+                    !isExpanded && !isHovered
+                      ? "lg:justify-center"
+                      : "justify-start"
                   }`}
-              >
-                {isExpanded || isHovered || isMobileOpen ? (
-                  "Others"
-                ) : (
-                  <HorizontaLDots />
-                )}
-              </h2>
-              {renderMenuItems(othersItems, "others")}
-            </div>
+                >
+                  {isExpanded || isHovered || isMobileOpen ? (
+                    "Others"
+                  ) : (
+                    <HorizontaLDots />
+                  )}
+                </h2>
+                {renderMenuItems(filteredOthersItems, "others")}
+              </div>
+            )}
           </div>
         </nav>
       </div>
     </aside>
   );
 };
-
 export default AppSidebar;

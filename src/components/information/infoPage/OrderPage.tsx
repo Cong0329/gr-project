@@ -1,21 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import { OrderCustom } from './OrderCustom';
-import { useDispatch } from 'react-redux';
-import { fetchOrders } from '../../../redux/orderAsyncThunk';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import { AppDispatch } from '../../../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchOrders,  } from '../../../redux/orderAsyncThunk';
+import { RootState, AppDispatch } from '../../../redux/store';
 
-// export interface Order {
-//     id: number;
-//     date: string;
-//     shippingMethod: string;
-//     orderId: string;
-//     status: 'delivered' | 'canceled' | 'pending' | 'delivering' | 'return';
-//     total: number;
-//     items: { name: string; price: number; quantity: number }[];
-// }
+
+
 
 export const OrderPage = () => {
     const [activeTab, setActiveTab] = useState('all');

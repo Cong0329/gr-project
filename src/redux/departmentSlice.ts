@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const fetchDepartments = createAsyncThunk("departments/fetch", async () => {
   const response = await axios.get(
-    "http://localhost:3000/api/v1/department"
+    `${import.meta.env.VITE_NODEJS_BACKEND_URL}/department`
   );
   return response.data;
 });

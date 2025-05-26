@@ -45,22 +45,33 @@ export const updateProfileAdminAPI = createAsyncThunk(
     }
   );
 
-export const adminLoginAPI =  createAsyncThunk(
+
+export const adminLoginAPI = createAsyncThunk(
   "admin/loginAdmin",
-  async (formLogin:SignInForm, { rejectWithValue  }) => {
+  async (formLogin: SignInForm, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/login`, formLogin,
+      console.log("Calling login API with data:", formLogin);
+      console.log("API URL:", `${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/login`);
+      
+      const response = await axios.post(
+        `${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/login`, 
+        formLogin,
         { withCredentials: true }
       );
+      
+      console.log("API response:", response.data);
       return response.data;
-    } catch (error : any) {
-      return rejectWithValue(error.response.data);
+    } catch (error: any) {
+      console.error("API error:", error);
+      console.error("Response data:", error.response?.data);
+      console.error("Status code:", error.response?.status);
+      return rejectWithValue(error.response?.data || { message: "Không thể kết nối đến máy chủ" });
     }
   }
-) ;
+);
 
 export const vefifyEmailAPI = createAsyncThunk(
-  "admin/verify",
+  "verify/verify-email",
   async ({email, verifyCode}: {email: string, verifyCode: string}, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/verify-email`, { email, verifyCode },
@@ -80,6 +91,22 @@ export const fetchUsersAPI = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/user/users`,
+        {
+          withCredentials: true
+        }
+      )
+      return response.data;
+    } catch (error : any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+)
+
+export const doctorLoginAPI =  createAsyncThunk(
+  "doctor/loginDoctor",
+  async (formLogin:SignInForm, { rejectWithValue  }) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/login`, formLogin,
         { withCredentials: true }
       );
       return response.data;
@@ -88,3 +115,50 @@ export const fetchUsersAPI = createAsyncThunk(
     }
   }
 );
+
+
+
+export const logoutApi = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/logout`, {
+        withCredentials: true
+      });
+      return true;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deleteUserAPI = createAsyncThunk(
+  "user/deleteUser",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/user/hide/${id}`,{},
+        {
+          withCredentials: true
+        }
+      )
+      return response.data;
+    } catch (error : any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+)
+export const createUserAPI = createAsyncThunk(
+  "user/createUser",
+  async ({name, email, password, roleCode}: {name: string, email: string, password: string, roleCode: string}, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/register`, {name, email, password, roleCode},
+        {
+          withCredentials: true
+        }
+      )
+      return response.data;
+    } catch (error : any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+)

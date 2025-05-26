@@ -5,8 +5,28 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "../../icons";
 
-export default function MonthlyTarget() {
-  const series = [75.55];
+export default function MonthlyTarget({
+    target, monthlyTarget, latestOrderGrowth
+}: {
+    target: number;
+    monthlyTarget: number;
+    latestOrderGrowth: number | 1;
+}) {
+  const monthly = 10000000
+  const targetPercentage = (target / monthly) * 100;
+  const growth = latestOrderGrowth === 0 ? 1 : latestOrderGrowth + 1;
+  const isGrowth = monthlyTarget - latestOrderGrowth;
+  const revenueGrowth = (isGrowth / growth) * 100;
+  const renderMessage = () => {
+    if (revenueGrowth > 0) {
+      return `Doanh thu của bạn cao hơn ${revenueGrowth}% so với tháng trước. Hãy tiếp tục làm việc tốt!`;
+    } else if (revenueGrowth < 0) {
+      return `Doanh thu của bạn thấp hơn ${Math.abs(revenueGrowth)}% so với tháng trước. Hãy cố gắng hơn nhé!`;
+    } else {
+      return `Doanh thu của bạn không thay đổi so với tháng trước.`;
+    }
+  };
+  const series = [targetPercentage];
   const options: ApexOptions = {
     colors: ["#465FFF"],
     chart: {
@@ -60,26 +80,26 @@ export default function MonthlyTarget() {
     setIsOpen(!isOpen);
   }
 
-  function closeDropdown() {
-    setIsOpen(false);
-  }
+  // function closeDropdown() {
+  //   setIsOpen(false);
+  // }
   return (
     <div className="rounded-2xl border border-gray-200 bg-gray-100 ">
       <div className="px-5 pt-5 bg-white shadow-default rounded-2xl pb-11  sm:px-6 sm:pt-6">
         <div className="flex justify-between">
           <div>
             <h3 className="text-lg font-semibold text-gray-800 ">
-              Monthly Target
+              Doanh thu tháng
             </h3>
             <p className="mt-1 text-gray-500 text-theme-sm ">
-              Target you’ve set for each month
+              Doanh thu mục tiêu
             </p>
           </div>
           <div className="relative inline-block">
             <button className="dropdown-toggle" onClick={toggleDropdown}>
               <MoreDotIcon className="text-gray-400 hover:text-gray-700  size-6" />
             </button>
-            <Dropdown
+            {/* <Dropdown
               isOpen={isOpen}
               onClose={closeDropdown}
               className="w-40 p-2"
@@ -96,7 +116,7 @@ export default function MonthlyTarget() {
               >
                 Delete
               </DropdownItem>
-            </Dropdown>
+            </Dropdown> */}
           </div>
         </div>
         <div className="relative">
@@ -111,24 +131,23 @@ export default function MonthlyTarget() {
 
           </div>
 
-          <span className="absolute left-1/2 top-full -translate-x-1/2 -translate-y-[95%] rounded-full bg-success-50 px-3 py-1 text-xs font-medium text-success-600 ">
+          {/* <span className="absolute left-1/2 top-full -translate-x-1/2 -translate-y-[95%] rounded-full bg-success-50 px-3 py-1 text-xs font-medium text-success-600 ">
             +10%
-          </span>
+          </span> */}
         </div>
         <p className="mx-auto mt-10 w-full max-w-[380px] text-center text-sm text-gray-500 sm:text-base">
-          You earn $3287 today, it's higher than last month. Keep up your good
-          work!
+        {renderMessage()}
         </p>
       </div>
 
       <div className="flex items-center justify-center gap-5 px-6 py-3.5 sm:gap-8 sm:py-5">
         <div>
           <p className="mb-1 text-center text-gray-500 text-theme-xs  sm:text-sm">
-            Target
+            Mục tiêu
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800  sm:text-lg">
-            $20K
-            <svg
+            {monthly.toLocaleString()} đ
+            {/* <svg
               width="16"
               height="16"
               viewBox="0 0 16 16"
@@ -141,7 +160,7 @@ export default function MonthlyTarget() {
                 d="M7.26816 13.6632C7.4056 13.8192 7.60686 13.9176 7.8311 13.9176C7.83148 13.9176 7.83187 13.9176 7.83226 13.9176C8.02445 13.9178 8.21671 13.8447 8.36339 13.6981L12.3635 9.70076C12.6565 9.40797 12.6567 8.9331 12.3639 8.6401C12.0711 8.34711 11.5962 8.34694 11.3032 8.63973L8.5811 11.36L8.5811 2.5C8.5811 2.08579 8.24531 1.75 7.8311 1.75C7.41688 1.75 7.0811 2.08579 7.0811 2.5L7.0811 11.3556L4.36354 8.63975C4.07055 8.34695 3.59568 8.3471 3.30288 8.64009C3.01008 8.93307 3.01023 9.40794 3.30321 9.70075L7.26816 13.6632Z"
                 fill="#D92D20"
               />
-            </svg>
+            </svg> */}
           </p>
         </div>
 
@@ -149,11 +168,11 @@ export default function MonthlyTarget() {
 
         <div>
           <p className="mb-1 text-center text-gray-500 text-theme-xs  sm:text-sm">
-            Revenue
+            Doanh thu
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800  sm:text-lg">
-            $20K
-            <svg
+            {monthlyTarget.toLocaleString()} đ
+            {/* <svg
               width="16"
               height="16"
               viewBox="0 0 16 16"
@@ -166,7 +185,7 @@ export default function MonthlyTarget() {
                 d="M7.60141 2.33683C7.73885 2.18084 7.9401 2.08243 8.16435 2.08243C8.16475 2.08243 8.16516 2.08243 8.16556 2.08243C8.35773 2.08219 8.54998 2.15535 8.69664 2.30191L12.6968 6.29924C12.9898 6.59203 12.9899 7.0669 12.6971 7.3599C12.4044 7.6529 11.9295 7.65306 11.6365 7.36027L8.91435 4.64004L8.91435 13.5C8.91435 13.9142 8.57856 14.25 8.16435 14.25C7.75013 14.25 7.41435 13.9142 7.41435 13.5L7.41435 4.64442L4.69679 7.36025C4.4038 7.65305 3.92893 7.6529 3.63613 7.35992C3.34333 7.06693 3.34348 6.59206 3.63646 6.29926L7.60141 2.33683Z"
                 fill="#039855"
               />
-            </svg>
+            </svg> */}
           </p>
         </div>
 
@@ -174,11 +193,11 @@ export default function MonthlyTarget() {
 
         <div>
           <p className="mb-1 text-center text-gray-500 text-theme-xs  sm:text-sm">
-            Today
+            Hôm nay
           </p>
           <p className="flex items-center justify-center gap-1 text-base font-semibold text-gray-800  sm:text-lg">
-            $20K
-            <svg
+            {target.toLocaleString()} đ
+            {/* <svg
               width="16"
               height="16"
               viewBox="0 0 16 16"
@@ -191,7 +210,7 @@ export default function MonthlyTarget() {
                 d="M7.60141 2.33683C7.73885 2.18084 7.9401 2.08243 8.16435 2.08243C8.16475 2.08243 8.16516 2.08243 8.16556 2.08243C8.35773 2.08219 8.54998 2.15535 8.69664 2.30191L12.6968 6.29924C12.9898 6.59203 12.9899 7.0669 12.6971 7.3599C12.4044 7.6529 11.9295 7.65306 11.6365 7.36027L8.91435 4.64004L8.91435 13.5C8.91435 13.9142 8.57856 14.25 8.16435 14.25C7.75013 14.25 7.41435 13.9142 7.41435 13.5L7.41435 4.64442L4.69679 7.36025C4.4038 7.65305 3.92893 7.6529 3.63613 7.35992C3.34333 7.06693 3.34348 6.59206 3.63646 6.29926L7.60141 2.33683Z"
                 fill="#039855"
               />
-            </svg>
+            </svg> */}
           </p>
         </div>
       </div>

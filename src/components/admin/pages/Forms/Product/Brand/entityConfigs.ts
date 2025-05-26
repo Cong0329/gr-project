@@ -82,6 +82,7 @@ export const userConfig: EntityConfig<User> = {
   name: 'người dùng',
   pluralName: 'người dùng',
   fields: [
+    { name: 'name', label: 'Tên người dùng', type: 'text', required: true },
     { name: 'email', label: 'Email', type: 'text', required: true },
     { name: 'password', label: 'Mật khẩu', type: 'text', required: true },
     { name: 'role', label: 'Vai trò', type: 'select', required: true },

@@ -21,6 +21,8 @@ import productReducer from './productSlice';
 import orderReducer from './orderSlice';
 import reviewsReducer from './reviewsSlice';
 import searchReducer from './searchSlice';
+import packageBookingReducer from './packageBookingRequestSlice'
+import revenueReducer from './revenueSlice'
 
 const cartPersistConfig = {
   key: 'cart',
@@ -31,7 +33,7 @@ const cartPersistConfig = {
 const authPersistConfig = {
   key: 'auth',
   storage,
-  whitelist: ['isAuthenticated', 'isUserAuthenticated', 'user', 'admin', 'verify', 'mail']
+  whitelist: ['isAuthenticated', 'isUserAuthenticated', 'user', 'admin', 'verify', 'mail', 'role']
 };
 
 const orderPersistConfig = {
@@ -67,7 +69,9 @@ export const store = configureStore({
     // order: orderReducer
     order: persistedReducer3,
     reviews: reviewsReducer,
-    search: searchReducer
+    search: searchReducer,
+    packages: packageBookingReducer,
+    revenue: revenueReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -1,13 +1,12 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  confirmAppointment,
-  createAppointment,
-} from "../../redux/appointmentSlice";
-import { toast, Toaster } from "react-hot-toast"; // Thêm Toaster provider
+import { createAppointment } from "../../redux/appointmentSlice";
+import { createBookingRequest } from "../../redux/packageBookingRequestSlice";
+import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
 import SuccessAnimation from "../../components/home_booking/details/component_details/AnimationBooked";
+import { RootState } from "../../redux/store";
 
 // Component LoadingSpinner
 const LoadingSpinner = ({ size = "medium" }) => {
@@ -26,34 +25,73 @@ const PaymentPage = () => {
   const location = useLocation();
   const { packageInfo } = location.state || {};
 
+  const { user } = useSelector((state: RootState) => state.auth);
+
   const [showSuccess, setShowSuccess] = useState(false);
 
   const dispatch = useDispatch();
 
-  // Đảm bảo state.appointments tồn tại trước khi truy cập
+  // Lấy state từ redux
   const appointmentsState = useSelector((state) => state.appointments || {});
-  const isConfirming = appointmentsState?.creating || false;
+  const packageBookingState = useSelector(
+    (state) => state.packageBooking || {}
+  );
+
+  // Kiểm tra trạng thái loading cho cả hai luồng
+  const isLoading =
+    appointmentsState?.creating || packageBookingState?.loading || false;
 
   // Debug Redux state
   useEffect(() => {
-    console.log("Redux state:", appointmentsState);
-  }, [appointmentsState]);
+    console.log("Redux appointments state:", appointmentsState);
+    console.log("Redux packageBooking state:", packageBookingState);
+  }, [appointmentsState, packageBookingState]);
 
-  // Kiểm tra rõ ràng trước khi truy cập thuộc tính appointments
-  // Lấy current appointment từ state hoặc từ location nếu có
-  const currentAppointment = useMemo(() => {
+  // Kiểm tra rõ ràng trước khi truy cập thuộc tính
+  // Lấy current từ state hoặc từ location nếu có
+  const currentItem = useMemo(() => {
+    // Xác định loại gói dịch vụ
+    const isSpecialistType =
+      packageInfo?.type === "specialist" ||
+      packageInfo?.type === "specialist_online";
+
     // Nếu có trong location.state, ưu tiên dùng
-    if (location.state?.appointment?.id) {
-      return location.state.appointment;
+    if (location.state?.appointment?.id && isSpecialistType) {
+      return {
+        type: "appointment",
+        data: location.state.appointment,
+      };
+    }
+
+    if (location.state?.bookingRequest?.id && !isSpecialistType) {
+      return {
+        type: "bookingRequest",
+        data: location.state.bookingRequest,
+      };
     }
 
     // Nếu không có trong location, tìm trong redux store
-    if (!appointmentsState?.appointments?.length) return null;
+    if (isSpecialistType && appointmentsState?.appointments?.length) {
+      return {
+        type: "appointment",
+        data: appointmentsState.appointments[
+          appointmentsState.appointments.length - 1
+        ],
+      };
+    }
 
-    return appointmentsState.appointments[
-      appointmentsState.appointments.length - 1
-    ];
-  }, [appointmentsState, location.state]);
+    if (!isSpecialistType && packageBookingState?.bookingRequests?.length) {
+      // Chỉnh sửa tên array để khớp với slice
+      return {
+        type: "bookingRequest",
+        data: packageBookingState.bookingRequests[
+          packageBookingState.bookingRequests.length - 1
+        ],
+      };
+    }
+
+    return null;
+  }, [appointmentsState, packageBookingState, location.state, packageInfo]);
 
   const [userInfo, setUserInfo] = useState({
     fullName: "",
@@ -62,10 +100,29 @@ const PaymentPage = () => {
     gender: "",
     birthDate: "",
     reason: "",
+    address: "",
     paymentMethod: "vnpay",
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Kiểm tra và hiển thị lỗi từ Redux
+  useEffect(() => {
+    // Hiển thị lỗi từ appointmentSlice nếu có
+    if (appointmentsState?.error) {
+      toast.error(
+        appointmentsState.error.message ||
+          "Đã xảy ra lỗi khi đặt lịch chuyên khoa"
+      );
+    }
+
+    // Hiển thị lỗi từ packageBookingSlice nếu có
+    if (packageBookingState?.error) {
+      toast.error(
+        packageBookingState.error.message || "Đã xảy ra lỗi khi đặt gói khám"
+      );
+    }
+  }, [appointmentsState?.error, packageBookingState?.error]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -108,24 +165,64 @@ const PaymentPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Xử lý thanh toán VNPay
-  const processVNPayPayment = async () => {
-    if (!currentAppointment?.id) {
+  // Xử lý thanh toán VNPay cho appointment
+  const processAppointmentVNPayPayment = async (appointmentId) => {
+    if (!appointmentId) {
       toast.error("Thông tin đặt lịch không hợp lệ");
       return false;
     }
 
     try {
       // Log cho debug
-      console.log("Đang gửi yêu cầu thanh toán VNPay với dữ liệu:", {
-        appointmentId: currentAppointment.id,
+      console.log("Đang gửi yêu cầu thanh toán VNPay cho appointment:", {
+        appointmentId: appointmentId,
         amount: packageInfo?.price || 0,
         userInfo: userInfo,
       });
 
       // Gửi request tạo URL thanh toán VNPay
       const response = await axios.post("/api/payment/vnpay/create", {
-        appointmentId: currentAppointment.id,
+        appointmentId: appointmentId,
+        amount: packageInfo?.price || 0,
+        userInfo: userInfo,
+      });
+
+      // Nếu thành công, chuyển hướng đến trang thanh toán VNPay
+      if (response.data && response.data.paymentUrl) {
+        window.location.href = response.data.paymentUrl;
+        return true;
+      } else {
+        console.error("VNPay response:", response.data);
+        toast.error("Không nhận được URL thanh toán");
+        return false;
+      }
+    } catch (error) {
+      console.error("VNPay error:", error);
+      toast.error("Có lỗi xảy ra khi khởi tạo thanh toán qua VNPay");
+      return false;
+    }
+  };
+
+  // Xử lý thanh toán VNPay cho booking request
+  const processBookingRequestVNPayPayment = async (bookingRequestId) => {
+    if (!bookingRequestId) {
+      toast.error("Thông tin đặt gói khám không hợp lệ");
+      return false;
+    }
+
+    try {
+      // Log cho debug
+      console.log("Đang gửi yêu cầu thanh toán VNPay cho booking request:", {
+        bookingRequestId: bookingRequestId,
+        amount: packageInfo?.price || 0,
+        userInfo: userInfo,
+      });
+
+      // Gửi request tạo URL thanh toán VNPay
+      const response = await axios.post("/api/payment/vnpay/create", {
+        // Sử dụng cùng endpoint cho cả 2 loại
+        bookingRequestId: bookingRequestId,
+        type: "package", // Thêm trường này để backend phân biệt loại thanh toán
         amount: packageInfo?.price || 0,
         userInfo: userInfo,
       });
@@ -155,33 +252,49 @@ const PaymentPage = () => {
     }
 
     setIsSubmitting(true);
+
+    try {
+      // KHÔNG dùng useSelector ở đây nữa, sử dụng user đã lấy từ trên
+      if (!user || !user.id) {
+        toast.error("Vui lòng đăng nhập để tiếp tục");
+        return;
+      }
+
+      // Sử dụng packageInfo từ trên hoặc location.state
+      const bookingInfo = packageInfo || location.state?.packageInfo || {};
+
+      const isSpecialistType =
+        bookingInfo.type === "specialist" ||
+        bookingInfo.type === "specialist_online";
+
+      if (isSpecialistType) {
+        await handleSpecialistBooking(user.id, bookingInfo);
+      } else {
+        await handlePackageBooking(user.id, bookingInfo);
+      }
+    } catch (error) {
+      console.error("Payment process error:", error);
+      toast.error(error.message || "Có lỗi xảy ra trong quá trình xử lý");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Xử lý đặt lịch chuyên khoa
+  const handleSpecialistBooking = async (userId, packageInfo) => {
     let newAppointmentId = null;
     let appointmentData = null;
 
     try {
-      const userId = "2d46df95-1a24-407a-a9be-65e7343ddb72";
-      const packageInfo = location.state?.packageInfo || {};
-
-      // Đảm bảo service_id là số nguyên (INTEGER) như trong model
       let service_id = packageInfo.service_id;
       if (!service_id) {
-        if (
-          packageInfo.type === "specialist" ||
-          packageInfo.type === "specialist_online"
-        ) {
-          service_id = packageInfo.department?.id;
-        } else {
-          service_id =
-            packageInfo.doctor?.service_package_id ||
-            packageInfo.department?.id;
-        }
+        service_id = packageInfo.department?.id;
       }
 
       // Ép kiểu service_id về số nguyên
       service_id = parseInt(service_id);
       if (isNaN(service_id)) {
         toast.error("Lỗi: service_id không hợp lệ");
-        setIsSubmitting(false);
         return;
       }
 
@@ -189,7 +302,6 @@ const PaymentPage = () => {
       const schedule_id = parseInt(packageInfo.scheduleId);
       if (isNaN(schedule_id)) {
         toast.error("Lỗi: schedule_id không hợp lệ");
-        setIsSubmitting(false);
         return;
       }
 
@@ -217,8 +329,7 @@ const PaymentPage = () => {
       // Thêm trường status vào appointmentData
       appointmentData = {
         user_id: userId,
-        doctor_id:
-          packageInfo.doctor?.id || "0961976a-ac57-49d7-8db1-af9272058159",
+        doctor_id: packageInfo.doctor?.id,
         schedule_id: schedule_id,
         date: packageInfo.date,
         start_time: start_time,
@@ -226,27 +337,25 @@ const PaymentPage = () => {
         type: packageInfo.type,
         service_id: service_id,
         payment_method: userInfo.paymentMethod === "vnpay" ? "online" : "cash",
-        amount: parseFloat(packageInfo.price) || 500000,
-        // Thêm status tại đây
+        amount: parseFloat(packageInfo.price),
         status:
           userInfo.paymentMethod === "vnpay" ? "pending_payment" : "confirmed",
-        // Thêm payment_status cho thanh toán tiền mặt
         payment_status:
           userInfo.paymentMethod === "vnpay" ? "pending" : "confirmed",
-        // Thêm thông tin bệnh nhân từ form
         patient_info: {
           name: userInfo.fullName,
           phone: userInfo.phone,
           email: userInfo.email,
-          dob: userInfo.dob,
+          dob: userInfo.birthDate,
           gender: userInfo.gender,
           address: userInfo.address,
+          reason: userInfo.reason,
         },
       };
 
       // Log chi tiết về dữ liệu trước khi gửi
       console.log(
-        "Appointment data being sent (formatted):",
+        "Appointment data being sent:",
         JSON.stringify(appointmentData, null, 2)
       );
 
@@ -262,13 +371,20 @@ const PaymentPage = () => {
 
       newAppointmentId = createResult.id;
 
+      const previousPageInfo = packageInfo.previousPage || {};
+      const backUrl =
+        previousPageInfo.url ||
+        `/booking-home/${
+          previousPageInfo.type || "specialty-detail"
+        }/${encodeURIComponent(previousPageInfo.name || "Chuyên khoa")}`;
+
       if (userInfo.paymentMethod === "vnpay") {
-        await processVNPayPayment(newAppointmentId);
+        await processAppointmentVNPayPayment(newAppointmentId);
       } else {
-        setShowSuccess(true); // hiển thị animation trong JSX return
+        setShowSuccess(true);
 
         setTimeout(() => {
-          navigate("/appointment-success", {
+          navigate(backUrl, {
             state: {
               appointment: {
                 ...createResult,
@@ -280,55 +396,155 @@ const PaymentPage = () => {
         }, 2000);
       }
     } catch (error) {
-      console.error("Payment process error:", error);
-
-      // Thêm xử lý lỗi đặc biệt cho 404
-      if (error.response?.status === 404) {
-        toast.error("Không tìm thấy API endpoint xác nhận. Kiểm tra URL API.");
-      } else {
-        toast.error(error.message || "Có lỗi xảy ra khi xử lý thanh toán");
-      }
-
-      // Mặc dù xác nhận thất bại nhưng lịch hẹn đã được tạo,
-      // có thể chuyển hướng người dùng với thông tin đã có
-      if (newAppointmentId && appointmentData) {
-        toast.warning(
-          "Lịch hẹn đã được tạo nhưng chưa được xác nhận đầy đủ. Vui lòng liên hệ hỗ trợ."
-        );
-        navigate("/appointment-success", {
-          state: {
-            appointment: {
-              id: newAppointmentId,
-              status: appointmentData.status,
-              payment_status: appointmentData.payment_status,
-              date: appointmentData.date,
-              start_time: appointmentData.start_time,
-              end_time: appointmentData.end_time,
-              doctor_id: appointmentData.doctor_id,
-              patient_info: appointmentData.patient_info,
-            },
-          },
-        });
-      }
-    } finally {
-      setIsSubmitting(false);
+      console.error("Specialist booking error:", error);
+      throw error;
     }
   };
 
-  // Kiểm tra các dependencies cần thiết khi component mount
+  // Xử lý đặt lịch gói khám
+  const handlePackageBooking = async (userId, packageInfo) => {
+    let newBookingRequestId = null;
+    let bookingRequestData = null;
+
+    try {
+      // Lấy service_id từ packageInfo
+      let service_id = packageInfo.service_id;
+      if (!service_id) {
+        service_id = packageInfo.id;
+      }
+
+      // Ép kiểu service_id về số nguyên
+      service_id = parseInt(service_id);
+      if (isNaN(service_id)) {
+        toast.error("Lỗi: service_id không hợp lệ");
+        return;
+      }
+
+      // Tạo dữ liệu booking request
+      bookingRequestData = {
+        user_id: userId,
+        package_id: service_id,
+        package_type: packageInfo.type,
+        requested_date: packageInfo.date,
+        requested_time_slot: packageInfo.time,
+        notes: userInfo.reason,
+        payment_method: userInfo.paymentMethod === "vnpay" ? "online" : "cash",
+        amount: parseFloat(packageInfo.price),
+        status:
+          userInfo.paymentMethod === "vnpay" ? "pending_payment" : "pending",
+        payment_status:
+          userInfo.paymentMethod === "vnpay" ? "pending" : "confirmed",
+        patient_info: {
+          name: userInfo.fullName,
+          phone: userInfo.phone,
+          email: userInfo.email,
+          dob: userInfo.birthDate,
+          gender: userInfo.gender,
+          address: userInfo.address,
+        },
+      };
+
+      // Log chi tiết về dữ liệu trước khi gửi
+      console.log(
+        "Package booking data being sent:",
+        JSON.stringify(bookingRequestData, null, 2)
+      );
+
+      const createResult = await dispatch(
+        createBookingRequest(bookingRequestData)
+      ).unwrap();
+
+      console.log("Created package booking result:", createResult);
+
+      if (!createResult || !createResult.id) {
+        throw new Error(
+          "Không thể tạo yêu cầu đặt gói khám. Vui lòng thử lại sau."
+        );
+      }
+
+      newBookingRequestId = createResult.id;
+
+      const previousPageInfo = packageInfo.previousPage || {};
+      const backUrl =
+        previousPageInfo.url ||
+        `/booking-home/${
+          previousPageInfo.type || "generalex-detail"
+        }/${encodeURIComponent(previousPageInfo.name || "Gói khám")}`;
+
+      if (userInfo.paymentMethod === "vnpay") {
+        await processBookingRequestVNPayPayment(newBookingRequestId);
+      } else {
+        setShowSuccess(true);
+
+        // Điều hướng sau khi đặt thành công
+        setTimeout(() => {
+          navigate(backUrl, {
+            state: {
+              bookingRequest: {
+                ...createResult,
+                status: "pending",
+                payment_status: "confirmed",
+              },
+            },
+          });
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Package booking error:", error);
+      throw error;
+    }
+  };
+
+  // Xử lý khi thanh toán VNPay thành công quay trở lại
   useEffect(() => {
-    // Kiểm tra packageInfo
+    // Kiểm tra xem có phải đang quay lại từ VNPay không
+    const urlParams = new URLSearchParams(window.location.search);
+    const vnp_ResponseCode = urlParams.get("vnp_ResponseCode");
+
+    if (vnp_ResponseCode) {
+      if (vnp_ResponseCode === "00") {
+        // Thanh toán thành công
+        toast.success("Thanh toán thành công!");
+        setShowSuccess(true);
+
+        // Đợi 2 giây rồi điều hướng tùy theo loại dịch vụ
+        setTimeout(() => {
+          // Kiểm tra loại dịch vụ để điều hướng
+          if (
+            packageInfo?.type === "specialist" ||
+            packageInfo?.type === "specialist_online"
+          ) {
+            navigate(
+              `/booking-home/specialty-detail/${encodeURIComponent(
+                packageInfo.specialtyName
+              )}`
+            );
+          } else {
+            navigate(
+              `/packages/${packageInfo.type}/${encodeURIComponent(
+                packageInfo.name
+              )}`
+            );
+          }
+        }, 2000);
+      } else {
+        // Thanh toán thất bại
+        toast.error("Thanh toán không thành công. Vui lòng thử lại.");
+      }
+    }
+  }, [navigate, packageInfo]);
+
+  useEffect(() => {
     if (!packageInfo) {
-      toast.error("Không tìm thấy thông tin gói khám");
+      toast.error("Không tìm thấy thông tin gói dịch vụ");
       navigate("/packages");
       return;
     }
 
-    // Kiểm tra currentAppointment sau khi component mount
-    if (!currentAppointment?.id) {
-      console.warn("Không tìm thấy thông tin lịch khám hiện tại");
+    if (!currentItem?.data?.id) {
+      console.warn("Không tìm thấy thông tin đặt lịch hiện tại");
     }
-  }, [packageInfo, currentAppointment, navigate]);
+  }, [packageInfo, currentItem, navigate]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -462,15 +678,29 @@ const PaymentPage = () => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Địa chỉ
+                  </label>
+                  <input
+                    type="text"
+                    name="address"
+                    value={userInfo.address}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Nhập địa chỉ của bạn"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Lý do khám
                   </label>
                   <textarea
                     name="reason"
-                    value={userInfo.reason}
+                    value={packageInfo.notes}
                     onChange={handleChange}
                     rows={3}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Mô tả triệu chứng hoặc lý do khám (nếu có)"
+                    placeholder="Mô tả triệu chứng hoặc lý do khám (nếu có) hoặc ghi chú thêm cho bác sĩ"
                   />
                 </div>
 
@@ -556,10 +786,10 @@ const PaymentPage = () => {
                 </div>
                 <button
                   type="submit"
-                  disabled={isSubmitting || isConfirming}
+                  disabled={isSubmitting || isLoading}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-md font-medium text-lg mt-6 transition duration-200"
                 >
-                  {isSubmitting || isConfirming ? (
+                  {isSubmitting || isLoading ? (
                     <LoadingSpinner size="small" />
                   ) : (
                     "Xác nhận thanh toán"
@@ -579,9 +809,17 @@ const PaymentPage = () => {
                   <div className="space-y-4">
                     <div className="mb-4">
                       <h3 className="font-medium text-gray-900 mb-2">
-                        Gói khám
+                        {packageInfo.type === "specialist" ||
+                        packageInfo.type === "specialist_online"
+                          ? "Dịch vụ chuyên khoa"
+                          : "Gói khám"}
                       </h3>
                       <p className="text-gray-600">{packageInfo.name}</p>
+                      {packageInfo.department && (
+                        <p className="text-sm text-gray-500">
+                          {packageInfo.department.name}
+                        </p>
+                      )}
                     </div>
 
                     {/* Hiển thị thông tin ngày và giờ khám */}
@@ -607,7 +845,7 @@ const PaymentPage = () => {
                           </svg>
                           <span className="font-medium">Ngày: </span>
                           <span className="ml-1 text-gray-600">
-                            {packageInfo.formattedDate}
+                            {packageInfo.formattedDate || packageInfo.date}
                           </span>
                         </div>
                         <div className="flex items-center text-sm">
@@ -633,38 +871,42 @@ const PaymentPage = () => {
                       </div>
                     </div>
 
-                    {/* Chi tiết bác sĩ */}
-                    {packageInfo.doctor && (
-                      <div className="mb-4">
-                        <h3 className="font-medium text-gray-900 mb-2">
-                          Bác sĩ
-                        </h3>
-                        <div className="flex items-center">
-                          {packageInfo.doctor.avatar && (
-                            <img
-                              src={packageInfo.doctor.avatar}
-                              alt={packageInfo.doctor.name}
-                              className="w-10 h-10 rounded-full object-cover mr-3"
-                            />
-                          )}
-                          <div>
-                            <p className="font-medium text-gray-800">
-                              {packageInfo.doctor.name}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {packageInfo.doctor.position}
-                            </p>
+                    {/* Chi tiết bác sĩ - chỉ hiển thị nếu là chuyên khoa */}
+                    {packageInfo.doctor &&
+                      (packageInfo.type === "specialist" ||
+                        packageInfo.type === "specialist_online") && (
+                        <div className="mb-4">
+                          <h3 className="font-medium text-gray-900 mb-2">
+                            Bác sĩ
+                          </h3>
+                          <div className="flex items-center">
+                            {packageInfo.doctor.avatar && (
+                              <img
+                                src={packageInfo.doctor.avatar}
+                                alt={packageInfo.doctor.name}
+                                className="w-10 h-10 rounded-full object-cover mr-3"
+                              />
+                            )}
+                            <div>
+                              <p className="font-medium text-gray-800">
+                                {packageInfo.doctor.name}
+                              </p>
+                              <p className="text-sm text-gray-500">
+                                {packageInfo.doctor.position}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
+                      )}
 
                     <div className="space-y-4 mt-6 pt-4 border-t">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Giá khám:</span>
                         <span className="font-medium">
                           {packageInfo?.price
-                            ? `${packageInfo.price.toLocaleString("vi-VN")}đ`
+                            ? `${parseInt(packageInfo.price).toLocaleString(
+                                "vi-VN"
+                              )}đ`
                             : "0đ"}
                         </span>
                       </div>
@@ -681,7 +923,9 @@ const PaymentPage = () => {
                           <span>Tổng cộng:</span>
                           <span className="text-blue-600">
                             {packageInfo?.price
-                              ? `${packageInfo.price.toLocaleString("vi-VN")}đ`
+                              ? `${parseInt(packageInfo.price).toLocaleString(
+                                  "vi-VN"
+                                )}đ`
                               : "0đ"}
                           </span>
                         </div>

@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store'; // Adjust import path as needed
 
 // Constants
-const API_URL = "http://localhost:3000/api/v1/service-pkg";
 const MIN_FEATURED_RATING = 4.7;
 const MIN_SUGGESTED_RATING = 4.5;
 const MAX_SUGGESTED_RATING = 4.7;
@@ -89,7 +88,7 @@ export const fetchServicePackages = createAsyncThunk(
   'servicePackage/fetchServicePackages',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch(API_URL);
+      const response = await fetch(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/service-pkg`);
       
       if (!response.ok) {
         throw new Error(ERROR_MESSAGES.FETCH_FAILED);
@@ -160,7 +159,7 @@ export const fetchServiceItems = createAsyncThunk<
   async (_, { rejectWithValue }) => {
     try {
       // Replace with your actual API endpoint for service items
-      const response = await fetch('http://localhost:3000/api/v1/service-item');
+      const response = await fetch(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/service-pkg/service-item`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch service items');
@@ -183,7 +182,7 @@ export const fetchServiceCategories = createAsyncThunk<
   async (_, { rejectWithValue }) => {
     try {
       // Replace with your actual API endpoint for service categories
-      const response = await fetch('http://localhost:3000/api/v1/service-category');
+      const response = await fetch(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/service-pkg/service-category`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch service categories');
@@ -196,6 +195,7 @@ export const fetchServiceCategories = createAsyncThunk<
     }
   }
 );
+
 
 // Slice
 const servicePackageSlice = createSlice({
@@ -385,7 +385,5 @@ export const selectServiceCategories = (state: RootState) => state.servicePackag
 export const selectCategories = (state: RootState) => state.servicePackage.categories;
 export const selectLoadingStatus = (state: RootState) => state.servicePackage.loading;
 export const selectError = (state: RootState) => state.servicePackage.error;
-
-
 
 export default servicePackageSlice.reducer;

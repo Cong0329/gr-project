@@ -5,7 +5,11 @@ import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "../../icons";
 import { useState } from "react";
 
-export default function MonthlySalesChart() {
+export default function MonthlySalesChart({
+    monthlyRevenue
+}: {
+    monthlyRevenue: number[];
+}) {
   const options: ApexOptions = {
     colors: ["#465fff"],
     chart: {
@@ -34,18 +38,8 @@ export default function MonthlySalesChart() {
     },
     xaxis: {
       categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+        "Th1", "Th2", "Th3", "Th4", "Th5", "Th6",
+        "Th7", "Th8", "Th9", "Th10", "Th11", "Th12",
       ],
       axisBorder: {
         show: false,
@@ -88,7 +82,7 @@ export default function MonthlySalesChart() {
   const series = [
     {
       name: "Sales",
-      data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+      data: monthlyRevenue,
     },
   ];
   const [isOpen, setIsOpen] = useState(false);
@@ -110,7 +104,7 @@ export default function MonthlySalesChart() {
           <button className="dropdown-toggle" onClick={toggleDropdown}>
             <MoreDotIcon className="text-gray-400 hover:text-gray-700  size-6" />
           </button>
-          <Dropdown
+          {/* <Dropdown
             isOpen={isOpen}
             onClose={closeDropdown}
             className="w-40 p-2"
@@ -127,7 +121,7 @@ export default function MonthlySalesChart() {
             >
               Delete
             </DropdownItem>
-          </Dropdown>
+          </Dropdown> */}
         </div>
       </div>
 

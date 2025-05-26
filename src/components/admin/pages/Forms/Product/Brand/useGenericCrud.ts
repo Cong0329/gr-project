@@ -7,6 +7,7 @@ import { createCategory, updateCategory, deleteCategory } from '../../../../../.
 import { createMedicalObject, updateMedicalObject, deleteMedicalObject } from '../../../../../../redux/medicalObjectAsyncThunk';
 import { createIndication, updateIndication, deleteIndication } from '../../../../../../redux/indicationAsyncThunk';
 import { AppDispatch } from '../../../../../../redux/store';
+import { createUserAPI, deleteUserAPI } from '../../../../../../redux/userAsyncThunk';
 
 export function useGenericCrud<T extends BaseEntity>(
   initialItems: T[],
@@ -191,16 +192,17 @@ const handleUserSaveItem = () => {
     return;
   }
   if (modalType === 'create') {
-    // dispatch(createUser(currentItem.name));
+    dispatch(createUserAPI({name: currentItem.name, email: currentItem.email, password: currentItem.password, roleCode: currentItem.role}));
   } else {
-    // dispatch(updateUser({ id: currentItem.id, name: currentItem.name }));
+    // dispatch(updateUserAPI({ id: currentItem.id, name: currentItem.name, email: currentItem.email, roleCode: currentItem.role }));
   }
 
   setIsModalOpen(false);
 };
 
 const handleUserDeleteItem = () => {
-  // dispatch(deleteUser(currentItem.id));
+  console.log(currentItem.id);
+  dispatch(deleteUserAPI(currentItem.id));
   setIsModalOpen(false);
 };
 

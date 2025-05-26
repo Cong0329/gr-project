@@ -9,11 +9,19 @@ export interface Appointment {
   date: string;
   start_time: string;
   end_time: string;
-  type: 'specialist' | 'specialist_online';
+  type: 'specialist' | 'specialist_online' | 'general' | 'medical';
   service_id: number;
   payment_method: 'cash' | 'online';
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'rejected';
+  status: 'pending_payment' | 'confirmed' | 'cancelled' | 'completed' | 'rejected';
   reason?: string;
+  doctor?: {
+    id: string;
+    name: string;
+    avatar_url: string;
+    specialization: string;
+  };
+  schedule?: any;
+  serviceInfo?: any;
 }
 
 interface AppointmentState {
@@ -23,6 +31,10 @@ interface AppointmentState {
   creating: boolean;
   createSuccess: boolean;
   createError: string | null;
+  confirming?: boolean;
+  confirmSuccess?: boolean;
+  cancelling?: boolean;
+  cancelSuccess?: boolean;
 }
 
 const initialState: AppointmentState = {
@@ -39,7 +51,7 @@ export const createAppointment = createAsyncThunk(
     async (appointmentData: Partial<Appointment>, { rejectWithValue }) => {
       try {
         console.log('Data being sent:', appointmentData);
-        const response = await axios.post('http://localhost:3000/api/v1/appointment/create', appointmentData);
+        const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/appointment/create`, appointmentData);
         return response.data.data;
       } catch (error: any) {
         console.error('API Error Response:', error.response?.data);
@@ -55,7 +67,7 @@ export const createAppointment = createAsyncThunk(
     async ({ appointmentId, userInfo }: ConfirmAppointmentParams, { rejectWithValue }) => {
       try {
         const response = await axios.patch(
-          `http://localhost:3000/api/v1/appointment/${appointmentId}/status`,
+          `${import.meta.env.VITE_NODEJS_BACKEND_URL}/appointment/${appointmentId}/status`,
           {
             status: 'confirmed',
             patient_info: {
@@ -89,12 +101,32 @@ export const cancelAppointment = createAsyncThunk(
   'appointment/cancel',
   async ({ id, reason }: { id: string; reason?: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`/api/appointment/${id}/cancel`, {
-        ...(reason && { reason })
+      // Cách 1: Sử dụng withCredentials (cho cookie-based auth)
+      const response = await axios.post(
+        `${import.meta.env.VITE_NODEJS_BACKEND_URL}/appointment/${id}/cancel`,
+        { reason },
+        { withCredentials: true }
+      );
+      
+      
+      return response.data.data;
+    } catch (error: any) {
+      console.error('Cancel appointment error:', error.response?.data);
+      return rejectWithValue(error.response?.data?.message || 'Failed to cancel appointment');
+    }
+  }
+);
+
+export const getUserAppointment = createAsyncThunk(
+  'appointment/getUserAppointments',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/appointment/user/me`, {
+        withCredentials: true
       });
       return response.data.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Failed to cancel appointment');
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch appointments');
     }
   }
 );
@@ -110,6 +142,14 @@ const appointmentSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+     .addCase(getUserAppointment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserAppointment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.appointments = action.payload;
+      })
       .addCase(createAppointment.pending, (state) => {
         state.creating = true;
         state.createSuccess = false;
@@ -177,12 +217,27 @@ const appointmentSlice = createSlice({
       })
   
       // Cancel
+      .addCase(cancelAppointment.pending, (state) => {
+        state.cancelling = true;
+        state.cancelSuccess = false;
+        state.error = null;
+      })
       .addCase(cancelAppointment.fulfilled, (state, action: PayloadAction<Appointment>) => {
+        state.cancelling = false;
+        state.cancelSuccess = true;
         const index = state.appointments.findIndex(a => a.id === action.payload.id);
         if (index !== -1) {
           state.appointments[index].status = 'cancelled';
         }
-      });
+      })
+      .addCase(cancelAppointment.rejected, (state, action) => {
+        state.cancelling = false;
+        state.cancelSuccess = false;
+        state.error = typeof action.payload === 'string'
+          ? action.payload
+          : JSON.stringify(action.payload);
+      })
+
   }
 });
 

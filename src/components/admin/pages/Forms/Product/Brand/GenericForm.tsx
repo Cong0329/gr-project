@@ -1,5 +1,4 @@
 
-import { EyeCloseIcon, EyeIcon } from '../../../../icons';
 import { BaseEntity, EntityConfig, FieldConfig } from './types';
 import Select from 'react-select';
 interface GenericFormProps<T extends BaseEntity> {
@@ -15,13 +14,19 @@ function GenericForm<T extends BaseEntity>({
     onChange,
     readOnly = false
 }: GenericFormProps<T>) {
+    const genderMap = {
+        MALE: 'Nam',
+        FEMALE: 'Nữ',
+        OTHER: 'Khác', // nếu có thêm giới tính khác
+      };
+      
     const renderField = (field: FieldConfig) => {
         switch (field.type) {
             case 'textarea':
                 return (
                     <textarea
                         name={field.name}
-                        value={item[field.name] || ''}
+                        value={ item[field.name] || ''}
                         onChange={onChange}
                         disabled={readOnly}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md"
@@ -51,11 +56,11 @@ function GenericForm<T extends BaseEntity>({
                         classNamePrefix="react-select"
                         styles={{
                             menu: (provided) => ({
-                              ...provided,
-                              maxHeight: 200, // Giới hạn chiều cao dropdown
-                              overflowY: 'auto',
+                                ...provided,
+                                maxHeight: 200, // Giới hạn chiều cao dropdown
+                                overflowY: 'auto',
                             }),
-                          }}
+                        }}
                     />
                 );
 
@@ -98,19 +103,20 @@ function GenericForm<T extends BaseEntity>({
                     />
                 );
 
-         
+
 
             default:
                 return (
                     <input
                         type="text"
                         name={field.name}
-                        value={item[field.name] || ''}
+                        value={field.name === 'gender' ? genderMap[item[field.name] as keyof typeof genderMap] : field.name === "roles" ? item[field.name]?.[0].name : item[field.name] || ''}
                         onChange={onChange}
                         disabled={readOnly}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md"
                         required={field.required}
                     />
+
                 );
         }
     };
