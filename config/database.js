@@ -32,4 +32,4 @@ sequelize.sync({ alter: false })
   .then(() => console.log('✅ DB synced (altered without data loss)'))
   .catch(err => console.error('❌ DB sync error:', err));
   
-module.exports = sequelize;
+module.exports = sequelize; 

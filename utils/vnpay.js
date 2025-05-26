@@ -26,7 +26,7 @@ function buildVNPayUrl(orderId, totalAmount, ipAddr) {
     vnp_Params['vnp_ReturnUrl'] = returnUrl;
     vnp_Params['vnp_IpAddr'] = ipAddr;
     vnp_Params['vnp_CreateDate'] = createDate;
-    vnp_Params['vnp_BankCode'] = 'NCB';
+    // vnp_Params['vnp_BankCode'] = 'NCB';
 
 
     vnp_Params = sortObject(vnp_Params);

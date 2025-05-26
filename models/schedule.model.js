@@ -7,11 +7,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     doctor_id: {
       type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
-      references: {
-        model: 'doctor',
-        key: 'id'
-      }
     },
     date: {
       type: DataTypes.DATEONLY,

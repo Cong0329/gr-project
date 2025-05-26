@@ -2,7 +2,7 @@
 const { Message, MessageItem, User } = require('../models');
 const cloudinary = require('../utils/cloudinary'); // Đảm bảo bạn đã cấu hình Cloudinary
 const streamifier = require('streamifier');
-
+const IA_USER_ID = 'bc38c103-ab3b-4fb6-9f55-677cabd62412';
 
 // 1. User hoặc Admin gửi tin nhắn
 exports.sendMessage = async (req, res) => {
@@ -70,7 +70,7 @@ exports.sendMessage = async (req, res) => {
             message_id: message.id,
             sender_id: senderId,
             content,
-            image: imageUrl,
+            image_url: imageUrl,
         });
 
         message.update_at = new Date();
@@ -132,6 +132,85 @@ exports.getAllMessages = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+
+exports.sendAIMessage = async (req, res) => {
+    try {
+        const senderId = IA_USER_ID;
+        const { content } = req.body;
+        const recipientId = req.user.id;
+        let imageUrl = null;
+
+        if (!recipientId || (!content && !req.file)) {
+            return res.status(400).json({ message: 'Missing recipientId or content/image' });
+        }
+
+        // Xử lý ảnh nếu có
+        if (req.file) {
+            const streamUpload = () => {
+                return new Promise((resolve, reject) => {
+                    const stream = cloudinary.uploader.upload_stream({ folder: 'messages' }, (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    });
+                    streamifier.createReadStream(req.file.buffer).pipe(stream);
+                });
+            };
+            const result = await streamUpload();
+            imageUrl = result.secure_url;
+        }
+
+        // Lấy hoặc tạo conversation
+        let message = await Message.findOne({ where: { user_id: recipientId } });
+
+        if (!message) {
+            message = await Message.create({ user_id: recipientId });
+        }
+
+        const newMessageItem = await MessageItem.create({
+            message_id: message.id,
+            sender_id: senderId,
+            content,
+            image_url: imageUrl,
+        });
+
+        message.update_at = new Date();
+        await message.save();
+
+        // Gửi socket nếu có
+        if (req.io) {
+            req.io.to(recipientId).emit('ai_user_new_message', {
+                message_id: message.id,
+                sender_id: senderId,
+                content,
+                image_url: imageUrl,
+                createdAt: newMessageItem.createdAt,
+                updateAt: newMessageItem.updatedAt,
+                User: {
+                    id: senderId,
+                    name: 'Hệ thống AI',
+                    email: 'ia@system.local',
+                    avatar_url: 'https://example.com/ai-avatar.png'
+                },
+            });
+            req.io.emit('ai_new_message', {
+                message_id: message.id,
+                sender_id: null,
+                content,
+                image_url: imageUrl,
+                createdAt: newMessageItem.createdAt,
+                updateAt: newMessageItem.updatedAt,
+                User: { id: req.user.id, name: req.user.name, email: req.user.email, avatar_url: req.user.avatar_url },
+            });
+        }
+
+        res.status(201).json({ message: 'AI message sent', item: newMessageItem });
+    } catch (error) {
+        console.error('AI send message error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 
 // 3. Lấy toàn bộ tin nhắn trong một cuộc trò chuyện
 exports.getMessageItems = async (req, res) => {

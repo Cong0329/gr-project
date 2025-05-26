@@ -238,3 +238,4 @@ exports.searchProductsByName = async (req, res) => {
     return res.status(500).json({ message: 'Đã xảy ra lỗi server' });
   }
 };
+

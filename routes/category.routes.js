@@ -8,6 +8,7 @@ router.post('/', authenticateAdminToken, requireRole('ROLE_ADMIN'), categoryCont
 router.get('/', categoryController.getAllCategorys);
 router.get('/parent', categoryController.getParentCategorys);
 router.get('/:name', categoryController.getProductsByCategoryName);
+router.get('/tree/:name', categoryController.getCategoryTreeWithProducts);
 router.put('/:id', authenticateAdminToken, requireRole('ROLE_ADMIN'), categoryController.updateCategory);
 router.delete('/:id', authenticateAdminToken, requireRole('ROLE_ADMIN'), categoryController.deleteCategory);
 

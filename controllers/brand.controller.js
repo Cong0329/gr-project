@@ -1,4 +1,4 @@
-const { Brand, Product, ProductImage, ProductOption, ProductDetail, ProductDetailSection } = require('../models');
+const { Brand, Product, ProductImage, ProductOption, ProductDetail, ProductDetailSection, Category, MedicalObject, Indication } = require('../models');
 const cloudinary = require('../utils/cloudinary');
 
 // Get all brands
@@ -158,18 +158,22 @@ exports.getProductsByBrandName = async (req, res) => {
           model: Product,
           as: 'products',
           where: { is_deleted: false }, // 💥 Chỉ lấy sản phẩm chưa bị ẩn
-          attributes: ['id', 'name', 'quantity'],
+          attributes: ['id', 'name', 'quantity', 'slug', 'specification', 'type'],
           include: [
             {
               model: Brand,
               as: 'brand',
-              attributes: ['id', 'name'],
+              attributes: ['id', 'name', 'country', 'original'],
             },
+            { model: Category, as: 'category', attributes: ['id', 'name'] },
+            { model: MedicalObject, as: 'medical_object', attributes: ['id', 'name'] },
+            { model: Indication, as: 'indication', attributes: ['id', 'name'] },
             {
               model: ProductImage,
               as: 'images',
               attributes: ['id', 'image'],
               required: true, // Phải có ảnh
+              limit: 1 
             },
             {
               model: ProductOption,

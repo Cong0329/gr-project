@@ -1,4 +1,3 @@
-const { unique } = require("jquery");
 
 module. exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
@@ -17,6 +16,7 @@ module. exports = (sequelize, DataTypes) => {
     provider_id: DataTypes.STRING,
     verify_code: { type: DataTypes.INTEGER, allowNull: true },
     verify_code_expires_at: { type: DataTypes.DATE, allowNull: true },
+    is_deleted: { type: DataTypes.BOOLEAN, defaultValue: false }
   }, {
     tableName: 'user',
     timestamps: true

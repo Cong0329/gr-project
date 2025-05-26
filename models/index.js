@@ -1,15 +1,15 @@
 // models/index.js
-const { Sequelize, DataTypes } = require("sequelize");
+const {  DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 // Import models
 const DoctorModel = require('./doctor.model');
 const DepartmentModel = require('./department.model');
+const ScheduleModel = require('./schedule.model');
 const UserModel = require("./user.model");
 const RoleModel = require("./role.model");
 const UserRoleModel = require("./user-role.model"); // (Nếu có model trung gian)
 const ServicePackageModel = require('./service-pkg.model');
-const ScheduleModel = require('./schedule.model');
 const AddressModel = require("./address.model")
 const RefreshTokenModel = require("./refresh.model");
 const CountryModel = require("./country.model");
@@ -57,6 +57,7 @@ const Address = AddressModel(sequelize, DataTypes);
 const RefreshToken = RefreshTokenModel(sequelize, DataTypes);
 const Doctor = DoctorModel(sequelize, DataTypes);
 const Department = DepartmentModel(sequelize, DataTypes);
+const Schedule = ScheduleModel(sequelize, DataTypes);
 const Country = CountryModel(sequelize, DataTypes);
 const Brand = BrandModel(sequelize, DataTypes);
 const Origin = OriginModel(sequelize, DataTypes);
@@ -70,7 +71,6 @@ const ProductDetail = ProductDetailModel(sequelize, DataTypes);
 const ProductDetailSection = ProductDetailSectionModel(sequelize, DataTypes);
 const SectionIngredient = SectionIngredientModel(sequelize, DataTypes);
 const SectionIngredientDescription = SectionIngredientDescriptionModel(sequelize, DataTypes);
-const Schedule = ScheduleModel(sequelize, DataTypes);
 const ServicePackage = ServicePackageModel(sequelize, DataTypes);
 const ServiceCategory = ServiceCategoryModel(sequelize, DataTypes);
 const ServiceItem = ServiceItemModel(sequelize, DataTypes);
@@ -107,15 +107,15 @@ const db = {
   User,
   Role,
   Doctor,
-  Department,
   Schedule,
+  Department,
   UserRole,
   ServicePackage,
   Address,
   RefreshToken,
-  Country,
+  // Country,
   Brand,
-  Origin,
+  // Origin,
   MedicalObject,
   Indication,
   Category,
@@ -141,8 +141,7 @@ const db = {
   MessageItem,
   PackageBookingRequest,
   DoctorAssignment,
-  Appointment,
-  OrderStatusHistory
+  Appointment
 };
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)
