@@ -34,6 +34,13 @@ export default function AdminChatInterface() {
     // Lắng nghe socket events
     useEffect(() => {
         if (!admin?.id) return;
+        const handleAIMessage = (data: MessageItem) => {
+            toast.info('AI vừa gửi tin nhắn');
+            dispatch(getAllMessagesAdmin());
+            if (selectedUser?.User?.id === data.User?.id) {
+                setMessages(prev => [...prev, data]);
+            }
+        };
 
         const handleNewMessage = (data: MessageItem) => {
             toast.success('New message received');
@@ -47,11 +54,13 @@ export default function AdminChatInterface() {
         const handleAdminSend = () => dispatch(getAllMessagesAdmin());
 
         socket.on('admin_new_message', handleNewMessage);
+        socket.on('ai_new_message', handleAIMessage);
         socket.on('messageUnlocked', handleUnlock);
         socket.on('admin_send_message', handleAdminSend);
 
         return () => {
             socket.off('admin_new_message', handleNewMessage);
+            socket.off('ai_new_message', handleAIMessage);
             socket.off('messageUnlocked', handleUnlock);
             socket.off('admin_send_message', handleAdminSend);
         };

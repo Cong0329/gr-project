@@ -1,4 +1,4 @@
-import { Brand, Category, EntityConfig, Indication, MedicalObject } from './types';
+import { Brand, Category, EntityConfig, Indication, MedicalObject, User } from './types';
 
 
 
@@ -75,5 +75,30 @@ export const indicationConfig: EntityConfig<Indication> = {
   tableColumns: [
     { key: 'id', header: 'ID' },
     { key: 'name', header: 'Tên loại bệnh' },
+  ]
+};
+
+export const userConfig: EntityConfig<User> = {
+  name: 'người dùng',
+  pluralName: 'người dùng',
+  fields: [
+    { name: 'email', label: 'Email', type: 'text', required: true },
+    { name: 'password', label: 'Mật khẩu', type: 'text', required: true },
+    { name: 'role', label: 'Vai trò', type: 'select', required: true },
+  ],
+  initialState: () => ({
+    name: '',
+    email: '',
+    role: '',
+    phone: '',
+    address: '',
+    gender: '',
+  }),
+  tableColumns: [
+    { key: 'id', header: 'ID' },
+    { key: 'name', header: 'Tên người dùng' },
+    { key: 'email', header: 'Email' },
+    { key: 'role', header: 'Vai trò' },
+    
   ]
 };

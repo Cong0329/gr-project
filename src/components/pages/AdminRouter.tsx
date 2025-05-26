@@ -35,6 +35,7 @@ import AdminChatInterface from "../admin/components/chat/AdminChat/AdminChatInte
 import { CategoryProduct } from "../admin/pages/Forms/Product/Brand/CategoryProduct";
 import { MedicalObjectProduct } from "../admin/pages/Forms/Product/Brand/MedicalObjectProduct";
 import { IndicationProduct } from "../admin/pages/Forms/Product/Brand/IndicationProduct";
+import UserPage from "../admin/pages/Forms/Product/Brand/UserPage";
 
 const adminRoutes = (
     <>
@@ -49,6 +50,7 @@ const adminRoutes = (
             {/* Forms */}
             <Route path="/admin/form-elements" element={<FormElements />} />
             <Route path="/admin/create-product" element= {< ProductCreationForm/>} />
+            <Route path="/admin/users" element={<UserPage />} />
             <Route path="/admin/brand" element= {< BrandPage/>} />
             <Route path="/admin/category" element= {< CategoryPage/>} />
             <Route path="/admin/medical-object" element= {< MedicalObjectPage/>} />

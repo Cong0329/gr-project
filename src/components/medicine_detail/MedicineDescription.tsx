@@ -4,15 +4,16 @@ import { Sheet } from "react-modal-sheet";
 import { FaXmark } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCartAPI } from "../../redux/cartAsyncThunk";
-import { RootState } from "../../redux/store";
+import { RootState, AppDispatch } from "../../redux/store";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 interface ProductProps {
     medicineData: ProductDetail;
     setIsOpen: (value: boolean) => void;
     isOpen: boolean;
 }
 export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: ProductProps) => {
-    const dispatch = useDispatch();
+    const dispatch:AppDispatch = useDispatch();
     const [selectedOption, setSelectedOption] = useState(medicineData.options[0]);
     const {review} = useSelector((state: RootState) => state.products);
     const { user } = useSelector((state: RootState) => state.auth);
@@ -37,7 +38,7 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
     return (
         <div className="w-3/5 ml-10 tb:ml-0 space-y-2 tb:w-full">
             <h2 className="text-xl font-semibold">{medicineData.name}</h2>
-            <p className="text-black font-semibold">Thương hiệu: <a href="#" className="text-blue-700">{medicineData.brand.name}</a></p>
+            <p className="text-black font-semibold">Thương hiệu: <Link to={`/medicine-search?brand=${medicineData.brand.name}`} className="text-blue-700">{medicineData.brand.name}</Link></p>
             <div className="flex items-center gap-2 ms:text-sm mm:text-[12px]">
                 <span className="text-gray-500 cursor-pointer">{medicineData.code}</span>
                 <span className="bg-gray-300 w-1.5 h-1.5 rounded-full"></span>
@@ -83,9 +84,9 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
                     </div>
 
                     <div className="font-semibold">Danh mục</div>
-                    <div className="text-blue-500">{medicineData.category.name}</div>
+                    <div className="text-blue-500"><Link to={`/medicine-search?category=${medicineData.category.name}`} className="text-blue-700">{medicineData.category.name}</Link></div>
 
-                    <div className="font-semibold">Dạng bào chế</div>
+                    <div className="font-semibold">Dạng bào chế</div>   
                     <div>{medicineData.dosage_form}</div>
 
                     <div className="font-semibold">Quy cách</div>

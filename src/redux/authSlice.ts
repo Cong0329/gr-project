@@ -1,6 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { adminLoginAPI, updateProfileAPI, vefifyEmailAPI } from "./userAsyncThunk";
-import { tr } from "date-fns/locale";
+import { adminLoginAPI, fetchUsersAPI, updateProfileAdminAPI, updateProfileAPI, vefifyEmailAPI } from "./userAsyncThunk";
 
 interface UserInfo {
   id: string;
@@ -9,6 +8,13 @@ interface UserInfo {
   avatar_url: string;
   phone: string;
   gender: string;
+  roles: Role[];
+}
+
+interface Role {
+  id: string;
+  name: string;
+  code: string;
 }
 
 interface AuthState {
@@ -16,8 +22,10 @@ interface AuthState {
   isAuthenticated: boolean;
   user: UserInfo;
   admin: UserInfo;
+  users: UserInfo[];
   verify: boolean;
   message: string;
+  
   mail: string;
   status: "idle" | "loading" | "succeeded" | "failed";
 }
@@ -27,6 +35,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   user: {} as UserInfo,
   admin: {} as UserInfo,
+  users: [] as UserInfo[],
   verify: false,
   message: '',
   mail:'',
@@ -98,6 +107,27 @@ const authSlice = createSlice({
         })
         .addCase(vefifyEmailAPI.rejected, (state, action) => {
           state.message = action.payload.message;
+        })
+        
+        .addCase(updateProfileAdminAPI.fulfilled, (state) => {
+          state.status = "succeeded";
+        })
+        .addCase(updateProfileAdminAPI.pending, (state) => {
+          state.status = "loading";
+        })
+        .addCase(updateProfileAdminAPI.rejected, (state, action) => {
+          state.message = action.payload.message;
+        })
+        .addCase(fetchUsersAPI.fulfilled, (state, action) => {
+          state.users = action.payload.users;
+          state.status = "idle";
+        })
+        .addCase(fetchUsersAPI.pending, (state) => {
+          state.status = "loading";
+        })
+        .addCase(fetchUsersAPI.rejected, (state, action) => {
+          state.message = action.payload.message;
+          state.status = "failed";
         })
     },
   });

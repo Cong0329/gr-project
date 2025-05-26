@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
+import { AppDispatch, RootState } from '../../../redux/store';
 import { useEffect, useState } from 'react';
 import { fetchAddresses, deleteAddressAPI } from '../../../redux/addressAsyncThunk';
 import AddAddressModal from '../../cart/AddAddressModal';
@@ -9,8 +9,8 @@ import Skeleton from 'react-loading-skeleton';
 
 export const AddressPage = () => {
 
-    const dispatch = useDispatch();
-    const {status, addresses} = useSelector((state: RootState) => state.address);
+    const dispatch: AppDispatch = useDispatch();
+    const { status, addresses } = useSelector((state: RootState) => state.address);
     const [isAddingNew, setIsAddingNew] = useState(false);
     const [isModal, setIsModal] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
@@ -34,13 +34,16 @@ export const AddressPage = () => {
         setIsEdit(false);
     };
     useEffect(() => {
-        if (addresses.length === 0) {
-            dispatch(fetchAddresses());
-        } else if (status === 'succeeded') {
+
+        dispatch(fetchAddresses());
+
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (status === 'succeeded') {
             dispatch(fetchAddresses());
         }
-    }, [dispatch, status, addresses.length]);
-
+    }, [dispatch, status]);
     const handleOpenDelet = (id: string) => {
         setIsDelete(true);
         setSelectedEdit(id);

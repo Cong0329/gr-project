@@ -43,7 +43,7 @@ export const PromotionChild: React.FC<PromotionChildProps> = ({ product, handleT
     };
 
     return (
-        <div key={product.id} className="item-box border-2 rounded-lg bg-white flex flex-col items-center p-4 space-y-2 hover:border-blue-600 transition-all duration-300">
+        <div key={product.id} className="item-box border-2 mr-2  rounded-lg bg-white flex flex-col items-center p-4 space-y-2 hover:border-blue-600 transition-all duration-300">
             <Link to={`/medicine-detail/${product.slug}`} onClick={() => dispatch(resetProduct())}>
                 <img src={product.images[0].image} alt={product.name} loading="lazy" className="h-40" />
                 <div className="w-full mt-2 h-16 tb:h-10 text-black font-semibold text-sm overflow-hidden text-ellipsis">

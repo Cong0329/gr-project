@@ -7,12 +7,12 @@ import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { useDispatch, useSelector } from "react-redux";
 import { getPendingReviews } from "../../../../redux/reviewsAsyncThunk";
-import { RootState } from "../../../../redux/store";
+import { AppDispatch, RootState } from "../../../../redux/store";
 import { addNotification, markAsRead } from "../../../../redux/reviewsSlice";
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false)
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const { pendingReviews, notifying } = useSelector((state: RootState) => state.reviews);
   useEffect(() => {
     dispatch(getPendingReviews());

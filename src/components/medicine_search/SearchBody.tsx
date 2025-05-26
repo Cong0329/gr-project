@@ -10,6 +10,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import { searchMedicine } from "../../redux/sliceAsyncThunk";
 import { Product } from "../../redux/searchSlice";
+import { getBrandProduct } from "../../redux/brandAsyncThunk";
+import { getCategoryProduct } from "../../redux/categoryAsyncThunk";
+import Breadcrumb from "../home_booking/details/component_details/BreadCrumb";
 
 export const SearchBody = () => {
     const [isServiceHovered, setIsServiceHovered] = useState(false);
@@ -134,6 +137,8 @@ export const SearchBody = () => {
       });
       
     const name = searchParams.get("name");
+    const brandName = searchParams.get("brand");
+    const categoryName = searchParams.get("category");
     const category = [...new Set(products.map((product) => product?.category?.name))];
     const brand = [...new Set(products.map((product) => product?.brand?.name))];
     const country = [...new Set(products.map((product) => product?.brand?.country))];
@@ -146,7 +151,13 @@ export const SearchBody = () => {
         if (name) {
             dispatch(searchMedicine(name));
         }
-    }, [name, dispatch]);
+        if (brandName) {
+            dispatch(getBrandProduct(brandName));
+        }
+        if (categoryName) {
+            dispatch(getCategoryProduct(categoryName));
+        }
+    }, [name, brandName, categoryName, dispatch]);
     return (
         <main className="flex-1 bg-gray-100 ">
             <div className="mx-auto bg-white pt-2">
@@ -156,7 +167,12 @@ export const SearchBody = () => {
                 <div className="mx-auto relative pb-4">
                     <div className="bg-gray-100 min-h-screen mt-4 w-4/5 tb:w-11/12 mx-auto container">
                         {/* Thanh tìm kiếm */}
-                        <SearchBar name={name ?? ""} find={products.length} />
+                        {name && (
+                            <SearchBar name={name ?? ""} find={products.length} />
+                        )}
+                        {(brandName || categoryName) && (
+                            <Breadcrumb />
+                        )}
                         <ModalFilter isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
                         <div className="container mx-auto flex gap-4 mt-4">
                             {/* Bộ lọc */}

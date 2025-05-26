@@ -42,6 +42,15 @@ export interface Indication extends BaseEntity {
   name: string;
 }
 
+export interface User extends BaseEntity {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  role: string;
+  gender: string;
+}
+
 
 export interface Product extends BaseEntity {
   id: string;
@@ -57,7 +66,7 @@ export type ModalType = 'create' | 'edit' | 'delete' | 'view';
 export interface FieldConfig {
   name: string;
   label: string;
-  type: 'text' | 'number' | 'textarea' | 'select' | 'date' | 'file';
+  type: 'text' | 'number' | 'textarea' | 'select' | 'date' | 'file' | 'password';
   options?: { value: string | number; label: string }[];
   required?: boolean;
 }

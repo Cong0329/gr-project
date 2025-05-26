@@ -1,47 +1,79 @@
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { Link } from "react-router-dom";
+
 interface Category {
-    id: number;
-    name: string;
-    products: number;
-    icon: string;
-  }
-  
-  const categories: Category[] = [
-    { id: 1, name: "Thần kinh não", products: 91, icon: "🧠" },
-    { id: 2, name: "Vitamin & Khoáng chất", products: 173, icon: "💊" },
-    { id: 3, name: "Sức khỏe tim mạch", products: 43, icon: "💙" },
-    { id: 4, name: "Tăng sức đề kháng, miễn dịch", products: 63, icon: "🛡️" },
-    { id: 5, name: "Hỗ trợ tiêu hóa", products: 112, icon: "🌀" },
-    { id: 6, name: "Sinh lý - Nội tiết tố", products: 82, icon: "⚕️" },
-    { id: 7, name: "Dinh dưỡng", products: 71, icon: "🍎" },
-    { id: 8, name: "Hỗ trợ điều trị", products: 183, icon: "🩺" },
-    { id: 9, name: "Giải pháp làn da", products: 89, icon: "🧴" },
-    { id: 10, name: "Chăm sóc da mặt", products: 181, icon: "🎭" },
-    { id: 11, name: "Hỗ trợ làm đẹp", products: 42, icon: "💎" },
-    { id: 12, name: "Hỗ trợ tình dục", products: 41, icon: "🔗" },
-  ];
-  
-  export default function CategoriesSection(): JSX.Element {
-    return (
-      <div className="w-4/5 md-lg:w-11/12 container mx-auto bg-gray-100 mt-5 rounded-xl">
-        {/* Tiêu đề */}
-        <div className="flex items-center gap-2 mb-4 text-black font-bold text-lg">
-          <span className="text-blue-600 text-2xl">🏆</span> Danh mục nổi bật
-        </div>
-  
-        {/* Danh sách danh mục */}
-        <div className="grid grid-cols-6 tb:grid-cols-2 gap-4">
-          {categories.map((category: Category) => (
-            <div
-              key={category.id}
-              className="bg-white p-4 rounded-lg shadow-md flex flex-col items-center hover:shadow-lg transition-shadow duration-300"
-            >
-              <div className="text-3xl text-blue-600">{category.icon}</div>
-              <p className="font-bold text-black text-center">{category.name}</p>
-              <p className="text-gray-500 text-sm">{category.products} sản phẩm</p>
-            </div>
-          ))}
-        </div>
+  id: number;
+  name: string;
+  products: number;
+  icon: string;
+}
+
+const categoriesMapIcon: Record<string, string> = {
+  "Thần kinh não": "🧠",
+  "Vitamin & Khoáng chất": "💊",
+  "Sức khỏe tim mạch": "💙",
+  "Cải thiện tăng cường sức khỏe": "🛡️",
+  "Hỗ trợ tiêu hóa": "🌀",
+  "Sinh lý - Nội tiết tố": "⚕️",
+  "Dinh dưỡng": "🍎",
+  "Hỗ trợ điều trị": "🩺",
+  "Giải pháp làn da": "🧴",
+  "Chăm sóc da mặt": "🎭",
+  "Hỗ trợ làm đẹp": "💎",
+  "Hỗ trợ tình dục": "🔗",
+  "Thực phẩm - Đồ uống": "🍹",
+  "Chăm sóc răng miệng": "🦷",
+  "Vệ sinh cá nhân": "🧼"
+};
+
+export default function CategoriesSection(): JSX.Element {
+  const { parent } = useSelector((state: RootState) => state.categories);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    const map: Record<string, Category> = {};
+
+    parent?.forEach((group) => {
+      group.categories.forEach((cat) => {
+        const total = cat.products?.length || 0;
+        const name = cat.name;
+        if (!map[name]) {
+          map[name] = {
+            id: cat.id,
+            name: name,
+            products: total,
+            icon: categoriesMapIcon[name] ?? "📦"
+          };
+        } else {
+          map[name].products += total;
+        }
+      });
+    });
+
+    setCategories(Object.values(map));
+  }, [parent]);
+
+  return (
+    <div className="w-4/5 md-lg:w-11/12 container mx-auto bg-gray-100 mt-5 rounded-xl">
+      <div className="flex items-center gap-2 mb-4 text-black font-bold text-lg">
+        <span className="text-blue-600 text-2xl">🏆</span> Danh mục nổi bật
       </div>
-    );
-  }
-  
+
+      <div className="grid grid-cols-6 tb:grid-cols-2 gap-4">
+        {categories.slice(0, 12).map((category) => (
+          <Link
+            key={category.id}
+            to={`/medicine-search/?category=${category.name}`}
+            className="bg-white p-4 rounded-lg shadow-md flex flex-col items-center hover:shadow-lg transition-shadow duration-300"
+          >
+            <div className="text-3xl text-blue-600">{category.icon}</div>
+            <p className="font-bold text-black text-center">{category.name}</p>
+            <p className="text-gray-500 text-sm">{category.products} sản phẩm</p>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}

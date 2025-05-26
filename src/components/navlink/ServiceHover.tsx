@@ -3,6 +3,7 @@ import { CategoryList } from "./CategoryList";
 import { CategoryChild } from "./CategoryChild";
 import { CategoryProduct, CategoryProductProps } from "./CategoryProduct";
 
+
 export interface ServiceHoverProps {
     id: number;
     name: string;
@@ -10,8 +11,8 @@ export interface ServiceHoverProps {
 }
 
 
-
-export const ServiceHover = ({items}: {items: { id: number; name: string; image: string; children: ServiceHoverProps[]; products: CategoryProductProps[]; }[]}) => {
+export const ServiceHover = ({ items }: { items: { id: number; name: string; image: string; children: ServiceHoverProps[]; products: CategoryProductProps[]; }[] }) => {
+   
     const [hoveredCategoryId, setHoveredCategoryId] = useState<number>(items[0].id);
 
     const currentCategory = items.find((cat) => cat.id === hoveredCategoryId);
@@ -27,7 +28,7 @@ export const ServiceHover = ({items}: {items: { id: number; name: string; image:
                     {currentCategory && (
                         <>
                             <CategoryChild items={currentCategory.children} />
-                            <CategoryProduct products={currentCategory.products} />
+                            <CategoryProduct products={currentCategory.products} parent={currentCategory.name} />
                         </>
                     )}
                 </div>

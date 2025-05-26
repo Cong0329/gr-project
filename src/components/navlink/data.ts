@@ -19,220 +19,47 @@ import drink from "../../assets/category-icons/herbal-tea.png"
 import selfCare from "../../assets/category-icons/amenities.png"
 
 
+export const imageMap: Record<string, string> = {
+    "Vitamin C": vitaminC,
+    "Vitamin & Khoáng chất": vitaminC,
+    "Sinh lý - Nội tiết tố": blood,
+    "Cải thiện tăng cường chức năng": strength,
+    "Hỗ trợ điều trị": medicine,
+    "Hỗ trợ tiêu hóa": gas,
+    "Thần kinh não": brain,
+    "Hỗ trợ làm đẹp": skin,
+    "Sức khỏe tim mạch": heart,
+    "Chăm sóc da mặt": faceSkin,
+    "Chăm sóc cơ thể": bodyCare,
+    "Chăm sóc da": skinCare,
+    "Chăm sóc tóc": hair,
+    "Kem - thuốc bôi ngoài": cream,
+    "Mắt - tai - mũi - họng": eye,
+    "Sinh lý - tình dục": sexual,
+    "Chăm sóc răng miệng": tooth,
+    "Thức uống": drink,
+    "Tự chăm sóc": selfCare,
+};
+
+export const categoriesMapIcon: Record<string, string> = {
+    "Thần kinh não": "🧠",
+    "Vitamin & Khoáng chất": "💊",
+    "Sức khỏe tim mạch": "💙",
+    "Cải thiện tăng cường sức khỏe": "🛡️",
+    "Hỗ trợ tiêu hóa": "🌀",
+    "Sinh lý - Nội tiết tố": "⚕️",
+    "Dinh dưỡng": "🍎",
+    "Hỗ trợ điều trị": "🩺",
+    "Giải pháp làn da": "🧴",
+    "Chăm sóc da mặt": "🎭",
+    "Hỗ trợ làm đẹp": "💎",
+    "Hỗ trợ tình dục": "🔗",
+    "Thực phẩm - Đồ uống": "🍹",
+    "Chăm sóc răng miệng": "🦷",
+    "Vệ sinh cá nhân": "🧼"
+}
+
 export const popularSearches: CategoryGroup[] = [
-    {
-        id: 1, name: 'Thực phẩm chức năng', categories: [
-            {
-                id: 1,
-                name: "Vitamin & Khoáng chất",
-                image: vitaminC,
-                children: [
-                    { id: 1, name: "Vitamin C", image: "..." },
-                    { id: 2, name: "Vitamin D", image: "..." },
-                ],
-                products: [
-                    { id: 1, name: "Cetirizine", image: "...", price: 100000 },
-                ],
-            },
-            {
-                id: 2,
-                name: "Sinh lý - Nội tiết tố",
-                image: blood,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-            {
-                id: 3,
-                name: "Cải thiện tăng cường chức năng",
-                image: strength,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-            {
-                id: 4,
-                name: "Hỗ trợ điều trị",
-                image: medicine,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-            {
-                id: 5,
-                name: "Hỗ trợ tiêu hóa",
-                image: gas,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-            {
-                id: 6,
-                name: "Thần kinh não",
-                image: brain,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-            {
-                id: 7,
-                name: "Hỗ trợ làm đẹp",
-                image: skin,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-            {
-                id: 8,
-                name: "Sức khỏe tim mạch",
-                image: heart,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-        ]
-    },
-    {
-        id: 2, name: 'Dược mỹ phẩm', categories: [
-            {
-                id: 1,
-                name: "Chăm sóc da mặt",
-                image: faceSkin,
-                children: [
-                    { id: 1, name: "Vitamin C", image: "..." },
-                    { id: 2, name: "Vitamin D", image: "..." },
-                ],
-                products: [
-                    { id: 1, name: "Cetirizine", image: "...", price: 100000 },
-                ],
-            },
-            {
-                id: 2,
-                name: "Chăm sóc cơ thể",
-                image: bodyCare,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-            {
-                id: 3,
-                name: "Giải pháp làn da",
-                image: skinCare,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-            {
-                id: 4,
-                name: "Chăm sóc tóc - da đầu",
-                image: hair,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-            {
-                id: 5,
-                name: "Mỹ phẩm trang điểm",
-                image: cream,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-            {
-                id: 6,
-                name: "Chăm sóc da vùng mắt",
-                image: eye,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-        ]
-    },
-    {
-        id: 3, name: 'Chăm sóc cá nhân', categories: [
-            {
-                id: 1,
-                name: "Hỗ trợ tình dục",
-                image: sexual,
-                children: [
-                    { id: 1, name: "Vitamin C", image: "..." },
-                    { id: 2, name: "Vitamin D", image: "..." },
-                ],
-                products: [
-                    { id: 1, name: "Cetirizine", image: "...", price: 100000 },
-                ],
-            },
-            {
-                id: 2,
-                name: "Thực phẩm - Đồ uống",
-                image: drink,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-            {
-                id: 3,
-                name: "Vệ sinh cá nhân",
-                image: selfCare,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-            {
-                id: 4,
-                name: "Chăm sóc răng miệng",
-                image: tooth,
-                children: [
-                    { id: 3, name: "Thuốc ho", image: "..." },
-                ],
-                products: [
-                    { id: 2, name: "Paracetamol", image: "...", price: 80000 },
-                ],
-            },
-        ]
-    },
     {
         id: 4, name: 'Bệnh', categories: [
 

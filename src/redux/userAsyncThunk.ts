@@ -6,6 +6,8 @@ interface Profile {
     name : string | null;
     phone : string | null;
     gender : string | null;
+    password : string | null; 
+    avatar : File | null;
 }
 
 
@@ -16,6 +18,25 @@ export const updateProfileAPI = createAsyncThunk(
       try {
         const response = await axios.put(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/user/me`, newProfile,
           { withCredentials: true }
+        );
+        return response.data;
+      } catch (error : any) {
+        return rejectWithValue(error.response.data);
+      }
+    }
+  );
+
+export const updateProfileAdminAPI = createAsyncThunk(
+    "profile/updateProfileAdmin",
+    async (newProfile: FormData, { rejectWithValue }) => {
+      try {
+        const response = await axios.put(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/user/admin/me`, newProfile,
+          {
+            withCredentials: true,
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
         return response.data;
       } catch (error : any) {
@@ -47,6 +68,20 @@ export const vefifyEmailAPI = createAsyncThunk(
           withCredentials: true
         }
       )
+      return response.data;
+    } catch (error : any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const fetchUsersAPI = createAsyncThunk(
+  "user/fetchUsers",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/user/users`,
+        { withCredentials: true }
+      );
       return response.data;
     } catch (error : any) {
       return rejectWithValue(error.response.data);

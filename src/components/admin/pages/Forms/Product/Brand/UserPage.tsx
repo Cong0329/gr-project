@@ -3,36 +3,35 @@ import Header from './Header';
 import GenericTable from './GenericTable';
 import GenericModal from './GenericModal';
 import { useGenericCrud } from './useGenericCrud';
-import { categoryConfig } from './entityConfigs';
-import { Category } from './types';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../../../../../redux/store';
-import { fetchCategories } from '../../../../../../redux/categoryAsyncThunk';
-import { resetCategory } from '../../../../../../redux/categorySlice';
 import SearchBar from './GenericSearch';
+import { fetchUsersAPI } from '../../../../../../redux/userAsyncThunk';
+import { userConfig } from './entityConfigs';
+import { User } from './types';
 
 
-const CategoryPage: React.FC = () => {
+const UserPage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const { categories, status } = useSelector((state: RootState) => state.categories);
+  const { users, status } = useSelector((state: RootState) => state.auth);
   const [searchTerm, setSearchTerm] = useState('');
   useEffect(() => {
 
-    dispatch(fetchCategories());
+    dispatch(fetchUsersAPI());
   }, [dispatch]);
 
   useEffect(() => {
     if (status === 'succeeded') {
-      dispatch(fetchCategories());
+      dispatch(fetchUsersAPI());
     }
   }, [dispatch, status]);
-  const filteredCategories = categories.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(item =>
+    item.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const {
-    items: category,
+    items: user,
     isModalOpen,
-    currentItem: currentCategory,
+    currentItem: currentUser,
     modalType,
     handleCreateClick,
     handleViewClick,
@@ -40,19 +39,19 @@ const CategoryPage: React.FC = () => {
     handleDeleteClick,
     handleCloseModal,
     handleInputChange,
-    handleCategorySaveItem: handleSaveCategory,
-    handleCategoryDeleteItem: handleDeleteCategory
-  } = useGenericCrud<Category>(categories, categoryConfig);
+    handleUserSaveItem: handleSaveUser,
+    handleUserDeleteItem: handleDeleteUser
+  } = useGenericCrud<User>(users, userConfig);
   const updatedConfig = {
-    ...categoryConfig,
-    fields: categoryConfig.fields.map(field =>
-      field.name === 'parent_id'
+    ...userConfig,
+    fields: userConfig.fields.map(field =>
+      field.name === 'role'
         ? {
           ...field,
-          options: categories.map(cat => ({
-            value: cat.id,
-            label: cat.name,
-          }))
+          options: [
+            { value: 'ROLE_DOCTOR', label: 'Bác sĩ' },
+            { value: 'ROLE_ADMIN', label: 'Quản trị viên' },
+          ]
         }
         : field
     )
@@ -61,20 +60,19 @@ const CategoryPage: React.FC = () => {
     <>
       <div className="container mx-auto p-6">
         <Header
-          title="Quản lý danh mục"
+          title="Quản lý người dùng"
           onCreateClick={handleCreateClick}
-          entityName={categoryConfig.name}
+          entityName={userConfig.name}
         />
         <SearchBar
           searchTerm={searchTerm}
           onChange={setSearchTerm}
-          placeholder="Tìm kiếm danh mục..."
+          placeholder="Tìm kiếm người dùng..."
         />
         <GenericTable
-          items={filteredCategories}
+          items={filteredUsers}
           config={updatedConfig}
-          onReset={() => dispatch(resetCategory())}
-          link="category"
+          link="user"
           onView={handleViewClick}
           onEdit={handleEditClick}
           onDelete={handleDeleteClick}
@@ -83,12 +81,12 @@ const CategoryPage: React.FC = () => {
         <GenericModal
           isOpen={isModalOpen}
           modalType={modalType}
-          item={currentCategory}
+          item={currentUser}
           config={updatedConfig}
           onClose={handleCloseModal}
           onChange={handleInputChange}
-          onSave={handleSaveCategory}
-          onDelete={handleDeleteCategory}
+          onSave={handleSaveUser}
+          onDelete={handleDeleteUser}
         />
       </div>
       {status === "loading" &&
@@ -104,4 +102,4 @@ const CategoryPage: React.FC = () => {
   );
 };
 
-export default CategoryPage;
+export default UserPage;

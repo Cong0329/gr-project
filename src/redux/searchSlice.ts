@@ -1,3 +1,5 @@
+import { getBrandProduct } from "./brandAsyncThunk";
+import { getCategoryProduct } from "./categoryAsyncThunk";
 import { searchMedicine } from "./sliceAsyncThunk";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -81,7 +83,29 @@ const searchSlice = createSlice({
         }).addCase(searchMedicine.rejected, (state) => {
             state.status = 'failed';
             state.loading = false;
-        });
+        }).addCase(getBrandProduct.pending, (state) => {
+            state.status = 'loading';
+            state.loading = true;
+            state.products = [];
+       }).addCase(getBrandProduct.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+            state.products = action.payload.products;
+            state.loading = false;
+        }).addCase(getBrandProduct.rejected, (state) => {
+            state.status = 'failed';
+            state.loading = false;
+        }).addCase(getCategoryProduct.pending, (state) => {
+            state.status = 'loading';
+            state.loading = true;
+            state.products = [];
+       }).addCase(getCategoryProduct.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+            state.products = action.payload.products;
+            state.loading = false;
+        }).addCase(getCategoryProduct.rejected, (state) => {
+            state.status = 'failed';
+            state.loading = false;
+        })
     },
 });
 

@@ -23,8 +23,9 @@ const FilterItem: React.FC<FilterItemProps> = ({
   const [search, setSearch] = useState("");
 
   const filteredOptions = options.filter((opt) =>
-    opt.toLowerCase().includes(search.toLowerCase())
+    typeof opt === 'string' && opt.toLowerCase().includes(search.toLowerCase())
   );
+
 
   return (
     <div className="border-b py-2">

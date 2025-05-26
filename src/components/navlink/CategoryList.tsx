@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import { categoriesMapIcon } from "./data";
 
 export const CategoryList = ({
     categories,
@@ -22,9 +22,9 @@ export const CategoryList = ({
           >
             <Link
               className="flex space-x-2 py-2 border-b-2"
-              to="/"
+              to={`/medicine-search/?category=${category.name}`}
             >
-              <img src={category.image} alt={category.name} className="w-6 h-6" />
+              <span className="w-6 h-6 text-lg">{categoriesMapIcon[category.name]}</span>
               <span>{category.name}</span>
             </Link>
           </div>

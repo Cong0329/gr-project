@@ -83,7 +83,10 @@ button:focus-visible {
 }
 
 
-
+.slick-list {
+  margin: 0 auto;
+  width: 98%;
+}
 
 @tailwind base;
 @tailwind components;

@@ -74,7 +74,7 @@ const categorySlice = createSlice({
             })
             .addCase(getParentCategory.fulfilled, (state, action) => {
                 state.status = 'idle';
-                state.parent = action.payload.categories;
+                state.parent.push(action.payload);
             })
             .addCase(getParentCategory.rejected, (state) => {
                 state.status = 'failed';

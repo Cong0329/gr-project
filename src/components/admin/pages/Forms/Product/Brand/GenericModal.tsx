@@ -41,41 +41,47 @@ function GenericModal<T extends BaseEntity>({
         <div className="px-6 py-4 border-b">
           <h3 className="text-lg font-medium">{getModalTitle()}</h3>
         </div>
-        
+
         <div className="px-6 py-4">
           {(modalType === 'create' || modalType === 'edit' || modalType === 'view') && (
-            <GenericForm 
-              item={item} 
-              config={config}
-              onChange={onChange} 
-              readOnly={modalType === 'view'} 
-            />
-          )}
-          
-          {modalType === 'delete' && (
-            <p className="text-center">
-              Bạn có chắc chắn muốn xóa {config.name} <span className="font-semibold">{item.name}</span>?
-            </p>
+            item.roles?.[0].code ? (
+              <GenericForm
+                item={item}
+                config={config}
+                onChange={onChange}
+                readOnly={modalType === 'view'}
+              />
+            ) : (
+              <>
+                <GenericForm
+                  item={item}
+                  config={config}
+                  onChange={onChange}
+                  readOnly={modalType === 'view'}
+                />
+              </>
+            )
           )}
         </div>
-        
+
+
         <div className="px-6 py-4 bg-gray-50 border-t flex justify-end space-x-3">
-          <button 
+          <button
             onClick={onClose}
             className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
           >
             {modalType === 'view' ? 'Đóng' : 'Hủy'}
           </button>
-          
+
           {modalType === 'create' || modalType === 'edit' ? (
-            <button 
+            <button
               onClick={onSave}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
               {modalType === 'create' ? 'Thêm' : 'Cập nhật'}
             </button>
           ) : modalType === 'delete' ? (
-            <button 
+            <button
               onClick={onDelete}
               className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
             >

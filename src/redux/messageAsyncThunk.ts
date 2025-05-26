@@ -3,10 +3,44 @@ import axios from "axios";
 
 export const sendMessageUser = createAsyncThunk(
     "message/sendMessageUser",
-    async ({content }: {content: string,}, { rejectWithValue }) => {
+    async ({ content, image }: { content?: string; image?: File }, { rejectWithValue }) => {
         try {
+            console.log('send')
+            if (!content && !image) {
+                return rejectWithValue({ message: "Bạn phải nhập nội dung hoặc chọn ảnh." });
+            }
+
+            const formData = new FormData();
+            if (content) formData.append("content", content);
+            if (image) formData.append("image", image);
+
             const response = await axios.post(
                 `${import.meta.env.VITE_NODEJS_BACKEND_URL}/message/user`,
+                formData,
+                {
+                    withCredentials: true,
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                }
+            );
+
+            return response.data;
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                return rejectWithValue(error.response.data);
+            }
+            return rejectWithValue({ message: "Đã có lỗi xảy ra." });
+        }
+    }
+);
+
+export const sendAIMessage = createAsyncThunk(
+    "message/sendAIMessage",
+    async ({ content }: { content: string }, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(
+                `${import.meta.env.VITE_NODEJS_BACKEND_URL}/message/ai/user`,
                 { content },
                 {
                     withCredentials: true
@@ -22,9 +56,10 @@ export const sendMessageUser = createAsyncThunk(
     }
 );
 
+
 export const sendMessageAdmin = createAsyncThunk(
     "message/sendMessageAdmin",
-    async ({content, recipientId}: {content: string, recipientId: string}, { rejectWithValue }) => {
+    async ({ content, recipientId }: { content: string, recipientId: string }, { rejectWithValue }) => {
         try {
             const response = await axios.post(
                 `${import.meta.env.VITE_NODEJS_BACKEND_URL}/message/admin`,
@@ -45,7 +80,7 @@ export const sendMessageAdmin = createAsyncThunk(
 
 export const fetchMessagesUser = createAsyncThunk(
     "message/fetchMessagesUser",
-    async ({id}: {id: string}, { rejectWithValue }) => {
+    async ({ id }: { id: string }, { rejectWithValue }) => {
         try {
             const response = await axios.get(
                 `${import.meta.env.VITE_NODEJS_BACKEND_URL}/message/${id}/user`,
@@ -106,7 +141,7 @@ export const getAllMessagesAdmin = createAsyncThunk(
 
 export const hidenMessage = createAsyncThunk(
     "message/hidenMessage",
-    async ({id}: {id: string}, { rejectWithValue }) => {
+    async ({ id }: { id: string }, { rejectWithValue }) => {
         try {
             const response = await axios.patch(
                 `${import.meta.env.VITE_NODEJS_BACKEND_URL}/message/hiden/${id}/admin`,
@@ -129,7 +164,7 @@ export const unlockedMessages = createAsyncThunk(
     async (id: string, { rejectWithValue }) => {
         try {
             const response = await axios.patch(
-                `${import.meta.env.VITE_NODEJS_BACKEND_URL}/message/unlock/${id}/admin`,{},
+                `${import.meta.env.VITE_NODEJS_BACKEND_URL}/message/unlock/${id}/admin`, {},
                 {
                     withCredentials: true
                 }

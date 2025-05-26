@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
 import { ServiceHover } from './ServiceHover';
 import { CategoryGroup } from './NavLink';
+import { useState } from 'react';
 
 export const Service = ({ 
     item, 
@@ -11,7 +11,6 @@ export const Service = ({
     setIsServiceHovered: (isHovered: boolean) => void
 }) => {
     const [isHovered, setIsHovered] = useState(false);
-
     const handleMouseEnter = () => {
         if (item.id !== 4 && item.id !== 5) {
             setIsHovered(true);
@@ -25,6 +24,7 @@ export const Service = ({
             setIsServiceHovered(false);
         }
     };
+  
 
     return (
         <li className='px-3 py-1 text-sm font-semibold mr-2 mb-2 h-full'>
@@ -33,11 +33,11 @@ export const Service = ({
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
             >
-                <Link to={`/`} className="flex items-center group-hover:border-b-[3px] pb-2 group-hover:border-blue-700 group-hover:text-blue-600">
-                    {item.name}
-                    {item.id !== 4 && item.id !== 5 && (
-                        <svg
-                            className="w-4 h-4 ml-1 transform transition-transform duration-200 group-hover:rotate-180"
+                {item.id !== 4 && item.id !== 5 ? (
+                    <Link to={`/medicine-search/?category=${item.name}`} className="flex items-center group-hover:border-b-[3px] pb-2 group-hover:border-blue-700 group-hover:text-blue-600">
+                        {item.name}
+                            <svg
+                                className="w-4 h-4 ml-1 transform transition-transform duration-200 group-hover:rotate-180"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -45,8 +45,12 @@ export const Service = ({
                         >
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
-                    )}
                 </Link>
+                ) : (
+                    <div className="flex items-center group-hover:border-b-[3px] pb-2 group-hover:border-blue-700 group-hover:text-blue-600">
+                        {item.name}
+                    </div>
+                )}
                 {isHovered && item.id !== 4 && item.id !== 5 && (
                     <ServiceHover items={item.categories} />
                 )}

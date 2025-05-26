@@ -13,20 +13,25 @@ interface UploadImageError {
   message: string;
 }
 
+interface PredictImageResponse {
+  class_name: string;
+  probabilities: { [key: string]: number };  // Định nghĩa lại kiểu cho probabilities
+  image_url: string;
+  description: string;
+  treatment: string;
+  suggested_meds: string[];
+  department: string;
+}
 // Định nghĩa kiểu dữ liệu cho state của slice
 interface ImageState {
-  className: string;
-  probabilities: { [key: string]: number };  // Định nghĩa lại kiểu cho probabilities
-  imageUrl: string;
+  predict: PredictImageResponse;
   loading: boolean;
   error: string | null;
 }
 
 // Khởi tạo state ban đầu
 const initialState: ImageState = {
-  className: '',
-  probabilities: {},
-  imageUrl: '',
+  predict: {} as PredictImageResponse,
   loading: false,
   error: null,
 };
@@ -39,7 +44,7 @@ export const uploadImage = createAsyncThunk<UploadImageResponse, File, { rejectV
     formData.append('image', file);
 
     try {
-      const response = await axios.post<UploadImageResponse>(`${import.meta.env.VITE_BACKEND_URL}/classify/`, formData, {
+      const response = await axios.post<UploadImageResponse>(`${import.meta.env.VITE_PREDICT_SKIN_URL}/classify/`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       return response.data;
@@ -60,9 +65,7 @@ const imageSlice = createSlice({
   reducers: {
     reset: (state) => {
       // Đặt lại các state về giá trị ban đầu
-      state.className = '';
-      state.probabilities = {};
-      state.imageUrl = '';
+      state.predict = {} as PredictImageResponse;
       state.loading = false;
       state.error = null;
     }
@@ -73,11 +76,9 @@ const imageSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(uploadImage.fulfilled, (state, action: PayloadAction<UploadImageResponse>) => {
+      .addCase(uploadImage.fulfilled, (state, action) => {
         state.loading = false;
-        state.className = action.payload.class_name;
-        state.probabilities = action.payload.probabilities;
-        state.imageUrl = action.payload.image_url;
+        state.predict = action.payload;
       })
       .addCase(uploadImage.rejected, (state, action) => {
         state.loading = false;

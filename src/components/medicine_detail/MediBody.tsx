@@ -17,8 +17,8 @@ export const MedicineBody = () => {
     const { status, product } = useSelector((state: RootState) => state.products);
     const { slug } = useParams();
     useEffect(() => {
-        dispatch(getProductBySlug(slug));
-    }, [dispatch, slug]);
+        dispatch(getProductBySlug(slug as string));
+    }, [dispatch, slug]);   
     useEffect(() => {
         if (product.id) {
             dispatch(getProductDetailProduct(product.id));
@@ -35,14 +35,11 @@ export const MedicineBody = () => {
                     <div className="w-4/5 tb:w-11/12 container mx-auto bg-gray-100  [&>*]:!bg-gray-100">
                         <Breadcrumb current={decodeURIComponent(slug || "Thực phẩm chức năng")} />
                     </div>
-                    <ProductDetail />
+                    {product.name ? <ProductDetail /> : <div className='h-[600px] w-full'></div>}
                 </div>
                 {isServiceHovered && (
                     <div className="absolute inset-0 bg-blue-950 bg-opacity-30 z-5">    </div>
                 )}
-            
-           
-
             </div>
             {status === "loading" &&
             <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-50">

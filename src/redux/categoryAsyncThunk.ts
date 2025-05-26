@@ -17,9 +17,9 @@ export const fetchCategories = createAsyncThunk(
 
 export const getParentCategory = createAsyncThunk(
   "product/getParentCategory",
-  async (_, { rejectWithValue }) => {
+  async (name: string, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/category/parent`, {
+      const res = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/category/tree/${name}`, {
         withCredentials: true,
       });
       return res.data; // ✅ TRẢ VỀ ở đây

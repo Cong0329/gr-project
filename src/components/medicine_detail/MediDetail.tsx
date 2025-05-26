@@ -16,7 +16,7 @@ import { RootState } from "../../redux/store";
 
 export default function ProductDetail() {
   const [isOpen, setIsOpen] = useState(false);
-  const { product, detail, review } = useSelector((state: RootState) => state.products);
+  const { product, detail } = useSelector((state: RootState) => state.products);
   return (
     <div className="w-4/5 tb:w-full mx-auto container pb-10">
       <div className="bg-white rounded-xl tb:rounded-none flex p-4 tb:flex-col ">

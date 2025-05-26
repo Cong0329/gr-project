@@ -1,6 +1,7 @@
 
+import { EyeCloseIcon, EyeIcon } from '../../../../icons';
 import { BaseEntity, EntityConfig, FieldConfig } from './types';
-
+import Select from 'react-select';
 interface GenericFormProps<T extends BaseEntity> {
     item: T;
     config: EntityConfig<T>;
@@ -31,22 +32,33 @@ function GenericForm<T extends BaseEntity>({
 
             case 'select':
                 return (
-                    <select
-                        name={field.name}
-                        value={item[field.name] || ''}
-                        onChange={onChange}
-                        disabled={readOnly}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                        required={field.required}
-                    >
-                        <option value="">Chọn {field.label.toLowerCase()}</option>
-                        {field.options?.map(option => (
-                            <option key={option.value} value={option.value}>
-                                {option.label}
-                            </option>
-                        ))}
-                    </select>
+                    <Select
+                        value={field.options?.find(opt => opt.value === item[field.name]) || null}
+                        onChange={(selectedOption) => {
+                            const customEvent = {
+                                target: {
+                                    name: field.name,
+                                    value: selectedOption?.value || ''
+                                }
+                            } as React.ChangeEvent<HTMLInputElement>; // giả lập event để tương thích
+                            onChange(customEvent);
+                        }}
+                        options={field.options}
+                        isDisabled={readOnly}
+                        isSearchable={true}
+                        placeholder={`Chọn ${field.label.toLowerCase()}`}
+                        className="react-select-container"
+                        classNamePrefix="react-select"
+                        styles={{
+                            menu: (provided) => ({
+                              ...provided,
+                              maxHeight: 200, // Giới hạn chiều cao dropdown
+                              overflowY: 'auto',
+                            }),
+                          }}
+                    />
                 );
+
 
             case 'number':
                 return (
@@ -85,8 +97,8 @@ function GenericForm<T extends BaseEntity>({
                         required={field.required}
                     />
                 );
-            
 
+         
 
             default:
                 return (

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
-import { RootState } from "../../redux/store"
+import { AppDispatch, RootState } from "../../redux/store"
 import { useEffect } from "react"
 import { fetchCarts } from "../../redux/cartAsyncThunk"
 
@@ -10,10 +10,12 @@ export const Cart = () => {
     const { items, status } = useSelector((state: RootState) => state.cart);
 
 
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     useEffect(() => {
-        dispatch(fetchCarts());
-    }, [dispatch]);
+        if (isUserAuthenticated) {
+            dispatch(fetchCarts());
+        }
+    }, [dispatch, isUserAuthenticated]);
 
     useEffect(() => {
         if (status === 'succeeded') {

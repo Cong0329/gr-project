@@ -8,21 +8,18 @@ interface BreadcrumbItem {
   to: string;
 }
 
-// Cấu hình breadcrumb, đảm bảo breadcrumb cha sẽ luôn trỏ đến trang danh sách chính
 const breadcrumbConfig: BreadcrumbItem[] = [
   { pathMatch: "/profile/orders/order-detail", label: "Chi tiết đơn hàng", to: "/profile/orders/order-detail" },
   { pathMatch: "/profile/orders", label: "Đơn hàng", to: "/profile/orders" },
   { pathMatch: "/profile/prescriptions", label: "Đơn thuốc", to: "/profile/prescriptions" },
   { pathMatch: "/profile/personal-info", label: "Thông tin cá nhân", to: "/profile/personal-info" },
   { pathMatch: "/profile", label: "Cá nhân", to: "/profile" },
+  { pathMatch: "/medicine-search", label: "Danh mục", to: "/medicine-search" },
 
-  // Đảm bảo "Khám chuyên khoa" và "Khám từ xa" luôn dẫn đến trang danh sách chính
   { pathMatch: "/booking-home/specialty", label: "Khám chuyên khoa", to: "/booking-home/specialty-list" },
   { pathMatch: "/booking-home/specialty-detail", label: "Khám chuyên khoa", to: "/booking-home/specialty-list" },
-
   { pathMatch: "/booking-home/onlex", label: "Khám từ xa", to: "/booking-home/onlex-list" },
   { pathMatch: "/booking-home/onlex-detail", label: "Khám từ xa", to: "/booking-home/onlex-list" },
-
   { pathMatch: "/booking-home/generalex", label: "Khám tổng quát", to: "/booking-home/generalex-list" },
   { pathMatch: "/booking-home/generalex-detail", label: "Khám tổng quát", to: "/booking-home/generalex-list" },
   { pathMatch: "/booking-home/medicaltest", label: "Xét nghiệm y học", to: "/booking-home/medicaltest-list" },
@@ -32,8 +29,11 @@ const breadcrumbConfig: BreadcrumbItem[] = [
 export default function Breadcrumb() {
   const location = useLocation();
   const path = location.pathname;
+  const searchParams = new URLSearchParams(location.search);
 
-  // Tìm breadcrumb phù hợp với path hiện tại
+  const [queryKey] = Array.from(searchParams.keys());
+  const queryValue = queryKey ? searchParams.get(queryKey) : null;
+
   const matchedBreadcrumbs: BreadcrumbItem[] = [];
   breadcrumbConfig.forEach((item) => {
     if (path.startsWith(item.pathMatch)) {
@@ -42,22 +42,37 @@ export default function Breadcrumb() {
     }
   });
 
-  // Sắp xếp breadcrumb theo độ dài của pathMatch (để hiển thị theo thứ tự chính xác)
+  // Nếu là medicine-search và có query là brand => đổi label thành Thương hiệu
+  const medicineBreadcrumbIndex = matchedBreadcrumbs.findIndex(
+    (b) => b.pathMatch === "/medicine-search"
+  );
+
+  if (medicineBreadcrumbIndex !== -1 && queryKey === "brand") {
+    matchedBreadcrumbs[medicineBreadcrumbIndex] = {
+      ...matchedBreadcrumbs[medicineBreadcrumbIndex],
+      label: "Thương hiệu",
+    };
+  }
+
   matchedBreadcrumbs.sort((a, b) => a.pathMatch.length - b.pathMatch.length);
 
-  // Lấy segment cuối cùng của đường dẫn
   const pathSegments = decodeURIComponent(path).split("/").filter(Boolean);
   const lastSegment = pathSegments[pathSegments.length - 1];
 
-  // Điều kiện để không hiển thị nếu là "status" hay số liệu
   const isStatusSegment = lastSegment && lastSegment.match(/^([a-zA-Z0-9-]+)$/);
-
   const showLastSegment =
     lastSegment &&
     !matchedBreadcrumbs.some((b) => decodeURIComponent(lastSegment).includes(b.label)) &&
     !lastSegment.match(/^\d+$/) &&
     !lastSegment.includes("list") &&
     !isStatusSegment;
+
+  const formatLabel = (text: string) => {
+    return text
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
 
   return (
     <nav className="breadcrumb py-4 flex items-center space-x-2 text-gray-600 bg-gray-50">
@@ -70,16 +85,19 @@ export default function Breadcrumb() {
 
       {matchedBreadcrumbs.map((item, index) => {
         const isLastBreadcrumb = index === matchedBreadcrumbs.length - 1;
-        const isParentBreadcrumb = item.pathMatch === "/booking-home/specialty" || item.pathMatch === "/booking-home/onlex" || item.pathMatch === "/booking-home/generalex" || item.pathMatch === "/booking-home/medicaltest"; // Kiểm tra xem breadcrumb có phải là cha hay không
+        const isParentBreadcrumb = [
+          "/booking-home/specialty",
+          "/booking-home/onlex",
+          "/booking-home/generalex",
+          "/booking-home/medicaltest",
+        ].includes(item.pathMatch);
 
         return (
           <span key={index} className="flex items-center space-x-2">
             <span>{">"}</span>
             {isLastBreadcrumb && !isParentBreadcrumb ? (
-              // Các breadcrumb cuối không thể nhấn và có màu khác (breadcrumb con)
               <span className="text-gray-500 font-semibold">{item.label}</span>
             ) : (
-              // Các breadcrumb cha có thể nhấn
               <Link to={item.to} className="hover:text-blue-500">
                 {item.label}
               </Link>
@@ -88,12 +106,22 @@ export default function Breadcrumb() {
         );
       })}
 
-      {/* Hiển thị lastSegment nếu không phải là route đã được config */}
-      {showLastSegment && (
+      {/* Hiển thị query param nếu đang ở medicine-search */}
+      {path.startsWith("/medicine-search") && queryValue && (
         <span className="flex items-center space-x-2">
           <span>{">"}</span>
           <span className="text-gray-900 font-semibold">
-            {decodeURIComponent(lastSegment)}
+            {formatLabel(decodeURIComponent(queryValue))}
+          </span>
+        </span>
+      )}
+
+      {/* Hiển thị lastSegment nếu không phải là route đã được config */}
+      {!path.startsWith("/medicine-search") && showLastSegment && (
+        <span className="flex items-center space-x-2">
+          <span>{">"}</span>
+          <span className="text-gray-900 font-semibold">
+            {formatLabel(decodeURIComponent(lastSegment))}
           </span>
         </span>
       )}

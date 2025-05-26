@@ -165,32 +165,6 @@ export function useGenericCrud<T extends BaseEntity>(
   };
 
 
-
-
-// // Lưu (tạo mới hoặc cập nhật)
-// const handleSaveItem = () => {
-//   if (!validateBrandItem(currentItem)) {
-//     alert("Thiếu thông tin. Vui lòng kiểm tra lại.");
-//     return;
-//   }
-//   if (modalType === 'create') {
-//     setItems([...items, currentItem]);
-//   } else if (modalType === 'edit') {
-//     setItems(items.map(item =>
-//       item.id === currentItem.id ? currentItem : item
-//     ));
-//   }
-//   setIsModalOpen(false);
-// };
-
-
-
-// // Xóa
-// const handleDeleteItem = () => {
-//   setItems(items.filter(item => item.id !== currentItem.id));
-//   setIsModalOpen(false);
-// };
-
 const handleBrandDeleteItem = () => {
   dispatch(deleteBrand(currentItem.id));
   setIsModalOpen(false);
@@ -208,6 +182,25 @@ const handleMedicalObjectDeleteItem = () => {
 
 const handleIndicationDeleteItem = () => {
   dispatch(deleteIndication(currentItem.id));
+  setIsModalOpen(false);
+};
+
+const handleUserSaveItem = () => {
+  if (!currentItem.name) {
+    alert("Thiếu thông tin. Vui lòng kiểm tra lại.");
+    return;
+  }
+  if (modalType === 'create') {
+    // dispatch(createUser(currentItem.name));
+  } else {
+    // dispatch(updateUser({ id: currentItem.id, name: currentItem.name }));
+  }
+
+  setIsModalOpen(false);
+};
+
+const handleUserDeleteItem = () => {
+  // dispatch(deleteUser(currentItem.id));
   setIsModalOpen(false);
 };
 
@@ -230,5 +223,7 @@ return {
   handleBrandDeleteItem,
   handleCategoryDeleteItem,
   handleIndicationDeleteItem,
+  handleUserSaveItem,
+  handleUserDeleteItem,
 };
 }

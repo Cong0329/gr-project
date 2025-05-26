@@ -10,40 +10,42 @@ import axiosInstance from "../../auth/axiosInstance";
 export const Login = () => {
     const backendURL = import.meta.env.VITE_NODEJS_BACKEND_URL;
     const dispatch = useDispatch();
-    const { isUserAuthenticated, user} = useSelector((state: RootState) => state.auth);
+    const { isUserAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
     const handleGoogleLogin = () => {
         window.location.href = `${backendURL}/auth/google`;
     };
-    
+
 
     useEffect(() => {
-            const fetchUser = async () => {
-                console.log("Fetching user..."); // ✅ log
+        const fetchUser = async () => {
+            console.log("Fetching user..."); // ✅ log
 
-                try {
-                    const res = await axiosInstance.get(`/user/me`, {
-                        withCredentials: true
-                    });
+            try {
+                const res = await axiosInstance.get(`/user/me`, {
+                    withCredentials: true
+                });
 
-                    if (res.data) {
-                        
-                            dispatch(googleLogin(res.data));
-                        }
-                    
-                } catch (error) {
-                    console.log("Fetch user failed", error);
+                if (res.data) {
+
+                    dispatch(googleLogin(res.data));
                 }
-            };
 
+            } catch (error) {
+                console.log("Fetch user failed", error);
+            }
+        };
+        if (!isUserAuthenticated) {
             fetchUser();
-    }, [dispatch]);
+        }
+
+    }, [dispatch, isUserAuthenticated]);
 
 
     return (
         <>
             {
-                isUserAuthenticated  ? (
+                isUserAuthenticated ? (
                     <Link to="/profile" className="flex items-center gap-2">
                         <img src={user?.avatar_url} alt="" className="h-10 w-10 rounded-full" />
                         <span className="text-white font-semibold text-lg">{user?.name?.split(" ").slice(-1)[0]}</span>
