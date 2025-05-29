@@ -212,19 +212,8 @@ exports.getServicePackageSchedules = async (req, res, next) => {
  */
 exports.getDoctorSchedules = async (req, res, next) => {
   try {
-    // Validate input
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ 
-        success: false,
-        errors: errors.array() 
-      });
-    }
-
-    const doctorId = req.params.doctorId;
-    
-    // Kiểm tra bác sĩ có tồn tại không
-    const doctor = await Doctor.findByPk(doctorId, {
+    const doctor = await Doctor.findOne({
+      where: { user_id: req.user.id },
       include: [
         {
           model: Department,
@@ -233,14 +222,17 @@ exports.getDoctorSchedules = async (req, res, next) => {
         }
       ]
     });
-    
+
     if (!doctor) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: 'Doctor not found' 
+        message: 'Doctor profile not found for this user'
       });
     }
 
+    console.log('Found doctor:', doctor.id);
+    console.log('User ID:', req.user.id);
+    
     const { 
       page = 1, 
       limit = 10,
@@ -251,20 +243,23 @@ exports.getDoctorSchedules = async (req, res, next) => {
     } = req.query;
 
     const whereClause = {
-      doctor_id: doctorId
+      doctor_id: doctor.id 
     };
     
     if (status) whereClause.status = status;
     if (type) whereClause.type = type;
     
-    // Lọc theo khoảng ngày
     if (date_from || date_to) {
       whereClause.date = {};
       if (date_from) whereClause.date[Op.gte] = new Date(date_from);
       if (date_to) whereClause.date[Op.lte] = new Date(date_to);
     }
 
-    const schedules = await Schedule.findAll({
+    console.log('WHERE clause:', whereClause);
+
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+
+    const { count, rows: schedules } = await Schedule.findAndCountAll({
       where: whereClause,
       include: [
         {
@@ -280,10 +275,29 @@ exports.getDoctorSchedules = async (req, res, next) => {
           ]
         }
       ],
-      order: [['date', 'ASC'], ['start_time', 'ASC']]
+      order: [['date', 'ASC'], ['start_time', 'ASC']],
+      limit: parseInt(limit),
+      offset: offset
     });
 
-    res.json(schedules);
+    console.log('Found schedules:', schedules.length);
+
+    res.json({
+      success: true,
+      data: schedules,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total: count,
+        totalPages: Math.ceil(count / parseInt(limit))
+      },
+      doctor: {
+        id: doctor.id,         
+        name: doctor.name,     
+        department: doctor.department?.name
+      }
+    });
+
   } catch (error) {
     console.error('Error in getDoctorSchedules:', error);
     next(error);

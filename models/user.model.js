@@ -27,8 +27,31 @@ module. exports = (sequelize, DataTypes) => {
       foreignKey: 'user_id',
       as: 'bookingRequests'
     });
+    
+    User.hasOne(models.Doctor, {
+      foreignKey: 'user_id',
+      as: 'doctorProfile',
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE'
+    });
   };
   
+  User.prototype.isDoctor = async function() {
+    const doctorProfile = await this.getDoctorProfile();
+    return doctorProfile !== null;
+  };
+
+  User.prototype.getDoctorInfo = async function() {
+    return await this.getDoctorProfile({
+      include: [
+        {
+          model: sequelize.models.Department,
+          as: 'department',
+          attributes: ['id', 'name']
+        }
+      ]
+    });
+  };
 
   return User;
 };

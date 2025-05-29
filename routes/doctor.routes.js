@@ -1,68 +1,27 @@
 const express = require("express");
 const router = express.Router();
-const { Doctor } = require("../models");
-
-router.post("/", async (req, res) => {
-  try {
-    // Kiểm tra xem req.body có phải là mảng không
-    const doctorsToCreate = Array.isArray(req.body) ? req.body : [req.body];
-
-    // Sử dụng bulkCreate nếu là mảng, ngược lại sử dụng create
-    const newDoctors = await Doctor.bulkCreate(doctorsToCreate);
-    
-    res.status(201).json(newDoctors);
-  } catch (err) {
-    console.error("Lỗi khi tạo bác sĩ:", err);
-    res.status(500).json({ error: "Lỗi server khi tạo bác sĩ" });
-  }
-});
+const doctorController = require("../controllers/doctor.controller");
+const {authenticateAdminToken} = require('../middlewares/auth.middleware');
+const requireRole = require('../middlewares/role.middleware');
 
 
-router.get("/", async (req, res) => {
-  try {
-    const doctors = await Doctor.findAll();
-    res.json(doctors);
-  } catch (err) {
-    console.error("Lỗi khi lấy danh sách bác sĩ:", err);
-    res.status(500).json({ error: "Lỗi server khi lấy danh sách bác sĩ" });
-  }
-});
 
-router.get("/:id", async (req, res) => {
-  try {
-    const doctor = await Doctor.findByPk(req.params.id);
-    if (!doctor) return res.status(404).json({ error: "Không tìm thấy bác sĩ" });
-    res.json(doctor);
-  } catch (err) {
-    console.error("Lỗi khi lấy bác sĩ theo ID:", err);
-    res.status(500).json({ error: "Lỗi server" });
-  }
-});
+// POST /doctors - Tạo mới doctor
+router.post("/", doctorController.createDoctor);
 
-router.put("/:id", async (req, res) => {
-  try {
-    const doctor = await Doctor.findByPk(req.params.id);
-    if (!doctor) return res.status(404).json({ error: "Không tìm thấy bác sĩ" });
+// GET /doctors - Lấy tất cả doctors
+router.get("/", doctorController.getAllDoctors);
 
-    await doctor.update(req.body);
-    res.json(doctor);
-  } catch (err) {
-    console.error("Lỗi khi cập nhật bác sĩ:", err);
-    res.status(500).json({ error: "Lỗi server" });
-  }
-});
+// GET /doctors/:id - Lấy thông tin chi tiết doctor
+router.get("/:id", doctorController.getDoctorById);
 
-router.delete("/:id", async (req, res) => {
-  try {
-    const doctor = await Doctor.findByPk(req.params.id);
-    if (!doctor) return res.status(404).json({ error: "Không tìm thấy bác sĩ" });
+// PUT /doctors/:id - Cập nhật thông tin doctor
+router.put("/:id", doctorController.updateDoctor);
 
-    await doctor.destroy();
-    res.json({ message: "Xoá bác sĩ thành công" });
-  } catch (err) {
-    console.error("Lỗi khi xoá bác sĩ:", err);
-    res.status(500).json({ error: "Lỗi server" });
-  }
-});
+// DELETE /doctors/:id - Xóa doctor
+router.delete("/:id", doctorController.deleteDoctor);
+
+router.get("/info/me", authenticateAdminToken, requireRole('ROLE_DOCTOR', 'ROLE_ADMIN'), doctorController.getDoctorInfo);
+
 
 module.exports = router;

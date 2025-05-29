@@ -198,7 +198,6 @@ exports.verifyCode = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const roles = await user.getRoles();
     const hasValidRole = roles.some(role =>
       ['ROLE_ADMIN', 'ROLE_PHARMACIST', 'ROLE_DOCTOR'].includes(role.code)
     );

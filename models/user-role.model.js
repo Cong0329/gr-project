@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         timestamps: false, // Tắt tự động tạo createdAt, updatedAt
       }
     );
+    
   
     return UserRole;
   };

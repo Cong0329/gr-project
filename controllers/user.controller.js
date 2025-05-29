@@ -14,7 +14,7 @@ exports.getProfile = async (req, res) => {
           as: 'roles',
           attributes: ['id', 'code', 'name'],
           through: { attributes: [] }
-        }
+        },
       ]
     });
 

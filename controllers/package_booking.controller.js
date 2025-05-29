@@ -313,7 +313,6 @@ exports.getBookingRequests = async (req, res) => {
       whereClause.requested_date = date;
     }
     
-    // ✅ Thêm điều kiện package_id nếu có
     if (package_id) {
       whereClause.package_id = package_id; 
     }
@@ -323,6 +322,7 @@ exports.getBookingRequests = async (req, res) => {
     const bookings = await PackageBookingRequest.findAll({
       where: whereClause,
       attributes: [
+        'id',
         'requested_date', 
         'requested_time_slot', 
         'status',

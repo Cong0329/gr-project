@@ -144,7 +144,7 @@
 const express = require('express');
 const router = express.Router();
 const scheduleController = require('../controllers/schedule.controller');
-const {authenticateToken} = require('../middlewares/auth.middleware');
+const {authenticateToken, authenticateAdminToken} = require('../middlewares/auth.middleware');
 const requireRole = require('../middlewares/role.middleware');
 
 const {
@@ -179,7 +179,7 @@ router.get('/specialist', scheduleController.getSpecialistSchedules);
 router.get('/service-packages', scheduleController.getServicePackageSchedules);
 
 // Lấy tất cả lịch trình của một bác sĩ cụ thể
-router.get('/doctor/:doctorId',  scheduleController.getDoctorSchedules);
+router.get('/doctor/me', authenticateAdminToken, requireRole('ROLE_DOCTOR'),  scheduleController.getDoctorSchedules);
 
 // Lấy chi tiết lịch trình
 router.get('/:id', scheduleController.getScheduleById);

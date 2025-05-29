@@ -5,6 +5,14 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true
       },
+      user_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: 'user',
+        key: 'id'
+      }
+    },
       name: {
         type: DataTypes.STRING,
         allowNull: false
@@ -27,24 +35,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },      
-      created_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
-        onUpdate: sequelize.literal('CURRENT_TIMESTAMP')
-      },
       deleted_at: DataTypes.DATE,
       created_by: DataTypes.BIGINT,
       updated_by: DataTypes.BIGINT,
       deleted_by: DataTypes.BIGINT
     }, {
       tableName: 'doctor',
-      timestamps: false
+      timestamps: true
     });
     Doctor.associate = (models) => {
       Doctor.belongsTo(models.Department, {
@@ -56,7 +53,35 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'doctor_id',
         as: 'schedules' 
       });
+
+      Doctor.belongsTo(models.User, {
+      foreignKey: 'user_id',
+      as: 'userAccount',
+      allowNull: true
+    });
     };
+
+    Doctor.prototype.hasAccount = async function() {
+    const account = await this.getUserAccount();
+    return account !== null;
+  };
+
+  Doctor.prototype.getFullInfo = async function() {
+    return await Doctor.findByPk(this.id, {
+      include: [
+        {
+          model: sequelize.models.User,
+          as: 'userAccount',
+          attributes: ['id', 'name', 'email', 'phone', 'avatar_url']
+        },
+        {
+          model: sequelize.models.Department,
+          as: 'department',
+          attributes: ['id', 'name']
+        }
+      ]
+    });
+  };
     
     return Doctor;
   };

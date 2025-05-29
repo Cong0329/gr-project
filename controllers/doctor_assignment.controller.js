@@ -38,7 +38,9 @@ exports.requestDoctorAssignment = async (req, res) => {
       }
       
       // 3. Kiểm tra doctor tồn tại
-      const doctor = await Doctor.findByPk(doctor_id);
+      const doctor = await Doctor.findByPk(doctor_id, {
+        attributes: ['id', 'name', 'avatar', 'type']
+      });
       if (!doctor) {
         return res.status(404).json({ message: 'Không tìm thấy bác sĩ' });
       }
@@ -71,8 +73,15 @@ exports.requestDoctorAssignment = async (req, res) => {
       
       return res.status(201).json({
         message: `Đã gửi yêu cầu khám lúc ${bookingRequest.requested_time_slot} ngày ${bookingRequest.requested_date} cho admin`,
-        doctorAssignment
+        doctorAssignment,
+        doctorInfo: {
+          id: doctor.id,
+          name: doctor.name,
+          avatar: doctor.avatar,
+          type: doctor.type
+        }
       });
+
     } catch (error) {
       console.error('Error requesting doctor assignment:', error);
       return res.status(500).json({ 
