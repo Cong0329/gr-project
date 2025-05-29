@@ -19,16 +19,19 @@ interface Pagination {
 
 interface ScheduleState {
   specialistSchedules: Schedule[];
+  mySchedules: Schedule[];
   loading: boolean;
   error: string | null;
   pagination: Pagination;
   currentType: 'specialist' | 'specialist_online';
   isConfirming: boolean;
   confirmError: string | null;
+  doctorInfo: any;
 }
 
 const initialState: ScheduleState = {
   specialistSchedules: [],
+  mySchedules: [],
   loading: false,
   error: null,
   pagination: {
@@ -38,7 +41,6 @@ const initialState: ScheduleState = {
   },
   currentType: 'specialist',
 };
-
 export const fetchSpecialistSchedules = createAsyncThunk(
   'schedules/fetchSpecialistSchedules',
   async (
@@ -78,6 +80,59 @@ export const fetchSpecialistSchedules = createAsyncThunk(
   }
 );
 
+export const fetchMyDoctorSchedules = createAsyncThunk(
+  'schedules/fetchMyDoctorSchedules',
+  async (
+    { page = 1, limit = 10, status, date_from, date_to, type }: 
+    { 
+      page?: number; 
+      limit?: number; 
+      status?: string;
+      date_from?: string;
+      date_to?: string;
+      type?: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const params = {
+        page,
+        limit,
+        ...(status && { status }),
+        ...(date_from && { date_from }),
+        ...(date_to && { date_to }),
+        ...(type && { type })
+      };
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_NODEJS_BACKEND_URL}/schedule/doctor/me`, 
+        { 
+          params,
+          withCredentials: true 
+        }
+      );
+
+      if (!response.data.success) {
+        return rejectWithValue(response.data.message || 'Failed to fetch schedules');
+      }
+
+      return {
+        data: response.data.data,
+        pagination: response.data.pagination,
+        doctor: response.data.doctor
+      };
+    } catch (error: any) {
+      console.error('API Error:', error);
+      
+      if (error.response?.status === 403 && error.response?.data?.message === 'jwt expired') {
+        return rejectWithValue('Session expired. Please login again.');
+      }
+      
+      return rejectWithValue(error.response?.data?.message || error.message || 'Network error');
+    }
+  }
+);
+
 const scheduleSlice = createSlice({
   name: 'schedules',
   initialState,
@@ -106,6 +161,20 @@ const scheduleSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string || 'Failed to fetch schedules';
       })
+      .addCase(fetchMyDoctorSchedules.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMyDoctorSchedules.fulfilled, (state, action) => {
+        state.loading = false;
+        state.mySchedules = action.payload.data;
+        state.pagination = action.payload.pagination;
+        state.doctorInfo = action.payload.doctor;
+      })
+      .addCase(fetchMyDoctorSchedules.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string || 'Failed to fetch my schedules';
+      });
   }
 });
 

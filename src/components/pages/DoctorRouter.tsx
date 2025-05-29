@@ -1,16 +1,14 @@
-
 // src/AppRoutes.tsx
 import { Route } from "react-router";
 import UserProfiles from "../admin/pages/UserProfiles";
-import { Calendar, Home } from "lucide-react";
-import Blank from "../admin/pages/Blank";
+import { DoctorScheduleComponent } from "../admin/pages/FormsDoctor/ScheduleDoctor";
+import { ExaminationRequest } from "../admin/pages/FormsDoctor/ExaminationRequest";
 
 const doctorRoutes = (
   <Route>
-    <Route index element={<Home />} />
-    <Route path="profile" element={<UserProfiles />} />
-    <Route path="calendar" element={<Calendar />} />
-    <Route path="blank" element={<Blank />} />
+    <Route index element={<UserProfiles />} />
+    <Route path="schedule" element={<DoctorScheduleComponent />} />
+    <Route path="examination-requests" element={<ExaminationRequest />} />
   </Route>
 );
 

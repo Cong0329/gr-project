@@ -23,6 +23,7 @@ import reviewsReducer from './reviewsSlice';
 import searchReducer from './searchSlice';
 import packageBookingReducer from './packageBookingRequestSlice'
 import revenueReducer from './revenueSlice'
+import doctorAssignmentReducer from './doctorAssignmentSlice'
 
 const cartPersistConfig = {
   key: 'cart',
@@ -72,6 +73,7 @@ export const store = configureStore({
     search: searchReducer,
     packages: packageBookingReducer,
     revenue: revenueReducer,
+    doctorAssignment: doctorAssignmentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

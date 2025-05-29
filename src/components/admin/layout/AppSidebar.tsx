@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import logo from "../../../assets/logo.png";
 // Assume these icons are imported from an icon library
@@ -19,11 +19,9 @@ import {
 import { useSidebar } from "../context/SidebarContext";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
+import { CalendarIcon, ClipboardListIcon } from "lucide-react";
 
-const getRoleBasedPath = (path: string) => {
- 
-  const { role } = useSelector((state: RootState) => state.auth);
-  const userRole = Array.isArray(role) ? role[0] : role || "";
+const getRoleBasedPath = (path: string, userRole: string) => {
   if (userRole === "ROLE_ADMIN") return path;
   return path.replace("/admin/", "/doctor/");
 };
@@ -35,7 +33,8 @@ type NavItem = {
   subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
 };
 
-const navItems: NavItem[] = [
+// Admin nav items - Keep original paths
+const adminNavItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Bảng thống kê",
@@ -59,9 +58,9 @@ const navItems: NavItem[] = [
     icon: <ListIcon />,
     subItems: [
       { name: "Thương hiệu", path: "/admin/brand", pro: false },
-      { name: "Danh mục ", path: "/admin/category", pro: false },
-      { name: "Đối tượng ", path: "/admin/medical-object", pro: false },
-      { name: "Chỉ định ", path: "/admin/indication", pro: false },
+      { name: "Danh mục", path: "/admin/category", pro: false },
+      { name: "Đối tượng", path: "/admin/medical-object", pro: false },
+      { name: "Chỉ định", path: "/admin/indication", pro: false },
     ],
   },
   {
@@ -81,9 +80,28 @@ const navItems: NavItem[] = [
     name: "Pages",
     icon: <PageIcon />,
     subItems: [
-      { name: "Blank Page", path: "/blank", pro: false },
-      { name: "404 Error", path: "/error-404", pro: false },
+      { name: "Blank Page", path: "/admin/blank", pro: false },
+      { name: "404 Error", path: "/admin/error-404", pro: false },
     ],
+  },
+];
+
+// Doctor nav items - Keep original paths
+const doctorNavItems: NavItem[] = [
+  {
+    icon: <UserCircleIcon />,
+    name: "Hồ sơ cá nhân",
+    path: "/doctor",
+  },
+  {
+    icon: <CalendarIcon />,
+    name: "Lịch cá nhân",
+    path: "/doctor/schedule",
+  },
+  {
+    icon: <ClipboardListIcon />,
+    name: "Yêu cầu gói khám",
+    path: "/doctor/examination-requests",
   },
 ];
 
@@ -92,20 +110,20 @@ const othersItems: NavItem[] = [
     icon: <PieChartIcon />,
     name: "Charts",
     subItems: [
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
+      { name: "Line Chart", path: "/admin/line-chart", pro: false },
+      { name: "Bar Chart", path: "/admin/bar-chart", pro: false },
     ],
   },
   {
     icon: <BoxCubeIcon />,
     name: "UI Elements",
     subItems: [
-      { name: "Alerts", path: "/alerts", pro: false },
-      { name: "Avatar", path: "/avatars", pro: false },
-      { name: "Badge", path: "/badge", pro: false },
-      { name: "Buttons", path: "/buttons", pro: false },
-      { name: "Images", path: "/images", pro: false },
-      { name: "Videos", path: "/videos", pro: false },
+      { name: "Alerts", path: "/admin/alerts", pro: false },
+      { name: "Avatar", path: "/admin/avatars", pro: false },
+      { name: "Badge", path: "/admin/badge", pro: false },
+      { name: "Buttons", path: "/admin/buttons", pro: false },
+      { name: "Images", path: "/admin/images", pro: false },
+      { name: "Videos", path: "/admin/videos", pro: false },
     ],
   },
   {
@@ -119,35 +137,41 @@ const othersItems: NavItem[] = [
 ];
 
 const AppSidebar: React.FC = () => {
-  const {role} = useSelector((state: RootState) => state.auth);
+  const { role } = useSelector((state: RootState) => state.auth);
   const userRole = Array.isArray(role) ? role[0] : role || "";
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
 
   const isAdmin = userRole === "ROLE_ADMIN";
   const isDoctor = userRole === "ROLE_DOCTOR";
 
-  const filteredNavItems = navItems
-    .filter((item) => {
-      if (isAdmin) return true;
-      if (isDoctor) return item.path === "/admin/profile";
-      return false;
-    })
-    .map((item) => ({
+  // Select appropriate nav items and transform paths based on role
+  const navItems = isAdmin ? adminNavItems : isDoctor ? doctorNavItems : [];
+
+  // Transform paths using useMemo to prevent infinite re-renders
+  const filteredNavItems = useMemo(() => {
+    return navItems.map((item) => ({
       ...item,
-      path:
-        isDoctor && item.path
-          ? item.path.replace("/admin/", "/doctor/")
-          : item.path,
+      path: item.path ? getRoleBasedPath(item.path, userRole) : item.path,
       subItems: item.subItems?.map((subItem) => ({
         ...subItem,
-        path: isDoctor
-          ? subItem.path.replace("/admin/", "/doctor/")
-          : subItem.path,
+        path: getRoleBasedPath(subItem.path, userRole),
       })),
     }));
+  }, [navItems, userRole]);
 
-  // Ẩn othersItems nếu không phải admin
-  const filteredOthersItems = isAdmin ? othersItems : [];
+  // Transform othersItems paths using useMemo
+  const filteredOthersItems = useMemo(() => {
+    if (!isAdmin) return [];
+    return othersItems.map((item) => ({
+      ...item,
+      path: item.path ? getRoleBasedPath(item.path, userRole) : item.path,
+      subItems: item.subItems?.map((subItem) => ({
+        ...subItem,
+        path: getRoleBasedPath(subItem.path, userRole),
+      })),
+    }));
+  }, [isAdmin, userRole]);
+
   const location = useLocation();
 
   const [openSubmenu, setOpenSubmenu] = useState<{
@@ -159,16 +183,26 @@ const AppSidebar: React.FC = () => {
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // const isActive = (path: string) => location.pathname === path;
   const isActive = useCallback(
-    (path: string) => location.pathname === path,
-    [location.pathname]
+    (path: string) => {
+      const currentPath = location.pathname;
+
+      const isMenuParent = navItems.some(
+        (item) => item.path === path && item.subItems
+      );
+
+      return isMenuParent
+        ? currentPath === path || currentPath.startsWith(path + "/")
+        : currentPath === path;
+    },
+    [location.pathname, navItems]
   );
 
   useEffect(() => {
     let submenuMatched = false;
     ["main", "others"].forEach((menuType) => {
-      const items = menuType === "main" ? navItems : othersItems;
+      const items =
+        menuType === "main" ? filteredNavItems : filteredOthersItems;
       items.forEach((nav, index) => {
         if (nav.subItems) {
           nav.subItems.forEach((subItem) => {
@@ -185,9 +219,18 @@ const AppSidebar: React.FC = () => {
     });
 
     if (!submenuMatched) {
-      setOpenSubmenu(null);
+      // Check if current route matches any top-level menu item
+      ["main", "others"].forEach((menuType) => {
+        const items =
+          menuType === "main" ? filteredNavItems : filteredOthersItems;
+        items.forEach((nav, index) => {
+          if (nav.path && isActive(nav.path)) {
+            setOpenSubmenu(null); // Close submenus for direct links
+          }
+        });
+      });
     }
-  }, [location, isActive]);
+  }, [location, isActive, filteredNavItems, filteredOthersItems]);
 
   useEffect(() => {
     if (openSubmenu !== null) {
@@ -221,11 +264,11 @@ const AppSidebar: React.FC = () => {
           {nav.subItems ? (
             <button
               onClick={() => handleSubmenuToggle(index, menuType)}
-              className={`menu-item text-md font-semibold group py-2 px-4 flex gap-2 items-center justify-between ${
+              className={`menu-item text-md font-semibold group py-2 px-4 flex gap-2 items-center justify-between w-full text-left ${
                 openSubmenu?.type === menuType && openSubmenu?.index === index
-                  ? "bg-blue-100 text-blue-600  rounded-md"
-                  : "menu-item-inactive"
-              } cursor-pointer ${
+                  ? "bg-blue-100 text-blue-600 rounded-md"
+                  : "menu-item-inactive hover:bg-gray-50"
+              } cursor-pointer transition-colors duration-200 ${
                 !isExpanded && !isHovered
                   ? "lg:justify-center"
                   : "lg:justify-start"
@@ -249,11 +292,11 @@ const AppSidebar: React.FC = () => {
 
               {(isExpanded || isHovered || isMobileOpen) && (
                 <ChevronDownIcon
-                  className={` w-5 h-5 transition-transform duration-200 ${
+                  className={`w-5 h-5 transition-transform duration-200 ${
                     openSubmenu?.type === menuType &&
                     openSubmenu?.index === index
-                      ? "rotate-180 text-brand-500"
-                      : ""
+                      ? "rotate-180 text-blue-600"
+                      : "text-gray-400"
                   }`}
                 />
               )}
@@ -261,11 +304,11 @@ const AppSidebar: React.FC = () => {
           ) : (
             nav.path && (
               <Link
-                to={getRoleBasedPath(nav.path || "")}
-                className={`menu-item group flex items-center px-4 py-2 rounded-md font-semibold text-md gap-2 ${
+                to={nav.path}
+                className={`menu-item group flex items-center px-4 py-2 rounded-md font-semibold text-md gap-2 transition-colors duration-200 ${
                   isActive(nav.path)
                     ? "bg-blue-100 text-blue-600"
-                    : "menu-item-inactive"
+                    : "menu-item-inactive hover:bg-gray-50"
                 }`}
               >
                 <span
@@ -296,16 +339,16 @@ const AppSidebar: React.FC = () => {
                     : "0px",
               }}
             >
-              <ul className="mt-3  ml-9 space-y-2">
+              <ul className="mt-3 ml-9 space-y-2">
                 {nav.subItems.map((subItem) => (
                   <li key={subItem.name}>
                     <Link
-                      to={getRoleBasedPath(subItem.path)}
-                      className={`menu-dropdown-item text-sm  px-4 py-2 font-semibold  ${
+                      to={subItem.path}
+                      className={`menu-dropdown-item text-sm px-4 py-2 font-semibold rounded-md transition-colors duration-200 ${
                         isActive(subItem.path)
-                          ? "bg-blue-100 text-blue-600 px-4 py-2 rounded-md w-[210px]"
-                          : "menu-dropdown-item-inactive"
-                      } block`} // 👈 Thêm class "block" ở đây
+                          ? "bg-blue-100 text-blue-600"
+                          : "menu-dropdown-item-inactive hover:bg-gray-50 text-gray-600"
+                      } block w-[210px]`}
                     >
                       {subItem.name}
                     </Link>
@@ -319,9 +362,17 @@ const AppSidebar: React.FC = () => {
     </ul>
   );
 
+  // Get logo link based on role
+  const logoLink = isAdmin ? "/admin" : isDoctor ? "/doctor" : "/";
+  const appName = isAdmin
+    ? "PharmacyAdmin"
+    : isDoctor
+    ? "PharmacyDoctor"
+    : "Pharmacy";
+
   return (
     <aside
-      className={` fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white  text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
+      className={`fixed mt-16 flex flex-col lg:mt-0 top-0 px-5 left-0 bg-white text-gray-900 h-screen transition-all duration-300 ease-in-out z-50 border-r border-gray-200 
         ${
           isExpanded || isMobileOpen
             ? "w-[290px]"
@@ -339,15 +390,15 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link to="/admin">
+        <Link to={logoLink}>
           {isExpanded || isHovered || isMobileOpen ? (
             <div className="flex items-center gap-2">
               <img
                 src={logo}
-                className="h-10 w-10 bg-blue-500  border rounded-md p-1"
+                className="h-10 w-10 bg-blue-500 border rounded-md p-1"
                 alt="Logo"
               />
-              <span className="font-bold text-2xl">PharmacyAdmin</span>
+              <span className="font-bold text-2xl">{appName}</span>
             </div>
           ) : (
             <img
@@ -378,7 +429,7 @@ const AppSidebar: React.FC = () => {
               {renderMenuItems(filteredNavItems, "main")}
             </div>
 
-            {isAdmin && ( // Chỉ hiển thị others menu nếu là admin
+            {isAdmin && ( // Only show others menu for admin
               <div className="">
                 <h2
                   className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${
@@ -402,4 +453,5 @@ const AppSidebar: React.FC = () => {
     </aside>
   );
 };
+
 export default AppSidebar;

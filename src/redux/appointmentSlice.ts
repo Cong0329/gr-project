@@ -13,7 +13,15 @@ export interface Appointment {
   service_id: number;
   payment_method: 'cash' | 'online';
   status: 'pending_payment' | 'confirmed' | 'cancelled' | 'completed' | 'rejected';
-  reason?: string;
+  patient_info?: {
+    name: string;
+    phone: string;
+    email: string;
+    dob: string;
+    gender: string;
+    address: string;
+    reason?: string;
+  };
   doctor?: {
     id: string;
     name: string;
@@ -74,9 +82,10 @@ export const createAppointment = createAsyncThunk(
               name: userInfo.fullName,
               phone: userInfo.phone,
               email: userInfo.email,
-              dob: userInfo.dob,
+              dob: userInfo.birthDate,
               gender: userInfo.gender,
-              address: userInfo.address
+              address: userInfo.address,
+              reason: userInfo.reason
             }
           },
           {
@@ -101,7 +110,6 @@ export const cancelAppointment = createAsyncThunk(
   'appointment/cancel',
   async ({ id, reason }: { id: string; reason?: string }, { rejectWithValue }) => {
     try {
-      // Cách 1: Sử dụng withCredentials (cho cookie-based auth)
       const response = await axios.post(
         `${import.meta.env.VITE_NODEJS_BACKEND_URL}/appointment/${id}/cancel`,
         { reason },
@@ -186,6 +194,9 @@ const appointmentSlice = createSlice({
   
         if (index !== -1) {
           state.appointments[index].status = 'confirmed';
+          if (action.payload.patient_info) {
+            state.appointments[index].patient_info = action.payload.patient_info;
+          }
         } else {
           console.warn(`Appointment with id ${appointmentId} not found in state`);
           if (action.payload.appointment) {
@@ -203,10 +214,8 @@ const appointmentSlice = createSlice({
       .addCase(confirmAppointment.rejected, (state, action) => {
         state.confirming = false;
         
-        // Log chi tiết lỗi
         console.error('Confirm appointment rejected:', action);
         
-        // Nếu có payload từ rejectWithValue
         if (action.payload) {
           state.error = typeof action.payload === 'string' 
             ? action.payload 
@@ -228,6 +237,9 @@ const appointmentSlice = createSlice({
         const index = state.appointments.findIndex(a => a.id === action.payload.id);
         if (index !== -1) {
           state.appointments[index].status = 'cancelled';
+          if (action.payload.patient_info) {
+            state.appointments[index].patient_info = action.payload.patient_info;
+          }
         }
       })
       .addCase(cancelAppointment.rejected, (state, action) => {

@@ -28,8 +28,8 @@ export interface PackageBooking {
     doctor?: {
       id: string;
       name: string;
-      avatar_url: string;
-      specialization: string;
+      avatar: string;
+      type: string;
     };
   };
   doctorAssignments?: any[];
@@ -276,8 +276,23 @@ const packageBookingSlice = createSlice({
         state.error = null;
       })
       .addCase(getAllBookingRequests.fulfilled, (state, action) => {
+        console.log("getAllBookingRequests.fulfilled - payload:", action.payload);
+        console.log("getAllBookingRequests.fulfilled - payload type:", typeof action.payload);
+        console.log("getAllBookingRequests.fulfilled - payload.data:", action.payload?.data);
+        
         state.loading = false;
-        state.bookingRequests = action.payload;
+        
+        // Kiểm tra structure của response
+        if (Array.isArray(action.payload)) {
+          state.bookingRequests = action.payload;
+        } else if (action.payload?.data && Array.isArray(action.payload.data)) {
+          state.bookingRequests = action.payload.data;
+        } else {
+          console.error("Unexpected payload structure:", action.payload);
+          state.bookingRequests = [];
+        }
+        
+        console.log("State after update:", state.bookingRequests);
       })
       .addCase(getAllBookingRequests.rejected, (state, action) => {
         state.loading = false;
