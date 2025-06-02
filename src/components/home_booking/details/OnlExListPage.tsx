@@ -112,11 +112,12 @@ const OnlExListPage = () => {
                   )
                 }
               >
-                <div className="my-3">
+                <div className="bg-blue-50 rounded-full mb-4 w-20 h-20">
+                  {" "}
                   <img
-                    src={CoXuongKhop}
+                    src={category.image || CoXuongKhop}
                     alt={category.name}
-                    className="w-16 h-16 rounded-full"
+                    className="w-full h-full rounded-full object-cover"
                     loading="lazy"
                   />
                 </div>

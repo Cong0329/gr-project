@@ -107,11 +107,12 @@ const SpecialistPage = () => {
                   )
                 }
               >
-                <div className="bg-blue-50 p-3 rounded-full mb-4">
+                <div className="bg-blue-50 rounded-full mb-4 w-20 h-20">
+                  {" "}
                   <img
                     src={category.image || CoXuongKhop}
                     alt={category.name}
-                    className="w-12 h-12"
+                    className="w-full h-full rounded-full object-cover"
                     loading="lazy"
                   />
                 </div>

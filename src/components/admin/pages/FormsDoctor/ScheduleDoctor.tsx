@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMyDoctorSchedules } from "../../../../redux/scheduleSlice";
 import { getUserAppointment } from "../../../../redux/appointmentSlice";
@@ -15,7 +15,11 @@ import {
   Users,
   FileText,
   CalendarDays,
+  Plus,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
+import { CreateSchedule } from "./Components/CreateSchedule";
 
 export const DoctorScheduleComponent = () => {
   const dispatch = useDispatch();
@@ -23,6 +27,13 @@ export const DoctorScheduleComponent = () => {
     (state) => state.schedules
   );
   const { appointments } = useSelector((state) => state.appointments);
+
+  // State để quản lý việc hiển thị thông tin patient
+  const [expandedSchedules, setExpandedSchedules] = useState(new Set());
+
+  const [activeTab, setActiveTab] = useState("upcoming");
+
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchMyDoctorSchedules({}));
@@ -38,6 +49,53 @@ export const DoctorScheduleComponent = () => {
     );
 
     return appointment?.patient_info || null;
+  };
+
+  // Function để phân chia lịch theo thời gian
+  const categorizeSchedules = (schedules) => {
+    if (!schedules || !Array.isArray(schedules))
+      return { upcoming: [], past: [] };
+
+    const now = new Date();
+    const upcoming = [];
+    const past = [];
+
+    schedules.forEach((schedule) => {
+      const scheduleDateTime = new Date(
+        `${schedule.date}T${schedule.start_time}`
+      );
+
+      if (scheduleDateTime >= now) {
+        upcoming.push(schedule);
+      } else {
+        past.push(schedule);
+      }
+    });
+
+    // Sắp xếp upcoming theo thời gian tăng dần, past theo thời gian giảm dần
+    upcoming.sort(
+      (a, b) =>
+        new Date(`${a.date}T${a.start_time}`) -
+        new Date(`${b.date}T${b.start_time}`)
+    );
+    past.sort(
+      (a, b) =>
+        new Date(`${b.date}T${b.start_time}`) -
+        new Date(`${a.date}T${a.start_time}`)
+    );
+
+    return { upcoming, past };
+  };
+
+  // Toggle hiển thị thông tin patient
+  const togglePatientInfo = (scheduleId) => {
+    const newExpanded = new Set(expandedSchedules);
+    if (newExpanded.has(scheduleId)) {
+      newExpanded.delete(scheduleId);
+    } else {
+      newExpanded.add(scheduleId);
+    }
+    setExpandedSchedules(newExpanded);
   };
 
   const getStatusColor = (status) => {
@@ -108,6 +166,186 @@ export const DoctorScheduleComponent = () => {
     return date.toLocaleDateString("vi-VN");
   };
 
+  // Render schedule card
+  const renderScheduleCard = (schedule) => {
+    const patientInfo = getPatientInfoForSchedule(schedule);
+    const isBooked = schedule.status === "booked";
+    const isExpanded = expandedSchedules.has(schedule.id);
+
+    return (
+      <div
+        key={schedule.id}
+        className="bg-gradient-to-r from-white to-gray-50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:border-blue-300"
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            {/* Date & Time */}
+            <div className="flex items-center space-x-4 mb-4">
+              <div className="flex items-center space-x-2 text-gray-700">
+                <Calendar className="w-5 h-5 text-blue-500" />
+                <span className="font-semibold">
+                  {formatDate(schedule.date)}
+                </span>
+              </div>
+              <div className="flex items-center space-x-2 text-gray-700">
+                <Clock className="w-5 h-5 text-blue-500" />
+                <span className="font-medium">
+                  {formatTime(schedule.start_time)} -{" "}
+                  {formatTime(schedule.end_time)}
+                </span>
+              </div>
+            </div>
+
+            {/* Doctor Info */}
+            {schedule.doctor && (
+              <div className="bg-white rounded-xl p-4 mb-4 border border-gray-100">
+                <div className="flex items-center space-x-4">
+                  <img
+                    src={schedule.doctor.avatar}
+                    alt={schedule.doctor.name}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-blue-100"
+                  />
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-gray-800 flex items-center space-x-2">
+                      <User className="w-4 h-4 text-blue-500" />
+                      <span>{schedule.doctor.name}</span>
+                    </h4>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {schedule.doctor.position}
+                    </p>
+                    <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
+                      <span>{schedule.doctor.experience}</span>
+                      <span className="flex items-center space-x-1">
+                        <MapPin className="w-3 h-3" />
+                        <span>{schedule.doctor.address}</span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Service Info & Status */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 bg-blue-50 px-3 py-2 rounded-lg">
+                  {getTypeIcon(schedule.type)}
+                  <span className="text-sm font-medium text-blue-700">
+                    {schedule.doctor?.department?.name || "Khám tổng quát"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <div
+                  className={`px-4 py-2 rounded-full text-sm font-semibold border ${getStatusColor(
+                    schedule.status
+                  )}`}
+                >
+                  {getStatusText(schedule.status)}
+                </div>
+
+                {/* Nút xem thông tin patient nếu đã đặt */}
+                {isBooked && patientInfo && (
+                  <button
+                    onClick={() => togglePatientInfo(schedule.id)}
+                    className="flex items-center space-x-2 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors duration-200"
+                  >
+                    <Users className="w-4 h-4" />
+                    <span className="text-sm font-medium">
+                      {isExpanded ? "Ẩn thông tin" : "Xem bệnh nhân"}
+                    </span>
+                    {isExpanded ? (
+                      <ChevronUp className="w-4 h-4" />
+                    ) : (
+                      <ChevronDown className="w-4 h-4" />
+                    )}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Patient Info - Hiển thị khi expanded */}
+            {isBooked && patientInfo && isExpanded && (
+              <div className="bg-gradient-to-r from-blue-50 to-sky-50 rounded-xl p-5 mt-4 border-l-4 border-blue-400">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Users className="w-5 h-5 text-blue-600" />
+                  <h4 className="font-semibold text-blue-800">
+                    Thông tin bệnh nhân
+                  </h4>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Patient Basic Info */}
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-lg">
+                        {getGenderIcon(patientInfo.gender)}
+                      </span>
+                      <div>
+                        <span className="font-medium text-gray-800">
+                          {patientInfo.name}
+                        </span>
+                        <span className="text-sm text-gray-600 ml-2">
+                          ({patientInfo.gender})
+                        </span>
+                      </div>
+                    </div>
+
+                    {patientInfo.dob && (
+                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                        <CalendarDays className="w-4 h-4 text-blue-500" />
+                        <span>Sinh: {formatDateOfBirth(patientInfo.dob)}</span>
+                      </div>
+                    )}
+
+                    {patientInfo.phone && (
+                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                        <Phone className="w-4 h-4 text-green-500" />
+                        <span>{patientInfo.phone}</span>
+                      </div>
+                    )}
+
+                    {patientInfo.email && (
+                      <div className="flex items-center space-x-2 text-sm text-gray-600">
+                        <Mail className="w-4 h-4 text-orange-500" />
+                        <span>{patientInfo.email}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Address & Reason */}
+                  <div className="space-y-3">
+                    {patientInfo.address && (
+                      <div className="flex items-start space-x-2 text-sm text-gray-600">
+                        <MapPin className="w-4 h-4 text-red-500 mt-0.5" />
+                        <span>{patientInfo.address}</span>
+                      </div>
+                    )}
+
+                    {patientInfo.reason && (
+                      <div className="flex items-start space-x-2 text-sm">
+                        <FileText className="w-4 h-4 text-purple-500 mt-0.5" />
+                        <div>
+                          <span className="font-medium text-gray-700">
+                            Lý do khám:
+                          </span>
+                          <p className="text-gray-600 mt-1">
+                            {patientInfo.reason}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-64 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl">
@@ -144,23 +382,77 @@ export const DoctorScheduleComponent = () => {
     );
   }
 
+  const { upcoming, past } = categorizeSchedules(mySchedules);
+
   return (
     <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+      {/* Header với nút thêm */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
-        <div className="flex items-center space-x-3">
-          <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
-            <Calendar className="w-6 h-6 text-white" />
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+              <Calendar className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-white">
+                Lịch làm việc của tôi
+              </h1>
+              <p className="text-blue-100 mt-1">
+                Quản lý thời gian làm việc hiệu quả
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-white">
-              Lịch làm việc của tôi
-            </h1>
-            <p className="text-blue-100 mt-1">
-              Quản lý thời gian làm việc hiệu quả
-            </p>
-          </div>
+
+          <button
+            onClick={() => setShowCreateModal(true)}
+            className="flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl transition-colors duration-200"
+          >
+            <Plus className="w-5 h-5" />
+            <span className="font-medium">Thêm lịch</span>
+          </button>
         </div>
       </div>
+      <CreateSchedule
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+      />
+
+      {/* Tab Navigation */}
+      {mySchedules && mySchedules.length > 0 && (
+        <div className="border-b border-gray-200">
+          <div className="flex w-full px-8">
+            <button
+              onClick={() => setActiveTab("upcoming")}
+              className={`flex-1 flex items-center justify-center space-x-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                activeTab === "upcoming"
+                  ? "border-blue-500 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              <Clock className="w-4 h-4" />
+              <span>Lịch sắp tới</span>
+              <span className="ml-2 bg-blue-100 text-blue-600 text-xs px-2 py-1 rounded-full">
+                {upcoming.length}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("past")}
+              className={`flex-1 flex items-center justify-center space-x-2 px-6 py-4 border-b-2 font-medium text-sm transition-colors duration-200 ${
+                activeTab === "past"
+                  ? "border-blue-500 text-blue-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              <Calendar className="w-4 h-4" />
+              <span>Lịch đã qua</span>
+              <span className="ml-2 bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full">
+                {past.length}
+              </span>
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="p-8">
         {!mySchedules || mySchedules.length === 0 ? (
@@ -178,164 +470,38 @@ export const DoctorScheduleComponent = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {mySchedules.map((schedule) => {
-              const patientInfo = getPatientInfoForSchedule(schedule);
+            {/* Hiển thị lịch theo tab active */}
+            {activeTab === "upcoming" && upcoming.length > 0 && (
+              <>{upcoming.map(renderScheduleCard)}</>
+            )}
 
-              return (
-                <div
-                  key={schedule.id}
-                  className="bg-gradient-to-r from-white to-gray-50 border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:border-blue-300"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      {/* Date & Time */}
-                      <div className="flex items-center space-x-4 mb-4">
-                        <div className="flex items-center space-x-2 text-gray-700">
-                          <Calendar className="w-5 h-5 text-blue-500" />
-                          <span className="font-semibold">
-                            {formatDate(schedule.date)}
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-2 text-gray-700">
-                          <Clock className="w-5 h-5 text-blue-500" />
-                          <span className="font-medium">
-                            {formatTime(schedule.start_time)} -{" "}
-                            {formatTime(schedule.end_time)}
-                          </span>
-                        </div>
-                      </div>
+            {activeTab === "past" && past.length > 0 && (
+              <>{past.map(renderScheduleCard)}</>
+            )}
 
-                      {schedule.status === "booked" && patientInfo && (
-                        <div className="bg-gradient-to-r from-blue-50 to-sky-50 rounded-xl p-5 mb-4 border-l-4 border-blue-400">
-                          <div className="flex items-center space-x-2 mb-3">
-                            <Users className="w-5 h-5 text-blue-600" />
-                            <h4 className="font-semibold text-blue-800">
-                              Thông tin bệnh nhân
-                            </h4>
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* Patient Basic Info */}
-                            <div className="space-y-3">
-                              <div className="flex items-center space-x-2">
-                                <span className="text-lg">
-                                  {getGenderIcon(patientInfo.gender)}
-                                </span>
-                                <div>
-                                  <span className="font-medium text-gray-800">
-                                    {patientInfo.name}
-                                  </span>
-                                  <span className="text-sm text-gray-600 ml-2">
-                                    ({patientInfo.gender})
-                                  </span>
-                                </div>
-                              </div>
-
-                              {patientInfo.dob && (
-                                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                                  <CalendarDays className="w-4 h-4 text-blue-500" />
-                                  <span>
-                                    Sinh: {formatDateOfBirth(patientInfo.dob)}
-                                  </span>
-                                </div>
-                              )}
-
-                              {patientInfo.phone && (
-                                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                                  <Phone className="w-4 h-4 text-green-500" />
-                                  <span>{patientInfo.phone}</span>
-                                </div>
-                              )}
-
-                              {patientInfo.email && (
-                                <div className="flex items-center space-x-2 text-sm text-gray-600">
-                                  <Mail className="w-4 h-4 text-orange-500" />
-                                  <span>{patientInfo.email}</span>
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Address & Reason */}
-                            <div className="space-y-3">
-                              {patientInfo.address && (
-                                <div className="flex items-start space-x-2 text-sm text-gray-600">
-                                  <MapPin className="w-4 h-4 text-red-500 mt-0.5" />
-                                  <span>{patientInfo.address}</span>
-                                </div>
-                              )}
-
-                              {patientInfo.reason && (
-                                <div className="flex items-start space-x-2 text-sm">
-                                  <FileText className="w-4 h-4 text-purple-500 mt-0.5" />
-                                  <div>
-                                    <span className="font-medium text-gray-700">
-                                      Lý do khám:
-                                    </span>
-                                    <p className="text-gray-600 mt-1">
-                                      {patientInfo.reason}
-                                    </p>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Doctor Info */}
-                      {schedule.doctor && (
-                        <div className="bg-white rounded-xl p-4 mb-4 border border-gray-100">
-                          <div className="flex items-center space-x-4">
-                            <img
-                              src={schedule.doctor.avatar}
-                              alt={schedule.doctor.name}
-                              className="w-12 h-12 rounded-full object-cover border-2 border-blue-100"
-                            />
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-gray-800 flex items-center space-x-2">
-                                <User className="w-4 h-4 text-blue-500" />
-                                <span>{schedule.doctor.name}</span>
-                              </h4>
-                              <p className="text-sm text-gray-600 mt-1">
-                                {schedule.doctor.position}
-                              </p>
-                              <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                                <span>{schedule.doctor.experience}</span>
-                                <span className="flex items-center space-x-1">
-                                  <MapPin className="w-3 h-3" />
-                                  <span>{schedule.doctor.address}</span>
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Service Info */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex items-center space-x-2 bg-blue-50 px-3 py-2 rounded-lg">
-                            {getTypeIcon(schedule.type)}
-                            <span className="text-sm font-medium text-blue-700">
-                              {schedule.doctor?.department?.name ||
-                                "Khám tổng quát"}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div
-                          className={`px-4 py-2 rounded-full text-sm font-semibold border ${getStatusColor(
-                            schedule.status
-                          )}`}
-                        >
-                          {getStatusText(schedule.status)}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+            {/* Hiển thị message khi không có lịch trong tab hiện tại */}
+            {((activeTab === "upcoming" && upcoming.length === 0) ||
+              (activeTab === "past" && past.length === 0)) && (
+              <div className="text-center py-16">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  {activeTab === "upcoming" ? (
+                    <Clock className="w-8 h-8 text-gray-400" />
+                  ) : (
+                    <Calendar className="w-8 h-8 text-gray-400" />
+                  )}
                 </div>
-              );
-            })}
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                  {activeTab === "upcoming"
+                    ? "Chưa có lịch sắp tới"
+                    : "Chưa có lịch đã qua"}
+                </h3>
+                <p className="text-gray-500">
+                  {activeTab === "upcoming"
+                    ? "Hiện tại bạn chưa có lịch làm việc nào sắp tới."
+                    : "Bạn chưa có lịch làm việc nào đã hoàn thành."}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>

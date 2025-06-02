@@ -27,6 +27,8 @@ interface ScheduleState {
   isConfirming: boolean;
   confirmError: string | null;
   doctorInfo: any;
+  isCreating: boolean;
+  createError: string | null;
 }
 
 const initialState: ScheduleState = {
@@ -40,7 +42,10 @@ const initialState: ScheduleState = {
     total: 0
   },
   currentType: 'specialist',
+  isCreating: false,
+  createError: null,
 };
+
 export const fetchSpecialistSchedules = createAsyncThunk(
   'schedules/fetchSpecialistSchedules',
   async (
@@ -133,6 +138,46 @@ export const fetchMyDoctorSchedules = createAsyncThunk(
   }
 );
 
+export const createSchedule = createAsyncThunk(
+  'schedules/createSchedule',
+  async (
+    scheduleData: {
+      date: string;
+      start_time: string;
+      end_time: string;
+      type: 'specialist' | 'specialist_online';
+      status?: 'available' | 'booked';
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_NODEJS_BACKEND_URL}/schedule`,
+        scheduleData,
+        { withCredentials: true }
+      );
+
+      if (!response.data.success) {
+        return rejectWithValue(response.data.message || 'Failed to create schedule');
+      }
+
+      return response.data.data;
+    } catch (error: any) {
+      console.error('Create Schedule Error:', error);
+      
+      if (error.response?.status === 403) {
+        return rejectWithValue('Not authorized to create schedule');
+      }
+      
+      if (error.response?.status === 400) {
+        return rejectWithValue(error.response.data.message || 'Invalid schedule data');
+      }
+
+      return rejectWithValue(error.response?.data?.message || error.message || 'Network error');
+    }
+  }
+);
+
 const scheduleSlice = createSlice({
   name: 'schedules',
   initialState,
@@ -174,6 +219,18 @@ const scheduleSlice = createSlice({
       .addCase(fetchMyDoctorSchedules.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string || 'Failed to fetch my schedules';
+      })
+      .addCase(createSchedule.pending, (state) => {
+        state.isCreating = true;
+        state.createError = null;
+      })
+      .addCase(createSchedule.fulfilled, (state, action) => {
+        state.isCreating = false;
+        state.mySchedules.unshift(action.payload);
+      })
+      .addCase(createSchedule.rejected, (state, action) => {
+        state.isCreating = false;
+        state.createError = action.payload as string;
       });
   }
 });
