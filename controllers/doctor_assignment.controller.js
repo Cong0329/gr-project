@@ -338,24 +338,32 @@ exports.approveDoctorAndCreateSchedule = async (req, res) => {
     const transaction = await sequelize.transaction();
     try {
       const { booking_request_id, doctor_id } = req.body;
-  
-      // 1. Tìm booking request và doctor assignment
+
+      // 1. Tìm booking request trước (không include)
       const bookingRequest = await PackageBookingRequest.findByPk(booking_request_id, {
-        transaction,
-        include: [{
-          model: DoctorAssignment,
-          as: 'doctorAssignments',
-          where: { doctor_id },
-          required: true
-        }]
+        transaction
       });
-  
+
       if (!bookingRequest) {
         await transaction.rollback();
         return res.status(404).json({ message: 'Không tìm thấy yêu cầu đặt lịch' });
       }
-  
-      // 2. Validate và tách thời gian
+
+      // 2. Kiểm tra doctor assignment riêng biệt
+      const doctorAssignment = await DoctorAssignment.findOne({
+        where: {
+          booking_request_id,
+          doctor_id
+        },
+        transaction
+      });
+
+      if (!doctorAssignment) {
+        await transaction.rollback();
+        return res.status(404).json({ message: 'Không tìm thấy phân công bác sĩ này cho yêu cầu đặt lịch' });
+      }
+
+      // 3. Validate và tách thời gian
       if (!bookingRequest.requested_time_slot) {
         await transaction.rollback();
         return res.status(400).json({ message: 'Không có thời gian khám được yêu cầu' });
@@ -368,7 +376,7 @@ exports.approveDoctorAndCreateSchedule = async (req, res) => {
       }
   
       const [requested_start_time, requested_end_time] = timeParts;
-      
+
       // Validate định dạng HH:mm
       if (!isValidTimeFormat(requested_start_time) || !isValidTimeFormat(requested_end_time)) {
         await transaction.rollback();
@@ -384,7 +392,7 @@ exports.approveDoctorAndCreateSchedule = async (req, res) => {
         return res.status(400).json({ message: 'Thời gian bắt đầu phải trước thời gian kết thúc' });
       }
   
-      // 3. Kiểm tra trùng lịch
+      // 4. Kiểm tra trùng lịch
       const conflictingSchedule = await Schedule.findOne({
         where: {
           doctor_id,
@@ -407,7 +415,7 @@ exports.approveDoctorAndCreateSchedule = async (req, res) => {
         });
       }
   
-       // 4. Tạo schedule mới
+       // 5. Tạo schedule mới
       const schedule = await Schedule.create({
         doctor_id,
         date: bookingRequest.requested_date,
@@ -419,7 +427,7 @@ exports.approveDoctorAndCreateSchedule = async (req, res) => {
         patient_id: bookingRequest.patient_id
       }, { transaction });
   
-      // 5. Phê duyệt bác sĩ
+      // 6. Phê duyệt bác sĩ
       await DoctorAssignment.update(
         { status: 'approved' },
         {
@@ -431,7 +439,7 @@ exports.approveDoctorAndCreateSchedule = async (req, res) => {
         }
       );
   
-      // 6. Từ chối các bác sĩ khác
+      // 7. Từ chối các bác sĩ khác
       await DoctorAssignment.update(
         { status: 'rejected' },
         {
@@ -444,13 +452,15 @@ exports.approveDoctorAndCreateSchedule = async (req, res) => {
         }
       );
   
-      // 7. Cập nhật trạng thái booking request
+      // 8. Cập nhật trạng thái booking request
       await bookingRequest.update({
         status: 'assigned',
         schedule_id: schedule.id
       }, { transaction });
   
       await transaction.commit();
+
+      console.log("Booking Request Updated:", bookingRequest);
   
       return res.status(200).json({
         message: 'Đã phê duyệt bác sĩ và tạo lịch khám thành công',
@@ -467,6 +477,7 @@ exports.approveDoctorAndCreateSchedule = async (req, res) => {
       });
     }
   };
+
   // Hàm helper
   function isValidTimeFormat(time) {
     return /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(time);

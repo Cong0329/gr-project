@@ -149,7 +149,6 @@ const requireRole = require('../middlewares/role.middleware');
 
 const {
   validateServiceTypeAndId,
-  validateCreateSchedule
   } = require('../middlewares/schedule.middleware');
 
   const { check, validationResult } = require('express-validator');
@@ -187,9 +186,9 @@ router.get('/:id', scheduleController.getScheduleById);
 // Tạo lịch trình mới (ADMIN hoặc DOCTOR với điều kiện là lịch của chính họ)
 router.post(
   '/',
-  validateCreateSchedule,
   validateResults,
   validateServiceTypeAndId,
+  authenticateAdminToken, requireRole('ROLE_DOCTOR'),
   scheduleController.createSchedule
 );
 
@@ -198,10 +197,8 @@ router.put('/:id',
    
   
   (req, res, next) => {
-    // Nếu là ADMIN thì bỏ qua kiểm tra ownership
     if (req.user.roles.includes('ROLE_ADMIN')) return next();
     
-    // Nếu là DOCTOR thì kiểm tra ownership
     checkDoctorOwnership(req, res, next);
   },
   scheduleController.updateSchedule

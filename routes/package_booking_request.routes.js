@@ -30,7 +30,6 @@ router.post(
 router.get(
   '/a', 
   (req, res) => {
-    // Placeholder cho hàm getAllBookingRequests
     res.status(501).json({ message: 'Chức năng đang được phát triển' });
   }
 );
@@ -45,7 +44,7 @@ router.get(
 router.put('/:id/cancel', authenticateToken, bookingRequestController.cancelBookingRequest);
 
 router.get(
-  '/', bookingRequestController.getBookingRequests
+  '/', bookingRequestController.getAllBookingRequests
 );
 
 module.exports = router;

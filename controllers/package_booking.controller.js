@@ -126,72 +126,72 @@ exports.getBookingRequestDetails = async (req, res) => {
 };
 
 // Hàm lấy tất cả booking requests (cho admin/staff)
-exports.getAllBookingRequests = async (req, res) => {
-  try {
-    const { status, from_date, to_date, page = 1, limit = 10 } = req.query;
+// exports.getAllBookingRequests = async (req, res) => {
+//   try {
+//     const { status, from_date, to_date, page = 1, limit = 10 } = req.query;
     
-    // Xây dựng điều kiện tìm kiếm
-    const whereConditions = {};
-    if (status) whereConditions.status = status;
-    if (from_date && to_date) {
-      whereConditions.requested_date = {
-        [Op.between]: [from_date, to_date]
-      };
-    } else if (from_date) {
-      whereConditions.requested_date = {
-        [Op.gte]: from_date
-      };
-    } else if (to_date) {
-      whereConditions.requested_date = {
-        [Op.lte]: to_date
-      };
-    }
+//     // Xây dựng điều kiện tìm kiếm
+//     const whereConditions = {};
+//     if (status) whereConditions.status = status;
+//     if (from_date && to_date) {
+//       whereConditions.requested_date = {
+//         [Op.between]: [from_date, to_date]
+//       };
+//     } else if (from_date) {
+//       whereConditions.requested_date = {
+//         [Op.gte]: from_date
+//       };
+//     } else if (to_date) {
+//       whereConditions.requested_date = {
+//         [Op.lte]: to_date
+//       };
+//     }
     
-    // Tính toán offset cho phân trang
-    const offset = (page - 1) * limit;
+//     // Tính toán offset cho phân trang
+//     const offset = (page - 1) * limit;
     
-    // Thực hiện truy vấn với phân trang
-    const { count, rows: bookingRequests } = await PackageBookingRequest.findAndCountAll({
-      where: whereConditions,
-      include: [
-        { 
-          model: User,
-          as: 'user',
-          attributes: ['id', 'name', 'email', 'phone']
-        },
-        {
-          model: ServicePackage,
-          as: 'package',
-          attributes: ['id', 'name', 'type']
-        },
-        {
-          model: Schedule,
-          as: 'schedule',
-          include: [
-            {
-              association: 'doctor',
-              attributes: ['id', 'name']
-            }
-          ]
-        }
-      ],
-      limit: parseInt(limit),
-      offset: offset,
-      order: [['createdAt', 'DESC']]
-    });
+//     // Thực hiện truy vấn với phân trang
+//     const { count, rows: bookingRequests } = await PackageBookingRequest.findAndCountAll({
+//       where: whereConditions,
+//       include: [
+//         { 
+//           model: User,
+//           as: 'user',
+//           attributes: ['id', 'name', 'email', 'phone']
+//         },
+//         {
+//           model: ServicePackage,
+//           as: 'package',
+//           attributes: ['id', 'name', 'type']
+//         },
+//         {
+//           model: Schedule,
+//           as: 'schedule',
+//           include: [
+//             {
+//               association: 'doctor',
+//               attributes: ['id', 'name']
+//             }
+//           ]
+//         }
+//       ],
+//       limit: parseInt(limit),
+//       offset: offset,
+//       order: [['createdAt', 'DESC']]
+//     });
     
-    // Trả về kết quả với thông tin phân trang
-    return res.status(200).json({
-      total: count,
-      total_pages: Math.ceil(count / limit),
-      current_page: parseInt(page),
-      bookingRequests
-    });
-  } catch (error) {
-    console.error('Error getting booking requests:', error);
-    return res.status(500).json({ message: 'Đã xảy ra lỗi khi lấy danh sách yêu cầu đặt lịch' });
-  }
-};
+//     // Trả về kết quả với thông tin phân trang
+//     return res.status(200).json({
+//       total: count,
+//       total_pages: Math.ceil(count / limit),
+//       current_page: parseInt(page),
+//       bookingRequests
+//     });
+//   } catch (error) {
+//     console.error('Error getting booking requests:', error);
+//     return res.status(500).json({ message: 'Đã xảy ra lỗi khi lấy danh sách yêu cầu đặt lịch' });
+//   }
+// };
 
 // Get user package booking requests
 exports.getUserPackageBooking = async (req, res) => {
@@ -303,9 +303,9 @@ exports.cancelBookingRequest = async (req, res) => {
 };
 
 
-exports.getBookingRequests = async (req, res) => {
+exports.getAllBookingRequests = async (req, res) => {
   try {
-    const { date, package_id } = req.query;
+    const { date, package_id, package_name  } = req.query;
     
     const whereClause = {};
     
@@ -328,6 +328,18 @@ exports.getBookingRequests = async (req, res) => {
         'status',
         'package_id'
       ],
+      include: [
+        {
+          model: ServicePackage,
+          as: 'package',
+          attributes: ['id', 'name', 'description', 'price', 'totalDuration', 'type'],
+          ...(package_name && {
+            where: {
+              name: { [Op.like]: `%${package_name}%` }
+            }
+          })
+        }
+      ]
     });
     
     return res.status(200).json(bookings);
