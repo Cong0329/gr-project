@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-const { User, Role, RefreshToken } = require('../models');
+const { User, Role, RefreshToken, Doctor } = require('../models');
 
 // Google Callback
 exports.googleCallback = async (req, res) => {
@@ -270,12 +270,31 @@ exports.verifyCode = async (req, res) => {
 // Register
 exports.register = async (req, res) => {
   try {
-    const { name, email, password, roleCode } = req.body;
+    const { name, email, password, roleCode, doctorData } = req.body;
 
     // Kiểm tra role được phép tạo
     const allowedRoles = ['ROLE_ADMIN', 'ROLE_PHARMACIST', 'ROLE_DOCTOR'];
     if (!allowedRoles.includes(roleCode)) {
       return res.status(400).json({ message: 'Invalid role for registration' });
+    }
+
+    // Nếu là ROLE_DOCTOR, kiểm tra doctorData có được cung cấp không
+    if (roleCode === 'ROLE_DOCTOR' && !doctorData) {
+      return res.status(400).json({ 
+        message: 'doctorData is required when registering as doctor' 
+      });
+    }
+
+    // Nếu là ROLE_DOCTOR, validate doctorData
+    if (roleCode === 'ROLE_DOCTOR') {
+      const requiredDoctorFields = ['name', 'type', 'department_id'];
+      const missingDoctorFields = requiredDoctorFields.filter(field => !doctorData[field]);
+      if (missingDoctorFields.length > 0) {
+        return res.status(400).json({ 
+          message: `Missing required fields in doctorData: ${missingDoctorFields.join(', ')}`,
+          received: doctorData
+        });
+      }
     }
 
     // Kiểm tra email đã tồn tại chưa
@@ -297,13 +316,70 @@ exports.register = async (req, res) => {
     // Gán role tương ứng
     const role = await Role.findOne({ where: { code: roleCode } });
     if (!role) {
+      await user.destroy(); // Rollback user creation if role not found
       return res.status(500).json({ message: 'Role not found in system' });
     }
     await user.addRole(role);
 
-    res.status(201).json({ message: 'User registered successfully', userId: user.id });
+    let responseData = { 
+      message: 'User registered successfully', 
+      userId: user.id,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: roleCode
+      }
+    };
+
+    // Nếu là ROLE_DOCTOR, tạo doctor profile
+    if (roleCode === 'ROLE_DOCTOR') {
+      const doctor = await Doctor.create({
+        name: doctorData.name,
+        type: doctorData.type,
+        department_id: doctorData.department_id,
+        experience: doctorData.experience,
+        position: doctorData.position,
+        avatar: doctorData.avatar,
+        patientAge: doctorData.patientAge,
+        location: doctorData.location,
+        clinic: doctorData.clinic,
+        address: doctorData.address,
+        user_id: user.id,
+      });
+
+      responseData.doctor = doctor;
+      responseData.message = 'Doctor registered successfully';
+    }
+
+    res.status(201).json(responseData);
   } catch (error) {
     console.error('Register error:', error);
+    
+    // Handle validation errors
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({ 
+        message: "Validation Error",
+        details: error.errors.map(e => ({
+          field: e.path,
+          message: e.message,
+          value: e.value
+        }))
+      });
+    }
+
+    // Handle unique constraint errors
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return res.status(400).json({ 
+        message: "Unique Constraint Error",
+        details: error.errors.map(e => ({
+          field: e.path,
+          message: e.message,
+          value: e.value
+        }))
+      });
+    }
+
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };

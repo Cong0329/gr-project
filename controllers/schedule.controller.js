@@ -375,7 +375,6 @@ exports.createSchedule = async (req, res) => {
       });
     }
 
-    // QUAN TRỌNG: Tìm doctor từ user_id thay vì dùng doctor_id từ body
     const doctor = await Doctor.findOne({
       where: { user_id: req.user.id }
     });
