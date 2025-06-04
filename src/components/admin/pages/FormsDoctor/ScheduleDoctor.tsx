@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMyDoctorSchedules } from "../../../../redux/scheduleSlice";
-import { getUserAppointment } from "../../../../redux/appointmentSlice";
+import { getDoctorAppointments } from "../../../../redux/appointmentSlice";
 import {
   Calendar,
   Clock,
@@ -37,7 +37,7 @@ export const DoctorScheduleComponent = () => {
 
   useEffect(() => {
     dispatch(fetchMyDoctorSchedules({}));
-    dispatch(getUserAppointment());
+    dispatch(getDoctorAppointments());
   }, [dispatch]);
 
   // Function to find patient info for a schedule
@@ -48,6 +48,7 @@ export const DoctorScheduleComponent = () => {
       (apt) => apt.schedule_id === schedule.id && apt.status !== "cancelled"
     );
 
+    // Sử dụng patient_info từ appointment thay vì từ user info
     return appointment?.patient_info || null;
   };
 
@@ -246,7 +247,7 @@ export const DoctorScheduleComponent = () => {
                 </div>
 
                 {/* Nút xem thông tin patient nếu đã đặt */}
-                {isBooked && patientInfo?.dob && (
+                {isBooked && patientInfo && (
                   <button
                     onClick={() => togglePatientInfo(schedule.id)}
                     className="flex items-center space-x-2 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors duration-200"

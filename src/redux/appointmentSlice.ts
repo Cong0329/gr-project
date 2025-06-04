@@ -139,6 +139,21 @@ export const getUserAppointment = createAsyncThunk(
   }
 );
 
+export const getDoctorAppointments = createAsyncThunk(
+  'appointment/getDoctorAppointments',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/appointment/doctor-schedule/me`, {
+        withCredentials: true
+      });
+      console.log('API Response:', response.data);
+      return response.data.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to fetch doctor appointments');
+    }
+  }
+);
+
 const appointmentSlice = createSlice({
   name: 'appointments',
   initialState,
@@ -162,6 +177,14 @@ const appointmentSlice = createSlice({
         state.creating = true;
         state.createSuccess = false;
         state.createError = null;
+      })
+      .addCase(getDoctorAppointments.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getDoctorAppointments.fulfilled, (state, action) => {
+        state.loading = false;
+        state.appointments = action.payload;
       })
       .addCase(createAppointment.fulfilled, (state, action: PayloadAction<Appointment>) => {
         state.creating = false;
