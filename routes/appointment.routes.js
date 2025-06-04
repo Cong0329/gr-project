@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const appointmentController = require('../controllers/appointment.controller');
 const { check } = require('express-validator');
-const {authenticateToken} = require('../middlewares/auth.middleware');
+const {authenticateToken, authenticateAdminToken} = require('../middlewares/auth.middleware');
+const requireRole = require('../middlewares/role.middleware');
+
 
 
 // Validations
@@ -41,5 +43,7 @@ router.post('/:id/cancel', authenticateToken, appointmentController.cancelAppoin
 );
 
 router.get('/user/me', authenticateToken, appointmentController.getUserAppointment)
+
+router.get('/doctor-schedule/me', authenticateAdminToken, requireRole('ROLE_DOCTOR'), appointmentController.getDoctorAppointments)
 
 module.exports = router;

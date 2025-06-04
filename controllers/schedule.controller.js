@@ -229,9 +229,6 @@ exports.getDoctorSchedules = async (req, res, next) => {
         message: 'Doctor profile not found for this user'
       });
     }
-
-    console.log('Found doctor:', doctor.id);
-    console.log('User ID:', req.user.id);
     
     const { 
       page = 1, 
@@ -254,8 +251,6 @@ exports.getDoctorSchedules = async (req, res, next) => {
       if (date_from) whereClause.date[Op.gte] = new Date(date_from);
       if (date_to) whereClause.date[Op.lte] = new Date(date_to);
     }
-
-    console.log('WHERE clause:', whereClause);
 
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
