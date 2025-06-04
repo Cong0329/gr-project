@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createReview, getPendingReviews, getReviews, replyReview, upadateReplyReview } from "./reviewsAsyncThunk";
-import { getAllMessagesAdmin, fetchMessagesAdmin, fetchMessagesUser, hidenMessage, sendMessageUser, sendMessageAdmin, unlockedMessages } from "./messageAsyncThunk";
+import { getAllMessagesAdmin, fetchMessagesAdmin, fetchMessagesUser, hidenMessage, sendMessageUser, sendMessageAdmin, unlockedMessages, getAllMessageUser, sendMessageDoctor } from "./messageAsyncThunk";
 
 export interface Review {
     id: string;
@@ -40,7 +40,13 @@ export interface Message {
     createdAt: string;
     updatedAt: string;
     locked_by: string;
-    User: {
+    user1: {
+        id: string;
+        name: string;
+        email: string;
+        avatar_url: string;
+    }
+    user2: {
         id: string;
         name: string;
         email: string;
@@ -121,7 +127,7 @@ const reviewsSlice = createSlice({
             const newUserMessage = action.payload;
 
             const existingIndex = state.messages.findIndex(
-                (item) => item.User.id === newUserMessage.User.id
+                (item) => item.user2.id === newUserMessage.user2.id
             );
 
             if (existingIndex > -1) {
@@ -247,6 +253,25 @@ const reviewsSlice = createSlice({
                 state.status = 'loading';
             })
             .addCase(unlockedMessages.rejected, (state) => {
+                state.status = 'failed';
+            })
+            .addCase(getAllMessageUser.fulfilled, (state, action) => {
+                state.messages = action.payload;
+                state.status = 'idle';
+            })
+            .addCase(getAllMessageUser.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(getAllMessageUser.rejected, (state) => {
+                state.status = 'failed';
+            })
+            .addCase(sendMessageDoctor.fulfilled, (state) => {
+                state.status = 'succeeded';
+            })
+            .addCase(sendMessageDoctor.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(sendMessageDoctor.rejected, (state) => {
                 state.status = 'failed';
             })
     },

@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { goToCheckout, checkout } from "../../redux/cartSlice";
-import { RootState } from "../../redux/store";
+import { RootState, AppDispatch } from "../../redux/store";
 import { FaAngleRight, FaQuestion } from "react-icons/fa6";
 import { useEffect, useState } from "react";
 import { VoucherModal } from "./VoucherModal";
@@ -14,7 +14,7 @@ interface CartSummaryProps {
 }
 
 const CartSummary: React.FC<CartSummaryProps> = ({ isDetail, status, isLoading }) => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const [message, setMessage] = useState('');
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const isCheckout = useSelector((state: RootState) => state.cart.isCheckout);

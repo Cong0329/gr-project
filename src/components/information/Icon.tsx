@@ -20,7 +20,7 @@ const Icon: React.FC<IconProps> = ({ name }) => {
     'box': <div className="w-5 h-5 flex items-center justify-center">📦</div>,
     'map-pin': <div className="w-5 h-5 flex items-center justify-center">📍</div>,
     'syringe': <div className="w-5 h-5 flex items-center justify-center">💉</div>,
-    'clipboard': <div className="w-5 h-5 flex items-center justify-center">📋</div>,
+    'clipboard': <div className="w-5 h-5 flex items-center justify-center">💬</div>,
     'pill': <div className="w-5 h-5 flex items-center justify-center">💊</div>,
     'log-out': <div className="w-5 h-5 flex items-center justify-center">🚪</div>,
     'chevron-right': <div className="w-5 h-5 flex items-center justify-center">▶️</div>

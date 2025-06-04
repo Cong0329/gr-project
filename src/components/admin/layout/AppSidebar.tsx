@@ -76,14 +76,14 @@ const adminNavItems: NavItem[] = [
       { name: "Quản lý chat", path: "/admin/chat", pro: false },
     ],
   },
-  {
-    name: "Pages",
-    icon: <PageIcon />,
-    subItems: [
-      { name: "Blank Page", path: "/admin/blank", pro: false },
-      { name: "404 Error", path: "/admin/error-404", pro: false },
-    ],
-  },
+  // {
+  //   name: "Pages",
+  //   icon: <PageIcon />,
+  //   subItems: [
+  //     { name: "Blank Page", path: "/admin/blank", pro: false },
+  //     { name: "404 Error", path: "/admin/error-404", pro: false },
+  //   ],
+  // },
 ];
 
 // Doctor nav items - Keep original paths
@@ -103,38 +103,43 @@ const doctorNavItems: NavItem[] = [
     name: "Yêu cầu gói khám",
     path: "/doctor/examination-requests",
   },
+  {
+    icon: <ChatIcon />,
+    name: "Chat",
+    path: "/doctor/chat",
+  },
 ];
 
-const othersItems: NavItem[] = [
-  {
-    icon: <PieChartIcon />,
-    name: "Charts",
-    subItems: [
-      { name: "Line Chart", path: "/admin/line-chart", pro: false },
-      { name: "Bar Chart", path: "/admin/bar-chart", pro: false },
-    ],
-  },
-  {
-    icon: <BoxCubeIcon />,
-    name: "UI Elements",
-    subItems: [
-      { name: "Alerts", path: "/admin/alerts", pro: false },
-      { name: "Avatar", path: "/admin/avatars", pro: false },
-      { name: "Badge", path: "/admin/badge", pro: false },
-      { name: "Buttons", path: "/admin/buttons", pro: false },
-      { name: "Images", path: "/admin/images", pro: false },
-      { name: "Videos", path: "/admin/videos", pro: false },
-    ],
-  },
-  {
-    icon: <PlugInIcon />,
-    name: "Authentication",
-    subItems: [
-      { name: "Sign In", path: "/signin", pro: false },
-      { name: "Sign Up", path: "/signup", pro: false },
-    ],
-  },
-];
+// const othersItems: NavItem[] = [
+//   {
+//     icon: <PieChartIcon />,
+//     name: "Charts",
+//     subItems: [
+//       { name: "Line Chart", path: "/admin/line-chart", pro: false },
+//       { name: "Bar Chart", path: "/admin/bar-chart", pro: false },
+//     ],
+//   },
+//   {
+//     icon: <BoxCubeIcon />,
+//     name: "UI Elements",
+//     subItems: [
+//       { name: "Alerts", path: "/admin/alerts", pro: false },
+//       { name: "Avatar", path: "/admin/avatars", pro: false },
+//       { name: "Badge", path: "/admin/badge", pro: false },
+//       { name: "Buttons", path: "/admin/buttons", pro: false },
+//       { name: "Images", path: "/admin/images", pro: false },
+//       { name: "Videos", path: "/admin/videos", pro: false },
+//     ],
+//   },
+//   {
+//     icon: <PlugInIcon />,
+//     name: "Authentication",
+//     subItems: [
+//       { name: "Sign In", path: "/signin", pro: false },
+//       { name: "Sign Up", path: "/signup", pro: false },
+//     ],
+//   },
+// ];
 
 const AppSidebar: React.FC = () => {
   const { role } = useSelector((state: RootState) => state.auth);
@@ -160,17 +165,17 @@ const AppSidebar: React.FC = () => {
   }, [navItems, userRole]);
 
   // Transform othersItems paths using useMemo
-  const filteredOthersItems = useMemo(() => {
-    if (!isAdmin) return [];
-    return othersItems.map((item) => ({
-      ...item,
-      path: item.path ? getRoleBasedPath(item.path, userRole) : item.path,
-      subItems: item.subItems?.map((subItem) => ({
-        ...subItem,
-        path: getRoleBasedPath(subItem.path, userRole),
-      })),
-    }));
-  }, [isAdmin, userRole]);
+  // const filteredOthersItems = useMemo(() => {
+  //   if (!isAdmin) return [];
+  //   return othersItems.map((item) => ({
+  //     ...item,
+  //     path: item.path ? getRoleBasedPath(item.path, userRole) : item.path,
+  //     subItems: item.subItems?.map((subItem) => ({
+  //       ...subItem,
+  //       path: getRoleBasedPath(subItem.path, userRole),
+  //     })),
+  //   }));
+  // }, [isAdmin, userRole]);
 
   const location = useLocation();
 
@@ -200,9 +205,9 @@ const AppSidebar: React.FC = () => {
 
   useEffect(() => {
     let submenuMatched = false;
-    ["main", "others"].forEach((menuType) => {
+    ["main"].forEach((menuType) => {
       const items =
-        menuType === "main" ? filteredNavItems : filteredOthersItems;
+        menuType === "main" ? filteredNavItems : [];
       items.forEach((nav, index) => {
         if (nav.subItems) {
           nav.subItems.forEach((subItem) => {
@@ -220,9 +225,9 @@ const AppSidebar: React.FC = () => {
 
     if (!submenuMatched) {
       // Check if current route matches any top-level menu item
-      ["main", "others"].forEach((menuType) => {
+      ["main"].forEach((menuType) => {
         const items =
-          menuType === "main" ? filteredNavItems : filteredOthersItems;
+          menuType === "main" ? filteredNavItems : [];
         items.forEach((nav, index) => {
           if (nav.path && isActive(nav.path)) {
             setOpenSubmenu(null); // Close submenus for direct links
@@ -230,7 +235,7 @@ const AppSidebar: React.FC = () => {
         });
       });
     }
-  }, [location, isActive, filteredNavItems, filteredOthersItems]);
+  }, [location, isActive, filteredNavItems]);
 
   useEffect(() => {
     if (openSubmenu !== null) {
@@ -244,7 +249,7 @@ const AppSidebar: React.FC = () => {
     }
   }, [openSubmenu]);
 
-  const handleSubmenuToggle = (index: number, menuType: "main" | "others") => {
+  const handleSubmenuToggle = (index: number, menuType: "main") => {
     setOpenSubmenu((prevOpenSubmenu) => {
       if (
         prevOpenSubmenu &&
@@ -257,7 +262,7 @@ const AppSidebar: React.FC = () => {
     });
   };
 
-  const renderMenuItems = (items: NavItem[], menuType: "main" | "others") => (
+  const renderMenuItems = (items: NavItem[], menuType: "main") => (
     <ul className="flex flex-col gap-4">
       {items.map((nav, index) => (
         <li key={nav.name}>
@@ -428,7 +433,7 @@ const AppSidebar: React.FC = () => {
               </h2>
               {renderMenuItems(filteredNavItems, "main")}
             </div>
-
+{/* 
             {isAdmin && ( // Only show others menu for admin
               <div className="">
                 <h2
@@ -446,7 +451,7 @@ const AppSidebar: React.FC = () => {
                 </h2>
                 {renderMenuItems(filteredOthersItems, "others")}
               </div>
-            )}
+            )} */}
           </div>
         </nav>
       </div>

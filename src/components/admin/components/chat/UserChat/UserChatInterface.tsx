@@ -1,72 +1,55 @@
 import { useState, useEffect } from 'react';
 import { MessageItem, Message } from '../../../../../redux/reviewsSlice';
-import UserList from './UserList';
-import ChatHeader from './ChatHeader';
-import MessageList from './MessageList';
-import MessageInput from './MessageInput';
+import UserList from '../AdminChat/UserList';
+import ChatHeader from '../AdminChat/ChatHeader';
+import MessageList from '../AdminChat/MessageList';
+import MessageInput from '../AdminChat/MessageInput';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../../../../redux/store';
 import socket from '../../../../../auth/socket';
 import {
-    getAllMessagesAdmin,
+    getAllMessageUser,
+    sendMessageDoctor,
     fetchMessagesAdmin,
-    sendMessageAdmin
 } from '../../../../../redux/messageAsyncThunk';
 import { toast } from 'react-toastify';
 
-export default function AdminChatInterface() {
+export default function UserChatInterface() {
     const dispatch: AppDispatch = useDispatch();
-    const { admin } = useSelector((state: RootState) => state.auth);
+    const { user } = useSelector((state: RootState) => state.auth);
     const messagesUser = useSelector((state: RootState) => state.reviews.messages);
 
     const [selectedUser, setSelectedUser] = useState<Message | null>(null);
     const [messages, setMessages] = useState<MessageItem[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
-
-    // Load toàn bộ messages khi admin đăng nhập
     useEffect(() => {
-        if (admin?.id) {
-            dispatch(getAllMessagesAdmin());
+        if (user?.id) {
+            socket.emit('join_room', user.id);
+            dispatch(getAllMessageUser({ id: user.id }));
         }
-    }, [admin?.id, dispatch]);
-
-    // Lắng nghe socket events
+    }, [user?.id, dispatch]);
     useEffect(() => {
-        if (!admin?.id) return;
-        const handleAIMessage = (data: MessageItem) => {
-            toast.info('AI vừa gửi tin nhắn');
-            dispatch(getAllMessagesAdmin());
-            if (selectedUser?.user1?.id === data.User.id) {
-                setMessages(prev => [...prev, data]);
-            }
-        };
+        if (!user?.id) return;
 
         const handleNewMessage = (data: MessageItem) => {
-            toast.success('New message received');
-            dispatch(getAllMessagesAdmin());
-            if (selectedUser?.user1?.id === data.sender_id) {
+            dispatch(getAllMessageUser({ id: user.id }));
+            if (selectedUser?.user2?.id === data.sender_id) {
                 setMessages(prev => [...prev, data]);
+                toast.info('Bạn có tin nhắn mới');
+
             }
         };
 
-        const handleUnlock = () => dispatch(getAllMessagesAdmin());
-        const handleAdminSend = () => dispatch(getAllMessagesAdmin());
 
-        socket.on('admin_new_message', handleNewMessage);
-        socket.on('ai_new_message', handleAIMessage);
-        socket.on('messageUnlocked', handleUnlock);
-        socket.on('admin_send_message', handleAdminSend);
+        socket.on('new_doctor_message', handleNewMessage);
+
 
         return () => {
-            socket.off('admin_new_message', handleNewMessage);
-            socket.off('ai_new_message', handleAIMessage);
-            socket.off('messageUnlocked', handleUnlock);
-            socket.off('admin_send_message', handleAdminSend);
+            socket.off('new_doctor_message', handleNewMessage);
         };
-    }, [admin?.id, selectedUser, dispatch]);
+    }, [user?.id, selectedUser, dispatch]);
 
-    // Khi chọn user, lấy messages tương ứng
     useEffect(() => {
         if (selectedUser) {
             dispatch(fetchMessagesAdmin(selectedUser.id)).then((res: any) => {
@@ -81,29 +64,30 @@ export default function AdminChatInterface() {
 
     // Gửi tin nhắn
     const handleSendMessage = () => {
-        if (!newMessage.trim() || !selectedUser || !admin) return;
+        if (!newMessage.trim() || !selectedUser || !user) return;
 
         const tempMessage: MessageItem = {
             id: `${Date.now()}`, // ID tạm
             message_id: `${Date.now()}`,
-            sender_id: admin.id,
+            sender_id: user.id,
             content: newMessage,
             image_url: null,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             User: {
-                id: admin.id,
-                name: admin.name,
-                avatar_url: admin.avatar_url
+                id: user.id,
+                name: user.name,
+                avatar_url: user.avatar_url
             }
         };
 
         setMessages(prev => [...prev, tempMessage]); // hiển thị ngay
         setNewMessage('');
 
-        dispatch(sendMessageAdmin({
+        dispatch(sendMessageDoctor({
             content: newMessage,
-            recipientId: selectedUser.user1.id,
+            recipientId: selectedUser.user2.id,
+            id: user.id,
         })).then((res: any) => {
             // Optional: Replace tempMessage with res.payload.item if needed
             if (res?.payload?.item) {
@@ -115,11 +99,11 @@ export default function AdminChatInterface() {
 
     // Lọc user theo searchTerm
     const filteredUsers = messagesUser.filter(u =>
-        u.user1?.name.toLowerCase().includes(searchTerm.toLowerCase())
+        u.user2?.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
-        <div className="flex h-[570px]">
+        <div className="flex h-[570px] w-full ">
             <UserList
                 users={filteredUsers}
                 searchTerm={searchTerm}
@@ -128,11 +112,14 @@ export default function AdminChatInterface() {
                 onSelectUser={setSelectedUser}
                 selectedUserId={selectedUser?.id}
             />
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col ">
                 {selectedUser ? (
                     <>
                         <ChatHeader user={selectedUser} setSelectedUser={setSelectedUser} />
+                        
                         <MessageList messages={messages} user={selectedUser} />
+
+
                         <MessageInput
                             message={newMessage}
                             onChange={setNewMessage}

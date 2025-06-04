@@ -8,7 +8,7 @@ const ChatBoxWrapper = () => {
   const isDoctorRoute = location.pathname.startsWith('/doctor');
 
   // Giả sử bạn chỉ cho phép ChatBox hiển thị ở các route sau:
-  const allowedPaths = ['medicine-detail/:slug', '/medicine-search', '/profile', '/cart', '/booking-home', '/booking-home/specialty-list', '/booking-home/specialty-detail/:name', '/booking-home/onlex-list', '/booking-home/onlex-detail/:name', '/booking-home/generalex-list', '/booking-home/generalex-detail/:name', '/booking-home/medicaltest-list', '/booking-home/medicaltest-detail/:name', '/booking-home/payment', '/booking-home/payment-success', '/booking-home/payment-cancel'];
+  const allowedPaths = ['medicine-detail/:slug', '/medicine-search', '/profile', '/cart', '/booking-home', '/booking-home/specialty-list', '/booking-home/specialty-detail/:name', '/booking-home/onlex-list', '/booking-home/onlex-detail/:name', '/booking-home/generalex-list', '/booking-home/generalex-detail/:name', '/booking-home/medicaltest-list', '/booking-home/medicaltest-detail/:name', '/booking-home/payment', '/booking-home/payment-success', '/booking-home/payment-cancel', '/'];
 
   const isAllowedPath = allowedPaths.some(path => location.pathname.startsWith(path));
 

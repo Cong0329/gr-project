@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../redux/store";
+import chat from "../../../assets/chat.png";
 import {
   getUserAppointment,
   cancelAppointment,
@@ -11,6 +12,7 @@ import {
 } from "../../../redux/packageBookingRequestSlice";
 import { format, parseISO, isAfter, isSameDay, parse } from "date-fns";
 import { vi } from "date-fns/locale";
+import { ChatModal } from "../ModalChat";
 
 type AppointmentType = {
   id: string;
@@ -23,6 +25,7 @@ type AppointmentType = {
     name: string;
     avatar: string;
     type: string;
+    user_id: string;
   };
   serviceInfo?: {
     name: string;
@@ -62,6 +65,7 @@ interface CombinedAppointment {
   type: "appointment" | "package";
   serviceName: string;
   doctorName?: string;
+  doctorId?: string;
   doctorType?: string;
   price?: number;
   avatar?: string;
@@ -81,7 +85,7 @@ export const HealthCheckPage: React.FC = () => {
   const { bookingRequests, loading: bookingsLoading } = useSelector(
     (state: RootState) => state.packages
   );
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
     dispatch(getUserAppointment());
     dispatch(getUserPackageBooking());
@@ -101,6 +105,7 @@ export const HealthCheckPage: React.FC = () => {
           appointment.serviceInfo?.name ||
           getServiceTypeLabel(appointment.type),
         doctorName: appointment.doctor?.name,
+        doctorId: appointment.doctor?.user_id,
         doctorType: appointment.doctor?.type,
         price: appointment.serviceInfo?.price,
         avatar: appointment.doctor?.avatar,
@@ -333,11 +338,10 @@ export const HealthCheckPage: React.FC = () => {
           <nav className="flex">
             <button
               onClick={() => setActiveTab("upcoming")}
-              className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${
-                activeTab === "upcoming"
-                  ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-              }`}
+              className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${activeTab === "upcoming"
+                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                }`}
             >
               <div className="flex items-center justify-center space-x-2">
                 <svg
@@ -363,11 +367,10 @@ export const HealthCheckPage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab("past")}
-              className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${
-                activeTab === "past"
-                  ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-              }`}
+              className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${activeTab === "past"
+                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                }`}
             >
               <div className="flex items-center justify-center space-x-2">
                 <svg
@@ -438,38 +441,20 @@ export const HealthCheckPage: React.FC = () => {
         {/* Appointments List */}
         <div className="divide-y divide-gray-100">
           {displayAppointments.map((appointment) => (
-            <div
-              key={`${appointment.type}-${appointment.id}`}
-              className="p-6 hover:bg-gray-50 transition-colors duration-200"
-            >
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                        {appointment.serviceName}
-                      </h3>
-                      <div className="flex items-center space-x-4 text-sm text-gray-600">
-                        <span className="flex items-center">
-                          <svg
-                            className="w-4 h-4 mr-1"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h4M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 4h1m4 0h1"
-                            />
-                          </svg>
-                          {appointment.type === "package"
-                            ? "Gói khám"
-                            : "Lịch khám"}
-                        </span>
-                        {appointment.price && (
-                          <span className="flex items-center font-medium text-green-600">
+            <>
+              <div
+                key={`${appointment.type}-${appointment.id}`}
+                className="p-6 hover:bg-gray-50 transition-colors duration-200"
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                          {appointment.serviceName}
+                        </h3>
+                        <div className="flex items-center space-x-4 text-sm text-gray-600">
+                          <span className="flex items-center">
                             <svg
                               className="w-4 h-4 mr-1"
                               fill="none"
@@ -480,114 +465,157 @@ export const HealthCheckPage: React.FC = () => {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 strokeWidth="2"
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h4M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 4h1m4 0h1"
                               />
                             </svg>
-                            {appointment.price.toLocaleString("vi-VN")}đ
+                            {appointment.type === "package"
+                              ? "Gói khám"
+                              : "Lịch khám"}
                           </span>
-                        )}
+                          {appointment.price && (
+                            <span className="flex items-center font-medium text-green-600">
+                              <svg
+                                className="w-4 h-4 mr-1"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                                />
+                              </svg>
+                              {appointment.price.toLocaleString("vi-VN")}đ
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
-                        appointment.status
-                      )}`}
-                    >
-                      {getStatusLabel(appointment.status)}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div className="flex items-center text-gray-700">
-                      <svg
-                        className="w-5 h-5 text-blue-500 mr-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
+                          appointment.status
+                        )}`}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <span className="font-medium">
-                        {formatDate(appointment.date)}
+                        {getStatusLabel(appointment.status)}
                       </span>
                     </div>
 
-                    <div className="flex items-center text-gray-700">
-                      <svg
-                        className="w-5 h-5 text-green-500 mr-3"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      <span className="font-medium">{appointment.time}</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div className="flex items-center text-gray-700">
+                        <svg
+                          className="w-5 h-5 text-blue-500 mr-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                        <span className="font-medium">
+                          {formatDate(appointment.date)}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center text-gray-700">
+                        <svg
+                          className="w-5 h-5 text-green-500 mr-3"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <span className="font-medium">{appointment.time}</span>
+                      </div>
+
+                      {appointment.doctorName && (
+                        <div className="flex items-center text-gray-700 md:col-span-2">
+                          <div className="flex items-center">
+                            {appointment.avatar ? (
+                              <img
+                                src={appointment.avatar}
+                                alt={appointment.doctorName}
+                                className="w-5 h-5 rounded-full mr-3 object-cover"
+                                onError={(e) => {
+                                  // ✅ Fallback khi không load được avatar
+                                  const target = e.target as HTMLImageElement;
+                                  target.style.display = "none";
+                                  target.nextElementSibling?.classList.remove(
+                                    "hidden"
+                                  );
+                                }}
+                              />
+                            ) : null}
+                            <svg
+                              className={`w-5 h-5 text-purple-500 mr-3 ${appointment.avatar ? "hidden" : ""
+                                }`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                              />
+                            </svg>
+                            <span className="font-medium">
+                              Bác sĩ {appointment.doctorName}
+                              {appointment.doctorType && (
+                                <span className="text-gray-500 ml-1">
+                                  - {getDoctorTypeLabel(appointment.doctorType)}{" "}
+                                </span>
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
-                    {appointment.doctorName && (
-                      <div className="flex items-center text-gray-700 md:col-span-2">
-                        <div className="flex items-center">
-                          {appointment.avatar ? (
-                            <img
-                              src={appointment.avatar}
-                              alt={appointment.doctorName}
-                              className="w-5 h-5 rounded-full mr-3 object-cover"
-                              onError={(e) => {
-                                // ✅ Fallback khi không load được avatar
-                                const target = e.target as HTMLImageElement;
-                                target.style.display = "none";
-                                target.nextElementSibling?.classList.remove(
-                                  "hidden"
-                                );
-                              }}
-                            />
-                          ) : null}
-                          <svg
-                            className={`w-5 h-5 text-purple-500 mr-3 ${
-                              appointment.avatar ? "hidden" : ""
-                            }`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                            />
-                          </svg>
-                          <span className="font-medium">
-                            Bác sĩ {appointment.doctorName}
-                            {appointment.doctorType && (
-                              <span className="text-gray-500 ml-1">
-                                - {getDoctorTypeLabel(appointment.doctorType)}{" "}
-                              </span>
-                            )}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                    {/* ✅ Action Buttons - Updated logic */}
+                    <div className="flex justify-end space-x-3">
+                      {appointment.status === "pending_payment" && (
+                        <>
+                          {canCancelAppointment(appointment) && (
 
-                  {/* ✅ Action Buttons - Updated logic */}
-                  <div className="flex justify-end space-x-3">
-                    {appointment.status === "pending_payment" && (
-                      <>
-                        {canCancelAppointment(appointment) && (
+                            <button
+                              onClick={() => handleCancelAppointment(appointment)}
+                              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
+                            >
+                              <svg
+                                className="w-4 h-4 mr-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                              Hủy{" "}
+                              {appointment.type === "package"
+                                ? "yêu cầu"
+                                : "lịch"}
+                            </button>
+
+                          )}
                           <button
-                            onClick={() => handleCancelAppointment(appointment)}
-                            className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
+                            onClick={() => handlePayment(appointment)}
+                            className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-blue-700 transition-colors duration-200"
                           >
                             <svg
                               className="w-4 h-4 mr-2"
@@ -599,94 +627,83 @@ export const HealthCheckPage: React.FC = () => {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 strokeWidth="2"
-                                d="M6 18L18 6M6 6l12 12"
+                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
                               />
                             </svg>
-                            Hủy{" "}
-                            {appointment.type === "package"
-                              ? "yêu cầu"
-                              : "lịch"}
+                            Thanh toán
                           </button>
-                        )}
-                        <button
-                          onClick={() => handlePayment(appointment)}
-                          className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-blue-700 transition-colors duration-200"
-                        >
-                          <svg
-                            className="w-4 h-4 mr-2"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                            />
-                          </svg>
-                          Thanh toán
-                        </button>
-                      </>
-                    )}
-
-                    {/* ✅ Handle cancel for different statuses - covers both appointment and package */}
-                    {(appointment.status === "confirmed" ||
-                      appointment.status === "pending" ||
-                      appointment.status === "doctor_requested" ||
-                      appointment.status === "assigned") &&
-                      canCancelAppointment(appointment) && (
-                        <button
-                          onClick={() => handleCancelAppointment(appointment)}
-                          className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
-                        >
-                          <svg
-                            className="w-4 h-4 mr-2"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M6 18L18 6M6 6l12 12"
-                            />
-                          </svg>
-                          Hủy{" "}
-                          {appointment.type === "package" ? "yêu cầu" : "lịch"}
-                        </button>
+                        </>
                       )}
 
-                    {appointment.status === "completed" && (
-                      <button
-                        onClick={() => handleViewResults(appointment)}
-                        className="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-green-700 transition-colors duration-200"
-                      >
-                        <svg
-                          className="w-4 h-4 mr-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                      {/* ✅ Handle cancel for different statuses - covers both appointment and package */}
+                      <div className="flex gap-4">
+
+                        {(appointment.status === "confirmed" ||
+                          appointment.status === "pending" ||
+                          appointment.status === "doctor_requested" ||
+                          appointment.status === "assigned") &&
+                          canCancelAppointment(appointment) && (
+                            <button
+                              onClick={() => handleCancelAppointment(appointment)}
+                              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
+                            >
+                              <svg
+                                className="w-4 h-4 mr-2"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                              Hủy{" "}
+                              {appointment.type === "package" ? "yêu cầu" : "lịch"}
+                            </button>
+                          )}
+                        <button className="h-10 w-10" onClick={() => setIsModalOpen(true)}>
+                          <img src={chat} alt="" />
+                        </button>
+                      </div>
+
+
+                      {appointment.status === "completed" && (
+                        <button
+                          onClick={() => handleViewResults(appointment)}
+                          className="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-lg text-sm font-medium text-white hover:bg-green-700 transition-colors duration-200"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
-                        Xem kết quả
-                      </button>
-                    )}
+                          <svg
+                            className="w-4 h-4 mr-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                          Xem kết quả
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+              <ChatModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={`Chat với bác sĩ ${appointment.doctorName}`} id={appointment.doctorId} />
+
+            </>
+
           ))}
         </div>
       </div>
     </div>
+
   );
 };
 

@@ -3,14 +3,14 @@ import { StatisticCard } from "./StaticCard";
 import { FilterBar } from "./FilterBar";
 import { ReviewsList } from "./ReviewList";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../../../redux/store";
+import { RootState, AppDispatch } from "../../../../redux/store";
 import { getReviews, replyReview, upadateReplyReview } from "../../../../redux/reviewsAsyncThunk";
 import { toast } from "react-toastify";
 import { Review, addReview } from "../../../../redux/reviewsSlice";
 import socket from "../../../../auth/socket";
 
 export default function AdminReviewInterface() {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const { status } = useSelector((state: RootState) => state.reviews);
   const admin = useSelector((state: RootState) => state.auth.admin);
   const adminReviews = useSelector((state: RootState) => state.reviews.reviews);
