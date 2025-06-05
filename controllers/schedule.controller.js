@@ -229,9 +229,6 @@ exports.getDoctorSchedules = async (req, res, next) => {
         message: 'Doctor profile not found for this user'
       });
     }
-
-    console.log('Found doctor:', doctor.id);
-    console.log('User ID:', req.user.id);
     
     const { 
       page = 1, 
@@ -254,8 +251,6 @@ exports.getDoctorSchedules = async (req, res, next) => {
       if (date_from) whereClause.date[Op.gte] = new Date(date_from);
       if (date_to) whereClause.date[Op.lte] = new Date(date_to);
     }
-
-    console.log('WHERE clause:', whereClause);
 
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
@@ -366,18 +361,30 @@ exports.createSchedule = async (req, res) => {
     console.log('🔥 User:', req.user);
     console.log('🔥 Roles:', req.user?.roles);
     console.log('🔥 Body:', req.body);
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        errors: errors.array() 
+        errors: errors.array()
       });
     }
 
-    // Kiểm tra xung đột lịch trình
+    const doctor = await Doctor.findOne({
+      where: { user_id: req.user.id }
+    });
+
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Doctor profile not found for this user'
+      });
+    }
+
+    // Kiểm tra xung đột lịch trình với doctor_id từ database
     const conflictingSchedule = await Schedule.findOne({
       where: {
-        doctor_id: req.body.doctor_id,
+        doctor_id: doctor.id, // Dùng doctor.id thay vì req.body.doctor_id
         date: req.body.date,
         [Op.or]: [
           {
@@ -389,38 +396,49 @@ exports.createSchedule = async (req, res) => {
     });
 
     if (conflictingSchedule) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
         message: 'Schedule conflicts with existing appointment',
         conflictingSchedule
       });
     }
 
-    // Mặc định status là available khi tạo mới
+    // Tạo scheduleData với doctor_id từ database
     const scheduleData = {
       ...req.body,
+      doctor_id: doctor.id, // Ghi đè doctor_id
       status: req.body.status || 'available'
     };
 
     const newSchedule = await Schedule.create(scheduleData);
     
-    // Để phù hợp với frontend, lấy lại schedule kèm thông tin liên quan
+    // Lấy lại schedule kèm thông tin liên quan
     const completeSchedule = await Schedule.findByPk(newSchedule.id, {
       include: [
-        { 
-          model: Doctor, 
+        {
+          model: Doctor,
           as: 'doctor',
-          attributes: ['id', 'name', 'avatar', 'position']
+          attributes: ['id', 'name', 'avatar', 'position', 'type', 'experience', 'address'],
+          include: [
+            {
+              model: Department,
+              as: 'department',
+              attributes: ['id', 'name']
+            }
+          ]
         }
       ]
     });
 
-    res.status(201).json(completeSchedule);
+    res.status(201).json({
+      success: true,
+      data: completeSchedule
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: 'Server Error' 
+      message: 'Server Error'
     });
   }
 };

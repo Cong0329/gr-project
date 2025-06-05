@@ -464,3 +464,94 @@ exports.getUserAppointment = async (req, res) => {
     });
   }
 };
+
+exports.getDoctorAppointments = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log("User ID:", userId);
+
+    const doctor = await Doctor.findOne({
+      where: {
+        user_id: userId
+      }
+    });
+
+    if (!doctor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Doctor not found'
+      });
+    }
+
+    const doctorId = doctor.id;
+    console.log("Doctor ID:", doctorId);
+
+    const appointments = await Appointment.findAll({
+      where: {
+        doctor_id: doctorId
+      },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'name', 'email', 'phone', 'avatar_url']
+        },
+        {
+          model: Schedule,
+          as: 'schedule'
+        }
+      ],
+      order: [
+        ['date', 'DESC'],
+        ['start_time', 'DESC']
+      ]
+    });
+
+    console.log("Found appointments:", appointments.length);
+
+    const enrichedAppointments = await Promise.all(appointments.map(async (appointment) => {
+      const appointmentData = appointment.toJSON();
+      let serviceInfo = null;
+      
+      try {
+        if (appointment.type === 'specialist' || appointment.type === 'specialist_online') {
+          serviceInfo = await Department.findByPk(appointment.service_id, {
+            attributes: ['id', 'name', 'price']
+          });
+        } else if (appointment.type === 'general' || appointment.type === 'medical') {
+          serviceInfo = await ServicePackage.findByPk(appointment.service_id, {
+            attributes: ['id', 'name', 'description', 'price']
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching service info:', error);
+      }
+
+      return {
+        ...appointmentData,
+        serviceInfo: serviceInfo ? serviceInfo.toJSON() : null,
+        patient_info: appointmentData.patient_info || {
+          name: appointmentData.patient_name,
+          phone: appointmentData.patient_phone,
+          email: appointmentData.patient_email,
+          gender: appointmentData.patient_gender,
+          dob: appointmentData.patient_dob,
+          address: appointmentData.patient_address,
+          reason: appointmentData.reason
+        }
+      };
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: enrichedAppointments
+    });
+  } catch (error) {
+    console.error('Error fetching doctor appointments:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching appointments',
+      error: error.message
+    });
+  }
+};
