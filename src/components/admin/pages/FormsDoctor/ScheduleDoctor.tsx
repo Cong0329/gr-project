@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMyDoctorSchedules } from "../../../../redux/scheduleSlice";
-import { getUserAppointment } from "../../../../redux/appointmentSlice";
+import { getDoctorAppointments } from "../../../../redux/appointmentSlice";
 import {
   Calendar,
   Clock,
@@ -37,7 +37,7 @@ export const DoctorScheduleComponent = () => {
 
   useEffect(() => {
     dispatch(fetchMyDoctorSchedules({}));
-    dispatch(getUserAppointment());
+    dispatch(getDoctorAppointments());
   }, [dispatch]);
 
   // Function to find patient info for a schedule
@@ -48,6 +48,7 @@ export const DoctorScheduleComponent = () => {
       (apt) => apt.schedule_id === schedule.id && apt.status !== "cancelled"
     );
 
+    // Sử dụng patient_info từ appointment thay vì từ user info
     return appointment?.patient_info || null;
   };
 
@@ -346,47 +347,158 @@ export const DoctorScheduleComponent = () => {
     );
   };
 
+  const renderEmptyState = () => (
+    <div className="text-center py-16">
+      <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <Calendar className="w-12 h-12 text-blue-500" />
+      </div>
+      <h3 className="text-xl font-semibold text-gray-800 mb-2">
+        Chưa có lịch làm việc
+      </h3>
+      <p className="text-gray-500 max-w-md mx-auto mb-6">
+        Hiện tại bạn chưa có lịch làm việc nào. Hãy tạo lịch làm việc để bệnh
+        nhân có thể đặt lịch khám với bạn.
+      </p>
+
+      {/* Nút thêm lịch lớn trong empty state */}
+      <div className="flex flex-col items-center space-y-4">
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="flex items-center space-x-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+        >
+          <Plus className="w-6 h-6" />
+          <span className="text-lg">Tạo lịch làm việc đầu tiên</span>
+        </button>
+
+        <p className="text-sm text-gray-400">
+          Sau khi tạo lịch, bệnh nhân sẽ có thể đặt lịch khám với bạn
+        </p>
+      </div>
+    </div>
+  );
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-64 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
-          <p className="text-blue-600 font-medium">Đang tải lịch làm việc...</p>
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        {/* Header luôn hiển thị */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">
+                  Lịch làm việc của tôi
+                </h1>
+                <p className="text-blue-100 mt-1">
+                  Quản lý thời gian làm việc hiệu quả
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl transition-colors duration-200"
+            >
+              <Plus className="w-5 h-5" />
+              <span className="font-medium">Thêm lịch</span>
+            </button>
+          </div>
         </div>
+
+        <div className="flex items-center justify-center min-h-64 bg-gradient-to-br from-blue-50 to-indigo-50">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
+            <p className="text-blue-600 font-medium">
+              Đang tải lịch làm việc...
+            </p>
+          </div>
+        </div>
+
+        <CreateSchedule
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+        />
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-            <svg
-              className="w-8 h-8 text-red-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+        {/* Header luôn hiển thị ngay cả khi có lỗi */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                <Calendar className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">
+                  Lịch làm việc của tôi
+                </h1>
+                <p className="text-blue-100 mt-1">
+                  Quản lý thời gian làm việc hiệu quả
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl transition-colors duration-200"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-              />
-            </svg>
+              <Plus className="w-5 h-5" />
+              <span className="font-medium">Thêm lịch</span>
+            </button>
           </div>
-          <p className="text-red-600 font-medium">Lỗi: {error}</p>
         </div>
+
+        <div className="p-8">
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-8 h-8 text-red-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <p className="text-red-600 font-medium mb-2">
+                  Có lỗi xảy ra: {error}
+                </p>
+                <p className="text-red-500 text-sm">
+                  Không thể tải lịch làm việc. Bạn vẫn có thể tạo lịch mới bằng
+                  nút "Thêm lịch" phía trên.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <CreateSchedule
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+        />
       </div>
     );
   }
 
   const { upcoming, past } = categorizeSchedules(mySchedules);
+  const hasSchedules = mySchedules && mySchedules.length > 0;
 
   return (
     <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-      {/* Header với nút thêm */}
+      {/* Header với nút thêm - LUÔN hiển thị */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -412,13 +524,14 @@ export const DoctorScheduleComponent = () => {
           </button>
         </div>
       </div>
+
       <CreateSchedule
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
       />
 
-      {/* Tab Navigation */}
-      {mySchedules && mySchedules.length > 0 && (
+      {/* Tab Navigation - CHỈ hiển thị khi có lịch */}
+      {hasSchedules && (
         <div className="border-b border-gray-200">
           <div className="flex w-full px-8">
             <button
@@ -455,19 +568,9 @@ export const DoctorScheduleComponent = () => {
       )}
 
       <div className="p-8">
-        {!mySchedules || mySchedules.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Calendar className="w-12 h-12 text-gray-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              Chưa có lịch làm việc
-            </h3>
-            <p className="text-gray-500 max-w-md mx-auto">
-              Hiện tại bạn chưa có lịch làm việc nào được đặt. Hãy chờ bệnh nhân
-              đặt lịch hoặc cập nhật lịch làm việc của bạn.
-            </p>
-          </div>
+        {!hasSchedules ? (
+          // Empty state với nút thêm lịch nổi bật
+          renderEmptyState()
         ) : (
           <div className="space-y-4">
             {/* Hiển thị lịch theo tab active */}
@@ -495,11 +598,19 @@ export const DoctorScheduleComponent = () => {
                     ? "Chưa có lịch sắp tới"
                     : "Chưa có lịch đã qua"}
                 </h3>
-                <p className="text-gray-500">
+                <p className="text-gray-500 mb-4">
                   {activeTab === "upcoming"
                     ? "Hiện tại bạn chưa có lịch làm việc nào sắp tới."
                     : "Bạn chưa có lịch làm việc nào đã hoàn thành."}
                 </p>
+
+                <button
+                  onClick={() => setShowCreateModal(true)}
+                  className="inline-flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+                >
+                  <Plus className="w-5 h-5" />
+                  <span>Thêm lịch mới</span>
+                </button>
               </div>
             )}
           </div>
