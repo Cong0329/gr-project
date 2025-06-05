@@ -114,6 +114,21 @@ export const getBookingRequestWithAssignments = createAsyncThunk(
   }
 );
 
+export const getPendingDoctorAssignments = createAsyncThunk(
+  'doctorAssignment/getPendingDoctorAssignments',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/doctor-assignment/status/pending`, {
+        withCredentials: true
+      });
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Đã xảy ra lỗi khi lấy danh sách yêu cầu');
+      return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi' });
+    }
+  }
+);
+
 // Initial state
 const initialState = {
   loading: false,
@@ -130,6 +145,8 @@ const initialState = {
   createdAssignment: null,
   updatedSchedule: null,
   selectedDoctorInfo: null,
+  pendingAssignments: [],
+  message: '',
 };
 
 // Slice
@@ -162,6 +179,20 @@ const doctorAssignmentSlice = createSlice({
       .addCase(requestDoctorAssignment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      //get pending 
+      .addCase(getPendingDoctorAssignments.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getPendingDoctorAssignments.fulfilled, (state, action) => {
+        state.loading = false;
+        state.pendingAssignments = action.payload.data;
+      })
+      .addCase(getPendingDoctorAssignments.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.message;
       })
       
       // Update Doctor Assignment

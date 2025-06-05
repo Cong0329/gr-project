@@ -336,6 +336,7 @@ const PaymentPage = () => {
         end_time: end_time,
         type: packageInfo.type,
         service_id: service_id,
+        notes: packageInfo.reason,
         payment_method: userInfo.paymentMethod === "vnpay" ? "online" : "cash",
         amount: parseFloat(packageInfo.price),
         status:
@@ -349,7 +350,6 @@ const PaymentPage = () => {
           dob: userInfo.birthDate,
           gender: userInfo.gender,
           address: userInfo.address,
-          reason: userInfo.reason,
         },
       };
 

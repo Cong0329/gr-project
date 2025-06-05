@@ -5,35 +5,44 @@ export interface PackageBooking {
   id: number;
   user_id: string;
   package_type: 'general' | 'medical';
-  package_id: number;
-  requested_date: string;
-  requested_time_slot: string;
-  status: 'pending' | 'doctor_requested' | 'assigned' | 'rejected' | 'cancelled';
-  notes?: string;
-  schedule_id?: number;
-  package?: {
-    id: number;
-    name: string;
-    description: string;
-    price: number;
-    duration: number;
-    type: string;
-    features?: any[];
-  };
-  schedule?: {
-    id: number;
-    date: string;
-    start_time: string;
-    end_time: string;
-    doctor?: {
-      id: string;
+    package_id: number;
+    requested_date: string;
+    requested_time_slot: string;
+    status: 'pending' | 'doctor_requested' | 'assigned' | 'rejected' | 'cancelled';
+    notes?: string;
+    schedule_id?: number;
+    package?: {
+      id: number;
       name: string;
-      avatar: string;
+      description: string;
+      price: number;
+      duration: number;
       type: string;
+      features?: any[];
     };
-  };
-  doctorAssignments?: any[];
-}
+    schedule?: {
+      id: number;
+      date: string;
+      start_time: string;
+      end_time: string;
+      doctor?: {
+        id: string;
+        name: string;
+        avatar: string;
+        type: string;
+      };
+    };
+    patient_info?: {
+    name: string;
+    phone: string;
+    email: string;
+    dob: string;
+    gender: string;
+    address: string;
+    reason?: string;
+    };
+    doctorAssignments?: any[];
+  }
 
 interface PackageBookingState {
   bookingRequests: PackageBooking[];

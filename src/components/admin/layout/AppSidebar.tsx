@@ -77,6 +77,11 @@ const adminNavItems: NavItem[] = [
     ],
   },
   {
+    icon: <BoxCubeIcon />,
+    name: "Quản lý gói khám",
+    path: "/admin/packages",
+  },
+  {
     name: "Pages",
     icon: <PageIcon />,
     subItems: [
