@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const doctorAssignmentController = require('../controllers/doctor_assignment.controller');
+const { authenticateAdminToken} = require('../middlewares/auth.middleware');
+const requireRole = require('../middlewares/role.middleware');
 
 // Route để tạo yêu cầu bác sĩ cho một booking request
 // Chỉ admin và staff mới có thể tạo yêu cầu
@@ -43,5 +45,8 @@ router.get('/:id/with-assignments', doctorAssignmentController.getBookingRequest
 
 // Phê duyệt bác sĩ được chỉ định cho booking request và khởi tạo lịch
 router.post('/approve-doctor', doctorAssignmentController.approveDoctorAndCreateSchedule);
+
+router.get('/status/pending', authenticateAdminToken, requireRole('ROLE_ADMIN'), doctorAssignmentController.getPendingDoctorAssignments);
+
 
 module.exports = router;

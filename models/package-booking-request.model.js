@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 'pending',
       allowNull: false
     },
+    patient_info: {
+      type: DataTypes.JSON,
+      allowNull: true
+    },
     notes: {
       type: DataTypes.TEXT,
       allowNull: true

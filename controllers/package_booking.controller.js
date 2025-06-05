@@ -4,7 +4,8 @@ const { Op } = require('sequelize');
 // Hàm tạo booking request
 exports.createBookingRequest = async (req, res) => {
   try {
-    const { user_id, package_type, package_id, requested_date, requested_time_slot, notes } = req.body;
+    const { user_id, package_type, package_id, requested_date, requested_time_slot, notes,
+      status, patient_info } = req.body;
     
     // Kiểm tra gói dịch vụ tồn tại
     const servicePackage = await ServicePackage.findByPk(package_id);
@@ -38,7 +39,8 @@ exports.createBookingRequest = async (req, res) => {
       requested_date,
       requested_time_slot,
       notes,
-      status: 'pending'
+      status: 'pending',
+      patient_info
     });
     
     return res.status(201).json(bookingRequest);

@@ -149,7 +149,7 @@ exports.updateDoctorAssignment = async (req, res) => {
         {
           model: Doctor,
           as: 'doctor',
-          attributes: ['id', 'name', 'specialization', 'avatar']
+          attributes: ['id', 'name', 'type', 'avatar']
         }
       ]
     });
@@ -199,7 +199,7 @@ exports.getAssignmentsByBookingRequest = async (req, res) => {
         {
           model: Doctor,
           as: 'doctor',
-          attributes: ['id', 'name', 'specialization', 'avatar']
+          attributes: ['id', 'name', 'type', 'avatar']
         }
       ],
       order: [['created_at', 'DESC']]
@@ -303,7 +303,7 @@ exports.getAssignmentById = async (req, res) => {
                 {
                   model: Doctor,
                   as: 'doctor',
-                  attributes: ['id', 'name', 'specialization', 'avatar']
+                  attributes: ['id', 'name', 'type', 'avatar']
                 }
               ]
             }
@@ -312,7 +312,7 @@ exports.getAssignmentById = async (req, res) => {
         {
           model: Doctor,
           as: 'doctor',
-          attributes: ['id', 'name', 'specialization', 'avatar', 'bio', 'email', 'phone']
+          attributes: ['id', 'name', 'type', 'avatar',]
         }
       ]
     });
@@ -512,7 +512,7 @@ exports.getBookingRequestWithAssignments = async (req, res) => {
               {
                 model: Doctor,
                 as: 'doctor',
-                attributes: ['id', 'name', 'specialization', 'avatar']
+                attributes: ['id', 'name', 'type', 'avatar']
               }
             ]
           },
@@ -523,7 +523,7 @@ exports.getBookingRequestWithAssignments = async (req, res) => {
               {
                 model: Doctor,
                 as: 'doctor',
-                attributes: ['id', 'name', 'specialization', 'avatar']
+                attributes: ['id', 'name', 'type', 'avatar']
               }
             ]
           }
@@ -546,3 +546,44 @@ exports.getBookingRequestWithAssignments = async (req, res) => {
     }
   };
   
+exports.getPendingDoctorAssignments = async (req, res) => {
+  try {
+    const assignments = await DoctorAssignment.findAll({
+      where: {
+        status: 'requested'
+      },
+      include: [
+        {
+          model: PackageBookingRequest,
+          as: 'bookingRequest',
+          attributes: ['id', 'user_id', 'package_type', 'package_id', 'requested_date', 'requested_time_slot', 'notes', 'patient_info',],
+          include: [
+            {
+              model: ServicePackage,
+              as: 'package',
+              attributes: ['id', 'name', 'price', 'image']
+            }
+          ]
+        },
+        {
+          model: Doctor,
+          as: 'doctor',
+          attributes: ['id', 'name', 'type', 'experience']
+        }
+      ],
+      order: [['created_at', 'ASC']]
+    });
+
+    return res.status(200).json({
+      message: 'Lấy danh sách yêu cầu phê duyệt bác sĩ thành công',
+      data: assignments,
+      total: assignments.length
+    });
+  } catch (error) {
+    console.error('Error in getPendingDoctorAssignments:', error);
+    return res.status(500).json({
+      message: 'Lỗi khi lấy danh sách yêu cầu phê duyệt',
+      error: error.message
+    });
+  }
+};
