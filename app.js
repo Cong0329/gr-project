@@ -33,24 +33,42 @@ app.use((req, res, next) => {
   req.io = io; // inject vào req
   next();
 });
+global.onlineUsers = new Map();
+
 
 io.on('connection', (socket) => {
   console.log("Client connected");
+
+  // Lấy userId từ FE truyền qua query
+  const userId = socket.handshake.auth.userId;
+  if (userId) {
+    global.onlineUsers.set(userId.toString(), socket.id);
+    socket.join(userId.toString());
+    console.log(`User ${userId} online`);
+  }
+
 
   socket.on("register-admin", () => {
     socket.join("admins");
     console.log("Admin joined room");
   });
 
-  socket.on('join_room', (userId) => {
-    socket.join(userId); // Tham gia room riêng
-    console.log(`User ${userId} joined room`);
+  socket.on('join_room', (userJoin) => {
+    socket.join(userJoin.toString());
+    console.log(`User ${userJoin} manually joined room`);
   });
 
   socket.on('disconnect', () => {
-    console.log("Client disconnected");
+    if (userId) {
+      global.onlineUsers.delete(userId.toString());
+      console.log(`User ${userId} offline`);
+    } else {
+      console.log("Client disconnected (no userId)");
+    }
   });
 });
+
+
 
 
 

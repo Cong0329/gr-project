@@ -2,7 +2,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { User } = require('../models');
 require('dotenv').config(); 
-
+const cloudinary = require('../utils/cloudinary');
 
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
@@ -21,10 +21,26 @@ passport.use(new GoogleStrategy({
       
 
       if (!user) {
+        let avatar_url = '';
+
+        if (photos?.[0]?.value) {
+          try {
+            // 👇 Upload ảnh từ URL Google lên Cloudinary
+            const uploadRes = await cloudinary.uploader.upload(photos[0].value, {
+              folder: 'avatars', // Tùy chọn: lưu vào thư mục 'avatars'
+              fetch_format: 'auto',
+              crop: 'scale'
+            });
+            avatar_url = uploadRes.secure_url;
+          } catch (uploadErr) {
+            console.error('❌ Lỗi upload avatar lên Cloudinary:', uploadErr);
+          }
+        }
+
         user = await User.create({
           name: displayName,
           email: emails?.[0]?.value || '',
-          avatar_url: photos?.[0]?.value || '',
+          avatar_url,
           provider,
           provider_id: id
         });
