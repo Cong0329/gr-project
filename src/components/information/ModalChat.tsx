@@ -2,7 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, MessageCircle, User } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { sendMessageDoctor } from '../../redux/messageAsyncThunk';
+import { getAllMessageUser, sendMessageDoctor } from '../../redux/messageAsyncThunk';
+import socket from '../../auth/socket';
+import { toast } from 'react-toastify';
 interface Message {
     id: string;
     text: string;
@@ -50,6 +52,53 @@ export const ChatModal: React.FC<ChatModalProps> = ({
             inputRef.current.focus();
         }
     }, [isOpen]);
+
+    useEffect(() => {
+       if (id) {
+        setMessages([ {
+            id: '1',
+            text: 'Xin chào! Tôi có thể giúp gì cho bạn?',
+            sender: 'other',
+            timestamp: new Date(Date.now() - 60000)
+        }]);
+       }
+    }, [id]);
+
+    useEffect(() => {
+        if (!user?.id) return;
+
+        socket.emit('join_room', user.id);
+
+        const handleNewMessage = (data: {
+            message_id: string;
+            sender_id: string;
+            content: string;
+            image_url?: string;
+            createdAt: string;
+            updateAt: string;
+            User: any;
+        }) => {
+
+            // Chỉ thêm tin nhắn nếu đang trò chuyện đúng người
+            if (    id === data.sender_id) {
+                const formattedMessage: Message = {
+                    id: data.message_id,
+                    text: data.content,
+                    sender: 'other',
+                    timestamp: new Date(data.createdAt),
+                };
+
+                setMessages(prev => [...prev, formattedMessage]);
+            }
+        };
+
+        socket.on('new_doctor_message', handleNewMessage);
+
+        return () => {
+            socket.off('new_doctor_message', handleNewMessage);
+        };
+    }, [user?.id, dispatch, id]);
+
 
     const handleSendMessage = () => {
         if (inputMessage.trim() === '') return;
@@ -112,8 +161,8 @@ export const ChatModal: React.FC<ChatModalProps> = ({
                                     <User className="w-4 h-4" />
                                 </div>
                                 <div className={`rounded-lg p-3 ${message.sender === 'user'
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-gray-100 text-gray-800'
+                                    ? 'bg-blue-500 text-white'
+                                    : 'bg-gray-100 text-gray-800'
                                     }`}>
                                     <p className="text-sm">{message.text}</p>
                                     <p className={`text-xs mt-1 ${message.sender === 'user' ? 'text-blue-100' : 'text-gray-500'

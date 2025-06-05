@@ -53,6 +53,7 @@ type PackageBookingType = {
       name: string;
       avatar: string;
       type: string;
+      user_id: string;
     };
   };
 };
@@ -74,6 +75,7 @@ interface CombinedAppointment {
 
 export const HealthCheckPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const [selectedAppointment, setSelectedAppointment] = useState<CombinedAppointment | null>(null);
   const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
   const [combinedAppointments, setCombinedAppointments] = useState<
     CombinedAppointment[]
@@ -123,6 +125,7 @@ export const HealthCheckPage: React.FC = () => {
         serviceName: booking.package?.name || "Gói khám",
         doctorName: booking.schedule?.doctor?.name,
         doctorType: booking.schedule?.doctor?.type,
+        doctorId: booking.schedule?.doctor?.user_id,
         price: booking.package?.price,
         avatar: booking.schedule?.doctor?.avatar,
         originalData: booking,
@@ -664,7 +667,10 @@ export const HealthCheckPage: React.FC = () => {
                               {appointment.type === "package" ? "yêu cầu" : "lịch"}
                             </button>
                           )}
-                        <button className="h-10 w-10" onClick={() => setIsModalOpen(true)}>
+                        <button className="h-10 w-10" onClick={() => {
+                          setSelectedAppointment(appointment);
+                          setIsModalOpen(true);
+                        }}>
                           <img src={chat} alt="" />
                         </button>
                       </div>
@@ -695,7 +701,7 @@ export const HealthCheckPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <ChatModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={`Chat với bác sĩ ${appointment.doctorName}`} id={appointment.doctorId} />
+              <ChatModal key={appointment.id} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={`Chat với bác sĩ ${selectedAppointment?.doctorName}`} id={selectedAppointment?.doctorId} />
 
             </>
 
