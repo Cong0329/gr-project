@@ -178,8 +178,7 @@ const GeneralExListPage = () => {
                     <div className="md:flex-shrink-0 md:w-2/5">
                       <img
                         src={
-                          featuredPackage?.image ||
-                          "https://via.placeholder.com/400x240"
+                          "https://cdn.bookingcare.vn/fo/w640/2020/09/09/235248-tam-soat-ung-thu-nam.jpg"
                         }
                         alt="Bài viết sức khỏe"
                         className="h-64 w-full object-cover md:h-full"
@@ -187,16 +186,16 @@ const GeneralExListPage = () => {
                     </div>
                     <div className="p-6 md:p-8">
                       <span className="inline-block bg-blue-100 text-blue-600 px-2 py-1 rounded-full text-sm font-medium">
-                        Khám xét nghiệm
+                        Khám tổng quát
                       </span>
                       <h3 className="mt-3 text-xl font-bold text-gray-900 md:text-2xl">
-                        Khi nào bạn cần đi khám xét nghiệm? Những điều cần biết
+                        Khi nào bạn cần đi khámtổng quát? Những điều cần biết
                         trước khi đặt lịch
                       </h3>
                       <p className="mt-4 text-gray-600">
-                        Việc khám xét nghiệm giúp phát hiện và điều trị bệnh
-                        sớm. Tìm hiểu khi nào bạn nên đi khám, cần chuẩn bị gì
-                        và các xét nghiệm phù hợp với triệu chứng của bạn...
+                        Việc khám tổng quát giúp phát hiện và điều trị bệnh sớm.
+                        Tìm hiểu khi nào bạn nên đi khám, cần chuẩn bị gì để phù
+                        hợp với triệu chứng của bạn...
                       </p>
                       <div className="mt-6">
                         <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg transition-colors">

@@ -11,6 +11,9 @@ interface BreadcrumbItem {
 const breadcrumbConfig: BreadcrumbItem[] = [
   { pathMatch: "/profile/orders/order-detail", label: "Chi tiết đơn hàng", to: "/profile/orders/order-detail" },
   { pathMatch: "/profile/orders", label: "Đơn hàng", to: "/profile/orders" },
+  { pathMatch: "/profile/chat", label: "Tin nhắn", to: "/profile/chat" },
+  { pathMatch: "/profile/addresses", label: "Địa chỉ", to: "/profile/addresses" },
+  { pathMatch: "/profile/health-check", label: "Lịch khám sức khoẻ", to: "/profile/health-check" },
   { pathMatch: "/profile/prescriptions", label: "Đơn thuốc", to: "/profile/prescriptions" },
   { pathMatch: "/profile/personal-info", label: "Thông tin cá nhân", to: "/profile/personal-info" },
   { pathMatch: "/profile", label: "Cá nhân", to: "/profile" },

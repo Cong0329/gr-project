@@ -7,6 +7,7 @@ import { OrderPage } from "./infoPage/OrderPage";
 import { AddressPage } from "./infoPage/AddressPage";
 import { MedicinePage } from "./infoPage/MedicinePage";
 import { HealthCheckPage } from "./infoPage/HealthCheck";
+import UserChatInterface from "../admin/components/chat/UserChat/UserChatInterface";
 
 const MainContent: React.FC = () => {
   const activePage = useSelector(
@@ -21,11 +22,14 @@ const MainContent: React.FC = () => {
     orders: <OrderPage />,
     addresses: <AddressPage />,
     "health-check": <HealthCheckPage />,
-    "vaccination-orders": <div>Vaccination Orders Content</div>,
+    chat: <UserChatInterface />,
+  
+
+    // "vaccination-orders": <div>Vaccination Orders Content</div>,
     prescriptions: <MedicinePage />,
   };
 
-  return <div className="w-full">{contentMap[activePage]}</div>;
+  return <div className="w-full h-full">{contentMap[activePage]}</div>;
 };
 
 export default MainContent;

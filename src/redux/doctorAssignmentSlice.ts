@@ -11,6 +11,8 @@ export const requestDoctorAssignment = createAsyncThunk(
         booking_request_id,
         doctor_id,
         notes
+      }, {
+        withCredentials: true
       });
       toast.success(response.data.message);
       return response.data;
@@ -126,7 +128,8 @@ const initialState = {
   currentAssignment: null,
   bookingRequestDetail: null,
   createdAssignment: null,
-  updatedSchedule: null
+  updatedSchedule: null,
+  selectedDoctorInfo: null,
 };
 
 // Slice
@@ -151,7 +154,7 @@ const doctorAssignmentSlice = createSlice({
       .addCase(requestDoctorAssignment.fulfilled, (state, action) => {
         state.loading = false;
         state.createdAssignment = action.payload.doctorAssignment;
-        // Nếu đã có assignments cho booking này, thêm vào mảng
+        state.selectedDoctorInfo = action.payload.doctorInfo;
         if (state.assignmentsByBooking.length > 0) {
           state.assignmentsByBooking.push(action.payload.doctorAssignment);
         }

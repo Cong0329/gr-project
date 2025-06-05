@@ -5,13 +5,12 @@ import { googleLogin } from "../../redux/authSlice";
 import { RootState } from "../../redux/store";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../auth/axiosInstance";
-
+import { io } from "socket.io-client";
 
 export const Login = () => {
     const backendURL = import.meta.env.VITE_NODEJS_BACKEND_URL;
     const dispatch = useDispatch();
     const { isUserAuthenticated, user } = useSelector((state: RootState) => state.auth);
-
     const handleGoogleLogin = () => {
         window.location.href = `${backendURL}/auth/google`;
     };
@@ -35,11 +34,31 @@ export const Login = () => {
                 console.log("Fetch user failed", error);
             }
         };
-        if (!isUserAuthenticated) {
-            fetchUser();
-        }
+
+        fetchUser();
+
+
+
 
     }, [dispatch, isUserAuthenticated]);
+
+    useEffect(() => {
+        if (!user?.id) return;
+
+        const socket = io(`${import.meta.env.VITE_SOCKET_SERVER_URL}`, {
+            auth: {
+              userId: user.id
+            }
+          });
+          
+
+        console.log('Socket connected for user:', user.id);
+
+        return () => {
+            socket.disconnect();
+            console.log('Socket disconnected');
+        };
+    }, [user?.id]);
 
 
     return (

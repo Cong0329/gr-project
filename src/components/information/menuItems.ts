@@ -4,7 +4,7 @@ export const menuItems = [
   { id: 'orders', icon: 'box', label: 'Đơn hàng của tôi' },
   { id: 'addresses', icon: 'map-pin', label: 'Quản lý số địa chỉ' },
   { id: 'health-check', icon: 'syringe', label: 'Lịch khám sức khoẻ' },
-  { id: 'vaccination-orders', icon: 'clipboard', label: 'Đơn hàng tiêm chủng' },
+  { id: 'chat', icon: 'clipboard', label: 'Tin nhắn' },
   { id: 'prescriptions', icon: 'pill', label: 'Đơn thuốc của tôi' },
   { id: 'logout', icon: 'log-out', label: 'Đăng xuất' }
 ] as const;

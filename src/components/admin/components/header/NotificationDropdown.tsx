@@ -14,12 +14,17 @@ export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false)
   const dispatch:AppDispatch = useDispatch();
   const { pendingReviews, notifying } = useSelector((state: RootState) => state.reviews);
+  const { role } = useSelector((state: RootState) => state.auth);
   useEffect(() => {
-    dispatch(getPendingReviews());
-  }, [dispatch])
+    if (role.includes("ROLE_ADMIN")) {
+      dispatch(getPendingReviews());
+    }
+  }, [dispatch, role])
 
   useEffect(() => {
-    socket.emit("register-admin");
+    if (role.includes("ROLE_ADMIN")) {
+      socket.emit("register-admin");
+    }
 
     socket.on("new-review", (data) => {
       const newNotification = {

@@ -35,6 +35,43 @@ export const sendMessageUser = createAsyncThunk(
     }
 );
 
+
+
+export const sendMessageDoctor = createAsyncThunk(
+    "message/sendMessageDoctor",
+    async ({ content, image, recipientId ,id }: { content?: string; image?: File, recipientId: string ,id: string}, { rejectWithValue }) => {
+        try {
+            console.log('send')
+            if (!content && !image) {
+                return rejectWithValue({ message: "Bạn phải nhập nội dung hoặc chọn ảnh." });
+            }
+
+            const formData = new FormData();
+            if (content) formData.append("content", content);
+            if (image) formData.append("image", image);
+            formData.append("recipientId", recipientId);
+
+            const response = await axios.post(
+                `${import.meta.env.VITE_NODEJS_BACKEND_URL}/message/${id}/doctor`,
+                formData,
+                {
+                    withCredentials: true,
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                }
+            );
+
+            return response.data;
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                return rejectWithValue(error.response.data);
+            }
+            return rejectWithValue({ message: "Đã có lỗi xảy ra." });
+        }
+    }
+);
+
 export const sendAIMessage = createAsyncThunk(
     "message/sendAIMessage",
     async ({ content }: { content: string }, { rejectWithValue }) => {
@@ -138,6 +175,26 @@ export const getAllMessagesAdmin = createAsyncThunk(
         }
     }
 );
+
+export const getAllMessageUser = createAsyncThunk(
+    "message/getAllMessageUser",
+    async ({ id }: { id: string }, { rejectWithValue }) => {
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_NODEJS_BACKEND_URL}/message/${id}/doctor`,
+                {
+                    withCredentials: true
+                }
+            );
+            return response.data;
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                return rejectWithValue(error.response.data);
+            }
+            return rejectWithValue({ message: 'An unknown error occurred' });
+        }
+    }
+)
 
 export const hidenMessage = createAsyncThunk(
     "message/hidenMessage",
