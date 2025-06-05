@@ -92,6 +92,7 @@ const authSlice = createSlice({
         state.doctor = {} as UserInfo;
         state.status = "idle";
         localStorage.clear();
+        state.role = '';
       },
       resetLoginStatus: (state) => {
         state.status = "idle";

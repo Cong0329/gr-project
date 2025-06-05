@@ -8,7 +8,7 @@ import { setActivePage } from '../../redux/navigationSlice';
 import { validPageIds } from './menuItems';
 import Breadcrumb from '../home_booking/details/component_details/BreadCrumb';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
+import { RootState, AppDispatch } from '../../redux/store';
 import { fetchCarts } from '../../redux/cartAsyncThunk';
 import { resetOrder } from '../../redux/orderSlice';
 
@@ -16,7 +16,7 @@ import { resetOrder } from '../../redux/orderSlice';
 export const InformationBody = () => {
     const [isServiceHovered, setIsServiceHovered] = useState(false);
     const { pageId } = useParams<{ pageId: string }>();
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const navigate = useNavigate();
     const { reset } = useSelector((state: RootState) => state.order);
     useEffect(() => {
@@ -34,7 +34,7 @@ export const InformationBody = () => {
         }
     }, [pageId, dispatch, navigate]);
     return (
-        <main className="flex-1 bg-gray-100 ">
+        <main className="flex-1 bg-gray-100  ">
             <div className="mx-auto bg-white pt-2 ">
                 <NavLink setIsServiceHovered={setIsServiceHovered} />
             </div>
@@ -48,7 +48,7 @@ export const InformationBody = () => {
                             <Sidebar />
 
                         </div>
-                        <div className='w-4/5'>
+                        <div className='w-4/5 h-full'>
                             <MainContent />
 
                         </div>

@@ -15,14 +15,15 @@ interface Props {
 
 export default function UserList({ users, searchTerm, onSearch, onMessage, onSelectUser, selectedUserId }: Props) {
     const { admin } = useSelector((state: RootState) => state.auth);
+    const userMe = useSelector((state: RootState) => state.auth.user);
     const dispatch: AppDispatch = useDispatch();
-
+    const role = useSelector((state: RootState) => state.auth.role);
     const previousSelectedUserRef = useRef<Message | null>(null);
 
     const handleUserClick = (user: Message) => {
         const isUnlocked = user.locked_by === null || user.locked_by === admin?.id;
 
-        if (isUnlocked) {
+        if (isUnlocked && role.includes('ROLE_ADMIN')) {
             const prevUser = previousSelectedUserRef.current;
 
             // Nếu user trước đó tồn tại, khác user hiện tại, và đang bị lock → unlock
@@ -34,6 +35,10 @@ export default function UserList({ users, searchTerm, onSearch, onMessage, onSel
                 dispatch(unlockedMessages(prevUser.id));
             }
 
+            onSelectUser(user);
+            onMessage('');
+            previousSelectedUserRef.current = user;
+        } else if (user.user1?.id === userMe?.id || user.user2?.id === admin?.id || role.includes('ROLE_DOCTOR')) {
             onSelectUser(user);
             onMessage('');
             previousSelectedUserRef.current = user;
@@ -75,12 +80,26 @@ export default function UserList({ users, searchTerm, onSearch, onMessage, onSel
                             className={`p-4 flex items-center cursor-pointer ${selectedUserId === user.id ? 'bg-blue-100' : 'hover:bg-gray-100'}`}
                             onClick={() => handleUserClick(user)}
                         >
-                            <img className="w-12 h-12 rounded-full object-cover" src={user.User.avatar_url} alt={user.User.name} />
-                            <div className="ml-4">
-                                <h2 className={` ${user.locked_by === null || user.locked_by !== admin?.id ? 'text-black font-semibold' : 'text-gray-500'}`}>
-                                    {user.User.name}
-                                </h2>
-                            </div>
+                            {(role.includes('ROLE_DOCTOR') || role.includes('ROLE_ADMIN')) ? (
+                                <>
+                                    <img className="w-12 h-12 rounded-full object-cover" src={user.user1?.avatar_url} alt={user.user1?.name} />
+                                    <div className="ml-4">
+                                        <h2 className={` ${user.locked_by === null || user.locked_by !== admin?.id ? 'text-black font-semibold' : 'text-gray-500'}`}>
+                                            {user.user1?.name}
+                                        </h2>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <img className="w-12 h-12 rounded-full object-cover" src={user.user2?.avatar_url} alt={user.user2?.name} />
+                                    <div className="ml-4">
+                                        <h2 className={` ${user.locked_by === null || user.locked_by !== admin?.id ? 'text-black font-semibold' : 'text-gray-500'}`}>
+                                            {user.user2?.name}
+                                        </h2>
+                                    </div>
+                                </>
+                            )}
+
                         </div>
                     ))
                 )}

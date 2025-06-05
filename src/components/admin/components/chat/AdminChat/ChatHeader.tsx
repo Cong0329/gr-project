@@ -3,7 +3,8 @@ import { Message } from '../../../../../redux/reviewsSlice';
 import { X } from 'lucide-react';
 import { AppDispatch } from '../../../../../redux/store';
 import { unlockedMessages } from '../../../../../redux/messageAsyncThunk';
-
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../../../redux/store';
 interface Props {
     user: Message;
     setSelectedUser: (user: Message | null) => void;
@@ -11,9 +12,14 @@ interface Props {
 
 export default function ChatHeader({ user, setSelectedUser }: Props) {
     const dispatch: AppDispatch = useDispatch();
+    const { role } = useSelector((state: RootState) => state.auth);
+    const isDoctor = role.includes('ROLE_DOCTOR');
+    const isAdmin = role.includes('ROLE_ADMIN');
     const handleUnlockedMessages = () => {
+        if (isAdmin) {
+            dispatch(unlockedMessages(user.id));
 
-        dispatch(unlockedMessages(user.id));
+        }
         setSelectedUser(null);
     };
     return (
@@ -22,15 +28,15 @@ export default function ChatHeader({ user, setSelectedUser }: Props) {
                 <div className="relative">
                     <img
                         className="w-10 h-10 rounded-full object-cover"
-                        src={user.User.avatar_url}
-                        alt={user.User.name}
+                        src={`${(isAdmin || isDoctor) ? user.user1.avatar_url : user.user2.avatar_url}`}
+                        alt={user.user1.name}
                     />
                     {/* {user.User.isOnline && (
                         <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white"></div>
                     )} */}
                 </div>
                 <div className="ml-3">
-                    <h2 className="font-semibold text-gray-800">{user.User.name}</h2>
+                    <h2 className="font-semibold text-gray-800">{(isAdmin || isDoctor) ? user.user1.name : user.user2.name}</h2>
                     {/* <p className="text-sm text-gray-600">{user.User.role}</p> */}
                 </div>
             </div>

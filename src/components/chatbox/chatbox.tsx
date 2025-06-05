@@ -53,7 +53,7 @@ const ChatBox = () => {
 
   useEffect(() => {
     if (user?.id) {
-      socket.emit('join_room', user.id);
+      socket.emit('join_room', user?.id);
       socket.on('new_message', (data: MessageItem) => {
         setMessages(prev => [...prev, data]);
         dispatch(markAsRead(true));

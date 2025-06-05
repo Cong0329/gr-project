@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react';
 import { MessageItem, Message } from '../../../../../redux/reviewsSlice';
-import UserList from './UserList';
-import ChatHeader from './ChatHeader';
-import MessageList from './MessageList';
-import MessageInput from './MessageInput';
+import UserList from '../AdminChat/UserList';
+import ChatHeader from '../AdminChat/ChatHeader';
+import MessageList from '../AdminChat/MessageList';
+import MessageInput from '../AdminChat/MessageInput';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../../../../redux/store';
 import socket from '../../../../../auth/socket';
 import {
-    getAllMessagesAdmin,
+    getAllMessageUser,
+    sendMessageDoctor,
     fetchMessagesAdmin,
-    sendMessageAdmin
 } from '../../../../../redux/messageAsyncThunk';
 import { toast } from 'react-toastify';
 
-export default function AdminChatInterface() {
+export default function DoctorChatInterface() {
     const dispatch: AppDispatch = useDispatch();
     const { admin } = useSelector((state: RootState) => state.auth);
     const messagesUser = useSelector((state: RootState) => state.reviews.messages);
@@ -23,50 +23,32 @@ export default function AdminChatInterface() {
     const [messages, setMessages] = useState<MessageItem[]>([]);
     const [newMessage, setNewMessage] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
-
-    // Load toàn bộ messages khi admin đăng nhập
     useEffect(() => {
         if (admin?.id) {
-            dispatch(getAllMessagesAdmin());
+            socket.emit('join_room', admin.id);
+            dispatch(getAllMessageUser({ id: admin.id }));
         }
     }, [admin?.id, dispatch]);
-
-    // Lắng nghe socket events
     useEffect(() => {
         if (!admin?.id) return;
-        const handleAIMessage = (data: MessageItem) => {
-            toast.info('AI vừa gửi tin nhắn');
-            dispatch(getAllMessagesAdmin());
-            if (selectedUser?.user1?.id === data.User.id) {
-                setMessages(prev => [...prev, data]);
-            }
-        };
 
         const handleNewMessage = (data: MessageItem) => {
-            toast.success('New message received');
-            dispatch(getAllMessagesAdmin());
+            dispatch(getAllMessageUser({ id: admin.id }));
             if (selectedUser?.user1?.id === data.sender_id) {
                 setMessages(prev => [...prev, data]);
+                toast.info('Bạn có tin nhắn mới');
             }
         };
 
-        const handleUnlock = () => dispatch(getAllMessagesAdmin());
-        const handleAdminSend = () => dispatch(getAllMessagesAdmin());
 
-        socket.on('admin_new_message', handleNewMessage);
-        socket.on('ai_new_message', handleAIMessage);
-        socket.on('messageUnlocked', handleUnlock);
-        socket.on('admin_send_message', handleAdminSend);
+        socket.on('new_doctor_message', handleNewMessage);
+
 
         return () => {
-            socket.off('admin_new_message', handleNewMessage);
-            socket.off('ai_new_message', handleAIMessage);
-            socket.off('messageUnlocked', handleUnlock);
-            socket.off('admin_send_message', handleAdminSend);
+            socket.off('new_doctor_message', handleNewMessage);
         };
     }, [admin?.id, selectedUser, dispatch]);
 
-    // Khi chọn user, lấy messages tương ứng
     useEffect(() => {
         if (selectedUser) {
             dispatch(fetchMessagesAdmin(selectedUser.id)).then((res: any) => {
@@ -101,9 +83,10 @@ export default function AdminChatInterface() {
         setMessages(prev => [...prev, tempMessage]); // hiển thị ngay
         setNewMessage('');
 
-        dispatch(sendMessageAdmin({
+        dispatch(sendMessageDoctor({
             content: newMessage,
             recipientId: selectedUser.user1.id,
+            id: admin.id,
         })).then((res: any) => {
             // Optional: Replace tempMessage with res.payload.item if needed
             if (res?.payload?.item) {

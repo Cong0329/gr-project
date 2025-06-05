@@ -60,7 +60,16 @@ export const createAppointment = createAsyncThunk(
       try {
         console.log('Data being sent:', appointmentData);
         const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/appointment/create`, appointmentData);
-        return response.data.data;
+        const data = response.data;
+
+        // Chuyển hướng (redirect) tùy thuộc vào loại thanh toán
+        if (data.paymentUrl) {
+          window.location.href = data.paymentUrl;
+        } else {
+          window.location.href = '/profile/health-check';
+        }
+  
+        return data;
       } catch (error: any) {
         console.error('API Error Response:', error.response?.data);
         console.error('API Error Status:', error.response?.status);
@@ -68,7 +77,7 @@ export const createAppointment = createAsyncThunk(
         return rejectWithValue(error.response?.data?.message || 'Failed to create appointment');
       }
     }
-  );
+  );  
 
   export const confirmAppointment = createAsyncThunk(
     'appointment/confirm',
@@ -189,7 +198,7 @@ const appointmentSlice = createSlice({
       .addCase(createAppointment.fulfilled, (state, action: PayloadAction<Appointment>) => {
         state.creating = false;
         state.createSuccess = true;
-        state.appointments.push(action.payload);
+        // state.appointments.push(action.payload);
       })
       .addCase(createAppointment.rejected, (state, action) => {
         state.creating = false;

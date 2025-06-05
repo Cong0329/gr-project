@@ -8,13 +8,14 @@ import axiosInstance from "../../../../auth/axiosInstance";
 import avatar from "../../../../assets/images/user/owner.jpg"
 import { adminLogin, logout } from "../../../../redux/authSlice";
 import { logoutApi } from "../../../../redux/userAsyncThunk";
+import { io } from "socket.io-client";
 
 export default function UserDropdown() {
   const { admin, isAuthenticated, status, role } = useSelector((state: RootState) => state.auth);
   const userRole = Array.isArray(role) ? role[0] : role || "";
 
   const [isOpen, setIsOpen] = useState(false);
-  const dispatch:AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -23,33 +24,51 @@ export default function UserDropdown() {
   function closeDropdown() {
     setIsOpen(false);
   }
+  const fetchAdmin = async () => {
+    console.log("Fetching user..."); // ✅ log
+
+    try {
+      const res = await axiosInstance.get(`/user/admin/me`, {
+        withCredentials: true
+      });
+
+      if (res.data) {
+
+        dispatch(adminLogin(res.data));
+
+      }
+    } catch (error) {
+      console.log("Fetch user failed", error);
+    }
+  }
+  useEffect(() => {
+    fetchAdmin();
+
+  }, [dispatch, isAuthenticated]);
 
   useEffect(() => {
-      const fetchAdmin = async () => {
-        console.log("Fetching user..."); // ✅ log
-
-        try {
-          const res = await axiosInstance.get(`/user/admin/me`, {
-            withCredentials: true
-          });
-
-          if (res.data) {
-
-            dispatch(adminLogin(res.data));
-
-          }
-        } catch (error) {
-          console.log("Fetch user failed", error);
-        }
-    }
-    if (!isAuthenticated) {
-      fetchAdmin();
-    } else if (status === "succeeded") {
+    if (status === "succeeded") {
       fetchAdmin();
     }
-  }, [dispatch, isAuthenticated, status]);
+  }, [dispatch, status]);
+
+  useEffect(() => {
+    if (!admin?.id) return;
+
+    const socket = io(`${import.meta.env.VITE_SOCKET_SERVER_URL}`, {
+      auth: {
+        userId: admin.id
+      }
+    });
 
 
+    console.log('Socket connected for user:', admin.id);
+
+    return () => {
+      socket.disconnect();
+      console.log('Socket disconnected');
+    };
+  }, [admin?.id]);
 
 
   return (

@@ -53,22 +53,23 @@ const Checkout: React.FC = () => {
         <p className="text-sm font-semibold">Chọn phương thức thanh toán</p>
 
         <div className="mt-2 bg-white rounded-xl shadow-md p-4">
-          {method.map((item, index) => (
-            <label key={index} className="flex items-center space-x-2">
-              <input
-                type="radio"
-                name="payment"
-                value={item.method}
-                onChange={(e) => {
-                  dispatch(addPaymentMethod(e.target.value));
-                }}
-                defaultChecked={index === 0}
-              />
-               <img src={methodImages[item.method]} alt={item.method} className="w-10 h-10" />
-              <span>{item.description}</span>
-            </label>
-          ))}
-
+        {method
+            .filter((item) => item.method !== "cash")
+            .map((item, index) => (
+              <label key={index} className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="payment"
+                  value={item.method}
+                  onChange={(e) => {
+                    dispatch(addPaymentMethod(e.target.value));
+                  }}
+                  defaultChecked={index === 0}
+                />
+                 <img src={methodImages[item.method]} alt={item.method} className="w-10 h-10" />
+                <span>{item.description}</span>
+              </label>
+            ))}
          
         </div>
 
