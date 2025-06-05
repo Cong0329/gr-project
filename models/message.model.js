@@ -19,7 +19,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID, // hoặc kiểu ID bạn dùng cho admin
       allowNull: true,
     },
-    update_at : {
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    update_at: {
       type: DataTypes.DATE,
       allowNull: true
     }
@@ -30,7 +34,8 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Message.associate = (models) => {
-    Message.belongsTo(models.User, { foreignKey: 'user_id' });
+    Message.belongsTo(models.User, { foreignKey: 'user_id', as: 'user1' });
+    Message.belongsTo(models.User, { foreignKey: 'locked_by', as: 'user2' });
     Message.hasMany(models.MessageItem, { foreignKey: 'message_id', as: 'items' });
   };
 

@@ -5,13 +5,14 @@ const { Op } = require('sequelize');
 exports.createBookingRequest = async (req, res) => {
   try {
     const { user_id, package_type, package_id, requested_date, requested_time_slot, notes } = req.body;
-    
+
     // Kiểm tra gói dịch vụ tồn tại
     const servicePackage = await ServicePackage.findByPk(package_id);
     if (!servicePackage) {
       return res.status(404).json({ message: 'Không tìm thấy gói dịch vụ' });
     }
-    
+   
+
     const existingBooking = await PackageBookingRequest.findOne({
       where: {
         package_id,
@@ -22,14 +23,14 @@ exports.createBookingRequest = async (req, res) => {
         }
       }
     });
-    
+
     if (existingBooking) {
-      return res.status(409).json({ 
+      return res.status(409).json({
         message: 'Khung giờ này đã được đặt bởi người khác. Vui lòng chọn khung giờ khác.',
         error_code: 'SLOT_ALREADY_BOOKED'
       });
     }
-    
+
     // Tạo booking request
     const bookingRequest = await PackageBookingRequest.create({
       user_id,
@@ -40,7 +41,7 @@ exports.createBookingRequest = async (req, res) => {
       notes,
       status: 'pending'
     });
-    
+
     return res.status(201).json(bookingRequest);
   } catch (error) {
     console.error('Error creating booking request:', error);
@@ -52,13 +53,13 @@ exports.createBookingRequest = async (req, res) => {
 exports.assignSchedule = async (req, res) => {
   try {
     const { booking_request_id, doctor_id, start_time, end_time } = req.body;
-    
+
     // Tìm booking request
     const bookingRequest = await PackageBookingRequest.findByPk(booking_request_id);
     if (!bookingRequest) {
       return res.status(404).json({ message: 'Không tìm thấy yêu cầu đặt lịch' });
     }
-    
+
     // Tạo lịch với service_id chính là package_id
     const schedule = await Schedule.create({
       doctor_id,
@@ -69,14 +70,14 @@ exports.assignSchedule = async (req, res) => {
       type: bookingRequest.package_type,
       service_id: bookingRequest.package_id,
     });
-    
+
     // Cập nhật booking request với schedule_id
     await bookingRequest.update({
       status: 'assigned',
       schedule_id: schedule.id
     });
-    
-    return res.status(200).json({ 
+
+    return res.status(200).json({
       message: 'Đã gán lịch thành công',
       schedule,
       bookingRequest
@@ -91,10 +92,10 @@ exports.assignSchedule = async (req, res) => {
 exports.getBookingRequestDetails = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     const bookingRequest = await PackageBookingRequest.findByPk(id, {
       include: [
-        { 
+        {
           association: 'package',
           attributes: ['id', 'name', 'type', 'description', 'price']
         },
@@ -113,11 +114,11 @@ exports.getBookingRequestDetails = async (req, res) => {
         }
       ]
     });
-    
+
     if (!bookingRequest) {
       return res.status(404).json({ message: 'Không tìm thấy yêu cầu đặt lịch' });
     }
-    
+
     return res.status(200).json(bookingRequest);
   } catch (error) {
     console.error('Error getting booking request details:', error);
@@ -129,7 +130,7 @@ exports.getBookingRequestDetails = async (req, res) => {
 exports.getAllBookingRequests = async (req, res) => {
   try {
     const { status, from_date, to_date, page = 1, limit = 10 } = req.query;
-    
+
     // Xây dựng điều kiện tìm kiếm
     const whereConditions = {};
     if (status) whereConditions.status = status;
@@ -146,15 +147,15 @@ exports.getAllBookingRequests = async (req, res) => {
         [Op.lte]: to_date
       };
     }
-    
+
     // Tính toán offset cho phân trang
     const offset = (page - 1) * limit;
-    
+
     // Thực hiện truy vấn với phân trang
     const { count, rows: bookingRequests } = await PackageBookingRequest.findAndCountAll({
       where: whereConditions,
       include: [
-        { 
+        {
           model: User,
           as: 'user',
           attributes: ['id', 'name', 'email', 'phone']
@@ -179,7 +180,7 @@ exports.getAllBookingRequests = async (req, res) => {
       offset: offset,
       order: [['createdAt', 'DESC']]
     });
-    
+
     // Trả về kết quả với thông tin phân trang
     return res.status(200).json({
       total: count,
@@ -306,36 +307,36 @@ exports.cancelBookingRequest = async (req, res) => {
 exports.getBookingRequests = async (req, res) => {
   try {
     const { date, package_id } = req.query;
-    
+
     const whereClause = {};
-    
+
     if (date) {
       whereClause.requested_date = date;
     }
-    
+
     if (package_id) {
-      whereClause.package_id = package_id; 
+      whereClause.package_id = package_id;
     }
-    
+
     console.log('Query conditions:', whereClause);
-    
+
     const bookings = await PackageBookingRequest.findAll({
       where: whereClause,
       attributes: [
         'id',
-        'requested_date', 
-        'requested_time_slot', 
+        'requested_date',
+        'requested_time_slot',
         'status',
         'package_id'
       ],
     });
-    
+
     return res.status(200).json(bookings);
   } catch (error) {
     console.error('Error fetching booking requests:', error);
-    return res.status(500).json({ 
+    return res.status(500).json({
       message: 'Đã xảy ra lỗi khi lấy danh sách yêu cầu đặt lịch',
-      error: error.message 
+      error: error.message
     });
   }
 };

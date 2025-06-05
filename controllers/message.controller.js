@@ -2,6 +2,8 @@
 const { Message, MessageItem, User } = require('../models');
 const cloudinary = require('../utils/cloudinary'); // Đảm bảo bạn đã cấu hình Cloudinary
 const streamifier = require('streamifier');
+const nodemailer = require('nodemailer');
+const { Op } = require('sequelize');
 const IA_USER_ID = 'bc38c103-ab3b-4fb6-9f55-677cabd62412';
 
 // 1. User hoặc Admin gửi tin nhắn
@@ -35,7 +37,7 @@ exports.sendMessage = async (req, res) => {
         if (isAdmin) {
             if (!recipientId) return res.status(400).json({ message: 'Missing recipientId' });
 
-            message = await Message.findOne({ where: { user_id: recipientId } });
+            message = await Message.findOne({ where: { user_id: recipientId, type: 'admin' } });
 
             if (!message) {
                 return res.status(404).json({ message: 'Conversation not found' });
@@ -53,11 +55,12 @@ exports.sendMessage = async (req, res) => {
             // 2. USER GỬI CHO ADMIN
             recipientId = null; // Không cần
 
-            message = await Message.findOne({ where: { user_id: senderId } });
+            message = await Message.findOne({ where: { user_id: senderId, type: 'admin' } });
 
             if (!message) {
-                message = await Message.create({ user_id: senderId });
+                message = await Message.create({ user_id: senderId, type: 'admin' });
             }
+
 
             if (message.is_hidden_from_admin) {
                 message.is_hidden_from_admin = false;
@@ -72,6 +75,8 @@ exports.sendMessage = async (req, res) => {
             content,
             image_url: imageUrl,
         });
+
+      
 
         message.update_at = new Date();
         await message.save();
@@ -116,12 +121,137 @@ exports.sendMessage = async (req, res) => {
 };
 
 
+
+
+
+exports.sendMessageWithDoctor = async (req, res) => {
+    try {
+        const senderId = req.params.id;
+        const { recipientId, content } = req.body;
+        let imageUrl = null;
+
+        if (!recipientId) {
+            return res.status(400).json({ message: 'Missing recipientId' });
+        }
+
+        // Upload ảnh nếu có
+        if (req.file) {
+            const streamUpload = () => {
+                return new Promise((resolve, reject) => {
+                    const stream = cloudinary.uploader.upload_stream(
+                        { folder: 'messages' },
+                        (error, result) => {
+                            if (error) reject(error);
+                            else resolve(result);
+                        }
+                    );
+                    streamifier.createReadStream(req.file.buffer).pipe(stream);
+                });
+            };
+            const result = await streamUpload();
+            imageUrl = result.secure_url;
+        }
+
+        // Tìm hoặc tạo cuộc trò chuyện 1:1 giữa sender và recipient
+        let message = await Message.findOne({
+            where: {
+                type: 'doctor',
+                [Op.or]: [
+                    { user_id: senderId, locked_by: recipientId },
+                    { user_id: recipientId, locked_by: senderId },
+                ],
+            },
+        });
+
+        if (!message) {
+            message = await Message.create({
+                user_id: senderId,
+                locked_by: recipientId,
+                type: 'doctor',
+            });
+        }
+
+        // Tạo tin nhắn mới
+        const newMessageItem = await MessageItem.create({
+            message_id: message.id,
+            sender_id: senderId,
+            content,
+            image_url: imageUrl,
+        });
+
+        message.update_at = new Date();
+        await message.save();
+
+        const sender = await User.findByPk(senderId);
+
+        // Thông tin người gửi
+        const senderInfo = {
+            id: sender.id,
+            name: sender.name,
+            email: sender.email,
+            avatar_url: sender.avatar_url,
+        };
+
+        const payload = {
+            message_id: message.id,
+            sender_id: senderId,
+            content,
+            image_url: imageUrl,
+            createdAt: newMessageItem.createdAt,
+            updateAt: newMessageItem.updatedAt,
+            User: senderInfo,
+        };
+
+        // Gửi socket cho cả 2 người
+        if (req.io) {
+            req.io.to(senderId.toString()).emit('new_doctor_message', payload);
+            req.io.to(recipientId.toString()).emit('new_doctor_message', payload);
+        }
+
+        // Gửi email nếu người nhận offline
+        const isRecipientOnline = global.onlineUsers?.has(recipientId);
+        const recipient = await User.findByPk(recipientId);
+
+        if (!isRecipientOnline && recipient?.email) {
+            const transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS,
+                },
+            });
+
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: recipient.email,
+                subject: 'Tin nhắn từ hệ thống',
+                html: `
+                    <p>Bạn có tin nhắn mới từ ${sender.name}</p>
+                    <p>Nhấn vào đường dẫn để mở cuộc trò chuyện:</p>
+                    <a href="${process.env.FRONTEND_URL}/message/${message.id}">Mở tin nhắn</a>
+                `,
+            };
+
+            await transporter.sendMail(mailOptions);
+        }
+
+        res.status(201).json({ message: 'Message sent', item: newMessageItem });
+
+    } catch (error) {
+        console.error('Send message error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+
+
+
 // 2. Admin lấy tất cả các cuộc trò chuyện không bị ẩn
 exports.getAllMessages = async (req, res) => {
     try {
         const messages = await Message.findAll({
-            where: { is_hidden_from_admin: false },
-            include: [{ model: User, attributes: ['id', 'name', 'email', 'avatar_url'] }],
+            where: { is_hidden_from_admin: false, type: 'admin' },
+            include: [{ model: User, as: 'user1', attributes: ['id', 'name', 'email', 'avatar_url'] }],
             order: [['updatedAt', 'DESC']],
             attributes: ['id', 'locked_by', 'updatedAt']
 
@@ -133,6 +263,32 @@ exports.getAllMessages = async (req, res) => {
     }
 };
 
+
+exports.getAllMessagesById = async (req, res) => {
+    const userId = req.params.id;
+    try {
+        const messages = await Message.findAll({
+            where: { 
+                type: 'doctor',
+                [Op.or]: [
+                    { user_id: userId},
+                    { locked_by: userId },
+                ]
+            },
+            include: [
+                { model: User, as: 'user1', attributes: ['id', 'name', 'email', 'avatar_url'] },
+                { model: User, as: 'user2', attributes: ['id', 'name', 'email', 'avatar_url'] },
+            ],
+            order: [['updatedAt', 'DESC']],
+            attributes: ['id', 'updatedAt']
+
+        });
+        res.json(messages);
+    } catch (error) {
+        console.error('Get messages error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
 
 exports.sendAIMessage = async (req, res) => {
     try {
@@ -161,10 +317,10 @@ exports.sendAIMessage = async (req, res) => {
         }
 
         // Lấy hoặc tạo conversation
-        let message = await Message.findOne({ where: { user_id: recipientId } });
+        let message = await Message.findOne({ where: { user_id: recipientId, type:'admin' } });
 
         if (!message) {
-            message = await Message.create({ user_id: recipientId });
+            message = await Message.create({ user_id: recipientId, type: 'admin' });
         }
 
         const newMessageItem = await MessageItem.create({
@@ -217,7 +373,7 @@ exports.getMessageItems = async (req, res) => {
     try {
         const { id } = req.params;
         const message = await Message.findOne({
-            where: { user_id: id }
+            where: { user_id: id, type: 'admin' }
         });
         if (!message) return res.json([]);
         const items = await MessageItem.findAll({
@@ -229,6 +385,18 @@ exports.getMessageItems = async (req, res) => {
         console.error('Get message items error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
+};
+
+exports.checkUsersOnlineStatus = (req, res) => {
+    const { userIds } = req.body;
+    const status = {};
+    const onlineUsers = global.onlineUsers || new Map();
+
+    userIds.forEach(id => {
+        status[id] = onlineUsers.has(id.toString());
+    });
+
+    res.json({ status });
 };
 
 

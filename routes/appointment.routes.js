@@ -16,7 +16,7 @@ const appointmentValidation = [
   check('type').isIn(['specialist', 'specialist_online'])
     .withMessage('Type must be specialist or specialist_online'),
   check('service_id').isNumeric().withMessage('Service ID must be numeric'),
-  check('payment_method').isIn(['cash', 'online']).withMessage('Payment method must be cash or online')
+  check('payment_method').isIn(['vnpay', 'cash', 'online']).withMessage('Payment method must be cash or online')
 ];
 
 // Public Routes

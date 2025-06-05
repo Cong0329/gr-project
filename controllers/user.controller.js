@@ -86,9 +86,17 @@ exports.updateProfile = async (req, res) => {
 
     // Nếu có file ảnh thì upload lên Cloudinary
     if (req.file) {
+      if (user.avatar_url) {
+        try {
+          const publicId = image.image.split('/').pop().split('.')[0];
+          await cloudinary.uploader.destroy(`avatars/${publicId}`);
+        } catch (err) {
+          console.error('Error deleting image:', err);
+        }
+      }
       await new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'users' },
+          { folder: 'avatars' },
           async (error, result) => {
             if (error) return reject(error);
             user.avatar_url = result.secure_url;
