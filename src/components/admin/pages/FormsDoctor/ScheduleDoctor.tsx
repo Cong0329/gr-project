@@ -69,8 +69,7 @@ export const DoctorScheduleComponent = () => {
       (apt) => apt.schedule_id === schedule.id && apt.status !== "cancelled"
     );
 
-    // Sử dụng patient_info từ appointment thay vì từ user info
-    return appointment?.patient_info || null;
+    return appointment || null;
   };
 
   // Function để phân chia lịch theo thời gian
@@ -384,7 +383,8 @@ export const DoctorScheduleComponent = () => {
 
   // Render schedule card
   const renderScheduleCard = (schedule) => {
-    const patientInfo = getPatientInfoForSchedule(schedule);
+    const appointmentData = getPatientInfoForSchedule(schedule);
+    const patientInfo = appointmentData?.patient_info || null;
     const isBooked = schedule.status === "booked";
     const isCompleted = schedule.status === "completed";
     const isExpanded = expandedSchedules.has(schedule.id);
@@ -414,7 +414,6 @@ export const DoctorScheduleComponent = () => {
                 </span>
               </div>
             </div>
-
             {/* Doctor Info */}
             {schedule.doctor && (
               <div className="bg-white rounded-xl p-4 mb-4 border border-gray-100">
@@ -443,7 +442,6 @@ export const DoctorScheduleComponent = () => {
                 </div>
               </div>
             )}
-
             {/* Service Info & Status */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
@@ -476,7 +474,7 @@ export const DoctorScheduleComponent = () => {
                 )}
 
                 {/* Nút xem thông tin patient nếu đã đặt */}
-                {isBooked && patientInfo && (
+                {isBooked && appointmentData && (
                   <button
                     onClick={() => togglePatientInfo(schedule.id)}
                     className="flex items-center space-x-2 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors duration-200"
@@ -493,13 +491,17 @@ export const DoctorScheduleComponent = () => {
                   </button>
                 )}
 
-                {isCompleted && patientInfo && (
+                {isCompleted && appointmentData && (
                   <button
                     onClick={() =>
                       navigate("/doctor/medical-record", {
                         state: {
                           patient: patientInfo,
+                          patientId: appointmentData.user_id,
                           scheduleId: schedule.id,
+                          appointmentId: appointmentData.id,
+                          appointmentData: appointmentData,
+                          scheduleData: schedule,
                         },
                       })
                     }
@@ -510,7 +512,6 @@ export const DoctorScheduleComponent = () => {
                 )}
               </div>
             </div>
-
             {/* Ghi chú nếu có */}
             {schedule.note && !isEditing && (
               <div className="mt-4 p-3 bg-gray-50 rounded-lg border-l-4 border-gray-300">
@@ -527,94 +528,83 @@ export const DoctorScheduleComponent = () => {
                 </div>
               </div>
             )}
-
             {/* Form chỉnh sửa */}
             {isEditing && renderEditForm(schedule)}
-
             {/* Patient Info - Hiển thị khi expanded */}
-            {isBooked && patientInfo && isExpanded && !isEditing && (
-              <div className="bg-gradient-to-r from-blue-50 to-sky-50 rounded-xl p-5 mt-4 border-l-4 border-blue-400">
+            {isBooked && isExpanded && appointmentData && (
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 mt-4">
                 <div className="flex items-center space-x-2 mb-3">
-                  <Users className="w-5 h-5 text-blue-600" />
-                  <h4 className="font-semibold text-blue-800">
+                  <Heart className="w-5 h-5 text-green-600" />
+                  <h4 className="font-semibold text-green-800">
                     Thông tin bệnh nhân
                   </h4>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Patient Basic Info */}
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-lg">
+                {patientInfo ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center space-x-3">
+                      <span className="text-2xl">
                         {getGenderIcon(patientInfo.gender)}
                       </span>
                       <div>
-                        <span className="font-medium text-gray-800">
+                        <p className="font-medium text-gray-800">
                           {patientInfo.name}
-                        </span>
-                        <span className="text-sm text-gray-600 ml-2">
-                          ({patientInfo.gender})
-                        </span>
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          ID: {appointmentData.user_id}
+                        </p>
                       </div>
                     </div>
 
-                    {patientInfo.dob && (
-                      <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <CalendarDays className="w-4 h-4 text-blue-500" />
-                        <span>Sinh: {formatDateOfBirth(patientInfo.dob)}</span>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="w-4 h-4 text-gray-500" />
+                        <span>
+                          Ngày sinh:{" "}
+                          {formatDateOfBirth(patientInfo.date_of_birth)}
+                        </span>
                       </div>
-                    )}
 
-                    {patientInfo.phone && (
-                      <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <Phone className="w-4 h-4 text-green-500" />
-                        <span>{patientInfo.phone}</span>
-                      </div>
-                    )}
-
-                    {patientInfo.email && (
-                      <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <Mail className="w-4 h-4 text-orange-500" />
-                        <span>{patientInfo.email}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Address & Reason */}
-                  <div className="space-y-3">
-                    {patientInfo.address && (
-                      <div className="flex items-start space-x-2 text-sm text-gray-600">
-                        <MapPin className="w-4 h-4 text-red-500 mt-0.5" />
-                        <span>{patientInfo.address}</span>
-                      </div>
-                    )}
-
-                    {patientInfo.reason && (
-                      <div className="flex items-start space-x-2 text-sm">
-                        <FileText className="w-4 h-4 text-purple-500 mt-0.5" />
-                        <div>
-                          <span className="font-medium text-gray-700">
-                            Lý do khám:
-                          </span>
-                          <p className="text-gray-600 mt-1">
-                            {patientInfo.reason}
-                          </p>
+                      {patientInfo.phone && (
+                        <div className="flex items-center space-x-2">
+                          <Phone className="w-4 h-4 text-gray-500" />
+                          <span>{patientInfo.phone}</span>
                         </div>
-                      </div>
-                    )}
+                      )}
+
+                      {patientInfo.email && (
+                        <div className="flex items-center space-x-2">
+                          <Mail className="w-4 h-4 text-gray-500" />
+                          <span>{patientInfo.email}</span>
+                        </div>
+                      )}
+
+                      {patientInfo.address && (
+                        <div className="flex items-center space-x-2">
+                          <MapPin className="w-4 h-4 text-gray-500" />
+                          <span>{patientInfo.address}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="flex items-center space-x-2 text-gray-600">
+                    <AlertCircle className="w-4 h-4" />
+                    <span>Chưa có thông tin chi tiết bệnh nhân</span>
+                    <span className="text-sm">
+                      (User ID: {appointmentData.user_id})
+                    </span>
+                  </div>
+                )}
               </div>
             )}
-
             {/* Cảnh báo nếu không thể chỉnh sửa */}
             {!canEdit && !isEditing && (
               <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <AlertCircle className="w-4 h-4 text-amber-600" />
                   <span className="text-sm text-amber-700">
-                    Lịch này đã qua hoặc đã có bệnh nhân đặt lịch, không thể
-                    chỉnh sửa
+                    Lịch này đã qua không thể chỉnh sửa
                   </span>
                 </div>
               </div>

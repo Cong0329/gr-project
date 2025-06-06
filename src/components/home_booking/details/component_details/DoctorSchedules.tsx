@@ -376,10 +376,14 @@ const DoctorSchedules = () => {
                                   handleScheduleSelection(doctor, schedule)
                                 }
                                 disabled={
-                                  schedule.status === "booked" || isTimeInPast
+                                  schedule.status === "booked" ||
+                                  schedule.status === "completed" ||
+                                  isTimeInPast
                                 }
                                 className={`p-2 rounded-lg text-center ${
-                                  schedule.status === "booked" || isTimeInPast
+                                  schedule.status === "booked" ||
+                                  schedule.status === "completed" ||
+                                  isTimeInPast
                                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                                     : selectedSchedule?.id === schedule.id &&
                                       selectedDoctor?.id === doctor.id
