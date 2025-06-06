@@ -165,7 +165,7 @@ const DoctorSchedules = () => {
             name: `Khám ${department?.name || "Chuyên khoa"} với BS. ${
               selectedDoctor.name
             }`,
-            price: selectedDoctor.price || 500000,
+            price: department?.price || 500000,
             date: format(selectedDate, "yyyy-MM-dd"),
             time: `${selectedSchedule.start_time.slice(
               0,
