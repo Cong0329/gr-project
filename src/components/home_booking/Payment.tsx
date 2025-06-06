@@ -203,46 +203,6 @@ const PaymentPage = () => {
     }
   };
 
-  // Xử lý thanh toán VNPay cho booking request
-  // const processBookingRequestVNPayPayment = async (bookingRequestId) => {
-  //   if (!bookingRequestId) {
-  //     toast.error("Thông tin đặt gói khám không hợp lệ");
-  //     return false;
-  //   }
-
-  //   try {
-  //     // Log cho debug
-  //     console.log("Đang gửi yêu cầu thanh toán VNPay cho booking request:", {
-  //       bookingRequestId: bookingRequestId,
-  //       amount: packageInfo?.price || 0,
-  //       userInfo: userInfo,
-  //     });
-
-  //     // Gửi request tạo URL thanh toán VNPay
-  //     const response = await axios.post("/api/payment/vnpay/create", {
-  //       // Sử dụng cùng endpoint cho cả 2 loại
-  //       bookingRequestId: bookingRequestId,
-  //       type: "package", // Thêm trường này để backend phân biệt loại thanh toán
-  //       amount: packageInfo?.price || 0,
-  //       userInfo: userInfo,
-  //     });
-
-  //     // Nếu thành công, chuyển hướng đến trang thanh toán VNPay
-  //     if (response.data && response.data.paymentUrl) {
-  //       window.location.href = response.data.paymentUrl;
-  //       return true;
-  //     } else {
-  //       console.error("VNPay response:", response.data);
-  //       toast.error("Không nhận được URL thanh toán");
-  //       return false;
-  //     }
-  //   } catch (error) {
-  //     console.error("VNPay error:", error);
-  //     toast.error("Có lỗi xảy ra khi khởi tạo thanh toán qua VNPay");
-  //     return false;
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -254,7 +214,6 @@ const PaymentPage = () => {
     setIsSubmitting(true);
 
     try {
-      // KHÔNG dùng useSelector ở đây nữa, sử dụng user đã lấy từ trên
       if (!user || !user.id) {
         toast.error("Vui lòng đăng nhập để tiếp tục");
         return;

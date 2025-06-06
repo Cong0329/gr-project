@@ -15,6 +15,7 @@ import {
   TableIcon,
   UserCircleIcon,
   ChatIcon,
+  FileIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import { useSelector } from "react-redux";
@@ -112,6 +113,11 @@ const doctorNavItems: NavItem[] = [
     icon: <ChatIcon />,
     name: "Chat",
     path: "/doctor/chat",
+  },
+  {
+    icon: <FileIcon />,
+    name: "hồ sơ bệnh án",
+    path: "/doctor/medical-record",
   },
 ];
 

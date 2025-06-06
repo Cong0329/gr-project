@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchMyDoctorSchedules } from "../../../../redux/scheduleSlice";
+import {
+  fetchMyDoctorSchedules,
+  updateSchedule,
+} from "../../../../redux/scheduleSlice";
 import { getDoctorAppointments } from "../../../../redux/appointmentSlice";
 import {
   Calendar,
@@ -18,8 +21,14 @@ import {
   Plus,
   ChevronDown,
   ChevronUp,
+  Edit3,
+  Save,
+  X,
+  Trash2,
+  AlertCircle,
 } from "lucide-react";
 import { CreateSchedule } from "./Components/CreateSchedule";
+import { useNavigate } from "react-router-dom";
 
 export const DoctorScheduleComponent = () => {
   const dispatch = useDispatch();
@@ -34,6 +43,18 @@ export const DoctorScheduleComponent = () => {
   const [activeTab, setActiveTab] = useState("upcoming");
 
   const [showCreateModal, setShowCreateModal] = useState(false);
+
+  const navigate = useNavigate();
+
+  // State để quản lý việc chỉnh sửa lịch
+  const [editingSchedule, setEditingSchedule] = useState(null);
+  const [editForm, setEditForm] = useState({
+    date: "",
+    start_time: "",
+    end_time: "",
+    status: "",
+    note: "",
+  });
 
   useEffect(() => {
     dispatch(fetchMyDoctorSchedules({}));
@@ -99,6 +120,74 @@ export const DoctorScheduleComponent = () => {
     setExpandedSchedules(newExpanded);
   };
 
+  // Bắt đầu chỉnh sửa lịch
+  const startEditSchedule = (schedule) => {
+    setEditingSchedule(schedule.id);
+    setEditForm({
+      date: schedule.date,
+      start_time: schedule.start_time,
+      end_time: schedule.end_time,
+      status: schedule.status,
+      note: schedule.note || "",
+    });
+  };
+
+  // Hủy chỉnh sửa
+  const cancelEdit = () => {
+    setEditingSchedule(null);
+    setEditForm({
+      date: "",
+      start_time: "",
+      end_time: "",
+      status: "",
+      note: "",
+    });
+  };
+
+  // Lưu thay đổi
+  const saveScheduleChanges = async (scheduleId) => {
+    try {
+      const formattedUpdateData = {
+        ...editForm,
+        start_time: editForm.start_time
+          ? formatTime(editForm.start_time)
+          : editForm.start_time,
+        end_time: editForm.end_time
+          ? formatTime(editForm.end_time)
+          : editForm.end_time,
+      };
+      await dispatch(
+        updateSchedule({
+          scheduleId: scheduleId,
+          updateData: formattedUpdateData,
+        })
+      ).unwrap();
+
+      setEditingSchedule(null);
+      setEditForm({
+        date: "",
+        start_time: "",
+        end_time: "",
+        status: "",
+        note: "",
+      });
+
+      // Refresh lại danh sách lịch
+      dispatch(fetchMyDoctorSchedules({}));
+    } catch (error) {
+      console.error("Error updating schedule:", error);
+      alert("Có lỗi xảy ra khi cập nhật lịch làm việc");
+    }
+  };
+
+  // Xử lý thay đổi form
+  const handleFormChange = (field, value) => {
+    setEditForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case "booked":
@@ -107,6 +196,8 @@ export const DoctorScheduleComponent = () => {
         return "bg-blue-100 text-blue-800 border-blue-200";
       case "cancelled":
         return "bg-red-100 text-red-800 border-red-200";
+      case "completed":
+        return "bg-amber-100 text-amber-800 border-amber-200";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
@@ -120,6 +211,8 @@ export const DoctorScheduleComponent = () => {
         return "Chưa đặt";
       case "cancelled":
         return "Đã hủy";
+      case "completed":
+        return "Đã hoàn thành";
       default:
         return status;
     }
@@ -167,11 +260,136 @@ export const DoctorScheduleComponent = () => {
     return date.toLocaleDateString("vi-VN");
   };
 
+  // Kiểm tra xem lịch có thể chỉnh sửa không
+  const canEditSchedule = (schedule) => {
+    const scheduleDateTime = new Date(
+      `${schedule.date}T${schedule.start_time}`
+    );
+    const now = new Date();
+    // Có thể chỉnh sửa nếu lịch chưa qua hoặc đang trong quá trình diễn ra
+    return scheduleDateTime >= now || schedule.status === "available";
+  };
+
+  // Render form chỉnh sửa
+  const renderEditForm = (schedule) => {
+    return (
+      <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 mt-4">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-2">
+            <Edit3 className="w-5 h-5 text-yellow-600" />
+            <h4 className="font-semibold text-yellow-800">
+              Chỉnh sửa lịch làm việc
+            </h4>
+          </div>
+          <button
+            onClick={cancelEdit}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Ngày */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ngày làm việc
+            </label>
+            <input
+              type="date"
+              value={editForm.date}
+              onChange={(e) => handleFormChange("date", e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Giờ bắt đầu */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Giờ bắt đầu
+            </label>
+            <input
+              type="time"
+              value={editForm.start_time}
+              onChange={(e) => handleFormChange("start_time", e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Giờ kết thúc */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Giờ kết thúc
+            </label>
+            <input
+              type="time"
+              value={editForm.end_time}
+              onChange={(e) => handleFormChange("end_time", e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Trạng thái */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Trạng thái
+            </label>
+            <select
+              value={editForm.status}
+              onChange={(e) => handleFormChange("status", e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="available">Chưa đặt</option>
+              <option value="booked">Đã đặt</option>
+              <option value="completed">Đã hoàn thành</option>
+              <option value="cancelled">Đã hủy</option>
+            </select>
+          </div>
+
+          {/* Ghi chú */}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ghi chú
+            </label>
+            <textarea
+              value={editForm.note}
+              onChange={(e) => handleFormChange("note", e.target.value)}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Thêm ghi chú cho lịch làm việc..."
+            />
+          </div>
+        </div>
+
+        {/* Buttons */}
+        <div className="flex items-center justify-end space-x-3 mt-6">
+          <button
+            onClick={cancelEdit}
+            className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+          >
+            <X className="w-4 h-4" />
+            <span>Hủy</span>
+          </button>
+          <button
+            onClick={() => saveScheduleChanges(schedule.id)}
+            className="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+          >
+            <Save className="w-4 h-4" />
+            <span>Lưu thay đổi</span>
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   // Render schedule card
   const renderScheduleCard = (schedule) => {
     const patientInfo = getPatientInfoForSchedule(schedule);
     const isBooked = schedule.status === "booked";
+    const isCompleted = schedule.status === "completed";
     const isExpanded = expandedSchedules.has(schedule.id);
+    const isEditing = editingSchedule === schedule.id;
+    const canEdit = canEditSchedule(schedule);
 
     return (
       <div
@@ -246,6 +464,17 @@ export const DoctorScheduleComponent = () => {
                   {getStatusText(schedule.status)}
                 </div>
 
+                {/* Nút chỉnh sửa */}
+                {canEdit && !isEditing && (
+                  <button
+                    onClick={() => startEditSchedule(schedule)}
+                    className="flex items-center space-x-2 px-3 py-2 bg-yellow-50 hover:bg-yellow-100 text-yellow-600 rounded-lg transition-colors duration-200"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                    <span className="text-sm font-medium">Chỉnh sửa</span>
+                  </button>
+                )}
+
                 {/* Nút xem thông tin patient nếu đã đặt */}
                 {isBooked && patientInfo && (
                   <button
@@ -263,11 +492,47 @@ export const DoctorScheduleComponent = () => {
                     )}
                   </button>
                 )}
+
+                {isCompleted && patientInfo && (
+                  <button
+                    onClick={() =>
+                      navigate("/doctor/medical-record", {
+                        state: {
+                          patient: patientInfo,
+                          scheduleId: schedule.id,
+                        },
+                      })
+                    }
+                    className="flex items-center space-x-2 px-3 py-2 bg-yellow-50 hover:bg-yellow-100 text-yellow-600 rounded-lg transition-colors duration-200"
+                  >
+                    Lập hồ sơ
+                  </button>
+                )}
               </div>
             </div>
 
+            {/* Ghi chú nếu có */}
+            {schedule.note && !isEditing && (
+              <div className="mt-4 p-3 bg-gray-50 rounded-lg border-l-4 border-gray-300">
+                <div className="flex items-start space-x-2">
+                  <FileText className="w-4 h-4 text-gray-500 mt-0.5" />
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">
+                      Ghi chú:
+                    </span>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {schedule.note}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Form chỉnh sửa */}
+            {isEditing && renderEditForm(schedule)}
+
             {/* Patient Info - Hiển thị khi expanded */}
-            {isBooked && patientInfo && isExpanded && (
+            {isBooked && patientInfo && isExpanded && !isEditing && (
               <div className="bg-gradient-to-r from-blue-50 to-sky-50 rounded-xl p-5 mt-4 border-l-4 border-blue-400">
                 <div className="flex items-center space-x-2 mb-3">
                   <Users className="w-5 h-5 text-blue-600" />
@@ -338,6 +603,19 @@ export const DoctorScheduleComponent = () => {
                       </div>
                     )}
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Cảnh báo nếu không thể chỉnh sửa */}
+            {!canEdit && !isEditing && (
+              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <AlertCircle className="w-4 h-4 text-amber-600" />
+                  <span className="text-sm text-amber-700">
+                    Lịch này đã qua hoặc đã có bệnh nhân đặt lịch, không thể
+                    chỉnh sửa
+                  </span>
                 </div>
               </div>
             )}
