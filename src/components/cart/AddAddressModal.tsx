@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { RootState, AppDispatch } from "../../redux/store";
 import { addAddressAPI, getAddressById, updateAddressAPI, deleteAddressAPI } from "../../redux/addressAsyncThunk";
 import { CustomSelect } from "./CustomSelect";
 import { ModalDelete } from "./ModalDelete";
@@ -39,7 +39,7 @@ interface Address {
 
 
 const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdit, isModal }) => {
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const address = useSelector((state: RootState) => state.address.isEdit);
   const [formData, setFormData] = useState<Address>({
     name: "",
@@ -225,14 +225,16 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
   if (!isOpen) return null;
 
   return (
-    <div className={`px-6 tb:p-0  md-lg:text-sm ${isModal ? 'fixed inset-0 bg-black bg-opacity-50  flex flex-col  items-center justify-center z-20 tb:hidden' : ''}`}>
+    <div className={`px-6 tb:p-0  ml:w-full ml:h-full md-lg:text-sm  ${isModal ? 'fixed inset-0 bg-black bg-opacity-50  flex flex-col  items-center justify-center z-[999999]' : ''}`}>
 
-      <div className={isModal ? 'bg-white rounded-xl p-4' : ''}>
-        <div className="space-y-3 tb:px-6 overflow-y-auto max-h-[400px]  scrollbar-hide ">
+      <div className={isModal ? 'bg-white rounded-xl p-4 ml:w-full ml:h-full' : ''}>
+        <div className="space-y-3 tb:px-6 overflow-y-auto max-h-[400px] ml:max-h-full scrollbar-hide ">
           <label htmlFor="name">Thông tin người nhận</label>
           <input
             type="text"
             placeholder="Họ và tên"
+            id="name"
+            name="name"
             className="w-full p-2 border rounded"
             value={formData.name}
             onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
@@ -241,6 +243,8 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
           <input
             type="tel"
             placeholder="Số điện thoại"
+            id="phone"
+            name="phone"
             className="w-full p-2 border rounded"
             value={formData.phone}
             onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
@@ -274,6 +278,8 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
           <input
             type="text"
             placeholder="Số nhà, tên đường *"
+            id="street"
+            name="street"
             className="w-full p-2 border rounded"
             value={formData.street}
             onChange={(e) => setFormData(prev => ({ ...prev, street: e.target.value }))}

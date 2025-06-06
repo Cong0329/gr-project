@@ -65,8 +65,6 @@ export const createAppointment = createAsyncThunk(
         // Chuyển hướng (redirect) tùy thuộc vào loại thanh toán
         if (data.paymentUrl) {
           window.location.href = data.paymentUrl;
-        } else {
-          window.location.href = '/profile/health-check';
         }
   
         return data;

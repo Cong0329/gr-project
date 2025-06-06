@@ -9,12 +9,16 @@ import { FaRocketchat } from 'react-icons/fa';
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { RootState, AppDispatch } from "../../redux/store";
+import { useDispatch } from "react-redux";
+import { openChatbox } from "../../redux/reviewsSlice";
+
 
 
 
 
 export default function ProductDetail() {
+  const dispatch: AppDispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const { product, detail } = useSelector((state: RootState) => state.products);
   return (
@@ -37,7 +41,7 @@ export default function ProductDetail() {
       </div>
       <div className="fixed bottom-0 left-0 w-full bg-white shadow-lg p-4 z-30 hidden tb:flex items-center justify-between gap-4">
         {/* Nút Chat */}
-        <button className="bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center">
+        <button className="bg-blue-600 rounded-full w-10 h-10 flex items-center justify-center" onClick={() => dispatch(openChatbox())}>
           <motion.div
             animate={{ y: [0, -10, 0] }} // Hiệu ứng bounce
             transition={{ duration: 0.6, repeat: Infinity, ease: "easeInOut" }}

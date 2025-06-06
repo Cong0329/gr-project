@@ -39,16 +39,16 @@ export const InformationBody = () => {
                 <NavLink setIsServiceHovered={setIsServiceHovered} />
             </div>
             <div className='relative'>
-                <div className="mx-auto relative w-4/5 bg-gray-100 pb-4 container">
-                    <div className="  mx-auto bg-gray-100  [&>*]:!bg-gray-100">
+                <div className="mx-auto relative w-4/5 md-lg:w-11/12 bg-gray-100 pb-4 container tb:w-full">
+                    <div className="  mx-auto bg-gray-100  [&>*]:!bg-gray-100 tb:px-2">
                         <Breadcrumb />
                     </div>
-                    <div className="flex  w-full gap-10">
-                        <div className='w-1/5'>
+                    <div className="flex  w-full gap-10 md-lg:gap-5">
+                        <div className='w-1/5 tb:hidden md-lg:w-1/4'>
                             <Sidebar />
 
                         </div>
-                        <div className='w-4/5 h-full'>
+                        <div className='w-4/5 h-full tb:w-full tb:px-2 md-lg:w-3/4'>
                             <MainContent />
 
                         </div>

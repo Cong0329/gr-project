@@ -67,7 +67,7 @@ export const Login = () => {
                 isUserAuthenticated ? (
                     <Link to="/profile" className="flex items-center gap-2">
                         <img src={user?.avatar_url} alt="" className="h-10 w-10 rounded-full" />
-                        <span className="text-white font-semibold text-lg">{user?.name?.split(" ").slice(-1)[0]}</span>
+                        <span className="text-white font-semibold text-lg ">{user?.name?.split(" ").slice(-1)[0]}</span>
                     </Link>
                 ) : (
                     <button className="flex items-center justify-center tb:hidden " onClick={handleGoogleLogin} >

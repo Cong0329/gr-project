@@ -4,12 +4,13 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { reset, uploadImage } from '../../redux/imageSlice';
 import { fetchMessagesUser, sendMessageUser, sendAIMessage } from '../../redux/messageAsyncThunk';
 import socket from '../../auth/socket';
-import { MessageItem, markAsRead } from '../../redux/reviewsSlice';
+import { MessageItem, markAsRead, openChatbox } from '../../redux/reviewsSlice';
 import ReactMarkdown from 'react-markdown';
 import { imageToFile } from '../../components/chatbox/convertUrl';
+import { X } from 'lucide-react';
 
 const ChatBox = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { chatbox } = useSelector((state: RootState) => state.reviews);
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -18,16 +19,19 @@ const ChatBox = () => {
   const { user } = useSelector((state: RootState) => state.auth);
   const { predict } = useSelector((state: RootState) => state.image);
   const { notifying } = useSelector((state: RootState) => state.reviews);
+  const isDetailRoute = location.pathname.startsWith('/medicine-detail');
+  const isCartRoute = location.pathname.startsWith('/cart');
+  const isChatRoute = location.pathname.startsWith('/profile/chat');
   
   useEffect(() => {
-    if (user?.id && isOpen) {
+    if (user?.id && chatbox) {
       dispatch(fetchMessagesUser({ id: user.id })).then((res: any) => {
         if (res?.payload) {
           setMessages(res.payload);
         }
       });
     }
-  }, [dispatch, user, isOpen]);
+  }, [dispatch, user, chatbox]);
 
   useEffect(() => {
     if (predict.class_name) {
@@ -41,9 +45,9 @@ const ChatBox = () => {
                       - **Mô tả**: ${predict.description}
                       - **Điều trị**: ${predict.treatment}
                       - **Thuốc gợi ý**: ${predict.suggested_meds.map(
-        med => `[${med}](https://www.google.com/search?q=${encodeURIComponent(med)})`
+        med => `[${med}](medicine-search?name=${encodeURIComponent(med)})`
       ).join(', ')}
-                        - **Chuyên khoa**: [${predict.department}](https://www.google.com/search?q=chuyên+khoa+${encodeURIComponent(predict.department)})
+                        - **Chuyên khoa**: [${predict.department}](booking-home/onlex-detail/${encodeURIComponent(predict.department)})
                         `.trim();
       }
       dispatch(sendAIMessage({ content }));
@@ -74,8 +78,8 @@ const ChatBox = () => {
   };
 
   const handleOpenChat = () => {
-    if (!isOpen) setMessages([]);
-    setIsOpen(!isOpen);
+    if (!chatbox) setMessages([]);
+    dispatch(openChatbox());
     dispatch(reset());
     dispatch(markAsRead(false));
   };
@@ -159,15 +163,16 @@ const ChatBox = () => {
   }, [messages]);
 
   return (
-    <div className="fixed bottom-4 right-4 flex flex-col items-end z-[9999]">
-      <button className="bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg" onClick={handleOpenChat}>
-        {isOpen ? 'Close Chat' : 'Chat'}
+    <div className={`fixed bottom-4 right-4 flex flex-col items-end z-[9999]  ${isDetailRoute ? 'tb:bottom-20' : ''} ml:bottom-0 ml:right-0`}>
+      <button className={`bg-blue-600 text-white px-4 py-2 rounded-full shadow-lg ${(isDetailRoute || isCartRoute || isChatRoute) ? 'tb:hidden' : ''}`} onClick={handleOpenChat}>
+        {chatbox ? 'Close Chat' : 'Chat'}
       </button>
 
-      {isOpen && (
-        <div className="bg-white shadow-lg rounded-lg w-96 mt-2 flex flex-col h-[600px]">
-          <div className="bg-blue-600 text-white p-3 rounded-t-lg">
+      {chatbox && (
+        <div className="bg-white shadow-lg rounded-lg w-96 mt-2 flex flex-col h-[600px] tb:h-[500px] ml:w-screen ml:h-screen">
+          <div className="bg-blue-600 text-white p-3 rounded-t-lg tb:flex tb:justify-between tb:items-center">
             <h2 className="text-lg font-semibold">Chat với Dược Sỹ Health Pharmacy</h2>
+            <button className="text-white hidden tb:block" onClick={handleOpenChat}><X size={20}/></button>
           </div>
 
           {user?.id ? (

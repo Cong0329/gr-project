@@ -128,6 +128,9 @@ const orderSlice = createSlice({
                 note: ''
             }
         },
+        removeCartItemId: (state, action) => {
+            state.orderForm.cartItemIds = state.orderForm.cartItemIds.filter((id) => id !== action.payload);
+        },
         resetOrderDetail: (state) => {
             state.orderDetail = {} as Order
         },
@@ -200,4 +203,4 @@ const orderSlice = createSlice({
 
 export default orderSlice.reducer
 
-export const { setStatus, addCartItemId, addShippingAddressId, addPaymentMethod, addNote, resetOrderForm, resetOrder, resetOrderDetail, resetAdminOrderDetail } = orderSlice.actions
+export const { setStatus, addCartItemId, addShippingAddressId, addPaymentMethod, addNote, resetOrderForm, resetOrder, resetOrderDetail, resetAdminOrderDetail, removeCartItemId } = orderSlice.actions

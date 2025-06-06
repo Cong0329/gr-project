@@ -173,7 +173,7 @@ export const SearchBody = () => {
                         {(brandName || categoryName) && (
                             <Breadcrumb />
                         )}
-                        <ModalFilter isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+                        <ModalFilter category={category} brand={brand} country={country} original={original} medical_object={medical_object} indication={indication} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
                         <div className="container mx-auto flex gap-4 mt-4">
                             {/* Bộ lọc */}
                             <div className="w-1/4 tb:hidden">

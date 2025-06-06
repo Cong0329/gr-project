@@ -6,16 +6,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCartAPI } from "../../redux/cartAsyncThunk";
 import { RootState, AppDispatch } from "../../redux/store";
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { buyNow } from "../../redux/cartSlice";
 interface ProductProps {
     medicineData: ProductDetail;
     setIsOpen: (value: boolean) => void;
     isOpen: boolean;
 }
 export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: ProductProps) => {
-    const dispatch:AppDispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
+    const navigate = useNavigate();
     const [selectedOption, setSelectedOption] = useState(medicineData.options[0]);
-    const {review} = useSelector((state: RootState) => state.products);
+    const { review } = useSelector((state: RootState) => state.products);
     const { user } = useSelector((state: RootState) => state.auth);
     const [quantity, setQuantity] = useState(1);
     const increaseQuantity = () => setQuantity((prev) => prev + 1);
@@ -34,6 +36,12 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
         } else {
             toast.warning("Số lượng sản phẩm không đủ");
         }
+    };
+    const handleBuyNow = () => {
+        navigate('/cart'); // 👉 Chuyển trang trước
+        setTimeout(() => {
+            dispatch(buyNow());  // 👉 Gọi action sau khi đã chuyển trang
+        }, 0); // hoặc 100ms nếu muốn đảm bảo chắc chắn route đã xong
     };
     return (
         <div className="w-3/5 ml-10 tb:ml-0 space-y-2 tb:w-full">
@@ -86,7 +94,7 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
                     <div className="font-semibold">Danh mục</div>
                     <div className="text-blue-500"><Link to={`/medicine-search?category=${medicineData.category.name}`} className="text-blue-700">{medicineData.category.name}</Link></div>
 
-                    <div className="font-semibold">Dạng bào chế</div>   
+                    <div className="font-semibold">Dạng bào chế</div>
                     <div>{medicineData.dosage_form}</div>
 
                     <div className="font-semibold">Quy cách</div>
@@ -186,8 +194,8 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
                                         <div>
                                             <span className="text-2xl font-semibold text-blue-700">
                                                 {selectedOption.discounted_price && selectedOption.discounted_price > 0
-                                                    ? selectedOption.discounted_price.toLocaleString()
-                                                    : selectedOption.price.toLocaleString()}đ
+                                                    ? parseFloat(selectedOption.discounted_price).toLocaleString()
+                                                    : parseFloat(selectedOption.price).toLocaleString()}đ
                                             </span>
 
 
@@ -196,7 +204,7 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
 
                                         {selectedOption.discounted_price && selectedOption.discounted_price > 0 && (
                                             <span className="text-lg text-gray-500 line-through">
-                                                {selectedOption.price.toLocaleString()}đ
+                                                {parseFloat(selectedOption.price).toLocaleString()}đ
                                             </span>
                                         )}
 
@@ -278,12 +286,12 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
                             <div className='flex gap-2 font-medium'>
                                 <button
                                     className="mt-6 bg-blue-100 text-blue-600 px-4 py-3 rounded-full w-full"
-                                    onClick={() => setIsOpen(false)}
+                                    onClick={() => { setIsOpen(false); addToCart() }}
                                 >
                                     Thêm vào giỏ hàng
                                 </button>  <button
                                     className="mt-6 bg-blue-600 text-white px-4 py-3 rounded-full w-full"
-                                    onClick={() => setIsOpen(false)}
+                                    onClick={() => { setIsOpen(false); handleBuyNow() }}
                                 >
                                     Mua ngay
                                 </button>

@@ -52,6 +52,16 @@ const cartSlice = createSlice({
     removeFromCart: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
     },
+    buyNow: (state) => {
+      
+      state.items = state.items.map((item, index) => ({
+        ...item,
+        selected: index === 0,
+      }));
+      state.isCheckout = true;
+    },
+    
+
     updateSelectedOption: (state, action: PayloadAction<{ id: string; selectedOption: ProductOption }>) => {
       const item = state.items.find((item) => item.id === action.payload.id);
       if (item) {
@@ -114,7 +124,7 @@ const cartSlice = createSlice({
           slug: product.product.slug,
           selectedOption: product.option,
           selected: selectedMap[product.id] ?? true, // 🔥 Giữ trạng thái cũ hoặc mặc định `false`
-        }));
+        })).reverse();
       })      
       .addCase(fetchCarts.rejected, (state, action) => {
         state.status = "failed";
@@ -182,7 +192,8 @@ export const {
   updateSelectedOption,
   initializeCart,
   checkout,
-  resetCart
+  resetCart,
+  buyNow
 } = cartSlice.actions;
 
 export default cartSlice.reducer;

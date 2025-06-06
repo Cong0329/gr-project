@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { updateProfileAPI } from "../../../redux/userAsyncThunk";
 import { useDispatch } from "react-redux";
-
+import { AppDispatch } from "../../../redux/store";
 interface ProfilePageProps {
     name: string;
     phone: string | null;
@@ -9,7 +9,7 @@ interface ProfilePageProps {
 }
 
 export const ProfilePage = ({ name, phone, gender }: ProfilePageProps) => {
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
     const [isEdit, setIsEdit] = useState(false);
     const [formData, setFormData] = useState({
         name: name || '',
@@ -71,7 +71,7 @@ export const ProfilePage = ({ name, phone, gender }: ProfilePageProps) => {
         <div className="bg-white rounded-xl pb-4">
             <h2 className="text-2xl font-bold mb-2 border-b p-4">Thông tin cá nhân</h2>
             {isEdit ? (
-                <form className="grid grid-cols-2 gap-4 px-4">
+                <form className="grid grid-cols-2 mm:grid-cols-1 gap-4 px-4">
                     <div className="mb-4">
                         <label className="text-gray-600 mr-2" htmlFor="name">Họ và tên</label>
                         <input
@@ -107,7 +107,7 @@ export const ProfilePage = ({ name, phone, gender }: ProfilePageProps) => {
                     </div>
                 </form>
             ) : (
-                <div className="grid grid-cols-2 gap-4 px-4">
+                <div className="grid grid-cols-2 gap-4 px-4 mm:grid-cols-1">
                     <div className="mb-4">
                         <div className="text-gray-600">Họ và tên</div>
                         <div className="font-bold">{formData.name}</div>
@@ -126,14 +126,14 @@ export const ProfilePage = ({ name, phone, gender }: ProfilePageProps) => {
             )}
             <div className="flex gap-4 px-6 mt-4">
                 <button
-                    className="bg-blue-100 font-semibold text-blue-600 px-6 py-2 rounded-full"
+                    className="bg-blue-100 font-semibold text-blue-600 px-6 py-2 rounded-full mm:text-[13px]"
                     onClick={isEdit ? handleSubmit : handleEditToggle}
                 >
                     {isEdit ? 'Cập nhật thông tin' : 'Chỉnh sửa thông tin'}
                 </button>
                 {isEdit && (
                     <button
-                        className="bg-gray-100 font-semibold text-gray-600 px-6 py-2 rounded-full"
+                        className="bg-gray-100 font-semibold text-gray-600 px-6 py-2 rounded-full mm:text-[13px]"
                         onClick={() => setIsEdit(false)}
                     >
                         Hủy

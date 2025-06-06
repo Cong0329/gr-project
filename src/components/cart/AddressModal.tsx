@@ -55,7 +55,7 @@ const AddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
             </h2>
 
           </div>
-          <div className={`${isAddingNew ? "" : "overflow-y-auto max-h-80"}  w-full `}>
+          <div className={`${isAddingNew ? "" : "overflow-y-auto max-h-80"} tb:hidden w-full `}>
             {isAddingNew ? (
               <AddAddressModal
                 isOpen={isAddingNew}
