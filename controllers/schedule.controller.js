@@ -448,59 +448,186 @@ exports.createSchedule = async (req, res) => {
  */
 exports.updateSchedule = async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ 
+    const { scheduleId } = req.params;
+    const { status, date, start_time, end_time } = req.body;
+    const userId = req.user.id;
+
+    const doctor = await Doctor.findOne({
+      where: { user_id: userId }
+    });
+
+    if (!doctor) {
+      return res.status(404).json({
         success: false,
-        errors: errors.array() 
+        message: 'Không tìm thấy bác sĩ tương ứng.'
       });
     }
 
-    const schedule = await Schedule.findByPk(req.params.id);
-    if (!schedule) {
-      return res.status(404).json({ 
-        success: false,
-        message: 'Schedule not found' 
-      });
-    }
-
-    // Kiểm tra nếu DOCTOR có quyền cập nhật lịch riêng của họ
-    if (req.user && req.user.role === 'ROLE_DOCTOR' && schedule.doctor_id !== req.user.id) {
-      return res.status(403).json({
-        success: false,
-        message: 'You can only update your own schedules'
-      });
-    }
-
-    // Chỉ cho phép cập nhật một số trường nhất định
-    const updatableFields = ['status', 'start_time', 'end_time', 'date'];
-    const updates = {};
+    const doctorId = doctor.id;
     
-    for (const field of updatableFields) {
-      if (req.body[field] !== undefined) {
-        updates[field] = req.body[field];
-      }
-    }
-
-    await schedule.update(updates);
-    
-    // Lấy lại schedule kèm thông tin liên quan
-    const updatedSchedule = await Schedule.findByPk(schedule.id, {
+    // Kiểm tra schedule có tồn tại không
+    const schedule = await Schedule.findByPk(scheduleId, {
       include: [
-        { 
-          model: Doctor, 
+        {
+          model: Doctor,
           as: 'doctor',
-          attributes: ['id', 'name', 'avatar', 'position']
+          attributes: ['id', 'name', 'avatar', 'position', 'type', 'experience', 'address']
         }
       ]
     });
 
-    res.json(updatedSchedule);
+    if (!schedule) {
+      return res.status(404).json({
+        success: false,
+        message: 'Không tìm thấy lịch hẹn'
+      });
+    }
+
+    // Kiểm tra quyền truy cập (chỉ bác sĩ sở hữu lịch mới được cập nhật)
+    if (schedule.doctor_id !== doctorId) {
+      return res.status(403).json({
+        success: false,
+        message: 'Bạn không có quyền cập nhật lịch hẹn này'
+      });
+    }
+
+    // Validate dữ liệu đầu vào
+    const updateData = {};
+    
+    // Validate status
+    if (status) {
+      const validStatuses = ['available', 'booked', 'cancelled', 'completed'];
+      if (!validStatuses.includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Status không hợp lệ. Chỉ chấp nhận: available, booked, cancelled, completed'
+        });
+      }
+      updateData.status = status;
+    }
+
+    // Validate date
+    if (date) {
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(date)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Định dạng ngày không hợp lệ. Sử dụng YYYY-MM-DD'
+        });
+      }
+      
+      const inputDate = new Date(date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (inputDate < today) {
+        return res.status(400).json({
+          success: false,
+          message: 'Không thể đặt lịch vào ngày trong quá khứ'
+        });
+      }
+      
+      updateData.date = date;
+    }
+
+    // Validate time
+    const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    
+    if (start_time) {
+      if (!timeRegex.test(start_time)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Định dạng giờ bắt đầu không hợp lệ. Sử dụng HH:MM'
+        });
+      }
+      updateData.start_time = start_time;
+    }
+
+    if (end_time) {
+      if (!timeRegex.test(end_time)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Định dạng giờ kết thúc không hợp lệ. Sử dụng HH:MM'
+        });
+      }
+      updateData.end_time = end_time;
+    }
+
+    // Kiểm tra end_time phải sau start_time
+    const finalStartTime = start_time || schedule.start_time;
+    const finalEndTime = end_time || schedule.end_time;
+    
+    if (finalEndTime <= finalStartTime) {
+      return res.status(400).json({
+        success: false,
+        message: 'Giờ kết thúc phải sau giờ bắt đầu'
+      });
+    }
+
+    // Kiểm tra trùng lịch nếu có thay đổi về thời gian hoặc ngày
+    if (date || start_time || end_time) {
+      const finalDate = date || schedule.date;
+      
+      const conflictingSchedule = await Schedule.findOne({
+        where: {
+          id: { [Op.ne]: scheduleId },
+          doctor_id: doctorId,
+          date: finalDate,
+          [Op.or]: [
+            {
+              start_time: { [Op.between]: [finalStartTime, finalEndTime] }
+            },
+            {
+              end_time: { [Op.between]: [finalStartTime, finalEndTime] }
+            },
+            {
+              [Op.and]: [
+                { start_time: { [Op.lte]: finalStartTime } },
+                { end_time: { [Op.gte]: finalEndTime } }
+              ]
+            }
+          ],
+          status: { [Op.notIn]: ['cancelled'] }
+        }
+      });
+
+      if (conflictingSchedule) {
+        return res.status(409).json({
+          success: false,
+          message: 'Đã có lịch hẹn khác trong khoảng thời gian này'
+        });
+      }
+    }
+
+    // Cập nhật lịch hẹn
+    await schedule.update(updateData);
+
+    // Lấy lại dữ liệu đã cập nhật với đầy đủ thông tin
+    const updatedSchedule = await Schedule.findByPk(scheduleId, {
+      include: [
+        {
+          model: Doctor,
+          as: 'doctor',
+          attributes: ['id', 'name', 'avatar', 'position', 'type', 'experience', 'address']
+        }
+      ]
+    });
+
+    // Log hoạt động
+    console.log(`Schedule ${scheduleId} updated by doctor ${doctorId}:`, updateData);
+
+    res.status(200).json({
+      success: true,
+      message: 'Cập nhật lịch hẹn thành công',
+      data: updatedSchedule
+    });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ 
+    console.error('Error updating schedule:', error);
+    res.status(500).json({
       success: false,
-      message: 'Server Error' 
+      message: 'Lỗi server khi cập nhật lịch hẹn',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 };

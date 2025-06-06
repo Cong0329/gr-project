@@ -41,6 +41,7 @@ const ReviewModel = require("./reviews.model");
 const ReviewReplyModel = require("./review_replies.model");
 const MessageModel = require("./message.model");
 const MessageItemModel = require("./message_item.model");
+const MedicalRecordModel = require("./medical-record.model")
 
 
 
@@ -88,17 +89,7 @@ const Review = ReviewModel(sequelize, DataTypes);
 const ReviewReply = ReviewReplyModel(sequelize, DataTypes);
 const Message = MessageModel(sequelize, DataTypes);
 const MessageItem = MessageItemModel(sequelize, DataTypes);
-
-
-
-
-
-// Doctor.belongsTo(Department, { foreignKey: 'department_id', as: 'department' });
-// Department.hasMany(Doctor, { foreignKey: 'department_id', as: 'doctors' });
-
-// Schedule.belongsTo(Doctor, { foreignKey: 'doctor_id', as: 'doctor'});
-// Doctor.hasMany(Schedule, { foreignKey: 'doctor_id', as: 'schedule'});
-
+const MedicalRecord = MedicalRecordModel(sequelize, DataTypes)
 
 
 
@@ -143,7 +134,8 @@ const db = {
   MessageItem,
   PackageBookingRequest,
   DoctorAssignment,
-  Appointment
+  Appointment,
+  MedicalRecord
 };
 
 // Gọi hàm thiết lập quan hệ từ file riêng (nếu cần)
