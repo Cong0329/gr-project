@@ -5,7 +5,6 @@ export const sendMessageUser = createAsyncThunk(
     "message/sendMessageUser",
     async ({ content, image }: { content?: string; image?: File }, { rejectWithValue }) => {
         try {
-            console.log('send')
             if (!content && !image) {
                 return rejectWithValue({ message: "Bạn phải nhập nội dung hoặc chọn ảnh." });
             }
@@ -41,7 +40,6 @@ export const sendMessageDoctor = createAsyncThunk(
     "message/sendMessageDoctor",
     async ({ content, image, recipientId ,id }: { content?: string; image?: File, recipientId: string ,id: string}, { rejectWithValue }) => {
         try {
-            console.log('send')
             if (!content && !image) {
                 return rejectWithValue({ message: "Bạn phải nhập nội dung hoặc chọn ảnh." });
             }
@@ -96,13 +94,24 @@ export const sendAIMessage = createAsyncThunk(
 
 export const sendMessageAdmin = createAsyncThunk(
     "message/sendMessageAdmin",
-    async ({ content, recipientId }: { content: string, recipientId: string }, { rejectWithValue }) => {
+    async ({ content, recipientId, image }: { content?: string, recipientId: string, image?: File }, { rejectWithValue }) => {
         try {
+            if (!content && !image) {
+                return rejectWithValue({ message: "Bạn phải nhập nội dung hoặc chọn ảnh." });
+            }
+
+            const formData = new FormData();
+            if (content) formData.append("content", content);
+            if (image) formData.append("image", image);
+            formData.append("recipientId", recipientId);
             const response = await axios.post(
                 `${import.meta.env.VITE_NODEJS_BACKEND_URL}/message/admin`,
-                { content, recipientId },
+                formData,
                 {
-                    withCredentials: true
+                    withCredentials: true,
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
                 }
             );
             return response.data;

@@ -111,7 +111,36 @@ export default function AdminChatInterface() {
             }
         });
     };
+    const handleSendImage = (file: File) => {
+        if (!selectedUser || !admin) return;
 
+        const tempMessage: MessageItem = {
+            id: `${Date.now()}`,
+            message_id: `${Date.now()}`,
+            sender_id: admin.id,
+            content: '', // không có text
+            image_url: URL.createObjectURL(file), // hiển thị ngay ảnh
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            User: {
+                id: admin.id,
+                name: admin.name,
+                avatar_url: admin.avatar_url,
+            }
+        };
+
+        setMessages(prev => [...prev, tempMessage]);
+
+        dispatch(sendMessageAdmin({
+            image: file,
+            recipientId: selectedUser.user1.id,
+        })).then((res: any) => {
+            // Optional: Replace tempMessage with res.payload.item if needed
+            if (res?.payload?.item) {
+                // Optional logic: update message list to replace temp message
+            }
+        });
+    };
 
     // Lọc user theo searchTerm
     const filteredUsers = messagesUser.filter(u =>
@@ -137,6 +166,7 @@ export default function AdminChatInterface() {
                             message={newMessage}
                             onChange={setNewMessage}
                             onSend={handleSendMessage}
+                            onImageSend={handleSendImage}
                         />
                     </>
                 ) : (

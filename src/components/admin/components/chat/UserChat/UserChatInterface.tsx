@@ -95,7 +95,37 @@ export default function UserChatInterface() {
             }
         });
     };
+    const handleSendImage = (file: File) => {
+        if (!selectedUser || !user) return;
 
+        const tempMessage: MessageItem = {
+            id: `${Date.now()}`,
+            message_id: `${Date.now()}`,
+            sender_id: user.id,
+            content: '', // không có text
+            image_url: URL.createObjectURL(file), // hiển thị ngay ảnh
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            User: {
+                id: user.id,
+                name: user.name,
+                avatar_url: user.avatar_url,
+            }
+        };
+
+        setMessages(prev => [...prev, tempMessage]);
+
+        dispatch(sendMessageDoctor({
+            image: file,
+            recipientId: selectedUser.user2.id,
+            id: user.id,
+        })).then((res: any) => {
+            // Optional: Replace tempMessage with res.payload.item if needed
+            if (res?.payload?.item) {
+                // Optional logic: update message list to replace temp message
+            }
+        });
+    };
 
     // Lọc user theo searchTerm
     const filteredUsers = messagesUser.filter(u =>
@@ -129,6 +159,7 @@ export default function UserChatInterface() {
                             message={newMessage}
                             onChange={setNewMessage}
                             onSend={handleSendMessage}
+                            onImageSend={handleSendImage}
                         />
                     </div>
                 ) : (
