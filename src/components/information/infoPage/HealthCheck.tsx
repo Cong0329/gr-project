@@ -75,7 +75,8 @@ interface CombinedAppointment {
 
 export const HealthCheckPage: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [selectedAppointment, setSelectedAppointment] = useState<CombinedAppointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<CombinedAppointment | null>(null);
   const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
   const [combinedAppointments, setCombinedAppointments] = useState<
     CombinedAppointment[]
@@ -341,10 +342,11 @@ export const HealthCheckPage: React.FC = () => {
           <nav className="flex">
             <button
               onClick={() => setActiveTab("upcoming")}
-              className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${activeTab === "upcoming"
-                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                }`}
+              className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${
+                activeTab === "upcoming"
+                  ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              }`}
             >
               <div className="flex items-center justify-center space-x-2">
                 <svg
@@ -370,10 +372,11 @@ export const HealthCheckPage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab("past")}
-              className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${activeTab === "past"
-                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                }`}
+              className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${
+                activeTab === "past"
+                  ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+              }`}
             >
               <div className="flex items-center justify-center space-x-2">
                 <svg
@@ -538,7 +541,12 @@ export const HealthCheckPage: React.FC = () => {
                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                           />
                         </svg>
-                        <span className="font-medium">{appointment.time}</span>
+                        <span className="font-medium">
+                          {appointment.time
+                            .split(" - ")
+                            .map((time) => time.slice(0, 5))
+                            .join(" - ")}
+                        </span>
                       </div>
 
                       {appointment.doctorName && (
@@ -560,8 +568,9 @@ export const HealthCheckPage: React.FC = () => {
                               />
                             ) : null}
                             <svg
-                              className={`w-5 h-5 text-purple-500 mr-3 ${appointment.avatar ? "hidden" : ""
-                                }`}
+                              className={`w-5 h-5 text-purple-500 mr-3 ${
+                                appointment.avatar ? "hidden" : ""
+                              }`}
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -591,9 +600,10 @@ export const HealthCheckPage: React.FC = () => {
                       {appointment.status === "pending_payment" && (
                         <>
                           {canCancelAppointment(appointment) && (
-
                             <button
-                              onClick={() => handleCancelAppointment(appointment)}
+                              onClick={() =>
+                                handleCancelAppointment(appointment)
+                              }
                               className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
                             >
                               <svg
@@ -614,7 +624,6 @@ export const HealthCheckPage: React.FC = () => {
                                 ? "yêu cầu"
                                 : "lịch"}
                             </button>
-
                           )}
                           <button
                             onClick={() => handlePayment(appointment)}
@@ -640,14 +649,15 @@ export const HealthCheckPage: React.FC = () => {
 
                       {/* ✅ Handle cancel for different statuses - covers both appointment and package */}
                       <div className="flex gap-4">
-
                         {(appointment.status === "confirmed" ||
                           appointment.status === "pending" ||
                           appointment.status === "doctor_requested" ||
                           appointment.status === "assigned") &&
                           canCancelAppointment(appointment) && (
                             <button
-                              onClick={() => handleCancelAppointment(appointment)}
+                              onClick={() =>
+                                handleCancelAppointment(appointment)
+                              }
                               className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
                             >
                               <svg
@@ -664,17 +674,21 @@ export const HealthCheckPage: React.FC = () => {
                                 />
                               </svg>
                               Hủy{" "}
-                              {appointment.type === "package" ? "yêu cầu" : "lịch"}
+                              {appointment.type === "package"
+                                ? "yêu cầu"
+                                : "lịch"}
                             </button>
                           )}
-                        <button className="h-10 w-10" onClick={() => {
-                          setSelectedAppointment(appointment);
-                          setIsModalOpen(true);
-                        }}>
+                        <button
+                          className="h-10 w-10"
+                          onClick={() => {
+                            setSelectedAppointment(appointment);
+                            setIsModalOpen(true);
+                          }}
+                        >
                           <img src={chat} alt="" />
                         </button>
                       </div>
-
 
                       {appointment.status === "completed" && (
                         <button
@@ -701,15 +715,18 @@ export const HealthCheckPage: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <ChatModal key={appointment.id} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={`Chat với bác sĩ ${selectedAppointment?.doctorName}`} id={selectedAppointment?.doctorId} />
-
+              <ChatModal
+                key={appointment.id}
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                title={`Chat với bác sĩ ${selectedAppointment?.doctorName}`}
+                id={selectedAppointment?.doctorId}
+              />
             </>
-
           ))}
         </div>
       </div>
     </div>
-
   );
 };
 
