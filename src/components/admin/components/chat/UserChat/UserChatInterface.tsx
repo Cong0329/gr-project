@@ -12,7 +12,7 @@ import {
     sendMessageDoctor,
     fetchMessagesAdmin,
 } from '../../../../../redux/messageAsyncThunk';
-import { toast } from 'react-toastify';
+import { toast } from 'react-hot-toast';
 
 export default function UserChatInterface() {
     const dispatch: AppDispatch = useDispatch();
@@ -36,7 +36,7 @@ export default function UserChatInterface() {
             dispatch(getAllMessageUser({ id: user.id }));
             if (selectedUser?.user2?.id === data.sender_id) {
                 setMessages(prev => [...prev, data]);
-                toast.info('Bạn có tin nhắn mới');
+                toast('Bạn có tin nhắn mới');
 
             }
         };

@@ -12,7 +12,7 @@ import {
     fetchMessagesAdmin,
     sendMessageAdmin
 } from '../../../../../redux/messageAsyncThunk';
-import { toast } from 'react-toastify';
+import { toast } from 'react-hot-toast';
 
 export default function AdminChatInterface() {
     const dispatch: AppDispatch = useDispatch();
@@ -35,7 +35,7 @@ export default function AdminChatInterface() {
     useEffect(() => {
         if (!admin?.id) return;
         const handleAIMessage = (data: MessageItem) => {
-            toast.info('AI vừa gửi tin nhắn');
+            toast('AI vừa gửi tin nhắn');
             dispatch(getAllMessagesAdmin());
             if (selectedUser?.user1?.id === data.User.id) {
                 setMessages(prev => [...prev, data]);

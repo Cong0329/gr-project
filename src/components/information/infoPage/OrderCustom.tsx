@@ -5,7 +5,7 @@ import { Order, resetOrderDetail } from "../../../redux/orderSlice";
 import { useDispatch } from "react-redux";
 import { repurchaseOrderAPI } from "../../../redux/cartAsyncThunk";
 import { AppDispatch } from "../../../redux/store";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 interface OrderCustomProps {
     orders: Order[];
     isLoading?: boolean;

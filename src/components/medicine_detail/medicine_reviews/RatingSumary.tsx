@@ -1,5 +1,5 @@
 
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 
 
 interface RatingSummaryProps {
@@ -21,7 +21,7 @@ const RatingSummary: React.FC<RatingSummaryProps> = ({ reviews, setShowModal, us
   
   const handleRatingSubmit = () => {
     if (!user || Object.keys(user).length === 0) {
-      toast.warning("Vui lòng đăng nhập để đánh giá");
+      toast.error("Vui lòng đăng nhập để đánh giá");
       return;
     }
     setShowModal(true);

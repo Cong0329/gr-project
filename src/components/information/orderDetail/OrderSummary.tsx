@@ -4,7 +4,7 @@ import { FaAngleRight, FaQuestion } from "react-icons/fa6";
 
 import { CartSummartSkeleton } from "../../cart/CartSummartSkeleton";
 import { repurchaseOrderAPI } from "../../../redux/cartAsyncThunk";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { updateOrderCancelled, updateOrderCompleted } from "../../../redux/orderAsyncThunk";
 
 interface OrderSummaryProps {

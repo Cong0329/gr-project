@@ -3,7 +3,7 @@ import { Product } from "../../admin/pages/Forms/Product/Product";
 import { useDispatch, useSelector } from "react-redux";
 import { resetProduct } from "../../../redux/productSlice";
 import { addToCartAPI } from "../../../redux/cartAsyncThunk";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { RootState, AppDispatch } from "../../../redux/store";
 interface PromotionChildProps {
     product: Product;
@@ -31,7 +31,7 @@ export const PromotionChild: React.FC<PromotionChildProps> = ({ product, handleT
 
     const addToCart = () => {
         if (!user || Object.keys(user).length === 0) {
-            toast.warning("Vui lòng đăng nhập để thêm vào giỏ hàng");
+            toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng");
             return;
         }
         if (product.quantity > 1) {

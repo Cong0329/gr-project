@@ -5,7 +5,7 @@ import { FaXmark } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCartAPI } from "../../redux/cartAsyncThunk";
 import { RootState, AppDispatch } from "../../redux/store";
-import { toast } from "react-toastify";
+import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { buyNow } from "../../redux/cartSlice";
 interface ProductProps {
@@ -32,9 +32,9 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
             dispatch(addToCartAPI({ product_id: medicineData.id, quantity: quantity, option_id: selectedOption.id }));
             toast.success("Thêm vào giỏ hàng thành công");
         } else if (Object.keys(user).length === 0) {
-            toast.warning("Vui lòng đăng nhập để thêm vào giỏ hàng");
+            toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng");
         } else {
-            toast.warning("Số lượng sản phẩm không đủ");
+            toast.error("Số lượng sản phẩm không đủ");
         }
     };
     const handleBuyNow = () => {

@@ -25,6 +25,7 @@ import { OrderDetailPage } from "./components/pages/OrderDetailPage";
 import UserProtectedRoute from "./components/pages/UserProtectedRoute copy";
 // import { BookingAppoinment } from "./components/pages/BookingAppoinment";
 import { ToastContainer } from "react-toastify";
+import { Toaster } from 'react-hot-toast';
 import ChatBoxWrapper from "./components/chatbox/chatboWrap";
 import { BookingPayment } from "./components/pages/BookingPayment";
 import appRoutes from "./components/pages/AppRoutes";
@@ -34,6 +35,7 @@ function App() {
     <Router>
       <ScrollToTop />
       <ToastContainer />
+      <Toaster position="top-right" reverseOrder={false} />
       <ChatBoxWrapper />
       <Routes>
         <Route path="/" element={<Home />} />

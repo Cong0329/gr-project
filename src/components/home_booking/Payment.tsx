@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { createAppointment } from "../../redux/appointmentSlice";
 import { createBookingRequest } from "../../redux/packageBookingRequestSlice";
 import { toast, Toaster } from "react-hot-toast";
-import axios from "axios";
 import SuccessAnimation from "../../components/home_booking/details/component_details/AnimationBooked";
 import { RootState } from "../../redux/store";
 

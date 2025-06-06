@@ -3,11 +3,9 @@ import { X, Send, MessageCircle, User } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../../redux/store";
 import {
-  getAllMessageUser,
   sendMessageDoctor,
 } from "../../redux/messageAsyncThunk";
 import socket from "../../auth/socket";
-import { toast } from "react-toastify";
 interface Message {
   id: string;
   text: string;
