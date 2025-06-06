@@ -193,14 +193,7 @@ router.post(
 );
 
 // Cập nhật lịch trình (ADMIN hoặc DOCTOR với điều kiện là lịch của chính họ)
-router.put('/:id', 
-   
-  
-  (req, res, next) => {
-    if (req.user.roles.includes('ROLE_ADMIN')) return next();
-    
-    checkDoctorOwnership(req, res, next);
-  },
+router.put('/my-schedule/update/:scheduleId', authenticateAdminToken, requireRole('ROLE_DOCTOR'),
   scheduleController.updateSchedule
 );
 
