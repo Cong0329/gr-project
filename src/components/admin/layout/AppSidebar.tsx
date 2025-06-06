@@ -15,6 +15,7 @@ import {
   TableIcon,
   UserCircleIcon,
   ChatIcon,
+  FileIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 import { useSelector } from "react-redux";
@@ -76,14 +77,19 @@ const adminNavItems: NavItem[] = [
       { name: "Quản lý chat", path: "/admin/chat", pro: false },
     ],
   },
-  // {
-  //   name: "Pages",
-  //   icon: <PageIcon />,
-  //   subItems: [
-  //     { name: "Blank Page", path: "/admin/blank", pro: false },
-  //     { name: "404 Error", path: "/admin/error-404", pro: false },
-  //   ],
-  // },
+  {
+    icon: <BoxCubeIcon />,
+    name: "Quản lý gói khám",
+    path: "/admin/packages",
+  },
+  {
+    name: "Pages",
+    icon: <PageIcon />,
+    subItems: [
+      { name: "Blank Page", path: "/admin/blank", pro: false },
+      { name: "404 Error", path: "/admin/error-404", pro: false },
+    ],
+  },
 ];
 
 // Doctor nav items - Keep original paths
@@ -107,6 +113,11 @@ const doctorNavItems: NavItem[] = [
     icon: <ChatIcon />,
     name: "Chat",
     path: "/doctor/chat",
+  },
+  {
+    icon: <FileIcon />,
+    name: "hồ sơ bệnh án",
+    path: "/doctor/medical-record",
   },
 ];
 
@@ -206,8 +217,7 @@ const AppSidebar: React.FC = () => {
   useEffect(() => {
     let submenuMatched = false;
     ["main"].forEach((menuType) => {
-      const items =
-        menuType === "main" ? filteredNavItems : [];
+      const items = menuType === "main" ? filteredNavItems : [];
       items.forEach((nav, index) => {
         if (nav.subItems) {
           nav.subItems.forEach((subItem) => {
@@ -226,8 +236,7 @@ const AppSidebar: React.FC = () => {
     if (!submenuMatched) {
       // Check if current route matches any top-level menu item
       ["main"].forEach((menuType) => {
-        const items =
-          menuType === "main" ? filteredNavItems : [];
+        const items = menuType === "main" ? filteredNavItems : [];
         items.forEach((nav, index) => {
           if (nav.path && isActive(nav.path)) {
             setOpenSubmenu(null); // Close submenus for direct links
@@ -433,7 +442,7 @@ const AppSidebar: React.FC = () => {
               </h2>
               {renderMenuItems(filteredNavItems, "main")}
             </div>
-{/* 
+            {/* 
             {isAdmin && ( // Only show others menu for admin
               <div className="">
                 <h2

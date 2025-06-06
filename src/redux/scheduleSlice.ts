@@ -29,6 +29,7 @@ interface ScheduleState {
   doctorInfo: any;
   isCreating: boolean;
   createError: string | null;
+  message: '',
 }
 
 const initialState: ScheduleState = {
@@ -44,6 +45,7 @@ const initialState: ScheduleState = {
   currentType: 'specialist',
   isCreating: false,
   createError: null,
+  message: '',
 };
 
 export const fetchSpecialistSchedules = createAsyncThunk(
@@ -178,6 +180,23 @@ export const createSchedule = createAsyncThunk(
   }
 );
 
+export const updateSchedule = createAsyncThunk(
+  'schedules/updateSchedule',
+  async ({ scheduleId, updateData  }, { rejectWithValue }) => {
+    try {
+      const url = `${import.meta.env.VITE_NODEJS_BACKEND_URL}/schedule/my-schedule/update/${scheduleId}`;
+      console.log('Calling URL:', url);
+      console.log('Update data:', updateData);
+      
+      const response = await axios.put(url, updateData, { withCredentials: true });
+      return response.data;
+    } catch (error) {
+      console.log('Error details:', error.response);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const scheduleSlice = createSlice({
   name: 'schedules',
   initialState,
@@ -231,7 +250,30 @@ const scheduleSlice = createSlice({
       .addCase(createSchedule.rejected, (state, action) => {
         state.isCreating = false;
         state.createError = action.payload as string;
-      });
+      })
+      .addCase(updateSchedule.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateSchedule.fulfilled, (state, action) => {
+        console.log('updateSchedule.fulfilled triggered'); // Thêm log này
+        console.log('Payload:', action.payload); // Check payload
+        
+        state.loading = false;
+        const updatedSchedule = action.payload.data; // Có thể lỗi ở đây
+        console.log('Updated schedule:', updatedSchedule);
+        
+        const index = state.mySchedules.findIndex(s => s.id === updatedSchedule.id);
+        console.log('Found index:', index);
+        
+        if (index !== -1) {
+          state.mySchedules[index] = updatedSchedule;
+        }
+      })
+      .addCase(updateSchedule.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || 'Có lỗi xảy ra';
+      })
   }
 });
 

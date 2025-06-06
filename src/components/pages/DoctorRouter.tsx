@@ -4,6 +4,7 @@ import UserProfiles from "../admin/pages/UserProfiles";
 import { DoctorScheduleComponent } from "../admin/pages/FormsDoctor/ScheduleDoctor";
 import { ExaminationRequest } from "../admin/pages/FormsDoctor/ExaminationRequest";
 import DoctorChatInterface from "../admin/components/chat/DoctorChat/DoctorChatInterface";
+import MedicalRecord from "../admin/pages/FormsDoctor/MedicalRecord";
 
 const doctorRoutes = (
   <Route>
@@ -11,6 +12,7 @@ const doctorRoutes = (
     <Route path="schedule" element={<DoctorScheduleComponent />} />
     <Route path="examination-requests" element={<ExaminationRequest />} />
     <Route path="chat" element={<DoctorChatInterface />} />
+    <Route path="medical-record" element={<MedicalRecord />} />
   </Route>
 );
 

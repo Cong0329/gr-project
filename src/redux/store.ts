@@ -24,6 +24,7 @@ import searchReducer from './searchSlice';
 import packageBookingReducer from './packageBookingRequestSlice'
 import revenueReducer from './revenueSlice'
 import doctorAssignmentReducer from './doctorAssignmentSlice'
+import medicalRecordReducer from './medicalRecordSlice'
 
 const cartPersistConfig = {
   key: 'cart',
@@ -74,6 +75,7 @@ export const store = configureStore({
     packages: packageBookingReducer,
     revenue: revenueReducer,
     doctorAssignment: doctorAssignmentReducer,
+    medicalRecord:medicalRecordReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

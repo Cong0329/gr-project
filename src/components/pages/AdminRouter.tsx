@@ -32,6 +32,8 @@ import { CategoryProduct } from "../admin/pages/Forms/Product/Brand/CategoryProd
 import { MedicalObjectProduct } from "../admin/pages/Forms/Product/Brand/MedicalObjectProduct";
 import { IndicationProduct } from "../admin/pages/Forms/Product/Brand/IndicationProduct";
 import UserPage from "../admin/pages/Forms/Product/Brand/UserPage";
+import { Package } from "lucide-react";
+import PackagePage from "../admin/pages/Forms/Product/Manage/Packages";
 
 const adminRoutes = (
   <Route>
@@ -57,6 +59,9 @@ const adminRoutes = (
     <Route path="reviews" element={<AdminReview />} />
     <Route path="chat" element={<AdminChatInterface />} />
 
+    {/* Manage packages */}
+    <Route path="packages" element={<PackagePage />} />
+
     {/* Forms */}
     {/* <Route path="/admin/form-elements" element={<FormElements />} />
     <Route path="/admin/create-product" element={< ProductCreationForm />} />
@@ -76,12 +81,11 @@ const adminRoutes = (
     <Route path="/admin/medical-object/:name" element={<MedicalObjectProduct />} />
     <Route path="/admin/indication/:name" element={<IndicationProduct />} /> */}
 
-
     {/* Tables
     <Route path="/admin/basic-tables" element={<BasicTables />} />
 
     {/* Tables */}
-    {/* <Route path="basic-tables" element={<BasicTables />} /> */} 
+    {/* <Route path="basic-tables" element={<BasicTables />} /> */}
 
     {/* UI Elements */}
     <Route path="alerts" element={<Alerts />} />
@@ -105,6 +109,5 @@ export const adminAuthRoutes = (
     <Route path="/admin/verify" element={<VerifyCodePage />} />
   </>
 );
-
 
 export default adminRoutes;
