@@ -275,7 +275,7 @@ exports.getDoctorSchedules = async (req, res, next) => {
       offset: offset
     });
 
-    console.log('Found schedules:', schedules.length);
+    // console.log('Found schedules:', schedules.length);
 
     res.json({
       success: true,
@@ -358,9 +358,9 @@ exports.getScheduleById = async (req, res) => {
  */
 exports.createSchedule = async (req, res) => {
   try {
-    console.log('🔥 User:', req.user);
-    console.log('🔥 Roles:', req.user?.roles);
-    console.log('🔥 Body:', req.body);
+    // console.log('🔥 User:', req.user);
+    // console.log('🔥 Roles:', req.user?.roles);
+    // console.log('🔥 Body:', req.body);
     
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
