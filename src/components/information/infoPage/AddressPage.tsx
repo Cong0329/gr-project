@@ -142,9 +142,9 @@ export const AddressPage = () => {
 
     return (
         <div className="pt-2 ">
-            <div className="flex justify-between mb-6">
+            <div className="flex justify-between mb-6 ms:flex-col gap-2">
                 <h2 className="text-2xl font-bold">Quản lý số địa chỉ</h2>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg" onClick={handleAddNew}>Thêm địa chỉ mới</button>
+                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg ms:w-3/4" onClick={handleAddNew}>Thêm địa chỉ mới</button>
             </div>
             <div className="space-y-2 bg-white rounded-xl">
                 {content}

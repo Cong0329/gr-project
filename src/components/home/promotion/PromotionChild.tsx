@@ -44,8 +44,15 @@ export const PromotionChild: React.FC<PromotionChildProps> = ({ product, handleT
 
     return (
         <div key={product.id} className="item-box border-2 mr-2  rounded-lg bg-white flex flex-col items-center p-4 space-y-2 hover:border-blue-600 transition-all duration-300">
-            <Link to={`/medicine-detail/${product.slug}`} onClick={() => dispatch(resetProduct())}>
-                <img src={product.images[0].image} alt={product.name} loading="lazy" className="h-40" />
+            <Link to={`/medicine-detail/${product.slug}`} onClick={() => dispatch(resetProduct())} >
+                <div className="w-full h-40 flex items-center justify-center">
+                    <img
+                        src={product.images[0].image}
+                        alt={product.name}
+                        loading="lazy"
+                        className="max-h-40 max-w-full object-contain"
+                    />
+                </div>
                 <div className="w-full mt-2 h-16 tb:h-10 text-black font-semibold text-sm overflow-hidden text-ellipsis">
                     <p className="line-clamp-3">{product.name}</p>
                 </div>
@@ -58,7 +65,7 @@ export const PromotionChild: React.FC<PromotionChildProps> = ({ product, handleT
                     <button
                         key={option.label}
                         onClick={() => handleTypeClick(option.label, product.id)}
-                        className={`capitalize text-[13px] font-semibold px-2 ${selectedLabel === option.label
+                        className={`capitalize text-[13px] md-lg:text-[10px] mm:text-[9px] font-semibold px-2 ${selectedLabel === option.label
                             ? 'text-blue-700 border border-blue-700 rounded-lg'
                             : 'text-gray-600'
                             }`}
@@ -85,8 +92,8 @@ export const PromotionChild: React.FC<PromotionChildProps> = ({ product, handleT
                 )}
             </div>
 
-            <div className="w-full flex items-start">
-                <p className="bg-gray-300 p-2 rounded-lg text-[13px] font-semibold text-gray-600">{product.specification}</p>
+            <div className="w-full flex items-start md-lg:h-12">
+                <p className="bg-gray-300 p-2 rounded-lg text-[13px] font-semibold md-lg:text-[10px]  text-gray-600">{product.specification}</p>
             </div>
 
             <button className="bg-blue-700 text-white font-bold py-2 items-center rounded-full w-full text-sm" onClick={addToCart}>

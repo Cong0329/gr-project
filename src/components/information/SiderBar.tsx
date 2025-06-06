@@ -31,7 +31,7 @@ const Sidebar: React.FC = () => {
     }
   };
   return (
-    <div className="w-64">
+    <div className="w-full">
       <UserProfile name={user?.name?.split(" ").slice(-1)[0]} phone={user?.phone} img={user?.avatar_url} />
       <div className=" mt-5 bg-white rounded-xl">
         {menuItems.map((item) => (

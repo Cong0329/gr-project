@@ -362,7 +362,7 @@ export const HealthCheckPage: React.FC = () => {
                     d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <span>Lịch sắp tới</span>
+                <span className="ms:text-sm">Lịch sắp tới</span>
                 {upcomingAppointments.length > 0 && (
                   <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
                     {upcomingAppointments.length}
@@ -392,7 +392,7 @@ export const HealthCheckPage: React.FC = () => {
                     d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                   />
                 </svg>
-                <span>Lịch đã qua</span>
+                <span className="ms:text-sm">Lịch đã qua</span>
                 {pastAppointments.length > 0 && (
                   <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">
                     {pastAppointments.length}
@@ -499,7 +499,7 @@ export const HealthCheckPage: React.FC = () => {
                         </div>
                       </div>
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ${getStatusColor(
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border ms:text-[10px] ${getStatusColor(
                           appointment.status
                         )}`}
                       >

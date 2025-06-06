@@ -55,24 +55,24 @@ export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
                                     <Skeleton className="h-5 w-36 bg-gray-200 rounded-md"></Skeleton>
                                     <div className="mx-1 text-gray-300">•</div>
                                     <Skeleton className="h-5 w-32 bg-gray-200 rounded-md"></Skeleton>
-                                    <div className="mx-1 text-gray-300">•</div>
-                                    <Skeleton className="h-5 w-20 bg-gray-200 rounded-md"></Skeleton>
+                                    <div className="mx-1 text-gray-300 ml:hidden">•</div>
+                                    <Skeleton className="h-5 w-20 bg-gray-200 rounded-md ml:hidden"></Skeleton>
                                 </div>
                                 <div className="flex items-center">
-                                    <Skeleton className="w-2 h-2 bg-gray-200 rounded-md mr-2"></Skeleton>
-                                    <Skeleton className="h-5 w-20 bg-gray-200 rounded-md"></Skeleton>
+                                    <Skeleton className="w-2 h-2 bg-gray-200 rounded-md mr-2 ml:hidden"></Skeleton>
+                                    <Skeleton className="h-5 w-20 bg-gray-200 rounded-md ml:hidden"></Skeleton>
                                 </div>
                             </div>
                             <div className="pt-4 pb-2 flex justify-between items-start">
                                 <div className="flex items-center">
                                     <Skeleton className="h-16 w-16 bg-gray-200 rounded-md p-2"></Skeleton>
                                     <div className="ml-4">
-                                        <Skeleton className="h-10 w-[500px] bg-gray-200 rounded-md"></Skeleton>
+                                        <Skeleton className="h-10 w-[500px] md:w-[300px] tb:w-[300px] bg-gray-200 rounded-md"></Skeleton>
                                         <Skeleton className="h-5 w-32 bg-gray-200 rounded-md mt-2"></Skeleton>
                                     </div>
                                 </div>
-                                <Skeleton className="h-5 w-20 bg-gray-200 rounded-md"></Skeleton>
-                                <Skeleton className="h-5 w-20 bg-gray-200 rounded-md"></Skeleton>
+                                <Skeleton className="h-5 w-20 bg-gray-200 rounded-md ml:hidden"></Skeleton>
+                                <Skeleton className="h-5 w-20 bg-gray-200 rounded-md ml:hidden"></Skeleton>
                             </div>
                             <div className="flex justify-between items-center">
                                 <Skeleton className="h-5 w-28 bg-gray-200 rounded-md"></Skeleton>
@@ -94,16 +94,21 @@ export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
                         <div className="px-4 pt-4 pb-2">
                             <div className="flex justify-between items-center border-b pb-2">
                                 <div className="flex items-center gap-1 font-semibold">
-                                    <span>Đơn hàng {(new Date(order.createdAt)).toLocaleDateString('vi-VN')}</span>
-                                    <span>{(new Date(order.createdAt)).toLocaleTimeString('vi-VN', {
+                                    <span className="ml:hidden">Đơn hàng {(new Date(order.createdAt)).toLocaleDateString('vi-VN')}</span>
+                                    <span className="ml:hidden">{(new Date(order.createdAt)).toLocaleTimeString('vi-VN', {
                                         hour: '2-digit',
                                         minute: '2-digit',
                                         hour12: false
                                     })}</span>
-                                    <span className="mx-1 text-gray-300">•</span>
-                                    <span className="text-gray-500">Giao hàng tận nơi</span>
-                                    <span className="mx-1 text-gray-300">•</span>
-                                    <span className="text-gray-600">{order.id}</span>
+                                    <div className=" hidden  ml:flex ml:flex-col ml:items-start ">
+                                        <span className="">Đơn hàng {(new Date(order.createdAt)).toLocaleDateString('vi-VN')}</span>
+                                        <span className="text-gray-500 md-lg:w-20">Giao hàng tận nơi</span>
+
+                                    </div>
+                                    <span className="mx-1 text-gray-300 ml:hidden">•</span>
+                                    <span className="text-gray-500 md-lg:w-20 ml:hidden">Giao hàng tận nơi</span>
+                                    <span className="mx-1 text-gray-300 ml:hidden">•</span>
+                                    <span className="text-gray-600 md-lg:w-56 tb:hidden">{order.id}</span>
                                 </div>
                                 <div className="flex items-center">
                                     <div className={`w-2 h-2 ${statusBg[order.status]} rounded-full mr-2`}></div>
@@ -120,16 +125,21 @@ export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
                                             className="w-16 h-16 border rounded-lg p-2"
                                         />
                                         <div className="ml-4">
-                                            <div className="font-semibold text-sm w-[500px] line-clamp-2">
+                                            <div className="font-semibold text-sm w-[500px] md:w-[450px] tb:w-[400px] ml:w-[300px] ms:w-[250px] mm:w-[200px] line-clamp-2">
                                                 {order.items[0].product.name}
                                             </div>
-                                            {order.items.length > 1 && (
-                                                <div className="text-gray-500 w-full line-clamp-1">+1 sản phẩm khác</div>
-                                            )}
+
+                                            {order.items.length > 1 ? (
+                                                <div className="text-gray-500 w-full line-clamp-1">+{order.items.length - 1} sản phẩm khác</div>
+                                            ) : (
+
+                                                <div className=" w-full line-clamp-1 text-white">g</div>
+                                            )
+                                            }
                                         </div>
                                     </div>
-                                    <div className="font-bold">{parseFloat(order.items[0].price).toLocaleString()}đ</div>
-                                    <div className="text-gray-500">x{order.items[0].quantity} {order.items[0].option}</div>
+                                    <div className="font-bold tb:hidden">{parseFloat(order.items[0].price).toLocaleString()}đ</div>
+                                    <div className="text-gray-500 tb:hidden">x{order.items[0].quantity} {order.items[0].option}</div>
                                 </div>
                             </Link>
                             <Link to={`/profile/orders/order-detail/${order.id}`} onClick={() => dispatch(resetOrderDetail())}>

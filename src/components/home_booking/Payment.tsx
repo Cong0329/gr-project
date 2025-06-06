@@ -166,42 +166,42 @@ const PaymentPage = () => {
   };
 
   // Xử lý thanh toán VNPay cho appointment
-  const processAppointmentVNPayPayment = async (appointmentId) => {
-    if (!appointmentId) {
-      toast.error("Thông tin đặt lịch không hợp lệ");
-      return false;
-    }
+  // const processAppointmentVNPayPayment = async (appointmentId) => {
+  //   if (!appointmentId) {
+  //     toast.error("Thông tin đặt lịch không hợp lệ");
+  //     return false;
+  //   }
 
-    try {
-      // Log cho debug
-      console.log("Đang gửi yêu cầu thanh toán VNPay cho appointment:", {
-        appointmentId: appointmentId,
-        amount: packageInfo?.price || 0,
-        userInfo: userInfo,
-      });
+  //   try {
+  //     // Log cho debug
+  //     console.log("Đang gửi yêu cầu thanh toán VNPay cho appointment:", {
+  //       appointmentId: appointmentId,
+  //       amount: packageInfo?.price || 0,
+  //       userInfo: userInfo,
+  //     });
 
-      // Gửi request tạo URL thanh toán VNPay
-      const response = await axios.post("/api/payment/vnpay/create", {
-        appointmentId: appointmentId,
-        amount: packageInfo?.price || 0,
-        userInfo: userInfo,
-      });
+  //     // Gửi request tạo URL thanh toán VNPay
+  //     const response = await axios.post("/api/payment/vnpay/create", {
+  //       appointmentId: appointmentId,
+  //       amount: packageInfo?.price || 0,
+  //       userInfo: userInfo,
+  //     });
 
-      // Nếu thành công, chuyển hướng đến trang thanh toán VNPay
-      if (response.data && response.data.paymentUrl) {
-        window.location.href = response.data.paymentUrl;
-        return true;
-      } else {
-        console.error("VNPay response:", response.data);
-        toast.error("Không nhận được URL thanh toán");
-        return false;
-      }
-    } catch (error) {
-      console.error("VNPay error:", error);
-      toast.error("Có lỗi xảy ra khi khởi tạo thanh toán qua VNPay");
-      return false;
-    }
-  };
+  //     // Nếu thành công, chuyển hướng đến trang thanh toán VNPay
+  //     if (response.data && response.data.paymentUrl) {
+  //       window.location.href = response.data.paymentUrl;
+  //       return true;
+  //     } else {
+  //       console.error("VNPay response:", response.data);
+  //       toast.error("Không nhận được URL thanh toán");
+  //       return false;
+  //     }
+  //   } catch (error) {
+  //     console.error("VNPay error:", error);
+  //     toast.error("Có lỗi xảy ra khi khởi tạo thanh toán qua VNPay");
+  //     return false;
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -323,12 +323,17 @@ const PaymentPage = () => {
       ).unwrap();
 
       console.log("Created appointment result:", createResult);
-
-      if (!createResult || !createResult.id) {
-        throw new Error("Không thể tạo lịch khám. Vui lòng thử lại sau.");
+      if (userInfo.paymentMethod === "vnpay") {
+        if (!createResult?.paymentUrl || !createResult) {
+          throw new Error("Không thể tạo lịch khám. Vui lòng thử lại sau.");
+        }
+      } else {
+        if (!createResult.data || !createResult.data.id) {
+          throw new Error("Không thể tạo lịch khám. Vui lòng thử lại sau.");
+        }
       }
 
-      newAppointmentId = createResult.id;
+      // newAppointmentId = createResult.data.id;
 
       const previousPageInfo = packageInfo.previousPage || {};
       const backUrl =
@@ -338,7 +343,7 @@ const PaymentPage = () => {
         }/${encodeURIComponent(previousPageInfo.name || "Chuyên khoa")}`;
 
       if (userInfo.paymentMethod === "vnpay") {
-        await processAppointmentVNPayPayment(newAppointmentId);
+        // await processAppointmentVNPayPayment(newAppointmentId);
       } else {
         setShowSuccess(true);
 

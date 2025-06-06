@@ -25,8 +25,11 @@ export const CheckoutItem: React.FC<CheckoutItemProps> = ({ isFirst, item, isLoa
   const { name, quantity, image, selectedOption } = item;
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(addCartItemId(Number(item.id)));
+    if (item.selected) {
+      dispatch(addCartItemId(Number(item.id)));
+    }
   }, [dispatch, item]);
+  
   // Tính tổng tiền của sản phẩm dựa trên tùy chọn được chọn
   const totalPrice = (selectedOption.discountedPrice ?? selectedOption.price) * quantity;
 

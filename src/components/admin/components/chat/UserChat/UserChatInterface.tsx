@@ -104,30 +104,35 @@ export default function UserChatInterface() {
 
     return (
         <div className="flex h-[570px] w-full ">
-            <UserList
-                users={filteredUsers}
-                searchTerm={searchTerm}
-                onSearch={setSearchTerm}
-                onMessage={setNewMessage}
-                onSelectUser={setSelectedUser}
-                selectedUserId={selectedUser?.id}
-            />
-            <div className="flex-1 flex flex-col ">
+            <div className={`${selectedUser ? 'ml:hidden' : 'ml:block'} ml:w-full`}>
+                <UserList
+                    users={filteredUsers}
+                    searchTerm={searchTerm}
+                    onSearch={setSearchTerm}
+                    onMessage={setNewMessage}
+                    onSelectUser={setSelectedUser}
+                    selectedUserId={selectedUser?.id}
+                />
+            </div>
+
+            <div className="flex-1 flex flex-col  ">
                 {selectedUser ? (
-                    <>
+                    <div
+                        className={`flex flex-col h-full
+                                ml:fixed ml:inset-0 ml:z-50 ml:bg-white ml:flex ml:flex-col
+                                ml:h-full
+                                `}
+                    >
                         <ChatHeader user={selectedUser} setSelectedUser={setSelectedUser} />
-                        
                         <MessageList messages={messages} user={selectedUser} />
-
-
                         <MessageInput
                             message={newMessage}
                             onChange={setNewMessage}
                             onSend={handleSendMessage}
                         />
-                    </>
+                    </div>
                 ) : (
-                    <div className="flex-1 flex items-center justify-center bg-gray-50">
+                    <div className="flex-1 flex items-center ml:hidden justify-center bg-gray-50">
                         <div className="text-center">
                             <svg
                                 className="mx-auto h-12 w-12 text-gray-400"

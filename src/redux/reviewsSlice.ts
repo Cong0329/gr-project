@@ -78,6 +78,7 @@ export interface ReviewState {
     status: 'idle' | 'loading' | 'succeeded' | 'failed';
     error: string | null;
     notifying: boolean;
+    chatbox: boolean;
 }
 
 const initialState: ReviewState = {
@@ -89,12 +90,16 @@ const initialState: ReviewState = {
     status: 'idle',
     error: null,
     notifying: false,
+    chatbox: false,
 };
 
 const reviewsSlice = createSlice({
     name: "reviews",
     initialState,
     reducers: {
+        openChatbox(state) {
+            state.chatbox = !state.chatbox;
+        },
         addReview: (state, action) => {
             state.reviews.unshift(action.payload);
         },
@@ -277,5 +282,5 @@ const reviewsSlice = createSlice({
     },
 });
 
-export const { addReview, addNotification, markAsRead, clearNotifications, addMessage, addMessageAdmin, addMessageUser, clearMessages, clearMessagesAdmin, moveUserToTopOrAdd } = reviewsSlice.actions;
+export const { openChatbox, addReview, addNotification, markAsRead, clearNotifications, addMessage, addMessageAdmin, addMessageUser, clearMessages, clearMessagesAdmin, moveUserToTopOrAdd } = reviewsSlice.actions;
 export default reviewsSlice.reducer;

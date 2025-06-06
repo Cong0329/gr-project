@@ -12,6 +12,7 @@ export const OrderPage = () => {
     const [activeTab, setActiveTab] = useState('all');
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
     const [search, setSearch] = useState('');
+    const containerRef = useRef<HTMLDivElement>(null);
     const { orders } = useSelector((state: RootState) => state.order);
     const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
     const [isLoading, setIsLoading] = useState(true);
@@ -67,9 +68,9 @@ export const OrderPage = () => {
 
     return (
         <div className="pt-2">
-            <div className="flex justify-between mb-6">
+            <div className="flex justify-between mb-6 ml:flex-col ml:gap-2">
                 <h2 className="text-2xl font-bold">Đơn hàng của tôi</h2>
-                <div className="flex items-center w-1/2 py-4 pl-2 pr-1 rounded-full border bg-gray-200 h-10 relative">
+                <div className="flex items-center w-1/2 ml:w-full py-4 pl-2 pr-1 rounded-full border bg-gray-200 h-10 relative">
                     <input
                         type="text"
                         className="w-full px-4 py-2 bg-transparent focus:outline-none"
@@ -95,13 +96,13 @@ export const OrderPage = () => {
             </div>
 
             {/* Tabs */}
-            <div className="relative border-b bg-white rounded-t-xl mb-2">
-                <div className="flex justify-between relative">
+            <div className="relative border-b bg-white rounded-t-xl mb-2 ">
+                <div className="flex justify-between relative ml:w-full ml:overflow-x-auto ml:whitespace-nowrap ml:scrollbar-hide">
                     {['all', 'pending', 'confirmed', 'shipping', 'completed', 'cancelled', 'return'].map((tab) => (
                         <button
                             key={tab}
                             ref={(el) => (tabRefs.current[tab] = el)}
-                            className={`px-6 py-2 transition-colors font-semibold duration-300 w-[200px] ${activeTab === tab ? 'text-blue-600 font-medium' : 'text-gray-500'}`}
+                            className={`px-6 py-2 transition-colors font-semibold duration-300 md-lg:px-2 tb:px-2 ml:inline-block  ${activeTab === tab ? 'text-blue-600 font-medium' : 'text-gray-500'}`}
                             onClick={() => handleClickTab(tab)}
                         >
                             {{
@@ -119,7 +120,7 @@ export const OrderPage = () => {
 
                 {/* Animated underline */}
                 <span
-                    className="absolute bottom-0 h-[2px] bg-blue-600 transition-all duration-300"
+                    className="absolute bottom-0 h-[2px] bg-blue-600 transition-all duration-300 ml:hidden"
                     style={{
                         left: indicatorStyle.left,
                         width: indicatorStyle.width,

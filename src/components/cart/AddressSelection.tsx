@@ -1,25 +1,28 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import AddressModal from "./AddressModal";
-import { RootState } from "../../redux/store"; // Đảm bảo import đúng đường dẫn
+import { AppDispatch, RootState } from "../../redux/store"; // Đảm bảo import đúng đường dẫn
 import { fetchAddresses } from "../../redux/addressAsyncThunk";
 import { addShippingAddressId } from "../../redux/orderSlice";
 import { addNote } from "../../redux/orderSlice";
 const AddressSelection = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const dispatch = useDispatch();
+    const dispatch:AppDispatch = useDispatch();
 
     // Lấy selectedAddress từ Redux store
     const selectedAddress = useSelector((state: RootState) => state.address.selectedAddress);
 
     const {status, addresses} = useSelector((state: RootState) => state.address);
+    
     useEffect(() => {
-        if (addresses.length === 0) {
             dispatch(fetchAddresses());
-        } else if(status === "succeeded"){
+    }, [dispatch]);
+
+    useEffect(() => {
+        if(status === "succeeded"){
             dispatch(fetchAddresses());
         }
-    }, [dispatch,status,addresses.length]);
+    }, [dispatch,status]);
 
    useEffect(() => {
     if(selectedAddress){
@@ -35,7 +38,12 @@ const AddressSelection = () => {
                     <p className="capitalize">{selectedAddress?.type}</p>
                 </div>
                 <button onClick={() => setIsModalOpen(true)} className="text-blue-700 hover:underline font-semibold">
-                    Thay đổi
+                    {addresses.length === 0 ?(
+                        "Thêm địa chỉ"
+                    ):(
+                        "Thay đổi"
+                    )}
+                    
                 </button>
             </div>
 

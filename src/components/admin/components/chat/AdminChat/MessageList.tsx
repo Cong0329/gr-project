@@ -43,7 +43,7 @@ export default function MessageList({ messages, user }: Props) {
   }, [messages]);
   
   return (
-    <div ref={messagesContainerRef} className="flex-1 bg-gray-50  p-4 overflow-y-auto space-y-4">
+    <div ref={messagesContainerRef} className="flex-1 bg-gray-50  p-4 overflow-y-auto space-y-4 ">
       {(isAdmin || isDoctor) ? (
         <>
           {messages.map((msg) => (

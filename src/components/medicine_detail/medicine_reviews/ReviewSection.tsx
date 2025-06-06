@@ -4,14 +4,14 @@ import ReviewModal from "./ReviewModal";
 import RatingSummary from "./RatingSumary";
 import ExpandableText from "../medicine_tech/ExpandableText";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../redux/store";
+import { RootState,AppDispatch } from "../../../redux/store";
 import { createReview } from "../../../redux/reviewsAsyncThunk";
 import { toast } from "react-toastify";
 import { Review } from "../../../redux/reviewsSlice";
 
 const ReviewSection: React.FC = () => {
   const { user } = useSelector((state: RootState) => state.auth);
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const { product, review } = useSelector((state: RootState) => state.products);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -34,6 +34,10 @@ const ReviewSection: React.FC = () => {
     }
     if (rating === null) {
       toast.error("Vui lòng chọn đánh giá");
+      return;
+    }
+    if (!user?.id) {
+      toast.error("Vui lòng đăng nhập để đánh giá");
       return;
     }
 

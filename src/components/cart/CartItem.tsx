@@ -9,6 +9,8 @@ import { ModalDelete } from "./ModalDelete";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { resetProduct } from "../../redux/productSlice";
+import { AppDispatch } from "../../redux/store";
+import { removeCartItemId } from "../../redux/orderSlice";
 
 interface CartItem {
   id: string;
@@ -27,7 +29,7 @@ interface CartItemProps {
 
 const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const [newQuantity, setNewQuantity] = useState(item.quantity);
   const { id, product_id, name, quantity, image, selected, selectedOption, slug } = item;
   const [options, setOptions] = useState([]);
@@ -91,7 +93,7 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
         type="checkbox"
         className="w-4 h-4"
         checked={selected}
-        onChange={() => dispatch(toggleSelectItem(id))}
+        onChange={() => { dispatch(toggleSelectItem(id)); dispatch(removeCartItemId(Number(id))) }}
       />
 
       <div className="ml:hidden flex items-center gap-x-2">

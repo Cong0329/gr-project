@@ -46,15 +46,45 @@ export const BannerChild = () => {
     return (
         <div className="flex tb:flex-wrap gap-5  justify-around w-full">
             {child.map((child) => (
-                <div className='flex tb:flex-col rounded-lg bg-white p-4 items-center w-[200px] ml:w-[100px]' key={child.title}>
-                    <img src={child.image} alt={child.title} loading='lazy' className='w-1/3 h-full tb:h-[40px] object-fit' />
-                    <div className='tb:hidden'>
-                        <p className='font-bold pl-2 tb:text-sm'>{child.title}</p>
-                    </div>
-                    <div className='hidden tb:block items-center'>
-                        <p className='text-center font-bold pl-2 tb:text-sm'>{child.title}</p>
-                    </div>
-                </div>
+                <>
+                    {
+                        child.title === "Kiểm tra sức khỏe" ? (
+                            <div className='flex tb:flex-col rounded-lg bg-white p-4 items-center w-[200px] ml:w-[100px]' key={child.title}>
+                                <img src={child.image} alt={child.title} loading='lazy' className='w-1/3 h-full tb:h-[40px] object-fit' />
+                                <div className='tb:hidden'>
+
+                                    <a
+                                        href="/booking-home"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="font-bold pl-2 tb:text-sm"
+                                    >
+                                        {child.title}
+                                    </a>
+
+
+                                </div>
+                                <div className='hidden tb:block items-center'>
+                                    <p className='text-center font-bold pl-2 tb:text-sm'>{child.title}</p>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className='flex tb:flex-col rounded-lg bg-white p-4 items-center w-[200px] ml:w-[100px]' key={child.title}>
+                                <img src={child.image} alt={child.title} loading='lazy' className='w-1/3 h-full tb:h-[40px] object-fit' />
+                                <div className='tb:hidden'>
+
+                                    <p className="font-bold pl-2 tb:text-sm">{child.title}</p>
+
+
+
+                                </div>
+                                <div className='hidden tb:block items-center'>
+                                    <p className='text-center font-bold pl-2 tb:text-sm'>{child.title}</p>
+                                </div>
+                            </div>
+                        )
+                    }
+                </>
             ))}
         </div>
     )

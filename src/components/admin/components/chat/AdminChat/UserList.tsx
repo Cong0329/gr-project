@@ -46,7 +46,7 @@ export default function UserList({ users, searchTerm, onSearch, onMessage, onSel
     };
 
     return (
-        <div className="w-80 bg-white border-r border-gray-200 flex flex-col h-[570px]">
+        <div className="w-80 bg-white border-r border-gray-200 flex flex-col h-[570px] tb:w-[250px] ml:w-full">
             <div className="p-4 border-b border-gray-200">
                 <h1 className="text-2xl font-bold text-gray-800">Chats</h1>
             </div>

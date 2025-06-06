@@ -8,20 +8,18 @@ import ModalFilterSelected from "./ModalFilterSelected";
 interface ModalFilterProps {
   isOpen: boolean;
   onClose: () => void;
+  category: string[];
+  brand: string[];
+  country: string[];
+  original: string[];
+  medical_object: string[];
+  indication: string[];
 }
 
-const filterOptions: { [key: string]: string[] } = {
-  "Loại sản phẩm": ["Kem dưỡng", "Sữa rửa mặt", "Tinh chất", "Serum"],
-  "Đối tượng sử dụng": ["Nam", "Nữ", "Trẻ em", "Người lớn"],
-  "Giá bán": ["100k - 500k", "500k - 1 triệu", "Trên 1 triệu"],
-  "Loại thuốc": ["Thuốc bôi", "Thuốc uống", "Thuốc tiêm"],
-  "Nước sản xuất": ["Việt Nam", "Hàn Quốc", "Nhật Bản", "Mỹ"],
-  "Chỉ định": ["Trị mụn", "Dưỡng trắng", "Dưỡng ẩm"],
-  "Thương hiệu": ["La Roche-Posay", "Bioderma", "Vichy", "CeraVe"],
-  "Xuất xứ thương hiệu": ["Việt Nam", "Hàn Quốc", "Pháp", "Mỹ"],
-};
 
-export const ModalFilter: React.FC<ModalFilterProps> = ({ isOpen, onClose }) => {
+
+
+export const ModalFilter: React.FC<ModalFilterProps> = ({ isOpen, onClose, category, brand, country, original, medical_object, indication }) => {
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const dispatch = useDispatch();
@@ -30,6 +28,19 @@ export const ModalFilter: React.FC<ModalFilterProps> = ({ isOpen, onClose }) => 
 
   // State tạm để giữ các bộ lọc chưa áp dụng
   const [tempSelectedFilters, setTempSelectedFilters] = useState<typeof selectedFilters>({});
+
+  const filterOptions: { [key: string]: string[] } = {
+    "Loại sản phẩm": category,
+    "Đối tượng sử dụng": medical_object,
+    "Giá bán": ["Dưới 100.000đ", "100.000đ - 300.000đ", "300.000đ - 500.000đ", "Trên 500.000đ"],
+    "Loại thuốc": ["Thuốc kê đơn", "Thuốc không kê đơn"],
+    "Nước sản xuất": country,
+    "Chỉ định": indication,
+    "Thương hiệu": brand,
+    "Xuất xứ thương hiệu": original,
+  };
+
+
 
   // Khi mở modal, sao chép selectedFilters vào tempSelectedFilters
   useEffect(() => {
