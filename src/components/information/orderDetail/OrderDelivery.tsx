@@ -48,7 +48,7 @@ export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process })
                     </span>
                     <div className="flex items-center font-semibold space-x-4 text-sm">
                         <span className="text-gray-600">Giao hàng tận nơi</span>
-                        <span className="text-gray-600">{orderDetail.id}</span>
+                        <span className="text-gray-600 tb:hidden">{orderDetail.id}</span>
                     </div>
                 </div>
 

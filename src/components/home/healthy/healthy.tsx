@@ -176,7 +176,7 @@ export default function HealthSection() {
                         >
 
                             <div key={doctor.id} className="p-2 ms:p-0">
-                                <div className="bg-white rounded-xl p-4 ms:p-0 shadow-md flex items-center gap-3 tb:h-32 mm:h-[100px] mm:w-[230px] ms:h-[100px] ms:w-[270px]">
+                                <div className="bg-white rounded-xl p-4 ms:p-0 shadow-md flex items-center gap-3 tb:h-32 ms:h-[100px] h-[100px] ">
                                     <img
                                         src={doctor?.avatar}
                                         alt={doctor.name}

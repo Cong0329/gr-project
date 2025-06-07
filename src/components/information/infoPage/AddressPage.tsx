@@ -6,6 +6,7 @@ import AddAddressModal from '../../cart/AddAddressModal';
 import { ModalDelete } from '../../cart/ModalDelete';
 import { resetAddress } from '../../../redux/addressSlice';
 import Skeleton from 'react-loading-skeleton';
+import { Link } from 'react-router-dom';
 
 export const AddressPage = () => {
 
@@ -77,13 +78,13 @@ export const AddressPage = () => {
                             </div>
                         </div>
                         <div className="flex justify-end items-center space-x-2">
-                            <button className="text-blue-600" disabled>
-                                <Skeleton className="h-5 w-12 bg-gray-200 rounded"></Skeleton>
-                            </button>
+
+                            <Skeleton className="h-5 w-12 bg-gray-200 rounded"></Skeleton>
+
                             <span className='border h-5'></span>
-                            <button className="text-red-600" disabled>
-                                <Skeleton className="h-5 w-12 bg-gray-200 rounded"></Skeleton>
-                            </button>
+
+                            <Skeleton className="h-5 w-12 bg-gray-200 rounded"></Skeleton>
+
                         </div>
                     </div>
                 ))}</>
@@ -132,9 +133,9 @@ export const AddressPage = () => {
                 <div className="w-96 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                     <img src="https://imgur.com/wJtkO6K.png" alt="" className="w-full" loading="lazy" />
                 </div>
-                <div className="text-lg font-medium mb-1">Bạn chưa có đơn hàng nào.</div>
-                <div className="text-gray-500">Cùng khám phá hàng ngàn sản phẩm tại Nhà thuốc FPT Long Châu nhé!</div>
-                <button className="font-semibold text-white bg-blue-600 px-16 py-2 rounded-full mt-4">Khám phá ngay</button>
+                <div className="text-lg font-medium mb-1">Bạn chưa có địa chỉ nào.</div>
+                <div className="text-gray-500">Cùng khám phá hàng ngàn sản phẩm tại Nhà thuốc Viet Mart nhé!</div>
+                <Link to="/" className="font-semibold text-white bg-blue-600 px-16 py-2 rounded-full mt-4">Khám phá ngay</Link>
             </div>
         );
     }

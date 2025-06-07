@@ -28,9 +28,17 @@ export const CheckoutItem: React.FC<CheckoutItemProps> = ({ isFirst, item, isLoa
       dispatch(addCartItemId(Number(item.id)));
     }
   }, [dispatch, item]);
-  
+
   // Tính tổng tiền của sản phẩm dựa trên tùy chọn được chọn
-  const totalPrice = (typeof selectedOption === 'string' ? 0 : (selectedOption.discounted_price ?? selectedOption.price)) * quantity;
+  const totalPrice =
+    typeof selectedOption === 'string'
+      ? 0
+      : ((Number(selectedOption.discounted_price) === 0 || selectedOption.discounted_price == null)
+        ? Number(selectedOption.price)
+        : Number(selectedOption.discounted_price)) * quantity;
+
+
+
 
   // Hàm cập nhật tùy chọn cho sản phẩm
   let content;

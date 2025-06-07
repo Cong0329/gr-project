@@ -102,7 +102,7 @@ export const OrderDetailBody = () => {
                 <NavLink setIsServiceHovered={setIsServiceHovered} />
             </div>
             <div className='relative'>
-                <div className="mx-auto relative w-4/5 bg-gray-100 pb-4 container">
+                <div className="mx-auto relative w-4/5 bg-gray-100 pb-4 container tb:w-11/12">
                     <div className="  mx-auto bg-gray-100  [&>*]:!bg-gray-100">
                         <Breadcrumb />
                     </div>

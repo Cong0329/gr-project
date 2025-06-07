@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { FaMagnifyingGlass } from 'react-icons/fa6';
 import { OrderCustom } from './OrderCustom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchOrders,  } from '../../../redux/orderAsyncThunk';
+import { fetchOrders, } from '../../../redux/orderAsyncThunk';
 import { RootState, AppDispatch } from '../../../redux/store';
+import { Link } from 'react-router-dom';
 
 
 
@@ -130,15 +131,32 @@ export const OrderPage = () => {
             {/* Tab content */}
             {filteredOrders.length > 0 ? (
                 <OrderCustom orders={filteredOrders} isLoading={isLoading} />
+            ) : search === '' ? (
+                <div className="flex items-center justify-center flex-col p-12">
+                    <div className="w-96 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <img src="https://imgur.com/wJtkO6K.png" alt="" className="w-full" loading="lazy" />
+                    </div>
+                    <div className="text-lg font-medium mb-1">Bạn chưa có đơn hàng nào.</div>
+                    <div className="text-gray-500">Cùng khám phá hàng ngàn sản phẩm tại Nhà thuốc Viet Mart nhé!</div>
+                    <Link to="/" className="font-semibold text-white bg-blue-600 px-16 py-2 rounded-full mt-4">
+                        Khám phá ngay
+                    </Link>
+                </div>
             ) : (
                 <div className="flex items-center justify-center flex-col p-12">
                     <div className="w-96 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                         <img src="https://i.imgur.com/1T4337t.png" alt="" className="w-full" loading="lazy" />
                     </div>
                     <div className="text-gray-500">Không tìm thấy kết quả với từ khóa "{search}"</div>
-                    <button className="font-semibold text-white bg-blue-600 px-16 py-2 rounded-full mt-4" onClick={() => setSearch('')}>Xóa kết quả tìm kiếm</button>
+                    <button
+                        className="font-semibold text-white bg-blue-600 px-16 py-2 rounded-full mt-4"
+                        onClick={() => setSearch('')}
+                    >
+                        Xóa kết quả tìm kiếm
+                    </button>
                 </div>
             )}
+
         </div>
     );
 };
