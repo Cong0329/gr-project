@@ -5,7 +5,7 @@ const {authenticateToken} = require('../middlewares/auth.middleware');
 const authController = require('../controllers/auth.controller');
 
 // Google Authentication
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'],  prompt: 'select_account' }));
 
 // Google Callback
 router.get(
