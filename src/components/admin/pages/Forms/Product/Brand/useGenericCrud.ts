@@ -13,15 +13,17 @@ export function useGenericCrud<T extends BaseEntity>(
   initialItems: T[],
   entityConfig: EntityConfig<T>
 ) {
-  const [items, setItems] = useState<T[]>(initialItems);
+  const [items] = useState<T[]>(initialItems);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentItem, setCurrentItem] = useState<T>(entityConfig.initialState());
+  const initialItem = entityConfig.initialState ? entityConfig.initialState() : {} as T;
+  const [currentItem, setCurrentItem] = useState<T>(initialItem);
   const [modalType, setModalType] = useState<ModalType>('create');
   const dispatch: AppDispatch = useDispatch();
   // Mở modal tạo mới
   const handleCreateClick = () => {
+    const initialState = entityConfig.initialState ? entityConfig.initialState() : {} as T;
     setCurrentItem({
-      ...entityConfig.initialState(),
+      ...initialState,
       id: items.length > 0 ? Math.max(...items.map(item => item.id)) + 1 : 1,
     });
     setModalType('create');
@@ -166,66 +168,66 @@ export function useGenericCrud<T extends BaseEntity>(
   };
 
 
-const handleBrandDeleteItem = () => {
-  dispatch(deleteBrand(currentItem.id));
-  setIsModalOpen(false);
-};
+  const handleBrandDeleteItem = () => {
+    dispatch(deleteBrand(currentItem.id));
+    setIsModalOpen(false);
+  };
 
-const handleCategoryDeleteItem = () => {
-  dispatch(deleteCategory(currentItem.id));
-  setIsModalOpen(false);
-};
+  const handleCategoryDeleteItem = () => {
+    dispatch(deleteCategory(currentItem.id));
+    setIsModalOpen(false);
+  };
 
-const handleMedicalObjectDeleteItem = () => {
-  dispatch(deleteMedicalObject(currentItem.id));
-  setIsModalOpen(false);
-};
+  const handleMedicalObjectDeleteItem = () => {
+    dispatch(deleteMedicalObject(currentItem.id));
+    setIsModalOpen(false);
+  };
 
-const handleIndicationDeleteItem = () => {
-  dispatch(deleteIndication(currentItem.id));
-  setIsModalOpen(false);
-};
+  const handleIndicationDeleteItem = () => {
+    dispatch(deleteIndication(currentItem.id));
+    setIsModalOpen(false);
+  };
 
-const handleUserSaveItem = () => {
-  if (!currentItem.name) {
-    alert("Thiếu thông tin. Vui lòng kiểm tra lại.");
-    return;
-  }
-  if (modalType === 'create') {
-    dispatch(createUserAPI({name: currentItem.name, email: currentItem.email, password: currentItem.password, roleCode: currentItem.role}));
-  } else {
-    // dispatch(updateUserAPI({ id: currentItem.id, name: currentItem.name, email: currentItem.email, roleCode: currentItem.role }));
-  }
+  const handleUserSaveItem = () => {
+    if (!currentItem.name) {
+      alert("Thiếu thông tin. Vui lòng kiểm tra lại.");
+      return;
+    }
+    if (modalType === 'create') {
+      dispatch(createUserAPI({ name: currentItem.name, email: currentItem.email, password: currentItem.password, roleCode: currentItem.role }));
+    } else {
+      // dispatch(updateUserAPI({ id: currentItem.id, name: currentItem.name, email: currentItem.email, roleCode: currentItem.role }));
+    }
 
-  setIsModalOpen(false);
-};
+    setIsModalOpen(false);
+  };
 
-const handleUserDeleteItem = () => {
-  console.log(currentItem.id);
-  dispatch(deleteUserAPI(currentItem.id));
-  setIsModalOpen(false);
-};
+  const handleUserDeleteItem = () => {
+    console.log(currentItem.id);
+    dispatch(deleteUserAPI(currentItem.id));
+    setIsModalOpen(false);
+  };
 
-return {
-  items,
-  isModalOpen,
-  currentItem,
-  modalType,
-  handleCreateClick,
-  handleViewClick,
-  handleEditClick,
-  handleDeleteClick,
-  handleCloseModal,
-  handleInputChange,
-  handleMedicalObjectSaveItem,
-  handleBrandSaveItem,
-  handleCategorySaveItem,
-  handleIndicationSaveItem,
-  handleMedicalObjectDeleteItem,
-  handleBrandDeleteItem,
-  handleCategoryDeleteItem,
-  handleIndicationDeleteItem,
-  handleUserSaveItem,
-  handleUserDeleteItem,
-};
+  return {
+    items,
+    isModalOpen,
+    currentItem,
+    modalType,
+    handleCreateClick,
+    handleViewClick,
+    handleEditClick,
+    handleDeleteClick,
+    handleCloseModal,
+    handleInputChange,
+    handleMedicalObjectSaveItem,
+    handleBrandSaveItem,
+    handleCategorySaveItem,
+    handleIndicationSaveItem,
+    handleMedicalObjectDeleteItem,
+    handleBrandDeleteItem,
+    handleCategoryDeleteItem,
+    handleIndicationDeleteItem,
+    handleUserSaveItem,
+    handleUserDeleteItem,
+  };
 }

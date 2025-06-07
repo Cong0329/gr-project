@@ -211,7 +211,7 @@ export const useProductCreationForm = () => {
                     formData.options.length === 0 ||
                     (formData.options.length > 0 &&
                         formData.options.every(
-                            (opt) => opt.label.trim() !== "" && opt.price > 0 && opt.price > opt.discounted_price
+                            (opt) => opt.label.trim() !== "" && opt.price > 0 && opt.price > opt.discounted_price!
                         )
                     )
                 );

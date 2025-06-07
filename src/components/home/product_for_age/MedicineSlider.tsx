@@ -10,6 +10,11 @@ interface ProductSliderProps {
     products: Product[];
     show: number
 }
+interface ExtendedCustomArrowProps extends CustomArrowProps {
+    show: number;
+}
+  
+
 
 // ✅ Component nút Prev
 const PrevArrow: React.FC<CustomArrowProps> = ({ onClick, currentSlide }) => {
@@ -24,7 +29,7 @@ const PrevArrow: React.FC<CustomArrowProps> = ({ onClick, currentSlide }) => {
 };
 
 // ✅ Component nút Next
-const NextArrow: React.FC<CustomArrowProps> = ({ onClick, currentSlide, slideCount, show }) => {
+const NextArrow: React.FC<ExtendedCustomArrowProps> = ({ onClick, currentSlide, slideCount, show }) => {
     return slideCount && currentSlide !== slideCount - show ? (
         <button
             onClick={onClick}
@@ -59,7 +64,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ products, show }) => {
         slidesToScroll: 6,
         arrows: true,
         nextArrow: <NextArrow show={show} />,
-        prevArrow: <PrevArrow show={show} />,
+        prevArrow: <PrevArrow/>,
         responsive: [
             {
                 breakpoint: 800,

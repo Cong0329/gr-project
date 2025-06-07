@@ -10,7 +10,7 @@ import {
   getUserPackageBooking,
   cancelBookingRequest,
 } from "../../../redux/packageBookingRequestSlice";
-import { format, parseISO, isAfter, isSameDay, parse } from "date-fns";
+import { format, parseISO, isAfter, isSameDay } from "date-fns";
 import { vi } from "date-fns/locale";
 import { ChatModal } from "../ModalChat";
 

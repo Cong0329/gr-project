@@ -16,7 +16,7 @@ import { AppDispatch } from "../../../redux/store";
 const MedicalTestDetail = () => {
   const { name } = useParams();
   const dispatch:AppDispatch = useDispatch();
-  const [showSchedule, setShowSchedule] = useState(false);
+  const [showSchedule, setShowSchedule] = useState<boolean>(false);
   const scheduleRef = useRef<HTMLDivElement>(null);
 
   const allPackages = useSelector(selectAllPackages);
@@ -109,9 +109,12 @@ const MedicalTestDetail = () => {
               Đặt lịch xét nghiệm
             </h2>
             {/* <PackageSchedule packageData={currentTest} /> */}
-            <PackageSchedule
+            {/* <PackageSchedule
               showSchedule={showSchedule}
               scheduleRef={scheduleRef}
+              currentTest={currentTest}
+            /> */}
+            <PackageSchedule
               currentTest={currentTest}
             />
           </div>

@@ -29,6 +29,9 @@ import AdminReview from "../admin/components/chat/AdminReview";
 import AdminChatInterface from "../admin/components/chat/AdminChat/AdminChatInterface";
 import UserPage from "../admin/pages/Forms/Product/Brand/UserPage";
 import PackagePage from "../admin/pages/Forms/Product/Manage/Packages";
+import { CategoryProduct } from "../admin/pages/Forms/Product/Brand/CategoryProduct";
+import { MedicalObjectProduct } from "../admin/pages/Forms/Product/Brand/MedicalObjectProduct";
+import { IndicationProduct } from "../admin/pages/Forms/Product/Brand/IndicationProduct";
 
 const adminRoutes = (
   <Route>
@@ -49,6 +52,9 @@ const adminRoutes = (
     <Route path="products" element={<ProductPage />} />
     <Route path="edit-product/:id" element={<EditProductPage />} />
     <Route path="brand/:name" element={<BrandProduct />} />
+    <Route path="category/:name" element={<CategoryProduct />} />
+    <Route path="medical-object/:name" element={<MedicalObjectProduct />} />
+    <Route path="indication/:name" element={<IndicationProduct />} /> 
     <Route path="orders" element={<OrderTables />} />
     <Route path="orders/:id" element={<OrderDetail />} />
     <Route path="reviews" element={<AdminReview />} />

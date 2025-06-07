@@ -56,7 +56,7 @@ export const ProductOption: React.FC<ProductOptionProps> = ({
                 <input
                     id="discounted_price"
                     type="text"
-                    value={option.discounted_price.toLocaleString('vi-VN')}
+                    value={option.discounted_price?.toLocaleString('vi-VN')}
                     onChange={(e) => {
                         const rawValue = e.target.value.replace(/\D/g, ''); // Bỏ hết ký tự không phải số
                         onUpdateField(option.id, "discounted_price", Number(rawValue));

@@ -134,7 +134,7 @@ export const createProductImage = createAsyncThunk(
         formData.append("productId", productId);
 
         images.forEach((image) => {
-            formData.append("images", image.file);
+            formData.append("images", image.file as File);
         });
         for (const [key, value] of formData.entries()) {
             console.log(`${key}:`, value);
@@ -178,7 +178,7 @@ export const deleteProductImage = createAsyncThunk(
 export const createProductOption = createAsyncThunk(
     'products/createProductOption',
     async ({ product_id, fullOption }: { product_id: string, fullOption: ProductOptionInt[] }, { rejectWithValue }) => {
-        const options = fullOption.map(({ id, ...rest }) => rest);
+        const options = fullOption.map(({  ...rest }) => rest);
         console.log(options);
         try {
             const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/product-option`, { options, product_id }, {

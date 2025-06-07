@@ -208,9 +208,12 @@ const GeneralExDetail = () => {
               </svg>
               Đặt lịch khám sức khỏe
             </h2>
-            <PackageSchedule
+            {/* <PackageSchedule
               showSchedule={showSchedule}
               scheduleRef={scheduleRef}
+              currentTest={currentTest}
+            /> */}
+             <PackageSchedule
               currentTest={currentTest}
             />
           </div>

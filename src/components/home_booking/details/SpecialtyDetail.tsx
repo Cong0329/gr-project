@@ -20,8 +20,7 @@ const SpecialtyDetail = () => {
     <>
       <div id="specialty-detail" className="min-h-screen bg-gray-50">
         <div className="container-fix-spe mx-auto px-4 sm:px-10">
-          <Breadcrumb current={decodeURIComponent(name || "Chuyên khoa")} />
-
+          <Breadcrumb/>
           <div className="bg-gradient-to-r from-blue-100 to-blue-50 rounded-2xl py-12 text-center px-6 transition-all duration-300">
             <div className="mt-6 flex justify-center">
               <div className="relative w-full max-w-md">
