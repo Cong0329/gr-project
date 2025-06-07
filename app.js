@@ -18,14 +18,14 @@ const app = express();
 const server = http.createServer(app);
 const io = socketio(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.MAIN_FRONTEND_URL,
     credentials: true,
   },
 });
 
 
 app.use(cors({
-  origin: 'http://localhost:5173', // đúng địa chỉ frontend
+  origin: process.env.MAIN_FRONTEND_URL, // đúng địa chỉ frontend
   credentials: true               // cho phép gửi cookie
 }));
 

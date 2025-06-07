@@ -44,22 +44,35 @@ exports.googleCallback = async (req, res) => {
     );
 
     // Lưu tokens vào cookie HTTP-only
+    // res.cookie('accessToken', accessToken, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === 'production',  // Chỉ gửi qua HTTPS trong môi trường production
+    //   sameSite: 'Strict',  // Ngăn chặn CSRF
+    //   maxAge: 24 * 60 * 60 * 1000  // Cookie hết hạn sau 1 ngày
+    // });
+
+    // res.cookie('refreshToken', refreshToken.token, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === 'production',  // Chỉ gửi qua HTTPS trong môi trường production
+    //   sameSite: 'Strict',  // Ngăn chặn CSRF
+    //   maxAge: 10 * 24 * 60 * 60 * 1000  // Cookie hết hạn sau 10 ngày
+    // });
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',  // Chỉ gửi qua HTTPS trong môi trường production
-      sameSite: 'Strict',  // Ngăn chặn CSRF
-      maxAge: 24 * 60 * 60 * 1000  // Cookie hết hạn sau 1 ngày
+      secure: true,
+      sameSite: 'None',
+      maxAge: 24 * 60 * 60 * 1000
     });
 
     res.cookie('refreshToken', refreshToken.token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',  // Chỉ gửi qua HTTPS trong môi trường production
-      sameSite: 'Strict',  // Ngăn chặn CSRF
-      maxAge: 10 * 24 * 60 * 60 * 1000  // Cookie hết hạn sau 10 ngày
+      secure: true,
+      sameSite: 'None',
+      maxAge: 24 * 60 * 60 * 1000
     });
 
     // Redirect về frontend
-    const frontendURL = 'http://localhost:5173/';
+    const frontendURL = process.env.MAIN_FRONTEND_URL;
     return res.redirect(`${frontendURL}`);
   } catch (err) {
     console.error('Google callback error:', err);
@@ -191,7 +204,7 @@ exports.verifyCode = async (req, res) => {
     const { email, verifyCode } = req.body;
 
     // Tìm người dùng theo email
-    
+
     const user = await User.findOne({ where: { email } });
     const roles = await user.getRoles();
     if (!user) {
@@ -234,18 +247,31 @@ exports.verifyCode = async (req, res) => {
     });
 
     // Lưu tokens vào cookie HTTP-only
+    // res.cookie('accessAdminToken', accessAdminToken, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === 'production',  // Chỉ gửi qua HTTPS trong môi trường production
+    //   sameSite: 'Strict',  // Ngăn chặn CSRF
+    //   maxAge: 24 * 60 * 60 * 1000  // Cookie hết hạn sau 1 ngày
+    // });
+
+    // res.cookie('refreshAdminToken', refreshAdminToken, {
+    //   httpOnly: true,
+    //   secure: process.env.NODE_ENV === 'production',  // Chỉ gửi qua HTTPS trong môi trường production
+    //   sameSite: 'Strict',  // Ngăn chặn CSRF
+    //   maxAge: 10 * 24 * 60 * 60 * 1000  // Cookie hết hạn sau 10 ngày
+    // });
     res.cookie('accessAdminToken', accessAdminToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',  // Chỉ gửi qua HTTPS trong môi trường production
-      sameSite: 'Strict',  // Ngăn chặn CSRF
-      maxAge: 24 * 60 * 60 * 1000  // Cookie hết hạn sau 1 ngày
+      secure: true,
+      sameSite: 'None',
+      maxAge: 24 * 60 * 60 * 1000
     });
 
     res.cookie('refreshAdminToken', refreshAdminToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',  // Chỉ gửi qua HTTPS trong môi trường production
-      sameSite: 'Strict',  // Ngăn chặn CSRF
-      maxAge: 10 * 24 * 60 * 60 * 1000  // Cookie hết hạn sau 10 ngày
+      secure: true,
+      sameSite: 'None',
+      maxAge: 24 * 60 * 60 * 1000
     });
 
 
@@ -280,8 +306,8 @@ exports.register = async (req, res) => {
 
     // Nếu là ROLE_DOCTOR, kiểm tra doctorData có được cung cấp không
     if (roleCode === 'ROLE_DOCTOR' && !doctorData) {
-      return res.status(400).json({ 
-        message: 'doctorData is required when registering as doctor' 
+      return res.status(400).json({
+        message: 'doctorData is required when registering as doctor'
       });
     }
 
@@ -290,7 +316,7 @@ exports.register = async (req, res) => {
       const requiredDoctorFields = ['name', 'type', 'department_id'];
       const missingDoctorFields = requiredDoctorFields.filter(field => !doctorData[field]);
       if (missingDoctorFields.length > 0) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           message: `Missing required fields in doctorData: ${missingDoctorFields.join(', ')}`,
           received: doctorData
         });
@@ -321,8 +347,8 @@ exports.register = async (req, res) => {
     }
     await user.addRole(role);
 
-    let responseData = { 
-      message: 'User registered successfully', 
+    let responseData = {
+      message: 'User registered successfully',
       userId: user.id,
       user: {
         id: user.id,
@@ -355,10 +381,10 @@ exports.register = async (req, res) => {
     res.status(201).json(responseData);
   } catch (error) {
     console.error('Register error:', error);
-    
+
     // Handle validation errors
     if (error.name === 'SequelizeValidationError') {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: "Validation Error",
         details: error.errors.map(e => ({
           field: e.path,
@@ -370,7 +396,7 @@ exports.register = async (req, res) => {
 
     // Handle unique constraint errors
     if (error.name === 'SequelizeUniqueConstraintError') {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: "Unique Constraint Error",
         details: error.errors.map(e => ({
           field: e.path,
@@ -412,10 +438,14 @@ exports.refreshToken = async (req, res) => {
     );
     // Lưu tokens vào cookie HTTP-only
     res.cookie('accessToken', newAccessToken, {
+      // httpOnly: true,
+      // secure: process.env.NODE_ENV === 'production',  // Chỉ gửi qua HTTPS trong môi trường production
+      // sameSite: 'Strict',  // Ngăn chặn CSRF
+      // maxAge: 24 * 60 * 60 * 1000  // Cookie hết hạn sau 1 ngày
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',  // Chỉ gửi qua HTTPS trong môi trường production
-      sameSite: 'Strict',  // Ngăn chặn CSRF
-      maxAge: 24 * 60 * 60 * 1000  // Cookie hết hạn sau 1 ngày
+      secure: true,
+      sameSite: 'None',
+      maxAge: 24 * 60 * 60 * 1000
     });
     return res.sendStatus(200);
   } catch (err) {
