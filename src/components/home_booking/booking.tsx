@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./Booking.css";
+// import "./Booking.css";
 
 const HomeBooking = () => {
   const placeholders = React.useMemo(
