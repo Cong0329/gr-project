@@ -460,14 +460,16 @@ exports.logout = async (req, res) => {
       httpOnly: true,
       // secure: false, // nếu dùng HTTPS thì để true
       secure: true,
-      sameSite: 'lax'
+      // sameSite: 'lax'
+      sameSite: 'None'   
     });
 
     res.clearCookie('refreshToken', {
       httpOnly: true,
       // secure: false,
       secure: true,
-      sameSite: 'lax'
+      // sameSite: 'lax'
+      sameSite: 'None'   
     });
     await RefreshToken.destroy({
       where: {
