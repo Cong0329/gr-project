@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import { useSidebar } from "../context/SidebarContext";
-import logo  from "../../../assets/logo.png";
+// import webLogo from "../../../assets/logo-web2.svg";
+// import logo from "../../../assets/user-logo-removebg-preview.png";
 import NotificationDropdown from "../components/header/NotificationDropdown";
 import UserDropdown from "../components/header/UserDropdown";
 
@@ -83,10 +84,10 @@ const AppHeader: React.FC = () => {
             {/* Cross Icon */}
           </button>
 
-          <Link to="/admin" className="lg:hidden">
+          {/* <Link to="/admin" className="lg:hidden">
             <img
               className=""
-              src={logo}
+              src={webLogo}
               alt="Logo"
             />
             <img
@@ -94,7 +95,7 @@ const AppHeader: React.FC = () => {
               src={logo}
               alt="Logo"
             />
-          </Link>
+          </Link> */}
 
           <button
             onClick={toggleApplicationMenu}

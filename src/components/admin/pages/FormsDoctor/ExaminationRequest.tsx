@@ -23,10 +23,9 @@ export const ExaminationRequest = () => {
   const dispatch:AppDispatch = useDispatch();
   const [selectedDate, setSelectedDate] = useState("");
   const [notes, setNotes] = useState("");
-  const [selectedBooking, setSelectedBooking] = useState<number | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("upcoming");
   const [packageName, setPackageName] = useState("");
-
   const { bookingRequests, loading } = useSelector(
     (state:RootState) => state.packages || {}
   );
@@ -164,7 +163,7 @@ export const ExaminationRequest = () => {
   };
 
   // Render booking card
-  const renderBookingCard = (booking: any, index: string) => {
+  const renderBookingCard = (booking: any, index:string) => {
     return (
       <div
         key={index}
@@ -214,7 +213,7 @@ export const ExaminationRequest = () => {
         {/* Action Section */}
         {booking.status === "pending" && (
           <div className="border-t border-gray-100 pt-4">
-            {selectedBooking === Number(index) ? (
+            {selectedBooking === index ? (
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200">
                 <div className="space-y-4">
                   <div className="flex items-center space-x-2 mb-3">
@@ -266,7 +265,7 @@ export const ExaminationRequest = () => {
               </div>
             ) : (
               <button
-                onClick={() => setSelectedBooking(Number(index))}
+                onClick={() => setSelectedBooking(index)}
                 className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center space-x-2"
               >
                 <User className="w-4 h-4" />

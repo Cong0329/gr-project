@@ -1,7 +1,8 @@
 import { Review } from "../../../redux/reviewsSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
-import logo from "../../../assets/logo.png";
+// import logo from "../../../assets/logo.png";
+import webLogo from "../../../assets/user-logo-removebg-preview.png";
 interface ReviewItemProps {
     review: Review;
     isReview: boolean;
@@ -30,8 +31,8 @@ const ReviewItem: React.FC<ReviewItemProps> = ({ review, isReview }) => {
                 <div className="mt-2 ml-16 border-l pl-4 space-y-2">
                     <div>
                         <div className="flex items-center gap-2">
-                            <img src={logo} alt="" className="rounded-full w-10 h-10 object-contain" />
-                            <p className="font-bold text-gray-600">Healthy Pharmacy<span className="text-sm text-gray-500 font-normal">(Dược Sĩ)</span></p>
+                            <img src={webLogo} alt="" className="rounded-full w-10 h-10 object-contain" />
+                            <p className="font-bold text-gray-600">Viet Mart<span className="text-sm text-gray-500 font-normal">(Dược Sĩ)</span></p>
                         </div>
                         <div className="ml-12">
                             <p>{review.reply.reply}</p>

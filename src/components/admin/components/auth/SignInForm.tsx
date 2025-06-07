@@ -4,7 +4,7 @@ import { adminLoginAPI } from "../../../../redux/userAsyncThunk";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import { RootState, AppDispatch } from "../../../../redux/store";
-import logo from "../../../../assets/logo.png";
+import webLogo from "../../../../assets/viet_mart_pharmacy_logo.svg";
 import Label from "../form/Label";
 import Checkbox from "../form/input/Checkbox";
 
@@ -84,12 +84,12 @@ export default function SignIn() {
             <div>
               <Link
                 to="/"
-                className="flex items-center justify-center gap-2 border rounded-lg p-2 hover:bg-gray-100"
+                className="flex items-center justify-center gap-2  rounded-lg p-2 hover:bg-gray-100"
               >
-                <img src={logo} alt="logo" className="h-14 w-14" />
-                <p className="text-4xl font-semibold text-gray-800">
+                <img src={webLogo} alt="logo" className="w-[300px] h-[100px]" />
+                {/* <p className="text-4xl font-semibold text-gray-800">
                   Healthy Pharmacy
-                </p>
+                </p> */}
               </Link>
 
               <div className="relative py-3 sm:py-5">

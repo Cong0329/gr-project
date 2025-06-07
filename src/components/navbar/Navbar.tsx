@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import logo from '../../assets/logo.png';
+import logo from '../../assets/logo-web2.svg';
+import webLogo from '../../assets/logo-web.svg'
 import Search from './Search';
 import { Login } from './Login';
 import { Cart } from './Cart';
@@ -56,12 +57,12 @@ export const Navbar = () => {
               <Menu size={28} />
             </button>
           </div>
-          <Link to="/" className='flex items-center hover:text-white'>
-            <img src={logo} alt="logo" className='w-14 h-14 md-lg:w-10 md-lg:h-10 ml:w-10 ml:h-10' loading='lazy' />
-            <div className='m-auto ml-2 '>
+          <Link to="/" className='flex items-center hover:text-white mt-2 '>
+            <img src={webLogo} alt="logo" className='w-[250px]  md-lg:w-[150px] tb:h-[80px]  ml:h-[60px]' loading='lazy' />
+            {/* <div className='m-auto ml-2 '>
               <h1 className='text-2xl font-bold md-lg:text-sm ml:text-[17px] '>Health Pharmacy</h1>
               <p className='text-sm md-lg:text-[10px] ml:text-[10px]'>Your Health, Our Priority</p>
-            </div>
+            </div> */}
           </Link>
           <div className='tb:block hidden'>
             <Cart />
@@ -91,9 +92,9 @@ export const Navbar = () => {
               className="bg-white w-64 h-full shadow-lg transform transition-transform ease-in-out duration-300"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className='flex justify-end p-4 py-2'>
-                <img src={logo} alt="logo" className='w-14 h-14 md-lg:w-10 md-lg:h-10 ml:w-10 ml:h-10' loading='lazy' />
-                <h1 className='text-lg font-bold md-lg:text-sm ml:text-[17px] text-gray-600 '>Health Pharmacy</h1>
+              <div className='flex justify-end p-4 py-2  border-b border-gray-200 '>
+                <img src={logo} alt="logo" className=' w-[200px]   ] ml:h-[60px]' loading='lazy' />
+                <h1 className='text-lg font-bold md-lg:text-sm ml:text-[17px] text-white tb:hidden ml:block '>Viet Mart</h1>
                 <button
                   className="text-gray-600 mb-4"
                   onClick={() => setMenuOpen(false)}
