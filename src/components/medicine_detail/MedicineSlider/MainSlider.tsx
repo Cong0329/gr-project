@@ -28,7 +28,7 @@ export default function MainSlider({
       className="rounded-lg overflow-hidden"
     >
       {images.map((src, index) => (
-        <SwiperSlide key={index} className="flex justify-center items-center mb-2">
+        <SwiperSlide key={index} className="flex justify-center items-center mb-2 my-swiper">
             <img
               src={src.image}
               alt={`Product ${index}`}
