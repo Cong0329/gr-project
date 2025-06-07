@@ -18,6 +18,7 @@ interface ServiceItem {
   name: string;
   description: string;
   price?: number;
+  duration?: string;
 }
 
 interface ServiceCategory {
@@ -50,6 +51,9 @@ interface ServicePackage {
   category?: string;
   preparation?: string;
   resultTime?: string;
+  duration?: string;
+  originalPrice?: number;
+  discount?: number;
   details?: {
     [key: string]: any;
     categories?: ServiceCategory[];
@@ -116,9 +120,9 @@ export const fetchServicePackages = createAsyncThunk(
         // Chuẩn hóa cấu trúc categories nếu không có sẵn
         if (!normalized.details.categories && pkg.items && pkg.items.length > 0) {
           // Nhóm items theo category
-          const itemsByCategory = {};
+          const itemsByCategory:any = {};
           
-          pkg.items.forEach(item => {
+          pkg.items.forEach((item:any) => {
             const categoryId = item.categoryId;
             const categoryName = item.category?.name || "Không phân loại";
             
@@ -328,7 +332,7 @@ const servicePackageSlice = createSlice({
           (pkg) => pkg.rating >= MIN_SUGGESTED_RATING && pkg.rating < MAX_SUGGESTED_RATING
         );
       })
-      .addCase(fetchServicePackages.rejected, (state, action) => {
+      .addCase(fetchServicePackages.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.payload ?? "Unknown error occurred";
       })

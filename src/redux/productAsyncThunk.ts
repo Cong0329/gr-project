@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { ProductImage, ProductOptionInt } from "../components/admin/pages/Forms/Product/AddProduct/ProductCreationForm";
-
+import { Ingredient } from "../components/admin/pages/Forms/Product/Blog/type";
 
 // Product
 
@@ -16,10 +16,10 @@ interface Product {
     description: string;
     manufacturer: string;
     quantity: number;
-    brand_id: number;
-    category_id: number;
-    medical_object_id: number;
-    indication_id: number;
+    brand_id: string;
+    category_id: string;
+    medical_object_id: string;
+    indication_id: string;
 }
 
 export const fetchProducts = createAsyncThunk(
@@ -300,15 +300,14 @@ export const deleteProductDetail = createAsyncThunk(
 
 // Detail Section
 interface ProductDetailSection {
-    product_detail_id: string;
     type: string;
     title: string;
-    description: string;
-    image: File | FileList | null;
+    description?: string;
+    image: File | FileList | string | null;
 }
 
 interface ProductDetailSectionIngredient extends ProductDetailSection {
-    descriptions: string;
+    descriptions: Ingredient;
 }
 
 export const createProductDetailSection = createAsyncThunk(
@@ -318,7 +317,7 @@ export const createProductDetailSection = createAsyncThunk(
         formData.append('product_detail_id', product_detail_id);
         formData.append('type', productDetailSection.type);
         formData.append('title', productDetailSection.title);
-        formData.append('description', productDetailSection.description);
+        formData.append('description', productDetailSection.description ?? "");
         if (productDetailSection.image) {
             formData.append('image', productDetailSection.image as File);
         }
@@ -411,7 +410,7 @@ export const updateProductDetailSection = createAsyncThunk(
         const formData = new FormData();
         formData.append('type', productDetailSection.type);
         formData.append('title', productDetailSection.title);
-        formData.append('description', productDetailSection.description);
+        formData.append('description', productDetailSection.description ?? "");
         if (productDetailSection.image) {
             formData.append('image', productDetailSection.image as File);
         }

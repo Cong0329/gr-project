@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { adminLoginAPI, fetchUsersAPI, updateProfileAdminAPI, updateProfileAPI, vefifyEmailAPI, doctorLoginAPI, deleteUserAPI, createUserAPI, } from "./userAsyncThunk";
 
 
-const getSafeErrorMessage = (payload) => {
+const getSafeErrorMessage = (payload: any) => {
   if (!payload) return "Đã xảy ra lỗi";
   if (typeof payload === 'string') return payload;
   if (payload.message) return payload.message;
@@ -58,9 +58,9 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-      setChatId: (state, action) => {
-        state.chat_id = action.payload;
-      },
+      // setChatId: (state, action) => {
+      //   state.chat_id = action.payload;
+      // },
       googleLogin: (state, actions) => {
         state.isUserAuthenticated = true;
         state.user = actions.payload;
@@ -159,7 +159,7 @@ const authSlice = createSlice({
         .addCase(updateProfileAdminAPI.pending, (state) => {
           state.status = "loading";
         })
-        .addCase(updateProfileAdminAPI.rejected, (state, action) => {
+        .addCase(updateProfileAdminAPI.rejected, (state, action: any) => {
           state.message = action.payload.message;
         })
         .addCase(fetchUsersAPI.fulfilled, (state, action) => {
@@ -169,7 +169,7 @@ const authSlice = createSlice({
         .addCase(fetchUsersAPI.pending, (state) => {
           state.status = "loading";
         })
-        .addCase(fetchUsersAPI.rejected, (state, action) => {
+        .addCase(fetchUsersAPI.rejected, (state, action: any) => {
           state.message = action.payload.message;
           state.status = "failed";
         })
@@ -179,7 +179,7 @@ const authSlice = createSlice({
         .addCase(deleteUserAPI.pending, (state) => {
           state.status = "loading";
         })
-        .addCase(deleteUserAPI.rejected, (state, action) => {
+        .addCase(deleteUserAPI.rejected, (state, action: any) => {
           state.message = action.payload.message;
           state.status = "failed";
         })
@@ -189,7 +189,7 @@ const authSlice = createSlice({
         .addCase(createUserAPI.pending, (state) => {
           state.status = "loading";
         })
-        .addCase(createUserAPI.rejected, (state, action) => {
+        .addCase(createUserAPI.rejected, (state, action: any) => {
           state.message = action.payload.message;
           state.status = "failed";
         })

@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../../../redux/store";
 import { deleteProduct } from "../../../../../redux/productAsyncThunk";
 import { Link } from "react-router-dom";
+import { resetProduct } from "../../../../../redux/productSlice";
 
 
 export interface Product {
@@ -29,7 +30,7 @@ interface Options {
     id: string;
     label: string;
     price: number;
-    discounted_pricet: number;
+    discounted_price: number;
 }
 
 interface Images {
@@ -122,8 +123,8 @@ export const Product = ({ products, status }: { products: Product[], status: str
 
                                 let priceToShow = "-";
                                 if (selectedOption) {
-                                    const discounted = parseFloat(selectedOption.discounted_price);
-                                    const price = parseFloat(selectedOption.price);
+                                    const discounted = parseFloat(selectedOption.discounted_price.toString());
+                                    const price = parseFloat(selectedOption.price.toString());
                                     priceToShow = formatPrice(discounted > 0 ? discounted : price);
                                 }
 

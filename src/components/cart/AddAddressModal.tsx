@@ -16,10 +16,13 @@ interface Props {
 interface Province {
   code: string;
   name: string;
+  districts: District[];
 }
 
-interface District extends Province {
-  province_code: string;
+interface District {
+  code: string;
+  name: string;
+  wards: Ward[];
 }
 
 interface Ward extends Province {
@@ -206,18 +209,24 @@ const AddAddressModal: React.FC<Props> = ({ isOpen, onClose, isEdit, selectedEdi
     onClose();
   };
 
-  const getChangedFields = (original: Address, updated: Address) => {
+  const getChangedFields = (original: Address, updated: Address): Partial<Address> => {
     const changes: Partial<Address> = {};
-    (Object.keys(updated) as (keyof Address)[]).forEach(key => {
-      if (updated[key] !== original[key]) {
-        changes[key] = updated[key];
+  
+    Object.entries(updated).forEach(([key, value]) => {
+      const typedKey = key as keyof Address;
+  
+      if (value !== original[typedKey]) {
+        changes[typedKey] = value;
       }
     });
+  
     return changes;
   };
+  
+  
 
   const handleDelete = () => {
-    dispatch(deleteAddressAPI(selectedEdit));
+    dispatch(deleteAddressAPI(selectedEdit as string));
     onClose();
   }
 

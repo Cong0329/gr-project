@@ -20,7 +20,7 @@ export const OrderDetailBody = () => {
     const completed = orderDetail?.status_history?.filter((item) => item.status === 'completed');
 
     useEffect(() => {
-        dispatch(fetchOrderById(id));
+        dispatch(fetchOrderById(id as string));
     }, [dispatch, id]);
 
     useEffect(() => {

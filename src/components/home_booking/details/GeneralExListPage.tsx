@@ -9,9 +9,10 @@ import {
 import { Search, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
+import { AppDispatch } from "../../../redux/store";
 
 const GeneralExListPage = () => {
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -38,12 +39,12 @@ const GeneralExListPage = () => {
         )
       : [];
 
-  const featuredPackage =
-    generalPackages.length > 0
-      ? generalPackages.find((pkg) => pkg.rating >= 4.7) || generalPackages[0]
-      : null;
+  // const featuredPackage =
+  //   generalPackages.length > 0
+  //     ? generalPackages.find((pkg) => pkg.rating >= 4.7) || generalPackages[0]
+  //     : null;
 
-  const handlePackageClick = (packageName) => {
+  const handlePackageClick = (packageName:string) => {
     navigate(
       `/booking-home/generalex-detail/${encodeURIComponent(packageName)}`
     );
@@ -89,7 +90,7 @@ const GeneralExListPage = () => {
           isSearchFocused ? "pt-32 md:pt-28" : ""
         }`}
       >
-        <Breadcrumb className={isSearchFocused ? "z-50 relative" : ""} />
+        <Breadcrumb />
 
         <div
           className={`bg-gradient-to-r from-blue-100 to-blue-50 rounded-2xl py-12 text-center mt-6 px-6 transition-all duration-300 ${

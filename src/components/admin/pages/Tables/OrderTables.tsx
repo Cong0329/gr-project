@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../../redux/store";
+import { AppDispatch, RootState } from "../../../../redux/store";
 import { fetchAdminOrders } from "../../../../redux/orderAsyncThunk";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { OrderTablesChild } from "./OrderTablesChild";
@@ -13,7 +13,7 @@ const OrderTables = () => {
     const { adminOrders } = useSelector((state: RootState) => state.order);
     const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
     const [isLoading, setIsLoading] = useState(true);
-    const dispatch = useDispatch();
+    const dispatch:AppDispatch = useDispatch();
     useEffect(() => {
         dispatch(fetchAdminOrders());
     }, [dispatch]);

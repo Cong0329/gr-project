@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { fetchDoctors } from "../../redux/doctorSlice";
 import { fetchDepartments } from "../../redux/departmentSlice";
-import HomeBooking from "../home_booking/Booking";
+import HomeBooking from "../home_booking/booking";
 import { Footer } from "../footer/Footer";
 import { Header } from "../header/Header";
 import Specialty from "../home_booking/sections/specialty";
@@ -10,9 +10,10 @@ import OnlEx from "../home_booking/sections/OnlEx";
 import GeneralEx from "../home_booking/sections/GeneralEx";
 import MedicalTest from "../home_booking/sections/MedicalTest";
 import ChatBox from "../chatbox/chatbox";
+import { AppDispatch } from "../../redux/store";
 
 export const HomeBookingCare = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchDoctors());

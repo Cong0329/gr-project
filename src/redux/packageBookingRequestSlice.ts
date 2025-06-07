@@ -11,6 +11,7 @@ export interface PackageBooking {
     status: 'pending' | 'doctor_requested' | 'assigned' | 'rejected' | 'cancelled';
     notes?: string;
     schedule_id?: number;
+    service_id?: number;
     package?: {
       id: number;
       name: string;
@@ -91,11 +92,11 @@ export const getUserPackageBooking = createAsyncThunk(
 // Create booking request
 export const createBookingRequest = createAsyncThunk(
   'packageBooking/createBookingRequest',
-  async (bookingData, { rejectWithValue }) => {
+  async (bookingData: any, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/pkg-booking-request`, bookingData);
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi khi tạo yêu cầu đặt lịch' });
     }
   }
@@ -108,7 +109,7 @@ export const getBookingRequestDetails = createAsyncThunk(
     try {
       const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/pkg-booking-request/${bookingId}`);
       return response.data;
-    } catch (error) {
+    } catch (error:any) {
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi khi lấy thông tin chi tiết' });
     }
   }
@@ -118,7 +119,7 @@ export const getBookingRequestDetails = createAsyncThunk(
 // getAllBookingRequests.ts
 export const getAllBookingRequests = createAsyncThunk(
   'packageBooking/getAllBookingRequests',
-  async ({ date, packageId }, { rejectWithValue }) => {
+  async ({ date, packageId }: { date?: string; packageId?: number }, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/pkg-booking-request`, {
         params: {
@@ -127,7 +128,7 @@ export const getAllBookingRequests = createAsyncThunk(
         }
       });
       return response.data;
-    } catch (error) {
+    } catch (error:any) {
       return rejectWithValue(
         error.response?.data || { message: 'Lỗi khi lấy danh sách booking' }
       );
@@ -139,7 +140,7 @@ export const getAllBookingRequests = createAsyncThunk(
 // Cancel booking request
 export const cancelBookingRequest = createAsyncThunk(
   'packageBooking/cancelBookingRequest',
-  async ({ bookingId, cancellationReason }, { rejectWithValue }) => {
+  async ({ bookingId, cancellationReason }: { bookingId: number; cancellationReason: string }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
         `${import.meta.env.VITE_NODEJS_BACKEND_URL}/pkg-booking-request/${bookingId}/cancel`, 
@@ -151,7 +152,7 @@ export const cancelBookingRequest = createAsyncThunk(
         }
       );
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi khi hủy yêu cầu đặt lịch' });
     }
   }
@@ -164,7 +165,7 @@ export const assignSchedule = createAsyncThunk(
     try {
       const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/pkg-booking-request/assign-schedule`, scheduleData);
       return response.data;
-    } catch (error) {
+    } catch (error:any) {
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi khi gán lịch' });
     }
   }
@@ -303,7 +304,7 @@ const packageBookingSlice = createSlice({
         
         console.log("State after update:", state.bookingRequests);
       })
-      .addCase(getAllBookingRequests.rejected, (state, action) => {
+      .addCase(getAllBookingRequests.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.payload?.message || 'Lỗi không xác định';
       });

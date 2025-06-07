@@ -43,6 +43,8 @@ const CategoryPage: React.FC = () => {
     handleCategorySaveItem: handleSaveCategory,
     handleCategoryDeleteItem: handleDeleteCategory
   } = useGenericCrud<Category>(categories, categoryConfig);
+
+  console.log(category);
   const updatedConfig = {
     ...categoryConfig,
     fields: categoryConfig.fields.map(field =>

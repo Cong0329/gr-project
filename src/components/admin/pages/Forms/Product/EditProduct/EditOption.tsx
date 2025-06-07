@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { deleteProductOption, updateProductOption } from "../../../../../../redux/productAsyncThunk";
+import { AppDispatch } from "../../../../../../redux/store";
 
 interface ProductOptionProps {
     option: ProductOptionInt;
@@ -14,7 +15,7 @@ export const EditProductOption: React.FC<ProductOptionProps> = ({ option }) => {
     const [editedOption, setEditedOption] = useState<ProductOptionInt>(option);
     const [originalOption, setOriginalOption] = useState<ProductOptionInt>(option);
     const [isChanged, setIsChanged] = useState(false);
-    const dispatch = useDispatch();
+    const dispatch:AppDispatch = useDispatch();
 
     useEffect(() => {
         const hasChanged = JSON.stringify(editedOption) !== JSON.stringify(originalOption);
@@ -29,7 +30,7 @@ export const EditProductOption: React.FC<ProductOptionProps> = ({ option }) => {
     };
 
     const handleSave = () => {
-        if (editedOption.price > editedOption.discounted_price) {
+        if (editedOption.price > (editedOption.discounted_price ?? 0)) {
             setOriginalOption(editedOption); // Cập nhật lại bản gốc
             setIsEditing(false);
             dispatch(updateProductOption({ id: option.id, updateFields: editedOption }));
@@ -74,7 +75,7 @@ export const EditProductOption: React.FC<ProductOptionProps> = ({ option }) => {
                 <div className="flex space-x-2 ml-2">
                     {isEditing ? (
                         <>
-                            {isChanged && editedOption.price > editedOption.discounted_price && (
+                            {isChanged && editedOption.price > (editedOption.discounted_price ?? 0) && (
                                 <button
                                     type="button"
                                     onClick={handleSave}
@@ -118,7 +119,7 @@ export const EditProductOption: React.FC<ProductOptionProps> = ({ option }) => {
                         <input
                             id={`price-${option.id}`}
                             type="text"
-                            value={parseFloat(editedOption.price).toLocaleString('vi-VN')}
+                            value={Number(editedOption.price).toLocaleString('vi-VN')}
                             onChange={(e) => {
                                 const rawValue = e.target.value.replace(/\D/g, '');
                                 handleChange("price", Number(rawValue));
@@ -131,7 +132,7 @@ export const EditProductOption: React.FC<ProductOptionProps> = ({ option }) => {
                         <input
                             id={`discounted_price-${option.id}`}
                             type="text"
-                            value={parseFloat(editedOption.discounted_price).toLocaleString('vi-VN')}
+                            value={Number(editedOption.discounted_price).toLocaleString('vi-VN')}
                             onChange={(e) => {
                                 const rawValue = e.target.value.replace(/\D/g, '');
                                 handleChange("discounted_price", Number(rawValue));

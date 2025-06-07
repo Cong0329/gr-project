@@ -78,10 +78,10 @@ export const SearchBody = () => {
                 }).filter(Boolean) as { min: number; max: number }[];
 
                 const priceOption = product.options?.[0];
-                const productPrice = parseFloat(
-                    priceOption?.discounted_price !== "0.00" && priceOption?.discounted_price
+                const productPrice = Number(
+                    priceOption?.discounted_price !== 0 && priceOption?.discounted_price
                         ? priceOption?.discounted_price
-                        : priceOption?.price || "0"
+                        : priceOption?.price || 0
                 );
 
                 const inAnyRange = ranges.some(({ min, max }) => productPrice >= min && productPrice <= max);
@@ -124,7 +124,7 @@ export const SearchBody = () => {
     const sortedProducts = [...filteredProducts].sort((a, b) => {
         const getPrice = (product: Product) => {
           const option = product.options?.[0];
-          const price = parseFloat(option?.discounted_price || option?.price || "0");
+          const price = Number(option?.discounted_price || option?.price || "0");
           return isNaN(price) ? 0 : price;
         };
       

@@ -10,7 +10,7 @@ export const ImageThumbnail: React.FC<ImageThumbnailProps> = ({ image, onRemove 
     return (
       <div className="relative rounded-lg border w-40 p-1 overflow-hidden group">
         <img
-          src={image}
+          src={image.image}
           alt="Product"
           className=" h-20 w-40 object-cover"
           loading="lazy"

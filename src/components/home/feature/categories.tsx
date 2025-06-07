@@ -35,8 +35,8 @@ export default function CategoriesSection(): JSX.Element {
   useEffect(() => {
     const map: Record<string, Category> = {};
 
-    parent?.forEach((group) => {
-      group.categories.forEach((cat) => {
+    parent?.forEach((group: any) => {
+      group.categories.forEach((cat: any) => {
         const total = cat.products?.length || 0;
         const name = cat.name;
         if (!map[name]) {

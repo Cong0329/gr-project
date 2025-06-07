@@ -29,8 +29,9 @@ interface ScheduleState {
   doctorInfo: any;
   isCreating: boolean;
   createError: string | null;
-  message: '',
+  message: string;
 }
+
 
 const initialState: ScheduleState = {
   specialistSchedules: [],
@@ -46,6 +47,9 @@ const initialState: ScheduleState = {
   isCreating: false,
   createError: null,
   message: '',
+  isConfirming: false,
+  confirmError: null,
+  doctorInfo: null,
 };
 
 export const fetchSpecialistSchedules = createAsyncThunk(
@@ -182,7 +186,7 @@ export const createSchedule = createAsyncThunk(
 
 export const updateSchedule = createAsyncThunk(
   'schedules/updateSchedule',
-  async ({ scheduleId, updateData  }, { rejectWithValue }) => {
+  async ({ scheduleId, updateData }: { scheduleId: string; updateData: any }, { rejectWithValue }) => {
     try {
       const url = `${import.meta.env.VITE_NODEJS_BACKEND_URL}/schedule/my-schedule/update/${scheduleId}`;
       console.log('Calling URL:', url);
@@ -190,7 +194,7 @@ export const updateSchedule = createAsyncThunk(
       
       const response = await axios.put(url, updateData, { withCredentials: true });
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       console.log('Error details:', error.response);
       return rejectWithValue(error.response.data);
     }
@@ -215,7 +219,7 @@ const scheduleSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchSpecialistSchedules.fulfilled, (state, action) => {
+      .addCase(fetchSpecialistSchedules.fulfilled, (state, action:any) => {
         state.loading = false;
         state.specialistSchedules = action.payload.data;
         state.pagination = action.payload.pagination;
@@ -270,7 +274,7 @@ const scheduleSlice = createSlice({
           state.mySchedules[index] = updatedSchedule;
         }
       })
-      .addCase(updateSchedule.rejected, (state, action) => {
+      .addCase(updateSchedule.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.payload?.message || 'Có lỗi xảy ra';
       })

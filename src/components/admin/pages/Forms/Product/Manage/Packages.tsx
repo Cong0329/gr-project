@@ -8,11 +8,10 @@ import {
 
 const DoctorAssignmentPage: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const { pendingAssignments, status, error } = useSelector(
+  const { pendingAssignments } = useSelector(
     (state: RootState) => state.doctorAssignment
   );
 
-  const [selectedAssignment, setSelectedAssignment] = useState<any>(null);
   const [showPatientInfo, setShowPatientInfo] = useState<string | null>(null);
 
   useEffect(() => {

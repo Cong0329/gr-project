@@ -8,7 +8,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ sections, isCollapsed }) => {
-  const [activeSection, setActiveSection] = useState<DescriptionType | null>(
+  const [activeSection, setActiveSection] = useState<DescriptionType | string | null>(
     sections.length > 0 ? sections[0].type : null
   );
 

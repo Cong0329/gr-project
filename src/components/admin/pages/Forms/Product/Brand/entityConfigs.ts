@@ -88,12 +88,14 @@ export const userConfig: EntityConfig<User> = {
     { name: 'role', label: 'Vai trò', type: 'select', required: true },
   ],
   initialState: () => ({
+    id: '',
     name: '',
     email: '',
     role: '',
     phone: '',
-    address: '',
     gender: '',
+    avatar_url: '',
+    roles: [],
   }),
   tableColumns: [
     { key: 'id', header: 'ID' },

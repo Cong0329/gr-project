@@ -1,10 +1,9 @@
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import { removeFromCartAPI, updateQuantityAPI, updateSelectedOptionAPI } from "../../redux/cartAsyncThunk";
-import { toggleSelectItem } from "../../redux/cartSlice";
+import { toggleSelectItem, ProductOption } from "../../redux/cartSlice";
 import { FaTrash } from "react-icons/fa6";
 import PackageSelector from "./PackageSelector";
-import { ProductOption } from "./product";
 import { ModalDelete } from "./ModalDelete";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -19,7 +18,8 @@ interface CartItem {
   quantity: number;
   image: string;
   selected: boolean;
-  selectedOption: ProductOption;
+  selectedOption: string | ProductOption;
+  slug: string;
 }
 
 interface CartItemProps {
@@ -32,7 +32,7 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
   const dispatch: AppDispatch = useDispatch();
   const [newQuantity, setNewQuantity] = useState(item.quantity);
   const { id, product_id, name, quantity, image, selected, selectedOption, slug } = item;
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState<ProductOption[]>([]);
   useEffect(() => {
     setNewQuantity(quantity);
   }, [quantity]);
@@ -45,7 +45,7 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
   }, [product_id])
 
   // Tính tổng tiền dựa trên tùy chọn được chọn
-  const totalPrice = selectedOption.discounted_price > 0 ? selectedOption.discounted_price * quantity : selectedOption.price * quantity;
+  const totalPrice = Number((selectedOption as ProductOption)?.discounted_price) > 0 ?  Number((selectedOption as ProductOption)?.discounted_price) * quantity : Number((selectedOption as ProductOption)?.price) * quantity;
 
   const handleRemove = () => {
     dispatch(removeFromCartAPI(id))
@@ -55,7 +55,7 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
   // Cập nhật tùy chọn gói sản phẩm
   const handleOptionChange = (newOption: string) => {
     const selected = options.find(option => option.label === newOption);
-    if (selected?.id !== selectedOption.id) {
+    if (selected?.id !== (selectedOption as ProductOption)?.id) {
       dispatch(updateSelectedOptionAPI({ cartItemId: id, option_id: selected?.id }));
     }
   };
@@ -113,9 +113,9 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
 
         {/* Giá tiền */}
         <div>
-          <p className="text-blue-700 w-24 font-semibold text-sm">{selectedOption.discounted_price > 0 ? parseInt(selectedOption.discounted_price).toLocaleString() : parseInt(selectedOption.price).toLocaleString()}đ</p>
-          {selectedOption.discounted_price > 0 && (
-            <p className="text-gray-700 w-24 font-semibold text-[12px] line-through">{parseInt(selectedOption.price).toLocaleString()}đ</p>
+          <p className="text-blue-700 w-24 font-semibold text-sm">{Number((selectedOption as ProductOption)?.discounted_price) > 0 ? Number((selectedOption as ProductOption)?.discounted_price).toLocaleString() : Number((selectedOption as ProductOption)?.price).toLocaleString()}đ</p>
+          {Number((selectedOption as ProductOption)?.discounted_price) > 0 && (
+            <p className="text-gray-700 w-24 font-semibold text-[12px] line-through">{Number((selectedOption as ProductOption)?.price).toLocaleString()}đ</p>
           )}
 
         </div>
@@ -148,7 +148,7 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
         {/* Chọn tùy chọn sản phẩm */}
         <div className="w-28">
           <PackageSelector
-            selectedOption={selectedOption.label}
+            selectedOption={(selectedOption as ProductOption)?.label}
             options={options.map(option => option.label)}
             onChange={handleOptionChange}
           />
@@ -206,7 +206,7 @@ const CartItem: React.FC<CartItemProps> = ({ isFirst, item }) => {
             {/* Chọn tùy chọn sản phẩm */}
             <div className="">
               <PackageSelector
-                selectedOption={selectedOption.label}
+                selectedOption={(selectedOption as ProductOption)?.label}
                 options={options.map(option => option.label)}
                 onChange={handleOptionChange}
               />

@@ -74,7 +74,7 @@ const ReviewSection: React.FC = () => {
 
 
   const filteredReviews = filterRating
-    ? reviews.filter((review) => parseFloat(review.rating) === filterRating)
+    ? reviews.filter((review) => Number(review.rating) === filterRating)
     : reviews;
 
   return (

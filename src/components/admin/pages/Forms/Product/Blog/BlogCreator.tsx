@@ -1,6 +1,6 @@
 import  { useState } from "react";
 import { DescriptionType, Description, Title } from "./type";
-import TextSectionForm from "./TextSectionForm";
+import { TextDescriptionForm } from "./TextDescriptionForm";
 import IngredientSectionForm from "./IngredientSectionForm";
 
 const BlogCreator = () => {
@@ -16,7 +16,6 @@ const BlogCreator = () => {
   const handleSubmit = () => {
     const result: Description = {
       title,
-      image: "", // có thể thêm sau
       description: sections,
     };
     console.log("Submit result:", result);
@@ -57,7 +56,7 @@ const BlogCreator = () => {
       )}
       {selectedType &&
         selectedType !== DescriptionType.INGREDIENTS && (
-          <TextSectionForm type={selectedType} onSubmit={handleAddSection} />
+          <TextDescriptionForm type={selectedType} onSubmit={handleAddSection} />
         )}
 
       {/* Danh sách đã thêm */}

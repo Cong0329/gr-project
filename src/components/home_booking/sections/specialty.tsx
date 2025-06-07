@@ -1,22 +1,24 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchDepartments } from "../../../redux/departmentSlice";
+import { fetchDepartments, Department } from "../../../redux/departmentSlice";
 import { fetchDoctors } from "../../../redux/doctorSlice";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { Link } from "react-router-dom";
 import "./Specialty.css";
+import { RootState, AppDispatch } from "../../../redux/store";
+
 
 const Specialty = () => {
-  const [specialties, setSpecialties] = useState([]);
-  const dispatch = useDispatch();
+  const [specialties, setSpecialties] = useState<Department[]>([]);
+  const dispatch: AppDispatch = useDispatch();
 
   const { departments, loading: departmentLoading } = useSelector(
-    (state) => state.departments
+    (state: RootState) => state.departments
   );
   const { doctors, loading: doctorLoading } = useSelector(
-    (state) => state.doctors
+    (state: RootState) => state.doctors
   );
 
   useEffect(() => {

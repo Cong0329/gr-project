@@ -3,11 +3,10 @@ import MainContent from './MainContent';
 import { useState, useEffect } from 'react';
 import { NavLink } from '../navlink/NavLink';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setActivePage } from '../../redux/navigationSlice';
 import { validPageIds } from './menuItems';
 import Breadcrumb from '../home_booking/details/component_details/BreadCrumb';
-import { useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
 import { fetchCarts } from '../../redux/cartAsyncThunk';
 import { resetOrder } from '../../redux/orderSlice';
@@ -28,7 +27,7 @@ export const InformationBody = () => {
 
     useEffect(() => {
         if (pageId && validPageIds.includes(pageId as any)) {
-            dispatch(setActivePage(pageId));
+            dispatch(setActivePage(pageId as any));
         } else {
             navigate('/profile/personal-info', { replace: true });
         }

@@ -4,25 +4,27 @@ import Breadcrumb from "./component_details/BreadCrumb";
 import CoXuongKhop from "../../../assets/sections/Co_Xuong_Khop.webp";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchDoctors } from "../../../redux/doctorSlice";
-import { fetchDepartments } from "../../../redux/departmentSlice";
+import { fetchDepartments, Department } from "../../../redux/departmentSlice";
 import { Search, Calendar, UserRound, Clock, FileText } from "lucide-react";
+import { AppDispatch, RootState } from "../../../redux/store";
+
 
 const OnlExListPage = () => {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Department[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   const {
     doctors,
     loading: doctorLoading,
-    error: doctorError,
-  } = useSelector((state) => state.doctors);
+    // error: doctorError,
+  } = useSelector((state: RootState) => state.doctors);
   const {
     departments,
     loading: departmentLoading,
-    error: departmentError,
-  } = useSelector((state) => state.departments);
+    // error: departmentError,
+  } = useSelector((state: RootState) => state.departments);
 
   useEffect(() => {
     if (doctors.length === 0) dispatch(fetchDoctors());

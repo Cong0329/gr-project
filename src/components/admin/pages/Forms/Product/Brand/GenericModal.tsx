@@ -1,7 +1,7 @@
 
 import { BaseEntity, EntityConfig, ModalType } from './types';
 import GenericForm from './GenericForm';
-import { User } from './types';
+
 
 interface GenericModalProps<T extends BaseEntity> {
   isOpen: boolean;
@@ -44,7 +44,6 @@ function GenericModal<T extends BaseEntity>({
       { name: 'email', label: 'Email', type: 'text', required: true },
       { name: 'roles', label: 'Vai trò', type: 'text', required: true },
       { name: 'phone', label: 'Số điện thoại', type: 'text', required: true },
-      { name: 'gender', label: 'Giới tính', type: 'text', required: true },
     ]
   };
   return (

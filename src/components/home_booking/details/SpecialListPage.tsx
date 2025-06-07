@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchDepartments } from "../../../redux/departmentSlice";
+import { fetchDepartments, Department } from "../../../redux/departmentSlice";
 import { fetchDoctors } from "../../../redux/doctorSlice";
 import { useNavigate, useLocation } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
 import { Search, Calendar, UserRound, Clock, FileText } from "lucide-react";
 import CoXuongKhop from "../../../assets/sections/Co_Xuong_Khop.webp";
+import { AppDispatch, RootState } from "../../../redux/store";
 
 const SpecialistPage = () => {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Department[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
 
   const { departments, loading: departmentLoading } = useSelector(
-    (state) => state.departments
+    (state:RootState) => state.departments
   );
   const { doctors, loading: doctorLoading } = useSelector(
-    (state) => state.doctors
+    (state:RootState) => state.doctors
   );
 
   useEffect(() => {

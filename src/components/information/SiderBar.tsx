@@ -9,6 +9,7 @@ import { RootState } from '../../redux/store';
 import axios from 'axios';
 import { logout } from '../../redux/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { PageId } from './menuItems';
 
 const Sidebar: React.FC = () => {
   const activePage = useSelector((state: RootState) => state.navigation.activePage);
@@ -27,7 +28,7 @@ const Sidebar: React.FC = () => {
         console.error('Logout error:', err);
       }
     } else {
-      dispatch(setActivePage(id));
+      dispatch(setActivePage(id as PageId));
     }
   };
   return (

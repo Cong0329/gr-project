@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { fetchMedicalObjects, createMedicalObject, updateMedicalObject, deleteMedicalObject, getMedicalObjectProductByName } from "./medicalObjectAsyncThunk";
 import { Product } from "../components/admin/pages/Forms/Product/Product";
 interface MedicalObject {
+    id: string;
     name: string;
 }
 

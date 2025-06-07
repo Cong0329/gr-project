@@ -6,7 +6,6 @@ import { fetchBrands } from "../../../../../../../redux/brandAsyncThunk";
 import { fetchCategories } from "../../../../../../../redux/categoryAsyncThunk";
 import { fetchMedicalObjects } from "../../../../../../../redux/medicalObjectAsyncThunk";
 import { fetchIndications } from "../../../../../../../redux/indicationAsyncThunk";
-import Select from "react-select";
 import CustomSelect from "./CustomSelect";
 
 interface BasicInfoStepProps {

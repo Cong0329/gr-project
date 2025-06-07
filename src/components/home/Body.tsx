@@ -2,13 +2,12 @@ import { useState } from 'react';
 import { NavLink } from '../navlink/NavLink';
 import { Banner } from "./banner/Banner";
 import { Promotion } from './promotion/Promotion';
-import { Medicines } from './medicines/Medicines';
-import ProductSlider from './brand/Brand';
-import HealthSection from './healthy/Healthy';
+import { Medicines } from './medicines/medicines';
+import ProductSlider from './brand/brand';
+import HealthSection from './healthy/healthy';
 import CategoriesSection from './feature/Categories';
-import ProductForAge from './product_for_age/Product_for_age';
-import ProductList from './product_for_age/Product_section';
-import DiseaseList from './sick/Sick';
+import ProductForAge from './product_for_age/product_for_age';
+
 
 
 export const Body = () => {
@@ -22,14 +21,12 @@ export const Body = () => {
             <div className='relative'>
                 <div className="mx-auto relative  pb-4">
                     <Banner />
-                    <Promotion/>
-                    <Medicines/>
-                    <ProductSlider/>
-                    <HealthSection/>
-                    <CategoriesSection/>
-                    <ProductForAge/>
-                    {/* <ProductList/> */}
-                    {/* <DiseaseList/> */}
+                    <Promotion />
+                    <Medicines />
+                    <ProductSlider />
+                    <HealthSection />
+                    <CategoriesSection />
+                    <ProductForAge />
                 </div>
                 {isServiceHovered && (
                     <div className="absolute inset-0 bg-blue-950 bg-opacity-30 z-5">    </div>

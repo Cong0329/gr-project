@@ -35,7 +35,7 @@ export const ImagesStep: React.FC<ImagesStepProps> = ({ images, onAddImage, onRe
             {images.map((image) => (
               <ImageThumbnail
                 key={image.id}
-                image={image.url}
+                image={image}
                 onRemove={onRemoveImage}
               />
             ))}

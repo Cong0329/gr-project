@@ -59,13 +59,9 @@ export const Footer = () => {
                 {/* Phần dưới */}
                 <div className="flex flex-col md:flex-row items-center justify-between text-xs border-t border-white pt-4">
                     <p>
-                        © 2007 - 2025 Công ty Cổ Phần Dược Phẩm FPT Long Châu | Địa chỉ: 379-381 Hai Bà Trưng, P. Võ Thị Sáu, Q.3, TP. HCM
+                        © 2007 - 2025 Công ty Cổ Phần Dược Phẩm Viet Mart | Địa chỉ: 30 Xô Viết Nghệ Tĩnh, Hải Châu, Đà Nẵng
                     </p>
-                    <div className="flex space-x-4">
-                        <img src="/visa.png" alt="Visa" className="h-6" loading="lazy" />
-                        <img src="/mastercard.png" alt="MasterCard" className="h-6" loading="lazy" />
-                        <img src="/momo.png" alt="Momo" className="h-6" loading="lazy"/>
-                    </div>
+                 
                 </div>
             </div>
         </footer>

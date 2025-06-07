@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
 import { BaseEntity, EntityConfig } from './types';
-import { useDispatch } from 'react-redux';
-import { resetBrand } from '../../../../../../redux/brandSlice';
 interface GenericTableProps<T extends BaseEntity> {
   items: T[];
   config: EntityConfig<T>;
@@ -26,7 +24,7 @@ function GenericTable<T extends BaseEntity>({
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            {config.tableColumns.map((column) => (
+            {config.tableColumns?.map((column) => (
               <th
                 key={String(column.key)}
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -42,7 +40,7 @@ function GenericTable<T extends BaseEntity>({
         <tbody className="divide-y divide-gray-200">
           {items.map((item) => (
             <tr key={item.id}>
-              {config.tableColumns.map((column) => (
+              {config.tableColumns?.map((column) => (
                 <td
                   key={`${item.id}-${String(column.key)}`}
                   className="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
@@ -87,7 +85,7 @@ function GenericTable<T extends BaseEntity>({
           {items.length === 0 && (
             <tr>
               <td
-                colSpan={config.tableColumns.length + 1}
+                colSpan={config.tableColumns?.length ?? 0 + 1}
                 className="px-6 py-4 text-center text-sm text-gray-500"
               >
                 Không có {config.name} nào

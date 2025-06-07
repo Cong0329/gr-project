@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaCheckCircle } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import AddAddressModal from "./AddAddressModal"; // Import interface Address từ slice
-import { RootState } from "../../redux/store"; // Import RootState
+import { RootState, AppDispatch } from "../../redux/store"; // Import RootState
 import { selectAddress } from "../../redux/addressSlice"; // Import action từ slice
 import { Sheet } from "react-modal-sheet";
 
@@ -13,12 +13,12 @@ interface Props {
 }
 
 const AddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const addresses = useSelector((state: RootState) => state.address.addresses);
   const defaultAddress = useSelector((state: RootState) => state.address.selectedAddress);
   const [isEdit, setIsEdit] = useState(false);
 
-  const [selectedId, setSelectedId] = useState(defaultAddress?.id || "");
+  const [selectedId, setSelectedId] = useState(defaultAddress?.id ?? "");
   const [selectedEdit, setSelectedEdit] = useState('');
   const [isAddingNew, setIsAddingNew] = useState(false);
 
@@ -62,6 +62,7 @@ const AddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 isEdit={isEdit}
                 onClose={() => setIsAddingNew(false)}
                 selectedEdit={selectedEdit}
+                isModal={true}
               />
 
             ) : (
@@ -83,7 +84,7 @@ const AddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
                     <div className="flex items-center  justify-between">
                       <div className=" space-x-2 ">
                         <span className="font-semibold truncate">{address.name}</span>
-                        {address.default && (
+                        {address.default_address && (
                           <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
                             Mặc định
                           </span>
@@ -158,6 +159,7 @@ const AddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 isEdit={isEdit}
                 onClose={() => setIsAddingNew(false)}
                 selectedEdit={selectedEdit}
+                isModal={true}
               />
             ) : (
               <>
@@ -179,7 +181,7 @@ const AddressModal: React.FC<Props> = ({ isOpen, onClose }) => {
                       <div className="flex items-center  justify-between">
                         <div className=" space-x-2 ">
                           <span className="font-semibold truncate">{address.name}</span>
-                          {address.default && (
+                          {address.default_address && (
                             <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
                               Mặc định
                             </span>

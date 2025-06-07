@@ -30,7 +30,7 @@ interface Doctor {
 
 interface DoctorState {
   doctors: Doctor[];
-  info: null,
+  info: Doctor | null,
   loading: boolean;
   error: string | null;
   currentDoctor: Doctor | null;
@@ -129,7 +129,7 @@ const doctorSlice = createSlice({
         state.loading = false;
         state.doctors = action.payload;
       })
-      .addCase(fetchDoctors.rejected, (state, action) => {
+      .addCase(fetchDoctors.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.error.message;
       })
@@ -153,7 +153,7 @@ const doctorSlice = createSlice({
         state.loading = false;
         state.info = action.payload;
       })
-      .addCase(fetchMyDoctorInfo.rejected, (state, action) => {
+      .addCase(fetchMyDoctorInfo.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.payload;
       });

@@ -23,9 +23,7 @@ const MainContent: React.FC = () => {
     addresses: <AddressPage />,
     "health-check": <HealthCheckPage />,
     chat: <UserChatInterface />,
-  
-
-    // "vaccination-orders": <div>Vaccination Orders Content</div>,
+    logout: null,
     prescriptions: <MedicinePage />,
   };
 

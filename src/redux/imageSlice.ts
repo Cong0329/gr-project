@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
 
 // Định nghĩa kiểu dữ liệu cho kết quả trả về từ API
@@ -76,7 +76,7 @@ const imageSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(uploadImage.fulfilled, (state, action) => {
+      .addCase(uploadImage.fulfilled, (state, action:any) => {
         state.loading = false;
         state.predict = action.payload;
       })

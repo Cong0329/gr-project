@@ -10,9 +10,10 @@ import {
 import { Search, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
+import { AppDispatch } from "../../../redux/store";
 
 const MedicalTestListPage = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -40,9 +41,9 @@ const MedicalTestListPage = () => {
       )
     : medicalTests;
 
-  const featuredTest = medicalTests.length > 0 ? medicalTests[0] : null;
+  // const featuredTest = medicalTests.length > 0 ? medicalTests[0] : null;
 
-  const handleTestClick = (testName) => {
+  const handleTestClick = (testName:string) => {
     navigate(
       `/booking-home/medicaltest-detail/${encodeURIComponent(testName)}`
     );

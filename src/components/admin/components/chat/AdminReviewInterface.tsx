@@ -38,23 +38,23 @@ const sampleReviews: Review[] = [
 
 export default function AdminReviewInterface() {
   const [reviews, setReviews] = useState<Review[]>(sampleReviews);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState<'all' | 'answered' | 'unanswered'>('all');
-  const [filterRating, setFilterRating] = useState<number | null>(null);
-  const answeredCount = reviews.filter(review => review.isAnswered).length;
-  const unansweredCount = reviews.filter(review => !review.isAnswered).length;
+  const [searchTerm] = useState('');
+  const [filterStatus] = useState<'all' | 'answered' | 'unanswered'>('all');
+  const [filterRating] = useState<number | null>(null);
+  // const answeredCount = reviews.filter(review => review.isAnswered).length;
+  // const unansweredCount = reviews.filter(review => !review.isAnswered).length;
 
   // Hàm lọc đánh giá
   const filteredReviews = reviews.filter(review => {
     // Lọc theo từ khóa tìm kiếm
-    const matchesSearch = review.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          review.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          review.productName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = review.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          review.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          review.product.name.toLowerCase().includes(searchTerm.toLowerCase());
     
     // Lọc theo trạng thái trả lời
     const matchesStatus = filterStatus === 'all' || 
-                         (filterStatus === 'answered' && review.isAnswered) ||
-                         (filterStatus === 'unanswered' && !review.isAnswered);
+                         (filterStatus === 'answered' && !!review.reply) ||
+                         (filterStatus === 'unanswered' && !review.reply);
     
     // Lọc theo số sao
     const matchesRating = filterRating === null || review.rating === filterRating;
@@ -92,6 +92,11 @@ export default function AdminReviewInterface() {
             key={review.id}
             review={review}
             onSaveReply={handleSaveReply}
+            isExpanded={false}
+            onToggle={() => {}}
+            replyText=""
+            onReplyChange={() => {}}
+         
           />
         ))}
       </div>

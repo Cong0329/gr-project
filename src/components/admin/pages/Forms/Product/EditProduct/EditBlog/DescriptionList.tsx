@@ -1,5 +1,5 @@
 import React from 'react';
-import { Description } from './EditBlog';
+import { Description } from './types';
 
 interface Props {
   descriptions: Description[];

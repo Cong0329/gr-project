@@ -4,14 +4,14 @@ import { Button } from './Button';
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  // onConfirm: () => void;
   itemName: string;
 }
 
 export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
   isOpen,
   onClose,
-  onConfirm,
+  // onConfirm,
   itemName,
 }) => {
   if (!isOpen) return null;
@@ -27,7 +27,7 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
           <Button variant="secondary" onClick={onClose}>
             Hủy
           </Button>
-          <Button variant="danger" onClick={onConfirm}>
+          <Button variant="danger" onClick={() => {}}>
             Xóa
           </Button>
         </div>

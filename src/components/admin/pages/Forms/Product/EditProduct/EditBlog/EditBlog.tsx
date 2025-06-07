@@ -1,13 +1,12 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ProductForm } from './ProductForm';
-import { Product } from './types';
-import { RootState } from '../../../../../../../redux/store';
+import { RootState, AppDispatch } from '../../../../../../../redux/store';
 import { getProductDetailProduct } from '../../../../../../../redux/productAsyncThunk';
 
 // Example usage
 const EditBlog: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const { detail, product, status } = useSelector((state: RootState) => state.products);
   useEffect(() => {
     if (Object.keys(detail).length === 0) {
@@ -58,25 +57,13 @@ const EditBlog: React.FC = () => {
   //   ]
   // };
 
-  const handleSave = (updatedProduct: Product) => {
-    console.log("Saving product:", updatedProduct);
-    // Here you would typically send the updated product to your API
-    alert("Sản phẩm đã được cập nhật thành công!");
-  };
 
-  const handleDelete = (id: number) => {
-    console.log("Deleting product with ID:", id);
-    // Here you would typically send a delete request to your API
-    alert("Sản phẩm đã được xóa thành công!");
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 py-8">
       {detail && detail.id ? (
         <ProductForm
           initialProduct={detail}
-          onSave={handleSave}
-          onDelete={handleDelete}
         />
       ) : (
         <p className="text-center text-gray-600">Đang tải dữ liệu sản phẩm...</p>

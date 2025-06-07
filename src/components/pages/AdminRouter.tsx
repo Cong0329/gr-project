@@ -11,7 +11,6 @@ import Buttons from "../admin/pages/UiElements/Buttons";
 import LineChart from "../admin/pages/Charts/LineChart";
 import BarChart from "../admin/pages/Charts/BarChart";
 import Calendar from "../admin/pages/Calendar";
-import BasicTables from "../admin/pages/Tables/BasicTables";
 import FormElements from "../admin/pages/Forms/FormElements";
 import Blank from "../admin/pages/Blank";
 import Home from "../admin/pages/Dashboard/Home";
@@ -28,11 +27,7 @@ import OrderTables from "../admin/pages/Tables/OrderTables";
 import OrderDetail from "../admin/pages/Tables/OrderDetail";
 import AdminReview from "../admin/components/chat/AdminReview";
 import AdminChatInterface from "../admin/components/chat/AdminChat/AdminChatInterface";
-import { CategoryProduct } from "../admin/pages/Forms/Product/Brand/CategoryProduct";
-import { MedicalObjectProduct } from "../admin/pages/Forms/Product/Brand/MedicalObjectProduct";
-import { IndicationProduct } from "../admin/pages/Forms/Product/Brand/IndicationProduct";
 import UserPage from "../admin/pages/Forms/Product/Brand/UserPage";
-import { Package } from "lucide-react";
 import PackagePage from "../admin/pages/Forms/Product/Manage/Packages";
 
 const adminRoutes = (

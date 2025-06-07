@@ -59,7 +59,7 @@ const ProductSlider: React.FC<ProductSliderProps> = ({ products, show }) => {
         slidesToScroll: 6,
         arrows: true,
         nextArrow: <NextArrow show={show} />,
-        prevArrow: <PrevArrow />,
+        prevArrow: <PrevArrow show={show} />,
         responsive: [
             {
                 breakpoint: 800,

@@ -12,7 +12,6 @@ export const OrderPage = () => {
     const [activeTab, setActiveTab] = useState('all');
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 });
     const [search, setSearch] = useState('');
-    const containerRef = useRef<HTMLDivElement>(null);
     const { orders } = useSelector((state: RootState) => state.order);
     const tabRefs = useRef<Record<string, HTMLButtonElement | null>>({});
     const [isLoading, setIsLoading] = useState(true);

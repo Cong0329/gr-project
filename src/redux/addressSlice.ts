@@ -56,7 +56,7 @@ const addressSlice = createSlice({
     builder
       .addCase(fetchAddresses.fulfilled, (state, action) => {
         state.addresses = action.payload.addresses;
-        state.selectedAddress = action.payload.addresses.find(addr => addr.default_address) || null;
+        state.selectedAddress = action.payload.addresses.find((addr: any) => addr.default_address) || null;
         state.status = "idle";
       })
       .addCase(fetchAddresses.pending, (state) => {

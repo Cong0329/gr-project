@@ -16,7 +16,7 @@ export interface Section {
     product_detail_id: number;
     type: string;
     title: string;
-    image: string | null;
+    image: string | File | null;
     description: string | null;
     descriptions: Description[];
     ingredients: Ingredient[];

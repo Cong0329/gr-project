@@ -12,7 +12,7 @@ export const addAddressAPI = createAsyncThunk(
           }
         );
         return response.data;
-      } catch (error) {
+      } catch (error : any) {
         return rejectWithValue(error.response.data);
       }
     }
@@ -76,7 +76,7 @@ export const addAddressAPI = createAsyncThunk(
     "addresses/getById",
     async (id: string, { rejectWithValue }) => {
       try {
-        const response = await axios.get<Address>(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/address/${id}`,
+        const response = await axios.get<any>(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/address/${id}`,
           {
             withCredentials: true
           }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { createProductOption } from "../../../../../../redux/productAsyncThunk";
-import { id } from "date-fns/locale";
+import { AppDispatch } from "../../../../../../redux/store";
 
 interface ModalAddProductOptionProps {
     onClose: () => void;
@@ -10,7 +10,7 @@ interface ModalAddProductOptionProps {
 }
 
 export const ModalAddProductOption: React.FC<ModalAddProductOptionProps> = ({ onClose, onSave, id }) => {
-    const dispatch = useDispatch();
+    const dispatch:AppDispatch = useDispatch();
     const [label, setLabel] = useState("");
     const [price, setPrice] = useState<number | string>(0);
     const [discountedPrice, setDiscountedPrice] = useState<number | string>(0);
@@ -32,6 +32,7 @@ export const ModalAddProductOption: React.FC<ModalAddProductOptionProps> = ({ on
             dispatch(createProductOption({
                 product_id: id,
                 fullOption: [{
+                    id: "",
                     label,
                     price: Number(price),
                     discounted_price: Number(discountedPrice),

@@ -10,8 +10,6 @@ import {
   ProductIcon,
   ListIcon,
   PageIcon,
-  PieChartIcon,
-  PlugInIcon,
   TableIcon,
   UserCircleIcon,
   ChatIcon,
@@ -237,7 +235,7 @@ const AppSidebar: React.FC = () => {
       // Check if current route matches any top-level menu item
       ["main"].forEach((menuType) => {
         const items = menuType === "main" ? filteredNavItems : [];
-        items.forEach((nav, index) => {
+        items.forEach((nav) => {
           if (nav.path && isActive(nav.path)) {
             setOpenSubmenu(null); // Close submenus for direct links
           }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Ingredient } from './EditBlog';
+import { Ingredient } from './types';
 
 interface Props {
   ingredients: Ingredient[];

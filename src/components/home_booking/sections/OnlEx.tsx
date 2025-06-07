@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchDoctors } from "../../../redux/doctorSlice";
 import { fetchDepartments } from "../../../redux/departmentSlice";
+import { AppDispatch, RootState } from "../../../redux/store";
 
 const OnlEx = () => {
   const options = [
@@ -15,22 +16,22 @@ const OnlEx = () => {
     { label: "Tiêu hoá", value: "tiêu hoá từ xa" },
   ];
 
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const [activeOption, setActiveOption] = useState(0);
 
   const {
     doctors,
     loading: doctorLoading,
     error: doctorError,
-  } = useSelector((state) => state.doctors);
+  } = useSelector((state: RootState) => state.doctors);
   const {
     departments,
     loading: departmentLoading,
     error: departmentError,
-  } = useSelector((state) => state.departments);
+  } = useSelector((state: RootState) => state.departments);
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const [loading, setLoading] = useState(true);
+  // const [error, setError] = useState(null);
 
   useEffect(() => {
     dispatch(fetchDoctors());
@@ -49,7 +50,7 @@ const OnlEx = () => {
     return <p>Lỗi: {doctorError || departmentError}</p>;
   }
 
-  const departmentMap = {};
+  const departmentMap: Record<string, string> = {};
   departments.forEach((dept) => {
     departmentMap[dept.id] = dept.name;
   });

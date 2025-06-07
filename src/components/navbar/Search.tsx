@@ -6,10 +6,10 @@ export default function Search() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [searchHistory, setSearchHistory] = useState([]);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
 
   
-  const searchContainerRef = useRef(null);
+  const searchContainerRef = useRef<HTMLDivElement | null>(null);
   
   useEffect(() => {
     // Load search history from localStorage
@@ -17,8 +17,8 @@ export default function Search() {
     setSearchHistory(history);
     
     // Add event listener to close history when clicked outside
-    const handleClickOutside = (event) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+    const handleClickOutside = (event: Event) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
         setIsHistoryOpen(false);
       }
     };

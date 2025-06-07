@@ -5,8 +5,8 @@ import { ReviewsList } from "./ReviewList";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../../../redux/store";
 import { getReviews, replyReview, upadateReplyReview } from "../../../../redux/reviewsAsyncThunk";
-import { toast } from "react-toastify";
-import { Review, addReview } from "../../../../redux/reviewsSlice";
+import { toast } from "react-hot-toast";
+import { Review, addReview, setStatus } from "../../../../redux/reviewsSlice";
 import socket from "../../../../auth/socket";
 
 export default function AdminReviewInterface() {
@@ -26,28 +26,28 @@ export default function AdminReviewInterface() {
   useEffect(() => {
     setReviews(adminReviews);
   }, [adminReviews]);
-    useEffect(() => {
-      socket.emit("register-admin");
-  
-      socket.on("new-review", (data) => {
-        const newNotification = {
-          id: Date.now(),
-          user: {id: data.user.id, name: data.user.name, email: data.user.email, avatar_url: data.user.avatar_url},
-          product: {id: data.product.id, name: data.product.name},
-          comment: data.comment,
-          rating: data.rating,
-          createdAt: data.createdAt,
-          updatedAt: data.createdAt,
-          reply: null
-        };
-  
-        dispatch(addReview(newNotification));
-      });
-  
-      return () => {
-        socket.off("new-review");
+  useEffect(() => {
+    socket.emit("register-admin");
+
+    socket.on("new-review", (data) => {
+      const newNotification = {
+        id: Date.now(),
+        user: { id: data.user.id, name: data.user.name, email: data.user.email, avatar_url: data.user.avatar_url },
+        product: { id: data.product.id, name: data.product.name },
+        comment: data.comment,
+        rating: data.rating,
+        createdAt: data.createdAt,
+        updatedAt: data.createdAt,
+        reply: null
       };
-    }, [dispatch]);
+
+      dispatch(addReview(newNotification));
+    });
+
+    return () => {
+      socket.off("new-review");
+    };
+  }, [dispatch]);
 
 
 
@@ -68,10 +68,20 @@ export default function AdminReviewInterface() {
       (filterStatus === 'unanswered' && review.reply === null);
 
     // Lọc theo số sao
-    const matchesRating = filterRating === null || parseInt(review.rating) === filterRating;
+    const ratingValue = typeof review.rating === 'string' ? parseInt(review.rating) : review.rating;
+    const matchesRating = filterRating === null || ratingValue === filterRating;
 
     return matchesSearch && matchesStatus && matchesRating;
   });
+  useEffect(() => {
+    if (status === "failed") {
+      const timeoutId = setTimeout(() => {
+        setStatus('idle');
+      }, 1000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [status]);
 
   // Hàm mở rộng/thu gọn đánh giá
   const toggleExpand = (id: string) => {
@@ -93,7 +103,7 @@ export default function AdminReviewInterface() {
   // Hàm lưu trả lời
   const saveReply = (id: string) => {
     if (!replyTexts[id]) {
-      toast.warning('Vui lòng nhập nội dung phản hồi');
+      toast.error('Vui lòng nhập nội dung phản hồi');
       return;
     }
 
@@ -140,10 +150,10 @@ export default function AdminReviewInterface() {
     // console.log(id, replyTexts[id]);
     setReviews(updatedReviews);
     if (hadPreviousReply) {
-      dispatch(upadateReplyReview({replyId: replyId, reply: replyTexts[id]}));
+      dispatch(upadateReplyReview({ replyId: replyId!, reply: replyTexts[id] }));
     }
     else {
-      dispatch(replyReview({id, reply: replyTexts[id]}));
+      dispatch(replyReview({ id, reply: replyTexts[id] }));
     }
     // Hiển thị thông báo thành công
     toast.success(`Đã ${hadPreviousReply ? 'cập nhật' : 'gửi'} phản hồi cho đánh giá #${id}`);

@@ -1,4 +1,4 @@
-import { Review } from "./type";
+import { Review, Reply } from "./type";
 import { AdminReply } from "./AdminReply";
 import { ReplyForm } from "./ReplyForm";
 import { RatingStars } from "./RatingStar";
@@ -20,7 +20,7 @@ export const ReviewItem = ({
   onToggle: () => void,
   replyText: string,
   onReplyChange: (id: string, text: string) => void,
-  onSaveReply: (id: string) => void
+  onSaveReply: (reviewId: string, reply: Reply) => void
 }) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('vi-VN');

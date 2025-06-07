@@ -43,6 +43,7 @@ const BrandPage: React.FC = () => {
         handleBrandSaveItem: handleSaveBrand,
         handleBrandDeleteItem: handleDeleteBrand
     } = useGenericCrud<Brand>(brands, brandConfig);
+    console.log(brand);
 
     return (
         <>

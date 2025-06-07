@@ -17,7 +17,7 @@ interface ChatModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
-  id: string;
+  id?: string;
 }
 
 export const ChatModal: React.FC<ChatModalProps> = ({
@@ -137,6 +137,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
   };
 
   if (!isOpen) return null;
+  if (!id || !title) return null;
 
   return (
     <div className="fixed inset-0 bg-white bg-opacity-10 flex items-center justify-center z-[99999999] p-4">

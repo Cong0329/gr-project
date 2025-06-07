@@ -6,9 +6,10 @@ import { fetchDepartments } from "../../redux/departmentSlice";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import DoctorSchedules from "../home_booking/details/component_details/DoctorSchedules";
+import { AppDispatch } from "../../redux/store";
 
 export const BookingOnlExDetail = () => {
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchDoctors());

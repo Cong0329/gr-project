@@ -42,12 +42,20 @@ export interface Indication extends BaseEntity {
   name: string;
 }
 
+interface Role {
+  id: string;
+  name: string;
+  code: string;
+}
+
 export interface User extends BaseEntity {
+  id: string;
   name: string;
   email: string;
   phone: string;
-  role: string;
   gender: string;
+  avatar_url: string;
+  roles: Role[];
 }
 
 
@@ -74,8 +82,8 @@ export interface EntityConfig<T extends BaseEntity> {
   name: string;
   pluralName: string;
   fields: FieldConfig[];
-  initialState: () => T;
-  tableColumns: {
+  initialState?: () => T;
+  tableColumns?: {
     key: keyof T | string;
     header: string;
     render?: (item: T) => React.ReactNode;

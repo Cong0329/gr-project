@@ -79,6 +79,7 @@ export default function EcommerceMetrics({
               {latestOrderGrowth}%
             </Badge>
           ) : (
+            latestOrderGrowth !== null &&
             latestOrderGrowth < 0 &&
             <Badge color="error">
               <ArrowDownIcon />

@@ -12,9 +12,10 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import img from "../../../assets/logo.png";
 import { Link } from "react-router-dom";
+import { AppDispatch } from "../../../redux/store";
 
 const MedicalTest = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const allPackages = useSelector(selectAllPackages);
   const loading = useSelector(selectLoadingStatus);
   const error = useSelector(selectError);

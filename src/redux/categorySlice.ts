@@ -3,7 +3,10 @@ import { fetchCategories, updateCategory, deleteCategory, createCategory, getPar
 import { Product } from "../components/admin/pages/Forms/Product/Product";
 
 interface Category {
+    id: string;
     name: string;
+    parent_id: string;
+    categories: any[];
 }
 
 

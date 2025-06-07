@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { RootState } from "../../../../redux/store";
+import { AppDispatch, RootState } from "../../../../redux/store";
 import { vefifyEmailAPI } from "../../../../redux/userAsyncThunk";
 
 export const VerifyCodePage = () => {
   const location = useLocation();
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const { status, isAuthenticated, verify, mail } = useSelector(
     (state: RootState) => state.auth
   );
@@ -97,12 +97,11 @@ export const VerifyCodePage = () => {
 
     try {
       // Include role information for verification
-      const role = isAdmin ? "ROLE_ADMIN" : "ROLE_DOCTOR";
+      // const role = isAdmin ? "ROLE_ADMIN" : "ROLE_DOCTOR";
       await dispatch(
         vefifyEmailAPI({
           email: mail,
           verifyCode: code,
-          role,
         })
       );
     } catch (error: any) {

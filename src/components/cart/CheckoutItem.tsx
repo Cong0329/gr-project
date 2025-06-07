@@ -1,6 +1,6 @@
 
 import Skeleton from "react-loading-skeleton";
-import { ProductOption } from "./product";
+import { ProductOption } from "../../redux/cartSlice";
 import { useDispatch } from "react-redux";
 import { addCartItemId } from "../../redux/orderSlice";
 import { useEffect } from "react";
@@ -11,8 +11,7 @@ interface CheckoutItem {
   quantity: number;
   image: string;
   selected: boolean;
-  selectedOption: ProductOption; // Thêm `selectedOption` vào item
-  options: ProductOption[]; // Thêm `options` vào item
+  selectedOption: ProductOption | string; // Thêm `selectedOption` vào item
 }
 
 interface CheckoutItemProps {
@@ -31,7 +30,7 @@ export const CheckoutItem: React.FC<CheckoutItemProps> = ({ isFirst, item, isLoa
   }, [dispatch, item]);
   
   // Tính tổng tiền của sản phẩm dựa trên tùy chọn được chọn
-  const totalPrice = (selectedOption.discountedPrice ?? selectedOption.price) * quantity;
+  const totalPrice = (typeof selectedOption === 'string' ? 0 : (selectedOption.discounted_price ?? selectedOption.price)) * quantity;
 
   // Hàm cập nhật tùy chọn cho sản phẩm
   let content;
@@ -81,7 +80,7 @@ export const CheckoutItem: React.FC<CheckoutItemProps> = ({ isFirst, item, isLoa
         <div className="text-gray-500 flex font-semibold text-sm">
           <span>x</span>
           <p className="">{quantity}</p>
-          <p className="ml-1">{selectedOption.label}</p>
+          <p className="ml-1">{typeof selectedOption === 'string' ? selectedOption : selectedOption.label}</p>
         </div>
       </div>
     )

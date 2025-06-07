@@ -38,7 +38,7 @@ export const sendMessageUser = createAsyncThunk(
 
 export const sendMessageDoctor = createAsyncThunk(
     "message/sendMessageDoctor",
-    async ({ content, image, recipientId ,id }: { content?: string; image?: File, recipientId: string ,id: string}, { rejectWithValue }) => {
+    async ({ content, image, recipientId ,id }: { content?: string; image?: File, recipientId?: string ,id: string}, { rejectWithValue }) => {
         try {
             if (!content && !image) {
                 return rejectWithValue({ message: "Bạn phải nhập nội dung hoặc chọn ảnh." });
@@ -47,7 +47,7 @@ export const sendMessageDoctor = createAsyncThunk(
             const formData = new FormData();
             if (content) formData.append("content", content);
             if (image) formData.append("image", image);
-            formData.append("recipientId", recipientId);
+            formData.append("recipientId", recipientId || '');
 
             const response = await axios.post(
                 `${import.meta.env.VITE_NODEJS_BACKEND_URL}/message/${id}/doctor`,

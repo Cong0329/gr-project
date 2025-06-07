@@ -22,7 +22,7 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
     const [quantity, setQuantity] = useState(1);
     const increaseQuantity = () => setQuantity((prev) => prev + 1);
     const decreaseQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
-    const rating = review.length > 0 ? (review.reduce((sum, r) => sum + (parseFloat(r.rating ?? "0") ?? 0), 0) / review.length).toFixed(1) : "0.0";
+    const rating = review.length > 0 ? (review.reduce((sum, r) => sum + (Number(r.rating ?? 0)), 0) / review.length).toFixed(1) : "0.0";
     const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value, 10);
         setQuantity(isNaN(value) || value < 1 ? 1 : value);
@@ -60,8 +60,8 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
                     <div>
                         <span className="text-2xl font-semibold text-blue-700">
                             {selectedOption.discounted_price && selectedOption.discounted_price > 0
-                                ? parseFloat(selectedOption.discounted_price).toLocaleString()
-                                : parseFloat(selectedOption.price).toLocaleString()}đ
+                                ? Number(selectedOption.discounted_price).toLocaleString()
+                                : Number(selectedOption.price).toLocaleString()}đ
                         </span>
                         <span className="text-blue-700 text-lg font-medium">/ {selectedOption.label}</span>
 
@@ -70,7 +70,7 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
 
                     {selectedOption.discounted_price && selectedOption.discounted_price > 0 && (
                         <span className="text-lg text-gray-500 line-through">
-                            {parseFloat(selectedOption.price).toLocaleString()}đ
+                            {Number(selectedOption.price).toLocaleString()}đ
                         </span>
                     )}
 
@@ -194,8 +194,8 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
                                         <div>
                                             <span className="text-2xl font-semibold text-blue-700">
                                                 {selectedOption.discounted_price && selectedOption.discounted_price > 0
-                                                    ? parseFloat(selectedOption.discounted_price).toLocaleString()
-                                                    : parseFloat(selectedOption.price).toLocaleString()}đ
+                                                    ? Number(selectedOption.discounted_price).toLocaleString()
+                                                    : Number(selectedOption.price).toLocaleString()}đ
                                             </span>
 
 
@@ -204,7 +204,7 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
 
                                         {selectedOption.discounted_price && selectedOption.discounted_price > 0 && (
                                             <span className="text-lg text-gray-500 line-through">
-                                                {parseFloat(selectedOption.price).toLocaleString()}đ
+                                                {Number(selectedOption.price).toLocaleString()}đ
                                             </span>
                                         )}
 

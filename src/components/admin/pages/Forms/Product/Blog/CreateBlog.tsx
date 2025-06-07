@@ -1,6 +1,6 @@
 // components/CreateBlog.tsx
 import React, { useEffect, useState } from "react";
-import { DescriptionType, Title, TextTitle, IngredientTitle, descriptionTypeLabels } from "./type";
+import { DescriptionType, Title, TextTitle, IngredientTitle, descriptionTypeLabels, Instruction } from "./type";
 import { StepOne } from "./StepOne";
 import { DescriptionTypeSelector } from "./DescriptionTypeSelector";
 import { TextDescriptionForm } from "./TextDescriptionForm";
@@ -8,14 +8,14 @@ import { IngredientDescriptionForm } from "./IngredientDescriptionForm";
 import { useDispatch, useSelector } from "react-redux";
 import { createProductDetail, createProductDetailSection, createProductDetailSectionIngredient } from "../../../../../../redux/productAsyncThunk";
 import { setStatus } from "../../../../../../redux/productSlice";
-import { RootState } from "../../../../../../redux/store";
+import { AppDispatch, RootState } from "../../../../../../redux/store";
 
 interface CreateBlogProps {
   updateDetailedInfo: (title: string, descriptions: Title[]) => void;
 }
 
 const CreateBlog: React.FC<CreateBlogProps> = ({ updateDetailedInfo }) => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [blogTitle, setBlogTitle] = useState("");
   const [descriptions, setDescriptions] = useState<Title[]>([]);
@@ -35,13 +35,13 @@ const CreateBlog: React.FC<CreateBlogProps> = ({ updateDetailedInfo }) => {
 
   const handleAddTextDescription = (newDesc: TextTitle) => {
     setDescriptions((prev) => [...prev, newDesc]);
-    dispatch(createProductDetailSection({ product_detail_id: detail_id, productDetailSection: newDesc }));
+    dispatch(createProductDetailSection({ product_detail_id: detail_id, productDetailSection: { ...newDesc, title: newDesc.title ?? "" } }));
     setSelectedType(null);
   };
 
   const handleAddIngredientDescription = (newDesc: IngredientTitle) => {
     setDescriptions((prev) => [...prev, newDesc]);
-    dispatch(createProductDetailSectionIngredient({ product_detail_id: detail_id, productDetailSection: newDesc }));
+    dispatch(createProductDetailSectionIngredient({ product_detail_id: detail_id, productDetailSection: { ...newDesc, descriptions: newDesc.descriptions, title: newDesc.title ?? "" } }));
     console.log(newDesc.descriptions);
     setSelectedType(null);
   };
@@ -117,7 +117,7 @@ const CreateBlog: React.FC<CreateBlogProps> = ({ updateDetailedInfo }) => {
                 {desc.type === DescriptionType.INGREDIENTS ? (
                   <div>
                     <ul className="list-disc pl-4">
-                      {desc.descriptions.description?.map((line, idx) => (
+                      {(desc as IngredientTitle).descriptions.description?.map((line: string, idx: number) => (
                         <li key={idx}>{line}</li>
                       ))}
                     </ul>
@@ -129,7 +129,7 @@ const CreateBlog: React.FC<CreateBlogProps> = ({ updateDetailedInfo }) => {
                         </tr>
                       </thead>
                       <tbody>
-                        {desc.descriptions.ingredients.map((ing, idx) => (
+                        {(desc as IngredientTitle).descriptions.ingredients.map((ing: Instruction, idx: number) => (
                           <tr key={idx}>
                             <td className="border px-2">{ing.name}</td>
                             <td className="border px-2">{ing.value}</td>

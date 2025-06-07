@@ -3,6 +3,16 @@ import { Link } from 'react-router-dom';
 import Icon from './Icon';
 import { PageId } from './menuItems';
 
+type IconName = 
+  | 'user'
+  | 'box'
+  | 'map-pin'
+  | 'syringe'
+  | 'clipboard'
+  | 'pill'
+  | 'log-out'
+  | 'chevron-right';
+
 interface MenuItemProps {
   id: PageId;
   icon: string;
@@ -22,7 +32,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ id, icon, label, active, onClick })
           isActive ? 'text-blue-600 border-l-2 border-blue-600 bg-gray-100' : 'text-gray-700'
         }`}
       >
-        <Icon name={icon} />
+        <Icon name={icon as IconName} />
         <span className={`ml-3 ${isActive ? 'font-medium' : ''}`}>{label}</span>
         <span className="ml-auto">
           <Icon name="chevron-right" />
@@ -38,7 +48,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ id, icon, label, active, onClick })
         isActive ? 'text-blue-600 border-l-2 border-blue-600 bg-gray-100' : 'text-gray-700'
       }`}
     >
-      <Icon name={icon} />
+      <Icon name={icon as IconName} />
       <span className={`ml-3 ${isActive ? 'font-medium' : ''}`}>{label}</span>
       <span className="ml-auto">
         <Icon name="chevron-right" />

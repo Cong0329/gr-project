@@ -128,6 +128,9 @@ const reviewsSlice = createSlice({
         clearMessagesAdmin(state) {
             state.messageItemsAdmin = [];
         },
+        setStatus(state, action) {
+            state.status = action.payload;
+        },
         moveUserToTopOrAdd: (state, action) => {
             const newUserMessage = action.payload;
 
@@ -282,5 +285,5 @@ const reviewsSlice = createSlice({
     },
 });
 
-export const { openChatbox, addReview, addNotification, markAsRead, clearNotifications, addMessage, addMessageAdmin, addMessageUser, clearMessages, clearMessagesAdmin, moveUserToTopOrAdd } = reviewsSlice.actions;
+export const { setStatus, openChatbox, addReview, addNotification, markAsRead, clearNotifications, addMessage, addMessageAdmin, addMessageUser, clearMessages, clearMessagesAdmin, moveUserToTopOrAdd } = reviewsSlice.actions;
 export default reviewsSlice.reducer;

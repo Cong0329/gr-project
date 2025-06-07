@@ -10,6 +10,7 @@ import { useDispatch } from 'react-redux';
 import { deleteProductIngredient, deleteProductSection, updateProductDetailSection, deleteProductDescriptionIngredient, addProductIngredient, addProductDescriptionIngredient } from '../../../../../../../redux/productAsyncThunk';
 import ModalAddIngredient from './InModal';
 import ModalAddDescription from './DesModal';
+import { AppDispatch } from '../../../../../../../redux/store';
 
 interface SectionFormProps {
   section: Section;
@@ -25,23 +26,23 @@ export const SectionForm: React.FC<SectionFormProps> = ({
   const [ingredientModalOpen, setIngredientModalOpen] = useState(false);
   const [tempSection, setTempSection] = useState({
     title: section.title,
-    description: section.description,
+    description: section.description ?? undefined,
     image: section.image,
     url: section.image,
     type: section.type
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   
 
   const handleDeleteSection = () => {
-    dispatch(deleteProductSection(section.id));
+    dispatch(deleteProductSection(section.id.toString()));
   };
 
   const handleStartEditing = () => {
     setTempSection({
       title: section.title,
-      description: section.description,
+      description: section.description ?? undefined,
       image: section.image,
       type: section.type,
       url: section.image
@@ -55,7 +56,7 @@ export const SectionForm: React.FC<SectionFormProps> = ({
 
   const handleSaveChanges = () => {
     console.log(tempSection);
-    dispatch(updateProductDetailSection({ id: section.id, productDetailSection: tempSection }));
+    dispatch(updateProductDetailSection({ id: (section.id).toString(), productDetailSection: tempSection }));
     setIsEditing(false);
   };
 
@@ -87,13 +88,13 @@ export const SectionForm: React.FC<SectionFormProps> = ({
 
 
   const handleRemoveDescription = (descIndex: number) => {
-    dispatch(deleteProductDescriptionIngredient(descIndex));
+    dispatch(deleteProductDescriptionIngredient(descIndex.toString()));
   };
 
 
 
   const handleRemoveIngredient = (ingredientIndex: number) => {
-    dispatch(deleteProductIngredient(ingredientIndex));
+    dispatch(deleteProductIngredient(ingredientIndex.toString()));
   };
 
 
@@ -103,7 +104,7 @@ export const SectionForm: React.FC<SectionFormProps> = ({
       <div className="mb-8 p-4 border border-gray-200 rounded-lg">
         <div className="flex justify-between items-center mb-3">
           <h3 className="text-lg font-medium text-gray-700">
-            Mục {index + 1}: {descriptionTypeLabels[section.type]}
+            Mục {index + 1}: {descriptionTypeLabels[section.type as DescriptionType]}
           </h3>
           <div className="flex gap-2">
             {isEditing ? (
@@ -172,7 +173,13 @@ export const SectionForm: React.FC<SectionFormProps> = ({
                 {tempSection.url && (
                   <div className="relative inline-block">
                     <img
-                      src={tempSection.url}
+                      src={
+                        typeof tempSection.url === 'string'
+                          ? tempSection.url
+                          : tempSection.url instanceof File
+                            ? URL.createObjectURL(tempSection.url)
+                            : undefined
+                      }
                       alt=""
                       className="w-72 h-72 object-cover border border-gray-200 rounded-md"
                     />
@@ -206,7 +213,13 @@ export const SectionForm: React.FC<SectionFormProps> = ({
             ) : (
               section.image ? (
                 <img
-                  src={section.image}
+                  src={
+                    typeof section.image === 'string'
+                      ? section.image
+                      : section.image instanceof File
+                        ? URL.createObjectURL(section.image)
+                        : undefined
+                  }
                   alt=""
                   className="w-72 h-72 object-cover border border-gray-200 rounded-md"
                 />
@@ -225,7 +238,7 @@ export const SectionForm: React.FC<SectionFormProps> = ({
           isEditing ? (
             <TextArea
               label="Mô tả mục"
-              value={tempSection.description}
+              value={tempSection.description ?? ""}
               onChange={handleChangeTempDescription}
             />
           ) : (
@@ -314,7 +327,7 @@ export const SectionForm: React.FC<SectionFormProps> = ({
       {desModalOpen && (
         <ModalAddDescription
           onSubmit={(text) => {
-            dispatch(addProductDescriptionIngredient({ section_id: section.id, text }));
+            dispatch(addProductDescriptionIngredient({ section_id: section.id.toString(), text }));
             setDesModalOpen(false);
           }}
           onClose={() => setDesModalOpen(false)}
@@ -323,7 +336,7 @@ export const SectionForm: React.FC<SectionFormProps> = ({
       {ingredientModalOpen && (
         <ModalAddIngredient
           onSubmit={(ingredient) => {
-            dispatch(addProductIngredient({ section_id: section.id, name: ingredient.name, value: ingredient.value }));
+            dispatch(addProductIngredient({ section_id: section.id.toString(), name: ingredient.name, value: ingredient.value }));
             setIngredientModalOpen(false);
           }}
           onClose={() => setIngredientModalOpen(false)}

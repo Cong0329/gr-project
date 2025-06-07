@@ -39,6 +39,7 @@ const MedicalObjectPage: React.FC = () => {
     handleMedicalObjectSaveItem: handleSaveMedicalObject,
     handleMedicalObjectDeleteItem: handleDeleteMedicalObject
   } = useGenericCrud<MedicalObject>(medicalObjects, medicalObjectConfig);
+  console.log(medicalObject);
 
   return (
     <>

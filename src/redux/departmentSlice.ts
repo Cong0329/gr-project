@@ -8,13 +8,30 @@ export const fetchDepartments = createAsyncThunk("departments/fetch", async () =
   return response.data;
 });
 
+export interface Department {
+  id: number;
+  name: string;
+  image: string;
+  price: string;
+}
+
+// Interface cho slice state
+interface DepartmentState {
+  departments: Department[];
+  loading: boolean;
+  error: string | null;
+}
+
+// Khởi tạo state với kiểu rõ ràng
+const initialState: DepartmentState = {
+  departments: [],
+  loading: false,
+  error: null,
+};
+
 const departmentSlice = createSlice({
   name: "departments",
-  initialState: {
-    departments: [],
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -27,7 +44,7 @@ const departmentSlice = createSlice({
       })
       .addCase(fetchDepartments.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.error.message || "Error fetching departments";
       });
   },
 });

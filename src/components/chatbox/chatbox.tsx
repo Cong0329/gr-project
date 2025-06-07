@@ -184,7 +184,7 @@ const ChatBox = () => {
                     {msg.content && (
                       <ReactMarkdown
                         components={{
-                          p: ({ node, children }) => (
+                          p: ({  children }) => (
                             <div
                               className={`inline-block px-4 py-2 rounded-lg whitespace-pre-line ${msg.sender_id === user.id ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
                                 }`}
@@ -192,7 +192,7 @@ const ChatBox = () => {
                               {children}
                             </div>
                           ),
-                          a: ({ node, ...props }) => (
+                          a: ({  ...props }) => (
                             <a {...props} target="_blank" rel="noopener noreferrer" className="underline text-blue-700" />
                           )
                         }}

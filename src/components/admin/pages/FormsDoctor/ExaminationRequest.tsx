@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBookingRequests } from "../../../../redux/packageBookingRequestSlice";
 import { requestDoctorAssignment } from "../../../../redux/doctorAssignmentSlice";
@@ -15,30 +15,27 @@ import {
   AlertCircle,
   Filter,
   Stethoscope,
-  Mail,
-  Phone,
-  MapPin,
 } from "lucide-react";
+import { RootState, AppDispatch } from "../../../../redux/store";
+
 
 export const ExaminationRequest = () => {
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const [selectedDate, setSelectedDate] = useState("");
   const [notes, setNotes] = useState("");
-  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [selectedBooking, setSelectedBooking] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState("upcoming");
   const [packageName, setPackageName] = useState("");
 
   const { bookingRequests, loading } = useSelector(
-    (state) => state.packages || {}
+    (state:RootState) => state.packages || {}
   );
   const { loading: assignmentLoading } = useSelector(
-    (state) => state.doctorAssignment || {}
+    (state:RootState) => state.doctorAssignment || {}
   );
   const {
-    info,
-    loading: doctorLoading,
-    error,
-  } = useSelector((state) => state.doctors || {});
+    info
+  } = useSelector((state:RootState) => state.doctors || {});
 
   useEffect(() => {
     handleSearch();
@@ -49,20 +46,20 @@ export const ExaminationRequest = () => {
     dispatch(
       getAllBookingRequests({
         date: selectedDate,
-        package_name: packageName || undefined,
+        packageId: packageName ? Number(packageName) : undefined,
       })
     );
   };
 
   // Function để phân chia yêu cầu theo thời gian
-  const categorizeRequests = (requests) => {
+  const categorizeRequests = (requests: any[]) => {
     if (!requests || !Array.isArray(requests))
       return { upcoming: [], past: [] };
 
     const now = new Date();
     now.setHours(0, 0, 0, 0); // Set to start of today for date comparison
-    const upcoming = [];
-    const past = [];
+    const upcoming: any[] = [];
+    const past: any[] = [];
 
     requests.forEach((request) => {
       const requestDate = new Date(request.requested_date);
@@ -77,16 +74,17 @@ export const ExaminationRequest = () => {
 
     // Sắp xếp upcoming theo thời gian tăng dần, past theo thời gian giảm dần
     upcoming.sort(
-      (a, b) => new Date(a.requested_date) - new Date(b.requested_date)
+      (a, b) => new Date(a.requested_date).getTime() - new Date(b.requested_date).getTime()
     );
     past.sort(
-      (a, b) => new Date(b.requested_date) - new Date(a.requested_date)
+      (a, b) => new Date(b.requested_date).getTime() - new Date(a.requested_date).getTime()
     );
+    
 
     return { upcoming, past };
   };
 
-  const handleRequestAssignment = (booking) => {
+  const handleRequestAssignment = (booking: any) => {
     const bookingRequestId =
       booking.id || booking.booking_request_id || booking.request_id;
 
@@ -96,11 +94,11 @@ export const ExaminationRequest = () => {
       return;
     }
 
-    console.log("Sending request with:", {
-      booking_request_id: bookingRequestId,
-      doctor_id: info?.id,
-      notes: notes,
-    });
+    // console.log("Sending request with:", {
+    //   booking_request_id: bookingRequestId,
+    //   doctor_id: info?.id,
+    //   notes: notes,
+    // });
 
     dispatch(
       requestDoctorAssignment({
@@ -117,7 +115,7 @@ export const ExaminationRequest = () => {
     });
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("vi-VN", {
       weekday: "long",
       year: "numeric",
@@ -126,7 +124,7 @@ export const ExaminationRequest = () => {
     });
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
         return "bg-yellow-100 text-yellow-800 border-yellow-200";
@@ -139,7 +137,7 @@ export const ExaminationRequest = () => {
     }
   };
 
-  const getStatusText = (status) => {
+  const getStatusText = (status: string) => {
     switch (status) {
       case "pending":
         return "Chờ xử lý";
@@ -152,7 +150,7 @@ export const ExaminationRequest = () => {
     }
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status: string) => {
     switch (status) {
       case "pending":
         return <AlertCircle className="w-4 h-4" />;
@@ -166,7 +164,7 @@ export const ExaminationRequest = () => {
   };
 
   // Render booking card
-  const renderBookingCard = (booking, index) => {
+  const renderBookingCard = (booking: any, index: string) => {
     return (
       <div
         key={index}
@@ -216,7 +214,7 @@ export const ExaminationRequest = () => {
         {/* Action Section */}
         {booking.status === "pending" && (
           <div className="border-t border-gray-100 pt-4">
-            {selectedBooking === index ? (
+            {selectedBooking === Number(index) ? (
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200">
                 <div className="space-y-4">
                   <div className="flex items-center space-x-2 mb-3">
@@ -235,7 +233,7 @@ export const ExaminationRequest = () => {
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Nhập ghi chú cho yêu cầu này..."
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-vertical"
-                      rows="3"
+                      rows={3}
                     />
                   </div>
 
@@ -268,7 +266,7 @@ export const ExaminationRequest = () => {
               </div>
             ) : (
               <button
-                onClick={() => setSelectedBooking(index)}
+                onClick={() => setSelectedBooking(Number(index))}
                 className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center space-x-2"
               >
                 <User className="w-4 h-4" />

@@ -12,7 +12,7 @@ export const AddressPage = () => {
     const dispatch: AppDispatch = useDispatch();
     const { status, addresses } = useSelector((state: RootState) => state.address);
     const [isAddingNew, setIsAddingNew] = useState(false);
-    const [isModal, setIsModal] = useState(true);
+    const [isModal] = useState(true);
     const [isEdit, setIsEdit] = useState(false);
     const [selectedEdit, setSelectedEdit] = useState('');
     const [isDelete, setIsDelete] = useState(false);

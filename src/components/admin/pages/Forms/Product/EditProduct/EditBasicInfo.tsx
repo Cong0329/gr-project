@@ -95,18 +95,19 @@ export const EditBasicInfoStep = () => {
 
     const handleUpdate = () => {
         const updatedFields: any = {};
-
+    
         Object.keys(formData).forEach((key) => {
-            if (formData[key as keyof typeof formData] !== initialFormData[key]) {
-                updatedFields[key] = formData[key as keyof typeof formData];
+            const typedKey = key as keyof typeof formData;
+            if (formData[typedKey] !== (initialFormData as any)[key]) {
+                updatedFields[key] = formData[typedKey];
             }
         });
-
+    
         if (Object.keys(updatedFields).length === 0) {
             alert('Không có thay đổi nào');
             return;
         }
-
+    
         dispatch(updateProduct({ id: product.id, product: updatedFields }));
     };
 
@@ -203,7 +204,7 @@ export const EditBasicInfoStep = () => {
                     type="number"
                     name="quantity"
                     value={formData.quantity}
-                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, quantity: Number(e.target.value) })}
                     className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Nhập số lượng sản phẩm"
                     min={0}

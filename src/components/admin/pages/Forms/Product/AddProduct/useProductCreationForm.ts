@@ -3,12 +3,11 @@ import React, { useState } from "react";
 import { ProductFormData, ProductImage, ProductOptionInt } from "./ProductCreationForm";
 import { Title } from "../Blog/type";
 import { createProduct, createProductImage, createProductOption } from "../../../../../../redux/productAsyncThunk";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../../../../../../redux/store";
 export const useProductCreationForm = () => {
-    const dispatch = useDispatch();
-    const { product_id, product_detail_id } = useSelector((state: RootState) => state.products);
+    const dispatch:AppDispatch = useDispatch();
+    const { product_id } = useSelector((state: RootState) => state.products);
     const [currentStep, setCurrentStep] = useState<number>(1);
     const [formData, setFormData] = useState<ProductFormData>({
         basicInfo: {
@@ -184,7 +183,7 @@ export const useProductCreationForm = () => {
     // Kiểm tra xem bước hiện tại có đủ thông tin để tiếp tục không
     const canProceed = () => {
         switch (currentStep) {
-            case 1:
+            case 1: {
                 const { name, code, dosage_form, specification, ingredients, registration_number, description, manufacturer, quantity, brand_id, category_id, type, indication_id, medical_object_id } = formData.basicInfo;
                 return (
                     name.trim() !== "" &&
@@ -202,9 +201,11 @@ export const useProductCreationForm = () => {
                     indication_id !== null &&
                     medical_object_id !== null
                 );
-            case 2:
+            }
+            case 2: {
                 return formData.images.length > 0;
-            case 3:
+            }
+            case 3: {
                 // Kiểm tra xem tất cả các option có tên và ít nhất một giá trị
                 return (
                     formData.options.length === 0 ||
@@ -214,13 +215,16 @@ export const useProductCreationForm = () => {
                         )
                     )
                 );
-            case 4:
+            }
+            case 4: {
                 return (
                     formData.detailedInfo.title.trim() !== "" &&
                     formData.detailedInfo.description.length > 0
                 );
-            default:
+            }
+            default: {
                 return false;
+            }
         }
     };
 

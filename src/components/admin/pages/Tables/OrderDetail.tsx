@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../../redux/store";
+import { AppDispatch, RootState } from "../../../../redux/store";
 import { useEffect } from "react";
 import { fetchAdminOrderById, updateOrderConfirm, updateOrderShipping } from "../../../../redux/orderAsyncThunk";
 import { useParams } from "react-router-dom";
@@ -7,7 +7,7 @@ import { ItemOrder } from "./OrderItem";
 
 const OrderDetail = () => {
     const { adminOrderDetail, status } = useSelector((state: RootState) => state.order);
-    const dispatch = useDispatch();
+    const dispatch:AppDispatch = useDispatch();
     const { id } = useParams<{ id: string }>();
 
     const cancelled = adminOrderDetail?.status_history?.filter((item) => item.status === 'cancelled');
@@ -20,7 +20,7 @@ const OrderDetail = () => {
 
     useEffect(() => {
         if (id) {
-            dispatch(fetchAdminOrderById(id));
+            dispatch(fetchAdminOrderById(id as string));
         }
     }, [dispatch, id]);
 
@@ -60,10 +60,10 @@ const OrderDetail = () => {
 
     const handleConfirm = () => {
         if (adminOrderDetail.status === 'pending') {
-            dispatch(updateOrderConfirm(id));
+            dispatch(updateOrderConfirm(id as string));
         }
         else if (adminOrderDetail.status === 'confirmed') {
-            dispatch(updateOrderShipping(id));
+            dispatch(updateOrderShipping(id as string));
         }
     }
 
@@ -103,11 +103,11 @@ const OrderDetail = () => {
                             <h2 className="text-lg font-semibold">Thông tin thanh toán</h2>
                             <div className="flex justify-between">
                                 <span>Tổng tiền:</span>
-                                <span className="text-gray-600">{parseFloat(adminOrderDetail.discout_price).toLocaleString()}đ</span>
+                                <span className="text-gray-600">{parseFloat((adminOrderDetail.discout_price)as string).toLocaleString()}đ</span>
                             </div>
                             <div className="flex justify-between">
                                 <span>Giảm giá:</span>
-                                <span className="text-orange-600">{(adminOrderDetail.discout_price - adminOrderDetail.total_price).toLocaleString()}đ</span>
+                                <span className="text-orange-600">{(Number(adminOrderDetail.discout_price) - Number(adminOrderDetail.total_price)).toLocaleString()}đ</span>
                             </div>
                             <div className="flex justify-between">
                                 <span>Phí giao hàng:</span>
@@ -122,7 +122,7 @@ const OrderDetail = () => {
                             </div>
                             <div className="flex justify-between font-semibold">
                                 <span>Tổng thanh toán:</span>
-                                <span className="text-gray-600">{parseFloat(adminOrderDetail.total_price).toLocaleString()}đ</span>
+                                <span className="text-gray-600">{parseFloat((adminOrderDetail.total_price)as string).toLocaleString()}đ</span>
                             </div>
                         </div>
                         <div className="p-4 border-t">

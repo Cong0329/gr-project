@@ -1,9 +1,9 @@
 import React from "react";
-import { Title, DescriptionType, IngredientTitle } from "./description";
+import { Title, DescriptionType, IngredientTitle, TextTitle } from "./description";
 
 interface ProductSectionProps {
   id: DescriptionType;
-  section: Title | IngredientTitle;
+  section: Title;
 }
 
 // Hàm tách nội dung theo ký tự xuống dòng
@@ -14,7 +14,7 @@ const formatDescription = (description: string) => {
 const ProductSection: React.FC<ProductSectionProps> = ({ id, section }) => {
   let content;
 
-  if (id === DescriptionType.INGREDIENTS && typeof section.descriptions !== "string") {
+  if (id === DescriptionType.INGREDIENTS && typeof (section as IngredientTitle).descriptions !== "string") {
     content = (
       <>
         <table className="w-full border mt-2 mb-4">
@@ -25,7 +25,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({ id, section }) => {
             </tr>
           </thead>
           <tbody>
-            {section.ingredients.map((ing) => (
+            {(section as IngredientTitle).ingredients?.map((ing) => (
               <tr key={ing.id}>
                 <td className="border px-4 py-2">{ing.name}</td>
                 <td className="border px-4 py-2">{ing.value}</td>
@@ -33,9 +33,9 @@ const ProductSection: React.FC<ProductSectionProps> = ({ id, section }) => {
             ))}
           </tbody>
         </table>
-        {section.descriptions && (
+        {(section as IngredientTitle).descriptions && (
           <ul className="list-none pl-5 space-y-2">
-            {section.descriptions.map((desc) => (
+            {(section as IngredientTitle).descriptions?.map((desc) => (
               <li key={desc.id}>{desc.text}</li>
             ))}
           </ul>
@@ -43,7 +43,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({ id, section }) => {
       </>
     );
   } else if (id === DescriptionType.WARNINGS) {
-    const formattedDescription = formatDescription(section.description);
+    const formattedDescription = formatDescription((section as TextTitle).description);
     content = (
       <div className="p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 mt-2">
         <strong className="block mb-2">⚠️ Cảnh báo:</strong>
@@ -56,7 +56,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({ id, section }) => {
     );
   } else {
     // Tách dòng với tất cả type
-    const formattedDescription = formatDescription(section.description);
+    const formattedDescription = formatDescription((section as TextTitle).description);
 
     content = (
       <div className="mt-2">
@@ -66,7 +66,7 @@ const ProductSection: React.FC<ProductSectionProps> = ({ id, section }) => {
           ))}
         </ul>
         <div className="flex flex-col items-center">
-          <img alt="" src={section.image} className="rounded-lg"/>
+          <img alt="" src={(section as TextTitle).image ?? ""} className="rounded-lg"/>
         </div>
       </div>
     );

@@ -6,7 +6,7 @@ export interface ProductOption {
   id: string;
   label: string;
   price: number;
-  discountedPrice?: number;
+  discounted_price: number;
   isDiscounted?: boolean;
 }
 
@@ -19,6 +19,20 @@ export interface CartItem {
   slug: string;
   selectedOption: ProductOption | string;
   selected: boolean;
+}
+
+interface ProductInCart {
+  id: string;
+  product: {
+    id: string;
+    name: string;
+    images: {
+      image: string;
+    }[];
+    slug: string;
+  };
+  quantity: number;
+  option: ProductOption;
 }
 
 interface CartState {
@@ -115,7 +129,7 @@ const cartSlice = createSlice({
         }, {} as Record<string, boolean>);
       
         // Cập nhật danh sách sản phẩm, giữ lại `selected` nếu tồn tại
-        state.items = action.payload.items.map((product: CartItem) => ({
+        state.items = action.payload.items.map((product: ProductInCart) => ({
           id: String(product.id),
           product_id: String(product.product.id),
           name: product.product.name,

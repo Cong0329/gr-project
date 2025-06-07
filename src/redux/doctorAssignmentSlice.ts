@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 // Async thunks
 export const requestDoctorAssignment = createAsyncThunk(
   'doctorAssignment/requestDoctorAssignment',
-  async ({ booking_request_id, doctor_id, notes }, { rejectWithValue }) => {
+  async ({ booking_request_id, doctor_id, notes }: { booking_request_id: number; doctor_id?: string; notes: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/doctor-assignment/request`, {
         booking_request_id,
@@ -16,7 +16,7 @@ export const requestDoctorAssignment = createAsyncThunk(
       });
       toast.success(response.data.message);
       return response.data;
-    } catch (error) {
+    } catch (error:any) {
       toast.error(error.response?.data?.message || 'Đã xảy ra lỗi khi yêu cầu bác sĩ');
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi' });
     }
@@ -25,7 +25,7 @@ export const requestDoctorAssignment = createAsyncThunk(
 
 export const updateDoctorAssignment = createAsyncThunk(
   'doctorAssignment/updateDoctorAssignment',
-  async ({ id, status, notes }, { rejectWithValue }) => {
+  async ({ id, status, notes }: { id: number; status: string; notes: string }, { rejectWithValue }) => {
     try {
       const response = await axios.put(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/doctor-assignment/${id}`, {
         status,
@@ -33,7 +33,7 @@ export const updateDoctorAssignment = createAsyncThunk(
       });
       toast.success(response.data.message);
       return response.data;
-    } catch (error) {
+    } catch (error:any) {
       toast.error(error.response?.data?.message || 'Đã xảy ra lỗi khi cập nhật yêu cầu');
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi' });
     }
@@ -42,13 +42,13 @@ export const updateDoctorAssignment = createAsyncThunk(
 
 export const getAssignmentsByBookingRequest = createAsyncThunk(
   'doctorAssignment/getAssignmentsByBookingRequest',
-  async ({ booking_request_id, status }, { rejectWithValue }) => {
+  async ({ booking_request_id, status }: { booking_request_id: number; status?: string }, { rejectWithValue }) => {
     try {
       const url = `${import.meta.env.VITE_NODEJS_BACKEND_URL}/doctor-assignment/booking/${booking_request_id}`;
       const queryParams = status ? `?status=${status}` : '';
       const response = await axios.get(url + queryParams);
       return response.data;
-    } catch (error) {
+    } catch (error:any) {
       toast.error(error.response?.data?.message || 'Đã xảy ra lỗi khi lấy danh sách yêu cầu');
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi' });
     }
@@ -57,14 +57,14 @@ export const getAssignmentsByBookingRequest = createAsyncThunk(
 
 export const getAssignmentsByDoctor = createAsyncThunk(
   'doctorAssignment/getAssignmentsByDoctor',
-  async ({ doctor_id, status, page = 1, limit = 10 }, { rejectWithValue }) => {
+  async ({ doctor_id, status, page = 1, limit = 10 }: { doctor_id: string; status?: string; page?: number; limit?: number }, { rejectWithValue }) => {
     try {
       let url =`${import.meta.env.VITE_NODEJS_BACKEND_URL}/doctor-assignment/doctor/${doctor_id}?page=${page}&limit=${limit}`;
       if (status) url += `&status=${status}`;
       
       const response = await axios.get(url);
       return response.data;
-    } catch (error) {
+    } catch (error:any) {
       toast.error(error.response?.data?.message || 'Đã xảy ra lỗi khi lấy danh sách yêu cầu');
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi' });
     }
@@ -73,11 +73,11 @@ export const getAssignmentsByDoctor = createAsyncThunk(
 
 export const getAssignmentById = createAsyncThunk(
   'doctorAssignment/getAssignmentById',
-  async (id, { rejectWithValue }) => {
+  async (id: number, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/doctor-assignment/${id}`);
       return response.data;
-    } catch (error) {
+    } catch (error:any) {
       toast.error(error.response?.data?.message || 'Đã xảy ra lỗi khi lấy chi tiết yêu cầu');
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi' });
     }
@@ -86,7 +86,7 @@ export const getAssignmentById = createAsyncThunk(
 
 export const approveDoctorAndCreateSchedule = createAsyncThunk(
   'doctorAssignment/approveDoctorAndCreateSchedule',
-  async ({ booking_request_id, doctor_id }, { rejectWithValue }) => {
+  async ({ booking_request_id, doctor_id }: { booking_request_id: number; doctor_id: string }, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/doctor-assignment/approve-doctor`, {
         booking_request_id,
@@ -94,7 +94,7 @@ export const approveDoctorAndCreateSchedule = createAsyncThunk(
       });
       toast.success(response.data.message);
       return response.data;
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error.response?.data?.message || 'Đã xảy ra lỗi khi phê duyệt bác sĩ');
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi' });
     }
@@ -103,11 +103,11 @@ export const approveDoctorAndCreateSchedule = createAsyncThunk(
 
 export const getBookingRequestWithAssignments = createAsyncThunk(
   'doctorAssignment/getBookingRequestWithAssignments',
-  async (id, { rejectWithValue }) => {
+  async (id: number, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/doctor-assignment/booking-detail/${id}`);
       return response.data;
-    } catch (error) {
+    } catch (error:any) {
       toast.error(error.response?.data?.message || 'Đã xảy ra lỗi khi lấy thông tin chi tiết');
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi' });
     }
@@ -122,15 +122,39 @@ export const getPendingDoctorAssignments = createAsyncThunk(
         withCredentials: true
       });
       return response.data;
-    } catch (error) {
+    } catch (error:any) {
       toast.error(error.response?.data?.message || 'Đã xảy ra lỗi khi lấy danh sách yêu cầu');
       return rejectWithValue(error.response?.data || { message: 'Đã xảy ra lỗi' });
     }
   }
 );
 
+
+interface AssignmentState {
+  loading: boolean;
+  error: string | null;
+  assignmentsByBooking: any[];
+  assignmentsByDoctor: {
+    doctorAssignments: any[];
+    total: number;
+    total_pages: number;
+    current_page: number;
+  };
+  currentAssignment: any | null;
+  bookingRequestDetail: any;
+  createdAssignment: any | null;
+  updatedSchedule: any;
+  selectedDoctorInfo: any;
+  pendingAssignments: any[];
+  message: string;
+}
+
+
+
+
+
 // Initial state
-const initialState = {
+const initialState:AssignmentState = {
   loading: false,
   error: null,
   assignmentsByBooking: [],
@@ -176,7 +200,7 @@ const doctorAssignmentSlice = createSlice({
           state.assignmentsByBooking.push(action.payload.doctorAssignment);
         }
       })
-      .addCase(requestDoctorAssignment.rejected, (state, action) => {
+      .addCase(requestDoctorAssignment.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -190,7 +214,7 @@ const doctorAssignmentSlice = createSlice({
         state.loading = false;
         state.pendingAssignments = action.payload.data;
       })
-      .addCase(getPendingDoctorAssignments.rejected, (state, action) => {
+      .addCase(getPendingDoctorAssignments.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.payload.message;
       })
@@ -206,22 +230,22 @@ const doctorAssignmentSlice = createSlice({
         
         // Cập nhật trong danh sách nếu có
         if (state.assignmentsByBooking.length > 0) {
-          const index = state.assignmentsByBooking.findIndex(item => item.id === action.payload.doctorAssignment.id);
+          const index = state.assignmentsByBooking.findIndex((item:any) => item.id === action.payload.doctorAssignment.id);
           if (index !== -1) {
             state.assignmentsByBooking[index] = action.payload.doctorAssignment;
           }
         }
         
         if (state.assignmentsByDoctor.doctorAssignments.length > 0) {
-          const index = state.assignmentsByDoctor.doctorAssignments.findIndex(
-            item => item.id === action.payload.doctorAssignment.id
+          const index = state.assignmentsByDoctor.doctorAssignments.findIndex((item:any) =>
+            item.id === action.payload.doctorAssignment.id
           );
           if (index !== -1) {
             state.assignmentsByDoctor.doctorAssignments[index] = action.payload.doctorAssignment;
           }
         }
       })
-      .addCase(updateDoctorAssignment.rejected, (state, action) => {
+      .addCase(updateDoctorAssignment.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -235,7 +259,7 @@ const doctorAssignmentSlice = createSlice({
         state.loading = false;
         state.assignmentsByBooking = action.payload;
       })
-      .addCase(getAssignmentsByBookingRequest.rejected, (state, action) => {
+      .addCase(getAssignmentsByBookingRequest.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -249,7 +273,7 @@ const doctorAssignmentSlice = createSlice({
         state.loading = false;
         state.assignmentsByDoctor = action.payload;
       })
-      .addCase(getAssignmentsByDoctor.rejected, (state, action) => {
+      .addCase(getAssignmentsByDoctor.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -263,7 +287,7 @@ const doctorAssignmentSlice = createSlice({
         state.loading = false;
         state.currentAssignment = action.payload;
       })
-      .addCase(getAssignmentById.rejected, (state, action) => {
+      .addCase(getAssignmentById.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -280,7 +304,7 @@ const doctorAssignmentSlice = createSlice({
         
         // Cập nhật trạng thái các assignments nếu đang có danh sách
         if (state.assignmentsByBooking.length > 0) {
-          state.assignmentsByBooking = state.assignmentsByBooking.map(assignment => {
+          state.assignmentsByBooking = state.assignmentsByBooking.map((assignment:any) => {
             if (assignment.doctor_id === action.payload.schedule.doctor_id) {
               return { ...assignment, status: 'approved' };
             } else if (assignment.status === 'requested') {
@@ -290,7 +314,7 @@ const doctorAssignmentSlice = createSlice({
           });
         }
       })
-      .addCase(approveDoctorAndCreateSchedule.rejected, (state, action) => {
+      .addCase(approveDoctorAndCreateSchedule.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.payload;
       })
@@ -308,7 +332,7 @@ const doctorAssignmentSlice = createSlice({
           state.assignmentsByBooking = action.payload.doctorAssignments;
         }
       })
-      .addCase(getBookingRequestWithAssignments.rejected, (state, action) => {
+      .addCase(getBookingRequestWithAssignments.rejected, (state, action:any) => {
         state.loading = false;
         state.error = action.payload;
       });

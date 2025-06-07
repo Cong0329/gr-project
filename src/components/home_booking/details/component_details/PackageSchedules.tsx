@@ -1,35 +1,36 @@
 import { useState, useEffect } from "react";
-import { format, addDays, isSameDay, isAfter, parse, isToday } from "date-fns";
+import { format, addDays, isSameDay, isAfter, isToday } from "date-fns";
 import { vi } from "date-fns/locale";
 import { Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { getAllBookingRequests } from "../../../../redux/packageBookingRequestSlice";
+import { RootState, AppDispatch } from "../../../../redux/store";
 
-const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
+const PackageSchedule = ({ currentTest }: { currentTest: any }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<any>([]);
 
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   const bookingRequests = useSelector(
     (state: RootState) => state.packages.bookingRequests
   );
 
-  const packages = useSelector(
-    (state: RootState) => state.servicePackage.packages
-  );
+  // const packages = useSelector(
+  //   (state: RootState) => state.servicePackage.packages
+  // );
 
   const navigate = useNavigate();
 
   const {
     handleSubmit,
-    formState: { errors },
+    // formState: { errors },
     setValue,
   } = useForm({
     defaultValues: {
@@ -56,7 +57,7 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
     const packageId = currentPackage?.id || currentTest?.id;
 
     // ✅ Truyền thêm packageId để chỉ lấy booking của gói hiện tại
-    dispatch(getAllBookingRequests(selectedDateStr, packageId));
+    dispatch(getAllBookingRequests({date: selectedDateStr, packageId: packageId}));
 
     console.log("Fetching bookings for:", { date: selectedDateStr, packageId });
   }, [dispatch, selectedDate, currentPackage?.id, currentTest?.id]);
@@ -133,12 +134,12 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
   ]);
 
   // Check if date is weekend
-  const isWeekend = (date) => {
+  const isWeekend = (date: Date) => {
     const day = date.getDay();
     return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
   };
 
-  const handleDateSelect = (date) => {
+  const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
     setValue("date", format(date, "yyyy-MM-dd"));
     setSelectedTime(null);
@@ -146,13 +147,13 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
     // ✅ API sẽ được gọi tự động thông qua useEffect
   };
 
-  const handleTimeSelect = (timeSlot) => {
+  const handleTimeSelect = (timeSlot: any) => {
     if (!timeSlot.available) return;
     setSelectedTime(timeSlot.time);
     setValue("time", timeSlot.time);
   };
 
-  const processSubmit = (data) => {
+  const processSubmit = () => {
     setIsSubmitting(true);
 
     setTimeout(() => {
@@ -184,7 +185,7 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
   };
 
   // Format date for display
-  const formatDateForDisplay = (date) => {
+  const formatDateForDisplay = (date: Date) => {
     const today = new Date();
     const tomorrow = addDays(today, 1);
 
@@ -285,7 +286,7 @@ const PackageSchedule = ({ showSchedule, scheduleRef, currentTest }) => {
               Chọn giờ
             </label>
             <div className="grid grid-cols-4 gap-2">
-              {availableTimeSlots.map((slot, index) => (
+              {availableTimeSlots.map((slot: any, index: number) => (
                 <button
                   type="button"
                   key={index}

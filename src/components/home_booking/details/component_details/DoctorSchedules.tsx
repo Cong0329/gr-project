@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchDoctors } from "../../../../redux/doctorSlice";
 import { fetchDepartments } from "../../../../redux/departmentSlice";
@@ -8,49 +8,45 @@ import {
 } from "../../../../redux/scheduleSlice";
 import {
   format,
-  parseISO,
   isToday,
   isTomorrow,
-  parse,
-  isAfter,
 } from "date-fns";
 import { vi } from "date-fns/locale";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AppDispatch, RootState } from "../../../../redux/store";
 import {
   faChevronDown,
   faCalendarAlt,
   faUserMd,
-  faHospital,
-  faVideo,
   faClock,
   faMapMarkerAlt,
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 
 const DoctorSchedules = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { name } = useParams();
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [selectedSchedule, setSelectedSchedule] = useState(null);
+  const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
+  const [selectedSchedule, setSelectedSchedule] = useState<any>(null);
 
   const [hasDispatched, setHasDispatched] = useState(false);
 
   // Get data từ Redux
   const {
-    doctors,
+    // doctors,
     loading: doctorsLoading,
     error: doctorsError,
-  } = useSelector((state) => state.doctors);
+  } = useSelector((state: RootState) => state.doctors);
 
   const { departments, loading: departmentsLoading } = useSelector(
-    (state) => state.departments
+    (state: RootState) => state.departments
   );
 
   const {
@@ -58,7 +54,7 @@ const DoctorSchedules = () => {
     loading: schedulesLoading,
     error: schedulesError,
     currentType,
-  } = useSelector((state) => state.schedules);
+  } = useSelector((state: RootState) => state.schedules);
 
   // Xác định loại bác sĩ từ URL và cập nhật vào Redux store
   useEffect(() => {
@@ -92,7 +88,7 @@ const DoctorSchedules = () => {
           fetchSpecialistSchedules({
             type: currentType,
             date: currentDateStr,
-            service_id: department.id,
+            service_id: department.id.toString(),
           })
         );
 
@@ -107,7 +103,7 @@ const DoctorSchedules = () => {
   }, [selectedDate, name]);
 
   // Handle date change
-  const handleDateChange = (date) => {
+  const handleDateChange = (date: Date) => {
     setSelectedDate(date);
     setShowDatePicker(false);
 
@@ -117,7 +113,7 @@ const DoctorSchedules = () => {
   };
 
   // Format ngày hiển thị thân thiện
-  const formatDisplayDate = (date) => {
+  const formatDisplayDate = (date: Date) => {
     if (isToday(date)) return "Hôm nay";
     if (isTomorrow(date)) return "Ngày mai";
     return format(date, "EEEE, dd/MM", { locale: vi });
@@ -135,10 +131,10 @@ const DoctorSchedules = () => {
 
   // Xử lý dữ liệu từ API trả về
   // Giả sử rằng mỗi specialistSchedule có thông tin doctor được include từ API
-  const groupedSchedules = {};
+  const groupedSchedules: any = {};
 
   // Nhóm lịch theo bác sĩ
-  specialistSchedules.forEach((schedule) => {
+  specialistSchedules.forEach((schedule: any) => {
     if (schedule.doctor) {
       if (!groupedSchedules[schedule.doctor.id]) {
         groupedSchedules[schedule.doctor.id] = {
@@ -151,7 +147,7 @@ const DoctorSchedules = () => {
   });
 
   // Xử lý khi chọn một lịch khám - tự động cập nhật cả bác sĩ và lịch
-  const handleScheduleSelection = (doctor, schedule) => {
+  const handleScheduleSelection = (doctor: any, schedule: any) => {
     setSelectedDoctor(doctor);
     setSelectedSchedule(schedule);
   };
@@ -232,7 +228,7 @@ const DoctorSchedules = () => {
     );
   }
 
-  const isTimePassedCurrent = (timeString) => {
+  const isTimePassedCurrent = (timeString: string) => {
     const now = new Date();
     const [hours, minutes] = timeString.split(":").map(Number);
 
@@ -314,7 +310,7 @@ const DoctorSchedules = () => {
         {/* Doctors List */}
         <div className="grid gap-6">
           {Object.values(groupedSchedules).length > 0 ? (
-            Object.values(groupedSchedules).map(({ doctor, schedules }) => (
+            Object.values(groupedSchedules).map(({ doctor, schedules }: any) => (
               <motion.div
                 key={doctor.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -346,7 +342,7 @@ const DoctorSchedules = () => {
                     <div className="mt-3 flex items-center text-sm text-gray-500">
                       <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
                       <span>
-                        {currentType === "online"
+                        {currentType === "specialist_online"
                           ? "Khám từ xa"
                           : doctor.address || "Bệnh viện Đa khoa Quốc tế"}
                       </span>
@@ -363,7 +359,7 @@ const DoctorSchedules = () => {
                     {schedules.length > 0 ? (
                       <>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                          {schedules.map((schedule) => {
+                          {schedules.map((schedule: any) => {
                             // Thêm logic kiểm tra thời gian
                             const isTimeInPast =
                               isToday(selectedDate) &&

@@ -11,6 +11,7 @@ import Checkbox from "../form/input/Checkbox";
 export interface SignInForm {
   email: string;
   password: string;
+  role?: string;
 }
 
 export default function SignIn() {

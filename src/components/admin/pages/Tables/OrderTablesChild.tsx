@@ -1,8 +1,9 @@
 import { FaAngleRight } from "react-icons/fa6";
 import Skeleton from "react-loading-skeleton";
 import { Link } from "react-router-dom";
-import { Order,  resetAdminOrderDetail } from "../../../../redux/orderSlice";
+import { Order,  resetAdminOrderDetail, resetOrderDetail } from "../../../../redux/orderSlice";
 import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../../../redux/store";
 
 interface OrderTablesChildProps {
     orders: Order[];
@@ -10,7 +11,7 @@ interface OrderTablesChildProps {
 }
 
 export const OrderTablesChild = ({ orders, isLoading }: OrderTablesChildProps) => {
-    const dispatch = useDispatch();
+    const dispatch:AppDispatch = useDispatch();
     let content;
     const statusColor = {
         confirmed: 'text-orange-500',
@@ -121,7 +122,7 @@ export const OrderTablesChild = ({ orders, isLoading }: OrderTablesChildProps) =
                                             )}
                                         </div>
                                     </div>
-                                    <div className="font-bold">{parseFloat(order.items[0].price).toLocaleString()}đ</div>
+                                    <div className="font-bold">{parseFloat(order.items[0].price as string).toLocaleString()}đ</div>
                                     <div className="text-gray-500">x{order.items[0].quantity} {order.items[0].option}</div>
                                 </div>
                             </Link>
@@ -132,7 +133,7 @@ export const OrderTablesChild = ({ orders, isLoading }: OrderTablesChildProps) =
                                     </div>
                                     <div className="text-right flex gap-2 font-semibold">
                                         <div className="text-gray-500">Thành tiền:</div>
-                                        <div className="text-blue-700 ">{parseFloat(order.total_price).toLocaleString()}đ</div>
+                                        <div className="text-blue-700 ">{parseFloat(order.total_price as string).toLocaleString()}đ</div>
                                     </div>
                                 </div>
                             </Link>

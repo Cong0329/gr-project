@@ -2,16 +2,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { ImageThumbnail } from "../AddProduct/ImageThumbnail";
 import { Upload } from "lucide-react";
-import { RootState } from "../../../../../../redux/store";
-import { useState, useEffect } from "react";
-import { ProductImage } from "../AddProduct/ProductCreationForm";
-import { createProductImage, deleteProductImage, getProduct } from "../../../../../../redux/productAsyncThunk";
-import { AppDispatch } from "../../../../../../redux/store";
-// interface ImagesStepProps {
-//   images: ProductImage[];
-//   onAddImage: (e: React.ChangeEvent<HTMLInputElement>) => void;
-//   onRemoveImage: (id: string) => void;
-// }
+import { createProductImage, deleteProductImage } from "../../../../../../redux/productAsyncThunk";
+import { AppDispatch, RootState } from "../../../../../../redux/store";
+
+
 
 export const EditImagesStep = () => {
   const { product } = useSelector((state: RootState) => state.products);
@@ -60,7 +54,7 @@ export const EditImagesStep = () => {
             {product.images.map((image) => (
               <ImageThumbnail
                 key={image.id}
-                image={image.image}
+                image={image}
                 onRemove={() => onRemoveImage(image.id)}
               />
             ))}

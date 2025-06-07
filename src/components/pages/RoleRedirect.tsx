@@ -4,14 +4,14 @@ import { Navigate } from "react-router-dom";
 import { RootState } from "../../redux/store";
 
 const RoleRedirect = () => {
-  const { isAuthenticated, userInfo, verify } = useSelector(
+  const { isAuthenticated, role, verify } = useSelector(
     (state: RootState) => state.auth
   );
 
   useEffect(() => {
     // Log the current state for debugging - can be removed in production
-    console.log("RoleRedirect state:", { isAuthenticated, userInfo, verify });
-  }, [isAuthenticated, userInfo, verify]);
+    console.log("RoleRedirect state:", { isAuthenticated, role, verify });
+  }, [isAuthenticated, role, verify]);
 
   // Not authenticated - redirect to admin signin
   if (!isAuthenticated) {
@@ -21,14 +21,14 @@ const RoleRedirect = () => {
   // Authenticated but not verified - redirect to verification
   if (!verify) {
     const verifyPath =
-      userInfo?.role === "ROLE_ADMIN" ? "/admin/verify" : "/doctor/verify";
+      role.includes("ROLE_ADMIN") ? "/admin/verify" : "/doctor/verify";
     return <Navigate to={verifyPath} replace />;
   }
 
   // Authenticated and verified - redirect based on role
-  if (userInfo?.role === "ROLE_ADMIN") {
+  if (role.includes("ROLE_ADMIN")) {
     return <Navigate to="/admin" replace />;
-  } else if (userInfo?.role === "ROLE_DOCTOR") {
+  } else if (role.includes("ROLE_DOCTOR")) {
     return <Navigate to="/doctor" replace />;
   }
 

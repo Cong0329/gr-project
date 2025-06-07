@@ -10,7 +10,7 @@ interface OrderDeliveryProps {
 
 export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process }) => {
     const { orderDetail } = useSelector((state: RootState) => state.order);
-    const statusColor = {
+    const statusColor: Record<string, string> = {
         completed: 'text-green-500',
         confirmed: 'text-orange-500',
         cancelled: 'text-red-500',
@@ -18,7 +18,7 @@ export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process })
         shipping: 'text-blue-500',
         return: 'text-gray-500'
     };
-    const statusBg = {
+    const statusBg: Record<string, string> = {
         completed: 'bg-green-500',
         confirmed: 'bg-orange-500',
         cancelled: 'bg-red-500',
@@ -26,7 +26,7 @@ export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process })
         shipping: 'bg-blue-500',
         return: 'bg-gray-500'
     };
-    const statusText = {
+    const statusText: Record<string, string> = {
         completed: 'Đã giao',
         confirmed: 'Đã xác nhận',
         cancelled: 'Đã hủy',
@@ -52,10 +52,12 @@ export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process })
                     </div>
                 </div>
 
-                <div className="flex items-center gap-1">
-                    <span className={`w-2 h-2 ${statusBg[status]} rounded-full mr-2`}></span>
-                    <span className={`${statusColor[status]} font-medium`}>{statusText[status]}</span>
-                </div>
+                {status && (
+                    <div className="flex items-center gap-1">
+                        <span className={`w-2 h-2 ${statusBg[status]} rounded-full mr-2`}></span>
+                        <span className={`${statusColor[status]} font-medium`}>{statusText[status]}</span>
+                    </div>
+                )}
             </div>
 
             {/* Cancellation Message */}
@@ -97,7 +99,7 @@ export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process })
                 </div>
 
                 {/* Pharmacy Info */}
-                { status === 'pending' && (
+                {status === 'pending' && (
                     <div className="p-4 border-l">
                         <div className="flex items-center mb-2">
                             <div className="h-6 w-6 rounded-full bg-blue-100 flex items-center justify-center mr-2">

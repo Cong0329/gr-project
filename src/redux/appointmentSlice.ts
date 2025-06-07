@@ -9,9 +9,12 @@ export interface Appointment {
   date: string;
   start_time: string;
   end_time: string;
+  notes?: string;
+  amount?: number;
   type: 'specialist' | 'specialist_online' | 'general' | 'medical';
   service_id: number;
   payment_method: 'cash' | 'online';
+  payment_status?: 'pending' | 'confirmed';
   status: 'pending_payment' | 'confirmed' | 'cancelled' | 'completed' | 'rejected';
   patient_info?: {
     name: string;
@@ -79,7 +82,7 @@ export const createAppointment = createAsyncThunk(
 
   export const confirmAppointment = createAsyncThunk(
     'appointment/confirm',
-    async ({ appointmentId, userInfo }: ConfirmAppointmentParams, { rejectWithValue }) => {
+    async ({ appointmentId, userInfo }: {appointmentId: string, userInfo: any}, { rejectWithValue }) => {
       try {
         const response = await axios.patch(
           `${import.meta.env.VITE_NODEJS_BACKEND_URL}/appointment/${appointmentId}/status`,
@@ -193,7 +196,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
         state.appointments = action.payload;
       })
-      .addCase(createAppointment.fulfilled, (state, action: PayloadAction<Appointment>) => {
+      .addCase(createAppointment.fulfilled, (state) => {
         state.creating = false;
         state.createSuccess = true;
         // state.appointments.push(action.payload);

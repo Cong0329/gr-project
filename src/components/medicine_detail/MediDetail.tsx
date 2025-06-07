@@ -8,9 +8,8 @@ import ReviewSection from "./medicine_reviews/ReviewSection";
 import { FaRocketchat } from 'react-icons/fa';
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector,  useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "../../redux/store";
-import { useDispatch } from "react-redux";
 import { openChatbox } from "../../redux/reviewsSlice";
 
 

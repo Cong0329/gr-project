@@ -5,14 +5,14 @@ import { EditBasicInfoStep } from "./EditBasicInfo";
 import { EditImagesStep } from "./EditImagesStep";
 import { EditOptionsStep } from "./EditOptionsStep";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../../../../redux/store";
+import { RootState, AppDispatch } from "../../../../../../redux/store";
 import { getProduct } from "../../../../../../redux/productAsyncThunk";
 import { useParams } from "react-router-dom";
 import EditBlog from "./EditBlog/EditBlog";
-
+import { setStatus } from "../../../../../../redux/productSlice";
 
 const EditProductPage = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const [currentStep, setCurrentStep] = useState<number>(1);
   const { status, product } = useSelector((state: RootState) => state.products);
   const { id } = useParams();
@@ -41,10 +41,17 @@ const renderCurrentStep = () => {
     }
   };
   useEffect(() => {
+    if (status === "failed") {
+      setTimeout(() => {
+        dispatch(setStatus("idle"));
+      }, 2000);
+    }
+  }, [status, dispatch]);
+  useEffect(() => {
     if (Object.keys(product).length === 0) {
-      dispatch(getProduct(id))
+      dispatch(getProduct(id as string))
     } else if (status === 'succeeded' && Object.keys(product).length > 0) {
-      dispatch(getProduct(id))
+      dispatch(getProduct(id as string))
     }
   }, [id, dispatch, product, status]);
   

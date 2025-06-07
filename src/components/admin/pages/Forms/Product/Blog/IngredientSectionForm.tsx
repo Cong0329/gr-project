@@ -29,7 +29,8 @@ const IngredientSectionForm = ({ onSubmit }: Props) => {
       type: DescriptionType.INGREDIENTS,
       title,
       image: null,
-      description: {
+      url:'',
+      descriptions: {
         description: descriptions,
         ingredients: ingredients,
       },

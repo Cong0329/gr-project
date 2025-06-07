@@ -11,12 +11,14 @@ import {
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import PackageSchedule from "./component_details/PackageSchedules";
+import { AppDispatch } from "../../../redux/store";
 
 const GeneralExDetail = () => {
   const { name } = useParams();
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const [showSchedule, setShowSchedule] = useState(false);
-  const scheduleRef = useRef(null);
+  const scheduleRef = useRef<HTMLDivElement>(null);
+
 
   // Sử dụng selectors từ slice mới
   const allPackages = useSelector(selectAllPackages);
@@ -54,7 +56,7 @@ const GeneralExDetail = () => {
     return (
       <div id="generalex-detail" className="w-full">
         <div className="container mx-auto px-4 sm:px-10">
-          <Breadcrumb current={decodedName} />
+          <Breadcrumb />
           <Skeleton height={300} className="mt-6" />
           <Skeleton count={5} className="mt-4" />
         </div>
@@ -79,7 +81,7 @@ const GeneralExDetail = () => {
   }
 
   // Lấy danh mục và dịch vụ từ cấu trúc mới
-  const getServiceCategories = (currentPackage) => {
+  const getServiceCategories = (currentPackage: any) => {
     if (!currentPackage) return [];
 
     // Nếu đã có sẵn cấu trúc details.categories
@@ -93,9 +95,9 @@ const GeneralExDetail = () => {
     // Nếu không có, tạo từ mối quan hệ items
     if (currentPackage.items && Array.isArray(currentPackage.items)) {
       // Nhóm items theo category
-      const itemsByCategory = {};
+      const itemsByCategory: any = {};
 
-      currentPackage.items.forEach((item) => {
+      currentPackage.items.forEach((item: any) => {
         const categoryId = item.categoryId;
         const categoryName = item.category?.name || "Không phân loại";
 
@@ -126,7 +128,7 @@ const GeneralExDetail = () => {
   return (
     <div id="generalex-detail" className="w-full bg-gray-50 pb-10">
       <div className="container-fix-spe mx-auto px-4 sm:px-10">
-        <Breadcrumb current={decodedName} />
+        <Breadcrumb />
 
         <div className="bg-white rounded-xl shadow-md p-6 mt-6 grid md:grid-cols-3 gap-6 ">
           <img
@@ -227,7 +229,7 @@ const GeneralExDetail = () => {
                 </h3>
                 <ul className="list-disc ml-6 text-gray-700 space-y-1">
                   {serviceCategories.length > 0 ? (
-                    serviceCategories.map((category, index) => (
+                    serviceCategories.map((category: any, index: number) => (
                       <li key={index} className="text-lg font-medium">
                         {category.category}
                       </li>
@@ -368,7 +370,7 @@ const GeneralExDetail = () => {
             </h2>
 
             <div className="bg-white shadow p-6 rounded-xl space-y-6">
-              {serviceCategories.map((category, index) => (
+              {serviceCategories.map((category: any, index: number) => (
                 <div
                   key={index}
                   className="border-b pb-4 last:border-b-0 last:pb-0"
@@ -393,7 +395,7 @@ const GeneralExDetail = () => {
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {category.items &&
-                          category.items.map((item, itemIndex) => (
+                          category.items.map((item: any, itemIndex: number) => (
                             <tr
                               key={itemIndex}
                               className="hover:bg-gray-50 transition-colors"

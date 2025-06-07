@@ -28,8 +28,8 @@ const LayoutContent: React.FC = () => {
         } ${isMobileOpen ? "ml-0" : ""}`}
       >
         <AppHeader
-          title={isAdmin ? "Quản trị hệ thống" : "Phần mềm bác sĩ"}
-          role={isAdmin ? "admin" : "doctor"}
+          // title={isAdmin ? "Quản trị hệ thống" : "Phần mềm bác sĩ"}
+          // role={isAdmin ? "admin" : "doctor"}
         />
         <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
           <Outlet />

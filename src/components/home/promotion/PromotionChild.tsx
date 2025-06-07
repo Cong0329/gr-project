@@ -20,14 +20,14 @@ export const PromotionChild: React.FC<PromotionChildProps> = ({ product, handleT
     const selectedLabel = selectedType[product.id];
     const selectedOption = product.options?.find(opt => opt.label === selectedLabel) || product.options?.[0] || null;
 
+    const displayPrice = +selectedOption.discounted_price > 0
+        ? +selectedOption.discounted_price
+        : +selectedOption.price;
 
-    const displayPrice = parseFloat(selectedOption.discounted_price) > 0
-        ? parseFloat(selectedOption.discounted_price)
-        : parseFloat(selectedOption.price);
-
-    const displayDiscountedPrice = parseFloat(selectedOption.discounted_price) > 0
-        ? parseFloat(selectedOption.price)
+    const displayDiscountedPrice = +selectedOption.discounted_price > 0
+        ? +selectedOption.price
         : null;
+
 
     const addToCart = () => {
         if (!user || Object.keys(user).length === 0) {

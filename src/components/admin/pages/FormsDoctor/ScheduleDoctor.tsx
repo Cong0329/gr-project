@@ -10,11 +10,9 @@ import {
   Clock,
   User,
   MapPin,
-  Badge,
   Stethoscope,
   Phone,
   Mail,
-  Heart,
   Users,
   FileText,
   CalendarDays,
@@ -24,18 +22,18 @@ import {
   Edit3,
   Save,
   X,
-  Trash2,
   AlertCircle,
 } from "lucide-react";
 import { CreateSchedule } from "./Components/CreateSchedule";
 import { useNavigate } from "react-router-dom";
+import { RootState, AppDispatch } from "../../../../redux/store";
 
 export const DoctorScheduleComponent = () => {
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const { mySchedules, loading, error } = useSelector(
-    (state) => state.schedules
+    (state: RootState) => state.schedules
   );
-  const { appointments } = useSelector((state) => state.appointments);
+  const { appointments } = useSelector((state: RootState) => state.appointments);
 
   // State để quản lý việc hiển thị thông tin patient
   const [expandedSchedules, setExpandedSchedules] = useState(new Set());
@@ -62,11 +60,11 @@ export const DoctorScheduleComponent = () => {
   }, [dispatch]);
 
   // Function to find patient info for a schedule
-  const getPatientInfoForSchedule = (schedule) => {
+  const getPatientInfoForSchedule = (schedule: any) => {
     if (!appointments || !Array.isArray(appointments)) return null;
 
     const appointment = appointments.find(
-      (apt) => apt.schedule_id === schedule.id && apt.status !== "cancelled"
+      (apt: any) => apt.schedule_id === schedule.id && apt.status !== "cancelled"
     );
 
     // Sử dụng patient_info từ appointment thay vì từ user info
@@ -74,15 +72,15 @@ export const DoctorScheduleComponent = () => {
   };
 
   // Function để phân chia lịch theo thời gian
-  const categorizeSchedules = (schedules) => {
+  const categorizeSchedules = (schedules: any[]) => {
     if (!schedules || !Array.isArray(schedules))
       return { upcoming: [], past: [] };
 
     const now = new Date();
-    const upcoming = [];
-    const past = [];
+    const upcoming: any[] = [];
+    const past: any[] = [];
 
-    schedules.forEach((schedule) => {
+    schedules.forEach((schedule: any) => {
       const scheduleDateTime = new Date(
         `${schedule.date}T${schedule.start_time}`
       );
@@ -97,20 +95,22 @@ export const DoctorScheduleComponent = () => {
     // Sắp xếp upcoming theo thời gian tăng dần, past theo thời gian giảm dần
     upcoming.sort(
       (a, b) =>
-        new Date(`${a.date}T${a.start_time}`) -
-        new Date(`${b.date}T${b.start_time}`)
+        new Date(`${a.date}T${a.start_time}`).getTime() -
+        new Date(`${b.date}T${b.start_time}`).getTime()
     );
+    
     past.sort(
       (a, b) =>
-        new Date(`${b.date}T${b.start_time}`) -
-        new Date(`${a.date}T${a.start_time}`)
+        new Date(`${b.date}T${b.start_time}`).getTime() -
+        new Date(`${a.date}T${a.start_time}`).getTime()
     );
+    
 
     return { upcoming, past };
   };
 
   // Toggle hiển thị thông tin patient
-  const togglePatientInfo = (scheduleId) => {
+  const togglePatientInfo = (scheduleId: any) => {
     const newExpanded = new Set(expandedSchedules);
     if (newExpanded.has(scheduleId)) {
       newExpanded.delete(scheduleId);
@@ -121,7 +121,7 @@ export const DoctorScheduleComponent = () => {
   };
 
   // Bắt đầu chỉnh sửa lịch
-  const startEditSchedule = (schedule) => {
+  const startEditSchedule = (schedule: any) => {
     setEditingSchedule(schedule.id);
     setEditForm({
       date: schedule.date,
@@ -145,7 +145,7 @@ export const DoctorScheduleComponent = () => {
   };
 
   // Lưu thay đổi
-  const saveScheduleChanges = async (scheduleId) => {
+  const saveScheduleChanges = async (scheduleId: any) => {
     try {
       const formattedUpdateData = {
         ...editForm,
@@ -181,14 +181,14 @@ export const DoctorScheduleComponent = () => {
   };
 
   // Xử lý thay đổi form
-  const handleFormChange = (field, value) => {
+  const handleFormChange = (field: string, value: string) => {
     setEditForm((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "booked":
         return "bg-green-100 text-green-800 border-green-200";
@@ -203,7 +203,7 @@ export const DoctorScheduleComponent = () => {
     }
   };
 
-  const getStatusText = (status) => {
+  const getStatusText = (status: string) => {
     switch (status) {
       case "booked":
         return "Đã đặt";
@@ -218,7 +218,7 @@ export const DoctorScheduleComponent = () => {
     }
   };
 
-  const getTypeIcon = (type) => {
+  const getTypeIcon = (type: string) => {
     switch (type) {
       case "specialist_online":
         return <Stethoscope className="w-4 h-4" />;
@@ -227,7 +227,7 @@ export const DoctorScheduleComponent = () => {
     }
   };
 
-  const getGenderIcon = (gender) => {
+  const getGenderIcon = (gender: string) => {
     switch (gender?.toLowerCase()) {
       case "male":
       case "nam":
@@ -240,7 +240,7 @@ export const DoctorScheduleComponent = () => {
     }
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("vi-VN", {
       weekday: "long",
@@ -250,18 +250,18 @@ export const DoctorScheduleComponent = () => {
     });
   };
 
-  const formatTime = (timeString) => {
+  const formatTime = (timeString: string) => {
     return timeString.slice(0, 5);
   };
 
-  const formatDateOfBirth = (dobString) => {
+  const formatDateOfBirth = (dobString: string) => {
     if (!dobString) return "";
     const date = new Date(dobString);
     return date.toLocaleDateString("vi-VN");
   };
 
   // Kiểm tra xem lịch có thể chỉnh sửa không
-  const canEditSchedule = (schedule) => {
+  const canEditSchedule = (schedule: any) => {
     const scheduleDateTime = new Date(
       `${schedule.date}T${schedule.start_time}`
     );
@@ -271,7 +271,7 @@ export const DoctorScheduleComponent = () => {
   };
 
   // Render form chỉnh sửa
-  const renderEditForm = (schedule) => {
+  const renderEditForm = (schedule: any) => {
     return (
       <div className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-6 mt-4">
         <div className="flex items-center justify-between mb-4">
@@ -383,7 +383,7 @@ export const DoctorScheduleComponent = () => {
   };
 
   // Render schedule card
-  const renderScheduleCard = (schedule) => {
+  const renderScheduleCard = (schedule: any) => {
     const patientInfo = getPatientInfoForSchedule(schedule);
     const isBooked = schedule.status === "booked";
     const isCompleted = schedule.status === "completed";

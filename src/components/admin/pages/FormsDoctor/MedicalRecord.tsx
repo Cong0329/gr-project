@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getDoctorMedicalRecords,
@@ -11,9 +11,10 @@ import {
   selectCreateError,
   selectCreateSuccess,
 } from "../../../../redux/medicalRecordSlice";
+import { AppDispatch } from "../../../../redux/store";
 
 const MedicalRecord = () => {
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
 
   // Selectors
   const records = useSelector(selectMedicalRecords);
@@ -53,7 +54,7 @@ const MedicalRecord = () => {
   }, [createSuccess, dispatch]);
 
   // Handle form input change
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -140,7 +141,7 @@ const MedicalRecord = () => {
               value={formData.diagnosis}
               onChange={handleInputChange}
               placeholder="Nhập chẩn đoán"
-              rows="3"
+              rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -154,7 +155,7 @@ const MedicalRecord = () => {
               value={formData.treatment}
               onChange={handleInputChange}
               placeholder="Nhập phương pháp điều trị"
-              rows="3"
+              rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -206,7 +207,7 @@ const MedicalRecord = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {records.map((record) => (
+            {records.map((record: any) => (
               <div
                 key={record.id}
                 className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50"

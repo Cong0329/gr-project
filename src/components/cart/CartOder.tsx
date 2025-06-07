@@ -1,10 +1,10 @@
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../redux/store";
+import { AppDispatch, RootState } from "../../redux/store";
 import { toggleSelectAll } from "../../redux/cartSlice";
 import { AnimatePresence, motion } from "framer-motion";
 import CartItem from "./CartItem";
 const CartOder: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const cartItems = useSelector((state: RootState) => state.cart.items);
   return (
     <div className="mx-auto w-full ">

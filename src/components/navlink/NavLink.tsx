@@ -47,9 +47,9 @@ export const NavLink = ({ setIsServiceHovered }: { setIsServiceHovered: (isHover
 
     useEffect(() => {
         if (parent.length > 0) {
-            setPopularSearches(prev => {
+            setPopularSearches((prev) => {
                 const newGroups = parent.map(group => ({
-                    id: group.id,
+                    id: Number(group.id),
                     name: group.name,
                     categories: group.categories
                 }));
@@ -58,7 +58,7 @@ export const NavLink = ({ setIsServiceHovered }: { setIsServiceHovered: (isHover
                 const existingIds = new Set(prev.map(g => g.id));
                 const merged = [
                     ...prev,
-                    ...newGroups.filter(g => !existingIds.has(g.id))
+                    ...newGroups.filter(g => !existingIds.has(Number(g.id)))
                 ];
     
                 return merged;

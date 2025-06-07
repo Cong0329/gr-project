@@ -10,7 +10,7 @@ interface CheckoutItemProps {
 
 export const CheckoutItemOrder: React.FC<CheckoutItemProps> = ({ isFirst, item, isLoading }) => {
   // Tính tổng tiền của sản phẩm dựa trên tùy chọn được chọn
-  const totalPrice = parseFloat(item.price).toLocaleString() ;
+  const totalPrice = parseFloat(item.price as string).toLocaleString() ;
 
   // Hàm cập nhật tùy chọn cho sản phẩm
   let content;

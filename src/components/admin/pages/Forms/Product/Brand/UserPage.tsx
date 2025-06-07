@@ -40,8 +40,9 @@ const UserPage: React.FC = () => {
     handleCloseModal,
     handleInputChange,
     handleUserSaveItem: handleSaveUser,
-    handleUserDeleteItem: handleDeleteUser
+    handleUserDeleteItem: handleDeleteUser,
   } = useGenericCrud<User>(users, userConfig);
+  console.log(user);
   const updatedConfig = {
     ...userConfig,
     fields: userConfig.fields.map(field =>
@@ -75,6 +76,7 @@ const UserPage: React.FC = () => {
           link="user"
           onView={handleViewClick}
           onEdit={handleEditClick}
+          onReset={() => {}}
           onDelete={handleDeleteClick}
         />
 

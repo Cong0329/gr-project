@@ -138,7 +138,7 @@ export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
                                             }
                                         </div>
                                     </div>
-                                    <div className="font-bold tb:hidden">{parseFloat(order.items[0].price).toLocaleString()}đ</div>
+                                    <div className="font-bold tb:hidden">{parseFloat(order.items[0].price.toString()).toLocaleString()}đ</div>
                                     <div className="text-gray-500 tb:hidden">x{order.items[0].quantity} {order.items[0].option}</div>
                                 </div>
                             </Link>
@@ -149,7 +149,7 @@ export const OrderCustom = ({ orders, isLoading }: OrderCustomProps) => {
                                     </div>
                                     <div className="text-right flex gap-2 font-semibold">
                                         <div className="text-gray-500">Thành tiền:</div>
-                                        <div className="text-blue-700 ">{parseFloat(order.total_price).toLocaleString()}đ</div>
+                                        <div className="text-blue-700 ">{parseFloat(order.total_price.toString()).toLocaleString()}đ</div>
                                     </div>
                                 </div>
                             </Link>

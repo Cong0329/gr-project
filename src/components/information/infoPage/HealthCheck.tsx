@@ -97,7 +97,7 @@ export const HealthCheckPage: React.FC = () => {
   useEffect(() => {
     const combined: CombinedAppointment[] = [];
 
-    appointments?.forEach((appointment: AppointmentType) => {
+    appointments?.forEach((appointment: any) => {
       combined.push({
         id: appointment.id,
         date: appointment.date,
@@ -116,7 +116,7 @@ export const HealthCheckPage: React.FC = () => {
       });
     });
 
-    bookingRequests?.forEach((booking: PackageBookingType) => {
+    bookingRequests?.forEach((booking: any) => {
       combined.push({
         id: booking.id,
         date: booking.requested_date,
@@ -342,11 +342,10 @@ export const HealthCheckPage: React.FC = () => {
           <nav className="flex">
             <button
               onClick={() => setActiveTab("upcoming")}
-              className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${
-                activeTab === "upcoming"
+              className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${activeTab === "upcoming"
                   ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
                   : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-              }`}
+                }`}
             >
               <div className="flex items-center justify-center space-x-2">
                 <svg
@@ -372,11 +371,10 @@ export const HealthCheckPage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab("past")}
-              className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${
-                activeTab === "past"
+              className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${activeTab === "past"
                   ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
                   : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-              }`}
+                }`}
             >
               <div className="flex items-center justify-center space-x-2">
                 <svg
@@ -568,9 +566,8 @@ export const HealthCheckPage: React.FC = () => {
                               />
                             ) : null}
                             <svg
-                              className={`w-5 h-5 text-purple-500 mr-3 ${
-                                appointment.avatar ? "hidden" : ""
-                              }`}
+                              className={`w-5 h-5 text-purple-500 mr-3 ${appointment.avatar ? "hidden" : ""
+                                }`}
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -686,7 +683,9 @@ export const HealthCheckPage: React.FC = () => {
                             setIsModalOpen(true);
                           }}
                         >
-                          <img src={chat} alt="" />
+                          
+                            <img src={chat} alt="" />
+                       
                         </button>
                       </div>
 

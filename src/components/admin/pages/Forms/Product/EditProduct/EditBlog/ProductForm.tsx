@@ -7,6 +7,7 @@ import { ModalCreatSection } from './ModalCreatSection';
 import { DescriptionType } from '../../Blog/type';
 import { useDispatch } from 'react-redux';
 import { createProductDetailSection, updateProductDetail, createProductDetailSectionIngredient } from '../../../../../../../redux/productAsyncThunk';
+import { AppDispatch } from '../../../../../../../redux/store';
 
 interface ProductFormProps {
   initialProduct: Product;
@@ -22,7 +23,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [editedTitle, setEditedTitle] = useState(product.title);
   const [modalOpen, setModalOpen] = useState(false);
   const [usedTypes, setUsedTypes] = useState<DescriptionType[]>([]);
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
 
   useEffect(() => {
     const allTypes = Object.values(DescriptionType);
@@ -42,7 +43,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const handleSaveTitle = () => {
     setIsEditingTitle(false);
     console.log(editedTitle);
-    dispatch(updateProductDetail({ id: product.id, title: editedTitle }));
+    dispatch(updateProductDetail({ id: product.id.toString(), title: editedTitle }));
   };
 
   useEffect(() => {
@@ -154,12 +155,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             // Gửi request phù hợp theo type
             if (desc.type !== DescriptionType.INGREDIENTS) {
               dispatch(createProductDetailSection({
-                product_detail_id: product.id,
+                product_detail_id: product.id.toString(),
                 productDetailSection: desc,
               }));
             } else {
               dispatch(createProductDetailSectionIngredient({
-                product_detail_id: product.id,
+                product_detail_id: product.id.toString(),
                 productDetailSection: desc,
               }));
             }

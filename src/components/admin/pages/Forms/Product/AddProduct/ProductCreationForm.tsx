@@ -15,15 +15,16 @@ import { setStatus } from "../../../../../../redux/productSlice";
 // Định nghĩa kiểu dữ liệu
 export interface ProductImage {
   id: string;
-  file: File;
-  url: string;
+  file?: File;
+  url?: string;
+  image?: string;
 }
 
 export interface ProductOptionInt {
   id: string;
   label: string;
   price: number;
-  discounted_price: number;
+  discounted_price?: number;
 }
 
 

@@ -23,11 +23,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ id, isDetail, status, isLoa
   const isCheckout = false;
   const dispatch: AppDispatch = useDispatch();
 
-  const totalPrice = parseFloat(orderDetail.discout_price);
+  const totalPrice = parseFloat(orderDetail.discout_price as string);
 
-  const checkoutPrice = parseFloat(orderDetail.total_price);
+  const checkoutPrice = parseFloat(orderDetail.total_price as string);
 
-  const totalDiscount =  parseFloat(orderDetail.discout_price) - parseFloat(orderDetail.total_price);
+  const totalDiscount =  parseFloat(orderDetail.discout_price as string) - parseFloat(orderDetail.total_price as string);
 
 
   const handleRepurchaseOrder = () => {

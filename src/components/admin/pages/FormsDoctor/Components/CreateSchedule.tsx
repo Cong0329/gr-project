@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { createSchedule } from "../../../../../redux/scheduleSlice";
 import {
@@ -11,12 +11,13 @@ import {
   CheckCircle,
   Settings,
 } from "lucide-react";
+import { AppDispatch, RootState } from "../../../../../redux/store";
 
-export const CreateSchedule = ({ isOpen, onClose }) => {
-  const dispatch = useDispatch();
-  const { isCreating, createError } = useSelector((state) => state.schedules);
+export const CreateSchedule = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  const dispatch:AppDispatch = useDispatch();
+  const { isCreating, createError } = useSelector((state: RootState) => state.schedules);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{date: string; start_time: string; end_time: string; type: "specialist" | "specialist_online"; service_id: string; status?: "available" | "booked"; }>({
     date: "",
     start_time: "",
     end_time: "",
@@ -25,7 +26,7 @@ export const CreateSchedule = ({ isOpen, onClose }) => {
     status: "available",
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<any>({});
   const [showSuccess, setShowSuccess] = useState(false);
 
   const serviceOptions = [
@@ -70,7 +71,7 @@ export const CreateSchedule = ({ isOpen, onClose }) => {
 
   // Validate form
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: any = {};
 
     if (!formData.date) {
       newErrors.date = "Vui lòng chọn ngày";
@@ -107,14 +108,14 @@ export const CreateSchedule = ({ isOpen, onClose }) => {
   };
 
   // Handle input change
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     // Nếu thay đổi type, reset service_id
     if (name === "type") {
       setFormData((prev) => ({
         ...prev,
-        [name]: value,
+        [name]: value as "specialist" | "specialist_online",
         service_id: "", // Reset service khi đổi type
       }));
     } else {
@@ -126,7 +127,7 @@ export const CreateSchedule = ({ isOpen, onClose }) => {
 
     // Clear error khi user nhập lại
     if (errors[name]) {
-      setErrors((prev) => ({
+      setErrors((prev: any) => ({
         ...prev,
         [name]: "",
       }));
@@ -134,7 +135,7 @@ export const CreateSchedule = ({ isOpen, onClose }) => {
   };
 
   // Handle submit
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement | HTMLButtonElement>) => {
     e.preventDefault();
 
     if (!validateForm()) {

@@ -6,9 +6,10 @@ import { Footer } from "../footer/Footer";
 import { Header } from "../header/Header";
 import SpecialtyDetail from "../home_booking/details/SpecialtyDetail";
 import DoctorSchedules from "../home_booking/details/component_details/DoctorSchedules";
+import { AppDispatch } from "../../redux/store";
 
 export const BookingSpecialtyDetail = () => {
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchDoctors());

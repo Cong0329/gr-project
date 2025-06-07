@@ -2,12 +2,10 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { SignInForm } from "../components/admin/components/auth/SignInForm";
 
-interface Profile {
+export interface Profile {
     name : string | null;
     phone : string | null;
     gender : string | null;
-    password : string | null; 
-    avatar : File | null;
 }
 
 

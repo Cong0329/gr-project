@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { VoucherModal } from "./VoucherModal";
 import { CartSummartSkeleton } from "./CartSummartSkeleton";
 import { createOrder } from "../../redux/orderAsyncThunk";
+import { ProductOption } from "../../redux/cartSlice";
 
 interface CartSummaryProps {
   isDetail?: boolean | null;
@@ -30,18 +31,18 @@ const CartSummary: React.FC<CartSummaryProps> = ({ isDetail, status, isLoading }
 
   const totalPrice = cartItems
     .filter(item => item.selected) // Chỉ lấy các sản phẩm được chọn
-    .reduce((acc, item) => acc + (item.selectedOption.price ?? item.selectedOption.price) * item.quantity, 0);
+    .reduce((acc, item) => acc + ((item.selectedOption as ProductOption)?.price ?? (item.selectedOption as ProductOption)?.price) * item.quantity, 0);
 
   const checkoutPrice = cartItems
     .filter(item => item.selected) // Chỉ lấy các sản phẩm được chọn
-    .reduce((acc, item) => acc + (item.selectedOption.discounted_price > 0 ? item.selectedOption.discounted_price : item.selectedOption.price) * item.quantity, 0);
+    .reduce((acc, item) => acc + ((item.selectedOption as ProductOption)?.discounted_price > 0 ? (item.selectedOption as ProductOption)?.discounted_price : (item.selectedOption as ProductOption)?.price) * item.quantity, 0);
 
   const totalDiscount = cartItems
     .filter(item => item.selected) // Chỉ lấy các sản phẩm được chọn
     .reduce((acc, item) => {
-      if (item.selectedOption.discounted_price > 0) {
+      if ((item.selectedOption as ProductOption)?.discounted_price > 0) {
         // Tính số tiền giảm cho từng sản phẩm
-        const discountAmount = (item.selectedOption.price - item.selectedOption.discounted_price) * item.quantity;
+        const discountAmount = ((item.selectedOption as ProductOption)?.price - (item.selectedOption as ProductOption)?.discounted_price) * item.quantity;
         return acc + discountAmount;
       }
       return acc;

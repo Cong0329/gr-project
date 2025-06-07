@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { updateProfileAPI } from "../../../redux/userAsyncThunk";
+import { updateProfileAPI, Profile } from "../../../redux/userAsyncThunk";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../../redux/store";
 interface ProfilePageProps {
-    name: string;
+    name: string | null;
     phone: string | null;
     gender: string | null;
 }
@@ -12,16 +12,16 @@ export const ProfilePage = ({ name, phone, gender }: ProfilePageProps) => {
     const dispatch: AppDispatch = useDispatch();
     const [isEdit, setIsEdit] = useState(false);
     const [formData, setFormData] = useState({
-        name: name || '',
-        phone: phone || '',
-        gender: gender || '',
+        name: name ?? '',
+        phone: phone ?? '',
+        gender: gender ?? '',
     });
 
     // Store the original data to compare changes
     const [originalData] = useState({
-        name: name || '',
-        phone: phone || '',
-        gender: gender || '',
+        name: name ?? '',
+        phone: phone ?? '',
+        gender: gender ?? '',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -48,7 +48,12 @@ export const ProfilePage = ({ name, phone, gender }: ProfilePageProps) => {
 
         // Only send data if there are changes
         if (Object.keys(changedFields).length > 0) {
-            dispatch(updateProfileAPI(changedFields));
+            const sanitizedFields: Profile = {
+                name: changedFields.name ?? null,
+                phone: changedFields.phone ?? null,
+                gender: changedFields.gender ?? null,
+              };              
+              dispatch(updateProfileAPI(sanitizedFields));
         } else {
             console.log("No changes detected");
         }

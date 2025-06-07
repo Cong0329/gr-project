@@ -5,7 +5,7 @@ import { createAppointment } from "../../redux/appointmentSlice";
 import { createBookingRequest } from "../../redux/packageBookingRequestSlice";
 import { toast, Toaster } from "react-hot-toast";
 import SuccessAnimation from "../../components/home_booking/details/component_details/AnimationBooked";
-import { RootState } from "../../redux/store";
+import { AppDispatch, RootState } from "../../redux/store";
 
 // Component LoadingSpinner
 const LoadingSpinner = ({ size = "medium" }) => {
@@ -28,12 +28,12 @@ const PaymentPage = () => {
 
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const dispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
 
   // Lấy state từ redux
-  const appointmentsState = useSelector((state) => state.appointments || {});
+  const appointmentsState = useSelector((state: RootState) => state.appointments || {});
   const packageBookingState = useSelector(
-    (state) => state.packageBooking || {}
+    (state: RootState) => state.packages || {}
   );
 
   // Kiểm tra trạng thái loading cho cả hai luồng
@@ -102,7 +102,7 @@ const PaymentPage = () => {
     address: "",
     paymentMethod: "vnpay",
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Kiểm tra và hiển thị lỗi từ Redux
@@ -110,7 +110,7 @@ const PaymentPage = () => {
     // Hiển thị lỗi từ appointmentSlice nếu có
     if (appointmentsState?.error) {
       toast.error(
-        appointmentsState.error.message ||
+        (appointmentsState.error as any).message ||
           "Đã xảy ra lỗi khi đặt lịch chuyên khoa"
       );
     }
@@ -123,7 +123,7 @@ const PaymentPage = () => {
     }
   }, [appointmentsState?.error, packageBookingState?.error]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setUserInfo((prev) => ({
       ...prev,
@@ -131,14 +131,14 @@ const PaymentPage = () => {
     }));
 
     // Clear error khi người dùng nhập
-    if (errors[name]) {
+    if (errors[name as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   // Validate form
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Record<string, string> = {};
 
     if (!userInfo.fullName.trim()) {
       newErrors.fullName = "Vui lòng nhập họ và tên";
@@ -202,7 +202,7 @@ const PaymentPage = () => {
   //   }
   // };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -232,15 +232,15 @@ const PaymentPage = () => {
       }
     } catch (error) {
       console.error("Payment process error:", error);
-      toast.error(error.message || "Có lỗi xảy ra trong quá trình xử lý");
+      toast.error((error as any).message || "Có lỗi xảy ra trong quá trình xử lý");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   // Xử lý đặt lịch chuyên khoa
-  const handleSpecialistBooking = async (userId, packageInfo) => {
-    let newAppointmentId = null;
+  const handleSpecialistBooking = async (userId: string, packageInfo: any) => {
+    // let newAppointmentId = null;
     let appointmentData = null;
 
     try {
@@ -295,12 +295,12 @@ const PaymentPage = () => {
         type: packageInfo.type,
         service_id: service_id,
         notes: packageInfo.reason,
-        payment_method: userInfo.paymentMethod === "vnpay" ? "online" : "cash",
+        payment_method: (userInfo.paymentMethod === "vnpay" ? "online" : "cash") as "online" | "cash",
         amount: parseFloat(packageInfo.price),
         status:
-          userInfo.paymentMethod === "vnpay" ? "pending_payment" : "confirmed",
+          (userInfo.paymentMethod === "vnpay" ? "pending_payment" : "confirmed") as "pending_payment" | "confirmed",
         payment_status:
-          userInfo.paymentMethod === "vnpay" ? "pending" : "confirmed",
+          (userInfo.paymentMethod === "vnpay" ? "pending" : "confirmed") as "pending" | "confirmed",
         patient_info: {
           name: userInfo.fullName,
           phone: userInfo.phone,
@@ -365,8 +365,8 @@ const PaymentPage = () => {
   };
 
   // Xử lý đặt lịch gói khám
-  const handlePackageBooking = async (userId, packageInfo) => {
-    let newBookingRequestId = null;
+  const handlePackageBooking = async (userId: string, packageInfo: any) => {
+    // let newBookingRequestId = null;
     let bookingRequestData = null;
 
     try {
@@ -425,7 +425,7 @@ const PaymentPage = () => {
         );
       }
 
-      newBookingRequestId = createResult.id;
+      // newBookingRequestId = createResult.id;
 
       const previousPageInfo = packageInfo.previousPage || {};
       const backUrl =

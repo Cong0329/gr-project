@@ -5,13 +5,16 @@ import AddressSelection from "./AddressSelection";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { addPaymentMethod } from "../../redux/orderSlice";
+import { AppDispatch } from "../../redux/store";
+import { Payment } from "../../redux/orderSlice";
+
 
 
 const Checkout: React.FC = () => {
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const [method, setMethod] = useState([]);
-  const dispatch = useDispatch();
+  const [method, setMethod] = useState<Payment[]>([]);
+  const dispatch:AppDispatch = useDispatch();
   const methodImages: Record<string, string> = {
     "cod": "https://i.imgur.com/9GxNvdb.png",
     "vnpay": "https://i.imgur.com/GIYkroG.png",

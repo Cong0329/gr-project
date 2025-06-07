@@ -12,7 +12,7 @@ import { resetIndication } from '../../../../../../redux/indicationSlice';
 import SearchBar from './GenericSearch';
 
 const IndicationPage: React.FC = () => {
-  const dispatch:AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const { indications, status } = useSelector((state: RootState) => state.indications);
   const [searchTerm, setSearchTerm] = useState('');
   useEffect(() => {
@@ -39,7 +39,7 @@ const IndicationPage: React.FC = () => {
     handleIndicationSaveItem: handleSaveIndication,
     handleIndicationDeleteItem: handleDeleteIndication
   } = useGenericCrud<Indication>(indications, indicationConfig);
-
+  console.log(indication);
   return (
     <>
       <div className="container mx-auto p-6">
@@ -49,9 +49,9 @@ const IndicationPage: React.FC = () => {
           entityName={indicationConfig.name}
         />
         <SearchBar
-            searchTerm={searchTerm}
-            onChange={setSearchTerm}
-            placeholder="Tìm kiếm danh mục..."
+          searchTerm={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Tìm kiếm danh mục..."
         />
 
         <GenericTable

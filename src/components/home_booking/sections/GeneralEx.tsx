@@ -6,6 +6,7 @@ import { FaStar } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from "../../../redux/store";
 import {
   fetchServicePackages,
   selectFeaturedPackages,

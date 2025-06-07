@@ -12,8 +12,8 @@ export interface Order {
     createdAt: string;
     updatedAt: string;
     status: 'shipping' | 'cancelled' | 'pending' | 'completed' | 'confirmed' | 'return';
-    total_price: number;
-    discout_price: number;
+    total_price: number | string;
+    discout_price: number | string;
     note: string;
     user: User;
     items: OrderItem[];
@@ -49,7 +49,7 @@ export interface OrderItem {
     id: number;
     quantity: number;
     product: Product;
-    price: number;
+    price: number | string;
     option: string;
 }
 
@@ -65,7 +65,7 @@ interface OrderShippingAddress {
     default_address: boolean;
 }
 
-interface Payment {
+export interface Payment {
     id: number;
     method: string;
     description: string;

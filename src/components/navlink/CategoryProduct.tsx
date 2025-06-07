@@ -57,13 +57,13 @@ export const CategoryProduct = ({ products, parent }: { products: CategoryProduc
                 <>
                   <div className="flex">
                     <span className="mt-1 font-bold text-blue-700 mr-1">
-                      {parseFloat(product.discounted_price).toLocaleString()} đ
+                      {Number(product.discounted_price).toLocaleString()} đ
                     </span>
                     <span className="text-blue-700 mt-1 text-sm">/ {product.label}</span>
                   </div>
                   <div className="flex text-gray-500">
                     <span className="mr-1">
-                      {parseFloat(product.price).toLocaleString()} đ
+                      {Number(product.price).toLocaleString()} đ
                     </span>
                     <span className="text-sm">/ {product.label}</span>
                   </div>
@@ -71,7 +71,7 @@ export const CategoryProduct = ({ products, parent }: { products: CategoryProduc
               ) : (
                 <div className="flex">
                   <span className="mt-1 font-bold text-blue-700 mr-1">
-                    {parseFloat(product.price).toLocaleString()} đ
+                    {Number(product.price).toLocaleString()} đ
                   </span>
                   <span className="text-blue-700 mt-1 text-sm">/ {product.label}</span>
                 </div>

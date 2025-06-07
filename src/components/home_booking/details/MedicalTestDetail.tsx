@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Breadcrumb from "./component_details/BreadCrumb";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,12 +11,13 @@ import {
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import PackageSchedule from "./component_details/PackageSchedules";
+import { AppDispatch } from "../../../redux/store";
 
 const MedicalTestDetail = () => {
   const { name } = useParams();
-  const dispatch = useDispatch();
+  const dispatch:AppDispatch = useDispatch();
   const [showSchedule, setShowSchedule] = useState(false);
-  const scheduleRef = useRef(null);
+  const scheduleRef = useRef<HTMLDivElement>(null);
 
   const allPackages = useSelector(selectAllPackages);
   const loading = useSelector(selectLoadingStatus);
@@ -51,7 +52,7 @@ const MedicalTestDetail = () => {
     return (
       <div className="w-full">
         <div className="container mx-auto px-4 sm:px-10">
-          <Breadcrumb current={decodedName} />
+          <Breadcrumb/>
           <Skeleton height={300} className="mt-6" />
           <Skeleton count={5} className="mt-4" />
         </div>
@@ -70,7 +71,7 @@ const MedicalTestDetail = () => {
   return (
     <div className="w-full bg-gray-50 pb-10">
       <div className="container-fix-spe mx-auto px-4 sm:px-10">
-        <Breadcrumb current={decodedName} />
+        <Breadcrumb />
 
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 py-12 text-center text-white rounded-xl mt-6">
           <h1 className="text-3xl md:text-4xl font-bold mb-4">{decodedName}</h1>
@@ -270,14 +271,14 @@ const MedicalTestDetail = () => {
           </div>
         </div>
 
-        {currentTest?.details?.categories?.length > 0 && (
+        {currentTest?.details?.categories && currentTest.details.categories.length > 0 && (
           <div className="mt-10">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
               Chi tiết dịch vụ {decodedName}
             </h2>
 
             <div className="bg-white shadow p-6 rounded-xl space-y-6">
-              {currentTest.details.categories.map((category, index) => (
+              {currentTest?.details?.categories?.map((category, index) => (
                 <div
                   key={index}
                   className="border-b pb-4 last:border-b-0 last:pb-0"

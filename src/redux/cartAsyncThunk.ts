@@ -75,7 +75,7 @@ export const updateQuantityAPI = createAsyncThunk(
 
   export const updateSelectedOptionAPI = createAsyncThunk(
     'cart/updateSelectedOptionAPI',
-      async ({ cartItemId, option_id }: { cartItemId: string; option_id: string}, { rejectWithValue }) => {
+      async ({ cartItemId, option_id }: { cartItemId: string; option_id?: string}, { rejectWithValue }) => {
       try {
         // Gửi PATCH request để cập nhật số lượng sản phẩm
         const response = await axios.patch(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/cart/${cartItemId}`, { option_id },{
