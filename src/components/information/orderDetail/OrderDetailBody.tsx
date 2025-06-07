@@ -35,7 +35,7 @@ export const OrderDetailBody = () => {
 
     if (orderDetail.status === 'cancelled') {
         process = (
-            <div className="p-4 border-b">
+            <div className="p-4 border-b ml:flex">
                 <h3 className="text-base font-bold mb-2">Đơn hàng đã hủy lúc {new Date(canceled[0].changed_at).toLocaleString('vi-VN', {
                     day: '2-digit',
                     month: '2-digit',
@@ -54,7 +54,7 @@ export const OrderDetailBody = () => {
         )
     } else if (orderDetail.status === "completed") {
         process = (
-            <div className="p-4 border-b">
+            <div className="p-4 border-b ml:flex">
                 <h3 className="text-base font-bold mb-2">Đơn hàng đã giao lúc {new Date(completed[0].changed_at).toLocaleString('vi-VN', {
                     day: '2-digit',
                     month: '2-digit',
@@ -69,7 +69,7 @@ export const OrderDetailBody = () => {
         )
     } else {
         process = (
-            <div className="p-4 border-b">
+            <div className="p-4 border-b ml:flex">
                 <h3 className="text-base font-bold mb-2">Đơn hàng đã được trả lúc {new Date(orderDetail.updatedAt).toLocaleString('vi-VN', {
                     day: '2-digit',
                     month: '2-digit',

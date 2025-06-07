@@ -9,7 +9,7 @@ export const OrderPending = ({ status }: { status: string }) => {
     const orderDateCompleted = orderDetail?.status_history.find((item) => item.status === 'completed');
     return (
         <div className="flex p-4">
-            <div className="space-y-2 w-1/3">
+            <div className="space-y-2 w-1/3 ml:w-full">
                 {/* Delivery time */}
                 <div className="flex items-center">
                     <div className="flex items-center text-gray-700">

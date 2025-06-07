@@ -60,7 +60,7 @@ export default function MessageList({ messages, user }: Props) {
                 ) : (
                   <ReactMarkdown
                     components={{
-                      a: ({ node, ...props }) => (
+                      a: ({  ...props }) => (
                         <a {...props} target="_blank" rel="noopener noreferrer" className="underline text-black" />
                       )
                     }}
@@ -98,7 +98,7 @@ export default function MessageList({ messages, user }: Props) {
                   ) : (
                     <ReactMarkdown
                       components={{
-                        a: ({ node, ...props }) => (
+                        a: ({  ...props }) => (
                           <a {...props} target="_blank" rel="noopener noreferrer" className="underline text-black" />
                         )
                       }}

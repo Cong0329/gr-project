@@ -62,31 +62,44 @@ export const AddressPage = () => {
             <>
                 {addr.map((index) => (
                     <div key={index} className={`p-4 flex justify-between items-center ${index !== 2 ? 'border-b' : ''}`}>
-                        <div className=''>
+                        <div>
                             <div className="flex gap-2 items-center">
-                                <Skeleton className="font-medium h-5 w-36 bg-gray-200 rounded"></Skeleton>
+                                <div className="font-medium h-5 w-36 bg-gray-200 rounded">
+                                    <Skeleton />
+                                </div>
                                 <span className="border h-5"></span>
-                                <Skeleton className="h-5 w-32 bg-gray-200 rounded"></Skeleton>
+                                <div className="h-5 w-32 bg-gray-200 rounded">
+                                    <Skeleton />
+                                </div>
                             </div>
                             <div className="text-gray-600 mt-1">
-                                <Skeleton className="h-5 w-[500px] bg-gray-200 rounded"></Skeleton>
+                                <div className="h-5 w-[500px] bg-gray-200 rounded">
+                                    <Skeleton />
+                                </div>
                             </div>
                             <div className="flex items-center mt-2 gap-4">
-                                <Skeleton className="h-5 w-16 bg-gray-200 rounded"></Skeleton>
-                                <Skeleton className="h-5 w-16 bg-gray-200 rounded"></Skeleton>
-
+                                <div className="h-5 w-16 bg-gray-200 rounded">
+                                    <Skeleton />
+                                </div>
+                                <div className="h-5 w-16 bg-gray-200 rounded">
+                                    <Skeleton />
+                                </div>
                             </div>
                         </div>
+
                         <div className="flex justify-end items-center space-x-2">
+                            <div className="h-5 w-12 bg-gray-200 rounded">
+                                <Skeleton />
+                            </div>
 
-                            <Skeleton className="h-5 w-12 bg-gray-200 rounded"></Skeleton>
+                            <span className="border h-5"></span>
 
-                            <span className='border h-5'></span>
-
-                            <Skeleton className="h-5 w-12 bg-gray-200 rounded"></Skeleton>
-
+                            <div className="h-5 w-12 bg-gray-200 rounded">
+                                <Skeleton />
+                            </div>
                         </div>
                     </div>
+
                 ))}</>
         );
     } else if (addresses.length > 0) {

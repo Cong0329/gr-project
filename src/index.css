@@ -88,8 +88,8 @@ button:focus-visible {
   width: 98%;
 }
 
-.mySwiper .swiper-slide {
-  display: flex;  /* đổi từ block sang flex */
+.my-swiper .swiper-slide {
+  display: flex !important;  /* đổi từ block sang flex */
   justify-content: center;  /* căn ngang */
   align-items: center;      /* căn dọc */
   flex-shrink: 0;

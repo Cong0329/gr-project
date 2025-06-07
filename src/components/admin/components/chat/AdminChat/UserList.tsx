@@ -48,7 +48,7 @@ export default function UserList({ users, searchTerm, onSearch, onMessage, onSel
     return (
         <div className="w-80 bg-white border-r border-gray-200 flex flex-col h-[570px] tb:w-[250px] ml:w-full">
             <div className="p-4 border-b border-gray-200">
-                <h1 className="text-2xl font-bold text-gray-800">Chats</h1>
+                <h1 className="text-2xl font-bold text-gray-800">Tin nhắn</h1>
             </div>
 
             {/* Search Bar */}
@@ -72,7 +72,7 @@ export default function UserList({ users, searchTerm, onSearch, onMessage, onSel
             {/* User List */}
             <div className="flex-1 overflow-y-auto">
                 {users.length === 0 ? (
-                    <div className="text-center py-8">No users found.</div>
+                    <div className="text-center py-8">Chưa có tin nhắn.</div>
                 ) : (
                     users.map((user) => (
                         <div
