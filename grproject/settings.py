@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-*@e=_6tfyzx6g-17i8l19s#$dw^yv$oas3y99#@&azy&4@00bs
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['be-gr-project.onrender.com', '127.0.0.1']
+ALLOWED_HOSTS = ['be-gr-project.onrender.com', '127.0.0.1', 'https://medical-ai-vm6l.onrender.com']
 
 
 # Application definition
