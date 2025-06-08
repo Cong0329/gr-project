@@ -29,6 +29,7 @@ import { Toaster } from 'react-hot-toast';
 import ChatBoxWrapper from "./components/chatbox/chatboWrap";
 import { BookingPayment } from "./components/pages/BookingPayment";
 import appRoutes from "./components/pages/AppRoutes";
+import PolicyPage from "./components/pages/PolicyPage";
 
 function App() {
   return (
@@ -100,6 +101,7 @@ function App() {
 
         {appRoutes}
         <Route path="*" element={<InvalidPage />} />
+        <Route path="/privacy-policy" element={<PolicyPage />} />
       </Routes>
     </Router>
   );
