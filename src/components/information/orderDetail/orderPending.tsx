@@ -9,7 +9,7 @@ export const OrderPending = ({ status }: { status: string }) => {
     const orderDateCompleted = orderDetail?.status_history.find((item) => item.status === 'completed');
     return (
         <div className="flex p-4">
-            <div className="space-y-2 w-1/3">
+            <div className="space-y-2 w-1/3 ml:w-full">
                 {/* Delivery time */}
                 <div className="flex items-center">
                     <div className="flex items-center text-gray-700">
@@ -30,12 +30,12 @@ export const OrderPending = ({ status }: { status: string }) => {
                 </div>
             </div>
             {/* Order progress */}
-            <div className="w-2/3 ml-2 overflow-hidden">
+            <div className="w-2/3 ml-2 overflow-hidden ml:hidden">
                 <div className="relative">
                     {/* Progress line */}
-                    <div className="absolute top-4 left-12 w-[425px]">
+                    <div className="absolute top-4 left-12 w-[400px] md-lg:w-[250px]">
                         <div className="h-1 bg-gray-200">
-                            <div className={`h-1 bg-green-500 ${status === 'pending' ? 'w-1/3' : status === 'confirmed' ? 'w-2/3' : 'w-3/3'}`}></div>
+                            <div className={`h-1 bg-green-500 ${status === 'pending' ? 'w-1/3 md-lg:w-1/3 tb:w-1/3' : status === 'confirmed' ? 'w-2/3' : 'w-3/3'}`}></div>
                         </div>
                     </div>
                     {/* Steps */}

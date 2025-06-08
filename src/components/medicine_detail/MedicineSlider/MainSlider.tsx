@@ -25,10 +25,10 @@ export default function MainSlider({
       modules={[Navigation]}
       onSwiper={(swiper) => (mainSwiperRef.current = swiper)}
       onSlideChange={(swiper) => setCurrentIndex(swiper.activeIndex)}
-      className="rounded-lg overflow-hidden"
+      className="rounded-lg overflow-hidden my-swiper"
     >
       {images.map((src, index) => (
-        <SwiperSlide key={index} className="flex justify-center items-center mb-2">
+        <SwiperSlide key={index} className="flex justify-center items-center mb-2 ">
             <img
               src={src.image}
               alt={`Product ${index}`}

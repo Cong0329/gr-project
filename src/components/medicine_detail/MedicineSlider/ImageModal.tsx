@@ -64,10 +64,10 @@ export default function ImageModal({ images, indexModal, setShowModal }: ImageMo
                     }}
                     onSlideChange={(swiper) => setModalIndex(swiper.activeIndex)}
                     thumbs={{ swiper: modalThumbsSwiper }}
-                    className="rounded-lg overflow-hidden relative mt-10 ml:mt-32"
+                    className="rounded-lg overflow-hidden relative mt-10 ml:mt-32 my-swiper"
                 >
                     {images.map((src, index) => (
-                        <SwiperSlide key={index} className="flex justify-center items-center">
+                        <SwiperSlide key={index} className="flex justify-center items-center ">
                             <img
                                 src={src.image}
                                 alt={`Product Full ${index}`}
@@ -86,7 +86,7 @@ export default function ImageModal({ images, indexModal, setShowModal }: ImageMo
                         slidesPerView={5}
                         watchSlidesProgress
                         modules={[Thumbs]}
-                        className={`max-w-full h-full ${isZoomed ? "hidden" : "block"}`}
+                        className={`max-w-full h-full ${isZoomed ? "[display:none!important]": "block"}`}
                     >
                         {images.map((src, index) => (
                             <SwiperSlide key={index}>

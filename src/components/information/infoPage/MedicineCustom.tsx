@@ -17,37 +17,62 @@ export const MedicineCustom = () => {
                         <div className="px-4 pt-4 pb-2">
                             <div className="flex justify-between items-center border-b pb-2">
                                 <div className="flex items-center gap-1 font-semibold">
-                                    <Skeleton className="h-5 w-36 bg-gray-200 rounded-md"></Skeleton>
+                                    <div className="h-5 w-36 bg-gray-200 rounded-md">
+                                        <Skeleton />
+                                    </div>
                                     <div className="mx-1 text-gray-300">•</div>
-                                    <Skeleton className="h-5 w-32 bg-gray-200 rounded-md"></Skeleton>
+                                    <div className="h-5 w-32 bg-gray-200 rounded-md">
+                                        <Skeleton />
+                                    </div>
                                     <div className="mx-1 text-gray-300">•</div>
-                                    <Skeleton className="h-5 w-20 bg-gray-200 rounded-md"></Skeleton>
+                                    <div className="h-5 w-20 bg-gray-200 rounded-md">
+                                        <Skeleton />
+                                    </div>
                                 </div>
                                 <div className="flex items-center">
                                     <div className="w-2 h-2 bg-gray-200 rounded-md mr-2"></div>
-                                    <Skeleton className="h-5 w-20 bg-gray-200 rounded-md"></Skeleton>
+                                    <div className="h-5 w-20 bg-gray-200 rounded-md">
+                                        <Skeleton />
+                                    </div>
                                 </div>
                             </div>
                             <div className="pt-4 pb-2 flex justify-between items-start">
                                 <div className="flex items-center">
-                                    <Skeleton className="h-16 w-16 bg-gray-200 rounded-md p-2"></Skeleton>
+                                    <div className="h-16 w-16 bg-gray-200 rounded-md p-2">
+                                        <Skeleton />
+                                    </div>
                                     <div className="ml-4">
-                                        <Skeleton className="h-10 w-[500px] bg-gray-200 rounded-md"></Skeleton>
-                                        <Skeleton className="h-5 w-32 bg-gray-200 rounded-md mt-2"></Skeleton>
+                                        <div className="h-10 w-[500px] bg-gray-200 rounded-md">
+                                            <Skeleton />
+                                        </div>
+                                        <div className="h-5 w-32 bg-gray-200 rounded-md mt-2">
+                                            <Skeleton />
+                                        </div>
                                     </div>
                                 </div>
-                                <Skeleton className="h-5 w-20 bg-gray-200 rounded-md"></Skeleton>
-                                <Skeleton className="h-5 w-20 bg-gray-200 rounded-md"></Skeleton>
+                                <div className="h-5 w-20 bg-gray-200 rounded-md">
+                                    <Skeleton />
+                                </div>
+                                <div className="h-5 w-20 bg-gray-200 rounded-md">
+                                    <Skeleton />
+                                </div>
                             </div>
                             <div className="flex justify-between items-center">
-                                <Skeleton className="h-5 w-28 bg-gray-200 rounded-md"></Skeleton>
-                                <Skeleton className="h-5 w-36 bg-gray-200 rounded-md mt-2"></Skeleton>
+                                <div className="h-5 w-28 bg-gray-200 rounded-md">
+                                    <Skeleton />
+                                </div>
+                                <div className="h-5 w-36 bg-gray-200 rounded-md mt-2">
+                                    <Skeleton />
+                                </div>
                             </div>
                             <div className="border-t pt-2 mt-2 flex justify-end">
-                                <Skeleton className="h-10 w-40 bg-gray-200 rounded-full"></Skeleton>
+                                <div className="h-10 w-40 bg-gray-200 rounded-full">
+                                    <Skeleton />
+                                </div>
                             </div>
                         </div>
                     </div>
+
                 ))}
             </>
         )
@@ -65,7 +90,7 @@ export const MedicineCustom = () => {
 
     return (
         <div>
-           {content}
+            {content}
         </div>
 
     )

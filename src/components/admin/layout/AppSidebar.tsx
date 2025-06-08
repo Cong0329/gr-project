@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../../../assets/logo.png";
+import logo from "../../../assets/user-logo-removebg-preview (1).png";
+import webLogo from "../../../assets/logo-web2.svg";
 // Assume these icons are imported from an icon library
 import {
   BoxCubeIcon,
@@ -377,10 +378,10 @@ const AppSidebar: React.FC = () => {
   // Get logo link based on role
   const logoLink = isAdmin ? "/admin" : isDoctor ? "/doctor" : "/";
   const appName = isAdmin
-    ? "PharmacyAdmin"
+    ? "Quản trị hệ thống"
     : isDoctor
-    ? "PharmacyDoctor"
-    : "Pharmacy";
+    ? "Phần mềm bác sĩ"
+    : "Dược sĩ";
 
   return (
     <aside
@@ -398,7 +399,7 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div
-        className={`py-8 flex ${
+        className={`py-3 flex ${
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
@@ -406,16 +407,16 @@ const AppSidebar: React.FC = () => {
           {isExpanded || isHovered || isMobileOpen ? (
             <div className="flex items-center gap-2">
               <img
-                src={logo}
-                className="h-10 w-10 bg-blue-500 border rounded-md p-1"
+                src={webLogo}
+                className="w-[200px]   p-1"
                 alt="Logo"
               />
-              <span className="font-bold text-2xl">{appName}</span>
+              {/* <span className="font-bold text-2xl">{appName}</span> */}
             </div>
           ) : (
             <img
               src={logo}
-              className="h-10 w-10 bg-blue-500 border rounded-md p-1"
+              className="h-10 w-10  border rounded-md p-1 mt-5"
               alt="Logo"
             />
           )}
@@ -433,7 +434,7 @@ const AppSidebar: React.FC = () => {
                 }`}
               >
                 {isExpanded || isHovered || isMobileOpen ? (
-                  "Menu"
+                  `Menu ${appName}`
                 ) : (
                   <HorizontaLDots className="size-6" />
                 )}

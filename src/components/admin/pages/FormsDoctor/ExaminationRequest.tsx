@@ -25,7 +25,6 @@ export const ExaminationRequest = () => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [activeTab, setActiveTab] = useState("upcoming");
   const [packageName, setPackageName] = useState("");
-
   const { bookingRequests, loading } = useSelector(
     (state: RootState) => state.packages || {}
   );

@@ -39,16 +39,16 @@ export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process })
         <div className="w-full bg-white rounded-xl  mb-2">
             {/* Header */}
             <div className="flex items-center justify-between  p-4 border-b">
-                <div className="flex items-center space-x-2">
-                    <h2 className="text-lg font-semibold">Đơn hàng {new Date(orderDetail.createdAt).toLocaleDateString()}</h2>
+                <div className="flex items-center space-x-2 ">
+                    <h2 className="text-lg font-semibold ml:text-sm">Đơn hàng {new Date(orderDetail.createdAt).toLocaleDateString()}</h2>
                     <span className="text-blue-600">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                         </svg>
                     </span>
                     <div className="flex items-center font-semibold space-x-4 text-sm">
-                        <span className="text-gray-600">Giao hàng tận nơi</span>
-                        <span className="text-gray-600">{orderDetail.id}</span>
+                        <span className="text-gray-600 ml:hidden">Giao hàng tận nơi</span>
+                        <span className="text-gray-600 tb:hidden">{orderDetail.id}</span>
                     </div>
                 </div>
 
@@ -70,7 +70,7 @@ export const OrderDelivery: React.FC<OrderDeliveryProps> = ({ status, process })
             </div>
 
             {/* Customer Info Grid */}
-            <div className={`grid ${status === 'pending' ? 'grid-cols-3' : 'grid-cols-2'}`}>
+            <div className={`grid ${status === 'pending' ? 'grid-cols-3 ml:grid-cols-1' : 'grid-cols-2 ml:grid-cols-1'}`}>
                 {/* Recipient Info */}
                 <div className="p-4 border-r">
                     <div className="flex items-center mb-2">

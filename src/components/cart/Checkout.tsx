@@ -1,12 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { RootState, AppDispatch } from "../../redux/store";
 import { CheckoutItem } from "./CheckoutItem";
 import AddressSelection from "./AddressSelection";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { addPaymentMethod } from "../../redux/orderSlice";
-import { AppDispatch } from "../../redux/store";
-import { Payment } from "../../redux/orderSlice";
+import { addPaymentMethod, Payment  } from "../../redux/orderSlice";
+
 
 
 
