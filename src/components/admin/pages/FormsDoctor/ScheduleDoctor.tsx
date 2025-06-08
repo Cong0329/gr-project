@@ -34,7 +34,9 @@ export const DoctorScheduleComponent = () => {
   const { mySchedules, loading, error } = useSelector(
     (state: RootState) => state.schedules
   );
-  const { appointments } = useSelector((state: RootState) => state.appointments);
+  const { appointments } = useSelector(
+    (state: RootState) => state.appointments
+  );
 
   // State để quản lý việc hiển thị thông tin patient
   const [expandedSchedules, setExpandedSchedules] = useState(new Set());
@@ -65,7 +67,8 @@ export const DoctorScheduleComponent = () => {
     if (!appointments || !Array.isArray(appointments)) return null;
 
     const appointment = appointments.find(
-      (apt: any) => apt.schedule_id === schedule.id && apt.status !== "cancelled"
+      (apt: any) =>
+        apt.schedule_id === schedule.id && apt.status !== "cancelled"
     );
 
     return appointment || null;
@@ -98,13 +101,12 @@ export const DoctorScheduleComponent = () => {
         new Date(`${a.date}T${a.start_time}`).getTime() -
         new Date(`${b.date}T${b.start_time}`).getTime()
     );
-    
+
     past.sort(
       (a, b) =>
         new Date(`${b.date}T${b.start_time}`).getTime() -
         new Date(`${a.date}T${a.start_time}`).getTime()
     );
-    
 
     return { upcoming, past };
   };
@@ -561,8 +563,7 @@ export const DoctorScheduleComponent = () => {
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-gray-500" />
                         <span>
-                          Ngày sinh:{" "}
-                          {formatDateOfBirth(patientInfo.dob)}
+                          Ngày sinh: {formatDateOfBirth(patientInfo.dob)}
                         </span>
                       </div>
 

@@ -471,10 +471,9 @@ const MedicalRecord = () => {
                             {record.mr_user.name}
                             {record.mr_user.phone
                               ? ` - ${record.mr_user.phone}`
-                              : record.user_id === formData.user_id &&
-                                formData.patientPhone
+                              : formData.patientPhone
                               ? ` - ${formData.patientPhone}`
-                              : " - Chưa có SĐT"}
+                              : " - Chưa cập nhật số điện thoại trong thông tin cá nhân"}
                           </p>
                         </div>
                       )}

@@ -31,7 +31,9 @@ const PaymentPage = () => {
   const dispatch: AppDispatch = useDispatch();
 
   // Lấy state từ redux
-  const appointmentsState = useSelector((state: RootState) => state.appointments || {});
+  const appointmentsState = useSelector(
+    (state: RootState) => state.appointments || {}
+  );
   const packageBookingState = useSelector(
     (state: RootState) => state.packages || {}
   );
@@ -123,7 +125,11 @@ const PaymentPage = () => {
     }
   }, [appointmentsState?.error, packageBookingState?.error]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = e.target;
     setUserInfo((prev) => ({
       ...prev,
@@ -232,7 +238,9 @@ const PaymentPage = () => {
       }
     } catch (error) {
       console.error("Payment process error:", error);
-      toast.error((error as any).message || "Có lỗi xảy ra trong quá trình xử lý");
+      toast.error(
+        (error as any).message || "Có lỗi xảy ra trong quá trình xử lý"
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -295,12 +303,16 @@ const PaymentPage = () => {
         type: packageInfo.type,
         service_id: service_id,
         notes: packageInfo.reason,
-        payment_method: (userInfo.paymentMethod === "vnpay" ? "online" : "cash") as "online" | "cash",
+        payment_method: (userInfo.paymentMethod === "vnpay"
+          ? "online"
+          : "cash") as "online" | "cash",
         amount: parseFloat(packageInfo.price),
-        status:
-          (userInfo.paymentMethod === "vnpay" ? "pending_payment" : "confirmed") as "pending_payment" | "confirmed",
-        payment_status:
-          (userInfo.paymentMethod === "vnpay" ? "pending" : "confirmed") as "pending" | "confirmed",
+        status: (userInfo.paymentMethod === "vnpay"
+          ? "pending_payment"
+          : "confirmed") as "pending_payment" | "confirmed",
+        payment_status: (userInfo.paymentMethod === "vnpay"
+          ? "pending"
+          : "confirmed") as "pending" | "confirmed",
         patient_info: {
           name: userInfo.fullName,
           phone: userInfo.phone,
