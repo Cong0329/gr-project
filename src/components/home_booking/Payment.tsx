@@ -23,6 +23,11 @@ const PaymentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { packageInfo } = location.state || {};
+  const typeBooking= packageInfo || location.state?.packageInfo || {};
+
+  const isType =
+    typeBooking.type === "specialist" ||
+    typeBooking.type === "specialist_online";
 
   const { user } = useSelector((state: RootState) => state.auth);
 
@@ -679,6 +684,8 @@ const PaymentPage = () => {
                   </h3>
                   <div className="space-y-3">
                     <div className="flex items-center">
+                    {isType && (
+                      <>
                       <input
                         id="vnpay"
                         name="paymentMethod"
@@ -688,12 +695,15 @@ const PaymentPage = () => {
                         onChange={handleChange}
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500"
                       />
-                      <label
-                        htmlFor="vnpay"
-                        className="ml-3 block text-sm font-medium text-gray-700"
-                      >
-                        Thanh toán qua VnPay
-                      </label>
+                    
+                        <label
+                          htmlFor="vnpay"
+                          className="ml-3 block text-sm font-medium text-gray-700"
+                        >
+                          Thanh toán qua VnPay
+                        </label>
+                      </>
+                      )}
                     </div>
                     <div className="flex items-center">
                       <input
