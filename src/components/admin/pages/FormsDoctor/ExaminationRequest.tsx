@@ -22,7 +22,7 @@ export const ExaminationRequest = () => {
   const dispatch: AppDispatch = useDispatch();
   const [selectedDate, setSelectedDate] = useState("");
   const [notes, setNotes] = useState("");
-  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [selectedBooking, setSelectedBooking] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("upcoming");
   const [packageName, setPackageName] = useState("");
   const { bookingRequests, loading } = useSelector(
@@ -42,7 +42,7 @@ export const ExaminationRequest = () => {
     dispatch(
       getAllBookingRequests({
         date: selectedDate,
-        package_name: packageName || undefined,
+        packageId: packageName ? Number(packageName) : undefined,
       })
     );
   };
