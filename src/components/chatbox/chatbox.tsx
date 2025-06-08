@@ -171,11 +171,7 @@ const ChatBox = () => {
       {chatbox && (
         <div className="bg-white shadow-lg rounded-lg w-96 mt-2 flex flex-col h-[600px] tb:h-[500px] ml:w-screen ml:h-screen">
           <div className="bg-blue-600 text-white p-3 rounded-t-lg tb:flex tb:justify-between tb:items-center">
-<<<<<<< HEAD
-            <h2 className="text-lg font-semibold">Chat với Dược Viet Mart</h2>
-=======
             <h2 className="text-lg font-semibold">Chat với Dược Sỹ Viet Mart</h2>
->>>>>>> dad1f888588c5773aa3b6dbaa032f28eb716cccc
             <button className="text-white hidden tb:block" onClick={handleOpenChat}><X size={20}/></button>
           </div>
 
