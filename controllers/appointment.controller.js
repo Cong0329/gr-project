@@ -86,7 +86,7 @@ exports.createAppointment = async (req, res) => {
     if (payment_method === 'cash') {
       paymentStatus = 'confirmed';
     } else if (payment_method === 'vnpay') {
-      paymentStatus = 'pending_payment';
+      paymentStatus = 'pending';
     }
 
     // Update schedule status
