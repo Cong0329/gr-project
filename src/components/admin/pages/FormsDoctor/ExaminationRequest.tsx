@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBookingRequests } from "../../../../redux/packageBookingRequestSlice";
 import { requestDoctorAssignment } from "../../../../redux/doctorAssignmentSlice";
@@ -18,24 +18,21 @@ import {
 } from "lucide-react";
 import { RootState, AppDispatch } from "../../../../redux/store";
 
-
 export const ExaminationRequest = () => {
-  const dispatch:AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const [selectedDate, setSelectedDate] = useState("");
   const [notes, setNotes] = useState("");
-  const [selectedBooking, setSelectedBooking] = useState<number | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState(null);
   const [activeTab, setActiveTab] = useState("upcoming");
   const [packageName, setPackageName] = useState("");
 
   const { bookingRequests, loading } = useSelector(
-    (state:RootState) => state.packages || {}
+    (state: RootState) => state.packages || {}
   );
   const { loading: assignmentLoading } = useSelector(
-    (state:RootState) => state.doctorAssignment || {}
+    (state: RootState) => state.doctorAssignment || {}
   );
-  const {
-    info
-  } = useSelector((state:RootState) => state.doctors || {});
+  const { info } = useSelector((state: RootState) => state.doctors || {});
 
   useEffect(() => {
     handleSearch();
@@ -46,7 +43,7 @@ export const ExaminationRequest = () => {
     dispatch(
       getAllBookingRequests({
         date: selectedDate,
-        packageId: packageName ? Number(packageName) : undefined,
+        package_name: packageName || undefined,
       })
     );
   };
@@ -74,12 +71,15 @@ export const ExaminationRequest = () => {
 
     // Sắp xếp upcoming theo thời gian tăng dần, past theo thời gian giảm dần
     upcoming.sort(
-      (a, b) => new Date(a.requested_date).getTime() - new Date(b.requested_date).getTime()
+      (a, b) =>
+        new Date(a.requested_date).getTime() -
+        new Date(b.requested_date).getTime()
     );
     past.sort(
-      (a, b) => new Date(b.requested_date).getTime() - new Date(a.requested_date).getTime()
+      (a, b) =>
+        new Date(b.requested_date).getTime() -
+        new Date(a.requested_date).getTime()
     );
-    
 
     return { upcoming, past };
   };
@@ -214,7 +214,7 @@ export const ExaminationRequest = () => {
         {/* Action Section */}
         {booking.status === "pending" && (
           <div className="border-t border-gray-100 pt-4">
-            {selectedBooking === Number(index) ? (
+            {selectedBooking === index ? (
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200">
                 <div className="space-y-4">
                   <div className="flex items-center space-x-2 mb-3">
@@ -266,7 +266,9 @@ export const ExaminationRequest = () => {
               </div>
             ) : (
               <button
-                onClick={() => setSelectedBooking(Number(index))}
+                onClick={() => {
+                  setSelectedBooking(index);
+                }}
                 className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center space-x-2"
               >
                 <User className="w-4 h-4" />
