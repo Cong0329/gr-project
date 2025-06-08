@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getDoctorMedicalRecords,
@@ -24,14 +24,13 @@ import {
 import { AppDispatch } from "../../../../redux/store";
 
 const MedicalRecord = () => {
-  const dispatch:AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const location = useLocation();
 
   const navigateData = location.state || {};
   // const { patient, patientId, scheduleId, appointmentData, scheduleData } =
   //   navigateData;
-    const { patient, patientId, scheduleId, scheduleData } =
-    navigateData;
+  const { patient, patientId, scheduleId, scheduleData } = navigateData;
   // Selectors
   const records = useSelector(selectMedicalRecords);
   const loading = useSelector(selectMedicalRecordLoading);
@@ -89,7 +88,9 @@ const MedicalRecord = () => {
   }, [createSuccess, dispatch]);
 
   // Handle form input change
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -467,7 +468,12 @@ const MedicalRecord = () => {
                             </p>
                           </div>
                           <p className="text-sm text-blue-700 font-medium">
-                            {record.mr_user.name} - {record.mr_user.phone}
+                            {record.mr_user.name}
+                            {record.mr_user.phone
+                              ? ` - ${record.mr_user.phone}`
+                              : formData.patientPhone
+                              ? ` - ${formData.patientPhone}`
+                              : " - Chưa cập nhật số điện thoại trong thông tin cá nhân"}
                           </p>
                         </div>
                       )}

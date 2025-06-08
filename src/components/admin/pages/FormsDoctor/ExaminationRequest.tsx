@@ -1,4 +1,4 @@
-import  { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllBookingRequests } from "../../../../redux/packageBookingRequestSlice";
 import { requestDoctorAssignment } from "../../../../redux/doctorAssignmentSlice";
@@ -18,23 +18,20 @@ import {
 } from "lucide-react";
 import { RootState, AppDispatch } from "../../../../redux/store";
 
-
 export const ExaminationRequest = () => {
-  const dispatch:AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const [selectedDate, setSelectedDate] = useState("");
   const [notes, setNotes] = useState("");
   const [selectedBooking, setSelectedBooking] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("upcoming");
   const [packageName, setPackageName] = useState("");
   const { bookingRequests, loading } = useSelector(
-    (state:RootState) => state.packages || {}
+    (state: RootState) => state.packages || {}
   );
   const { loading: assignmentLoading } = useSelector(
-    (state:RootState) => state.doctorAssignment || {}
+    (state: RootState) => state.doctorAssignment || {}
   );
-  const {
-    info
-  } = useSelector((state:RootState) => state.doctors || {});
+  const { info } = useSelector((state: RootState) => state.doctors || {});
 
   useEffect(() => {
     handleSearch();
@@ -73,12 +70,15 @@ export const ExaminationRequest = () => {
 
     // Sắp xếp upcoming theo thời gian tăng dần, past theo thời gian giảm dần
     upcoming.sort(
-      (a, b) => new Date(a.requested_date).getTime() - new Date(b.requested_date).getTime()
+      (a, b) =>
+        new Date(a.requested_date).getTime() -
+        new Date(b.requested_date).getTime()
     );
     past.sort(
-      (a, b) => new Date(b.requested_date).getTime() - new Date(a.requested_date).getTime()
+      (a, b) =>
+        new Date(b.requested_date).getTime() -
+        new Date(a.requested_date).getTime()
     );
-    
 
     return { upcoming, past };
   };
@@ -163,7 +163,7 @@ export const ExaminationRequest = () => {
   };
 
   // Render booking card
-  const renderBookingCard = (booking: any, index:string) => {
+  const renderBookingCard = (booking: any, index: string) => {
     return (
       <div
         key={index}
@@ -265,7 +265,9 @@ export const ExaminationRequest = () => {
               </div>
             ) : (
               <button
-                onClick={() => setSelectedBooking(index)}
+                onClick={() => {
+                  setSelectedBooking(index);
+                }}
                 className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 rounded-xl font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center space-x-2"
               >
                 <User className="w-4 h-4" />
