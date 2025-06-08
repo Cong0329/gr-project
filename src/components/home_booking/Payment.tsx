@@ -898,9 +898,11 @@ const PaymentPage = () => {
                           <span>Tổng cộng:</span>
                           <span className="text-blue-600">
                             {packageInfo?.price
-                              ? `${parseInt(packageInfo.price).toLocaleString(
-                                  "vi-VN"
-                                )}đ`
+                              ? `${Number(
+                                  packageInfo.price
+                                    .toString()
+                                    .replace(/[^0-9]/g, "")
+                                ).toLocaleString("vi-VN")}đ`
                               : "0đ"}
                           </span>
                         </div>
