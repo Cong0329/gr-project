@@ -113,7 +113,7 @@ const PaymentPage = () => {
     if (appointmentsState?.error) {
       toast.error(
         (appointmentsState.error as any).message ||
-          "Đã xảy ra lỗi khi đặt lịch chuyên khoa"
+        "Đã xảy ra lỗi khi đặt lịch chuyên khoa"
       );
     }
 
@@ -304,8 +304,8 @@ const PaymentPage = () => {
         service_id: service_id,
         notes: packageInfo.reason,
         payment_method: (userInfo.paymentMethod === "vnpay"
-          ? "online"
-          : "cash") as "online" | "cash",
+          ? "vnpay"
+          : "cash") as "vnpay" | "cash",
         amount: parseFloat(packageInfo.price),
         status: (userInfo.paymentMethod === "vnpay"
           ? "pending_payment"
@@ -349,8 +349,7 @@ const PaymentPage = () => {
       const previousPageInfo = packageInfo.previousPage || {};
       const backUrl =
         previousPageInfo.url ||
-        `/booking-home/${
-          previousPageInfo.type || "specialty-detail"
+        `/booking-home/${previousPageInfo.type || "specialty-detail"
         }/${encodeURIComponent(previousPageInfo.name || "Chuyên khoa")}`;
 
       if (userInfo.paymentMethod === "vnpay") {
@@ -403,7 +402,7 @@ const PaymentPage = () => {
         requested_date: packageInfo.date,
         requested_time_slot: packageInfo.time,
         notes: userInfo.reason,
-        payment_method: userInfo.paymentMethod === "vnpay" ? "online" : "cash",
+        payment_method: userInfo.paymentMethod === "vnpay" ? "vnpay" : "cash",
         amount: parseFloat(packageInfo.price),
         status:
           userInfo.paymentMethod === "vnpay" ? "pending_payment" : "pending",
@@ -442,8 +441,7 @@ const PaymentPage = () => {
       const previousPageInfo = packageInfo.previousPage || {};
       const backUrl =
         previousPageInfo.url ||
-        `/booking-home/${
-          previousPageInfo.type || "generalex-detail"
+        `/booking-home/${previousPageInfo.type || "generalex-detail"
         }/${encodeURIComponent(previousPageInfo.name || "Gói khám")}`;
 
       if (userInfo.paymentMethod === "vnpay") {
@@ -551,9 +549,8 @@ const PaymentPage = () => {
                     name="fullName"
                     value={userInfo.fullName}
                     onChange={handleChange}
-                    className={`w-full px-4 py-2 border ${
-                      errors.fullName ? "border-red-500" : "border-gray-300"
-                    } rounded-md focus:ring-blue-500 focus:border-blue-500`}
+                    className={`w-full px-4 py-2 border ${errors.fullName ? "border-red-500" : "border-gray-300"
+                      } rounded-md focus:ring-blue-500 focus:border-blue-500`}
                     placeholder="Ví dụ: Nguyễn Văn A"
                     required
                   />
@@ -577,9 +574,8 @@ const PaymentPage = () => {
                       name="email"
                       value={userInfo.email}
                       onChange={handleChange}
-                      className={`w-full px-4 py-2 border ${
-                        errors.email ? "border-red-500" : "border-gray-300"
-                      } rounded-md focus:ring-blue-500 focus:border-blue-500`}
+                      className={`w-full px-4 py-2 border ${errors.email ? "border-red-500" : "border-gray-300"
+                        } rounded-md focus:ring-blue-500 focus:border-blue-500`}
                       required
                     />
                     {errors.email && (
@@ -598,9 +594,8 @@ const PaymentPage = () => {
                       name="phone"
                       value={userInfo.phone}
                       onChange={handleChange}
-                      className={`w-full px-4 py-2 border ${
-                        errors.phone ? "border-red-500" : "border-gray-300"
-                      } rounded-md focus:ring-blue-500 focus:border-blue-500`}
+                      className={`w-full px-4 py-2 border ${errors.phone ? "border-red-500" : "border-gray-300"
+                        } rounded-md focus:ring-blue-500 focus:border-blue-500`}
                       required
                     />
                     {errors.phone && (
@@ -620,9 +615,8 @@ const PaymentPage = () => {
                       name="gender"
                       value={userInfo.gender}
                       onChange={handleChange}
-                      className={`w-full px-4 py-2 border ${
-                        errors.gender ? "border-red-500" : "border-gray-300"
-                      } rounded-md focus:ring-blue-500 focus:border-blue-500`}
+                      className={`w-full px-4 py-2 border ${errors.gender ? "border-red-500" : "border-gray-300"
+                        } rounded-md focus:ring-blue-500 focus:border-blue-500`}
                       required
                     >
                       <option value="">Chọn giới tính</option>
@@ -785,7 +779,7 @@ const PaymentPage = () => {
                     <div className="mb-4">
                       <h3 className="font-medium text-gray-900 mb-2">
                         {packageInfo.type === "specialist" ||
-                        packageInfo.type === "specialist_online"
+                          packageInfo.type === "specialist_online"
                           ? "Dịch vụ chuyên khoa"
                           : "Gói khám"}
                       </h3>
@@ -879,9 +873,11 @@ const PaymentPage = () => {
                         <span className="text-gray-600">Giá khám:</span>
                         <span className="font-medium">
                           {packageInfo?.price
-                            ? `${parseInt(packageInfo.price).toLocaleString(
-                                "vi-VN"
-                              )}đ`
+                            ? `${Number(
+                              packageInfo.price
+                                .toString()
+                                .replace(/[^0-9]/g, "")
+                            ).toLocaleString("vi-VN")}đ`
                             : "0đ"}
                         </span>
                       </div>
@@ -898,9 +894,11 @@ const PaymentPage = () => {
                           <span>Tổng cộng:</span>
                           <span className="text-blue-600">
                             {packageInfo?.price
-                              ? `${parseInt(packageInfo.price).toLocaleString(
-                                  "vi-VN"
-                                )}đ`
+                              ? `${Number(
+                                packageInfo.price
+                                  .toString()
+                                  .replace(/[^0-9]/g, "")
+                              ).toLocaleString("vi-VN")}đ`
                               : "0đ"}
                           </span>
                         </div>
