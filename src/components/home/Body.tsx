@@ -13,7 +13,7 @@ import { RootState } from '../../redux/store';
 
 export const Body = () => {
     const [isServiceHovered, setIsServiceHovered] = useState(false);
-    const { status } = useSelector((state: RootState) => state.products);
+    const { status } = useSelector((state: RootState) => state.categories);
 
     return (
         <main className="flex-1 bg-gray-100 ">

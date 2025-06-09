@@ -38,10 +38,11 @@ export const MedicineDescription = ({ medicineData, isOpen, setIsOpen }: Product
         }
     };
     const handleBuyNow = () => {
+        addToCart();
         navigate('/cart'); // 👉 Chuyển trang trước
         setTimeout(() => {
             dispatch(buyNow());  // 👉 Gọi action sau khi đã chuyển trang
-        }, 0); // hoặc 100ms nếu muốn đảm bảo chắc chắn route đã xong
+        }, 100); // hoặc 100ms nếu muốn đảm bảo chắc chắn route đã xong
     };
     return (
         <div className="w-3/5 ml-10 tb:ml-0 space-y-2 tb:w-full">
