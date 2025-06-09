@@ -254,7 +254,7 @@ const MedicalRecord = () => {
           )}
 
           {/* Manual Input Warning */}
-          {!formData.user_id && (
+          {!patientId && !scheduleId && (
             <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6">
               <div className="flex items-center space-x-3 mb-3">
                 <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
