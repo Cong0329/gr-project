@@ -1,6 +1,8 @@
 const { Schedule, Doctor, Department, ServicePackage, Appointment, PackageBookingRequest, DoctorAssignment, User } = require('../models');
 const { Op } = require('sequelize');
 const { validationResult } = require('express-validator');
+const { sequelize } = require('../models');
+
 
 exports.getAllSchedules = async (req, res, next) => {
   try {
@@ -599,8 +601,41 @@ exports.updateSchedule = async (req, res) => {
       }
     }
 
-    // Cập nhật lịch hẹn
-    await schedule.update(updateData);
+    // 🔥 THÊM LOGIC SYNC STATUS VỚI BẢNG APPOINTMENTS
+    // Sử dụng transaction để đảm bảo data consistency
+    const transaction = await sequelize.transaction();
+    
+    try {
+      // Cập nhật bảng Schedule
+      await schedule.update(updateData, { transaction });
+
+      // 🔥 Nếu có thay đổi status, cập nhật cả bảng Appointments
+      if (status) {
+        // Tìm appointment tương ứng với schedule này
+        const appointment = await Appointment.findOne({
+          where: {
+            doctor_id: doctorId,
+            date: schedule.date,
+            start_time: schedule.start_time,
+            end_time: schedule.end_time
+          },
+          transaction
+        });
+
+        if (appointment) {
+          await appointment.update({ status: status }, { transaction });
+          console.log(`Synced appointment ${appointment.id} status to: ${status}`);
+        }
+      }
+
+      // Commit transaction
+      await transaction.commit();
+
+    } catch (error) {
+      // Rollback nếu có lỗi
+      await transaction.rollback();
+      throw error;
+    }
 
     // Lấy lại dữ liệu đã cập nhật với đầy đủ thông tin
     const updatedSchedule = await Schedule.findByPk(scheduleId, {
