@@ -13,7 +13,7 @@ export interface Appointment {
   amount?: number;
   type: 'specialist' | 'specialist_online' | 'general' | 'medical';
   service_id: number;
-  payment_method: 'cash' | 'online';
+  payment_method: 'cash' | 'vnpay';
   payment_status?: 'pending' | 'confirmed';
   status: 'pending_payment' | 'confirmed' | 'cancelled' | 'completed' | 'rejected';
   patient_info?: {

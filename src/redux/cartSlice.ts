@@ -68,9 +68,9 @@ const cartSlice = createSlice({
     },
     buyNow: (state) => {
       
-      state.items = state.items.map((item, index) => ({
+      state.items = state.items.map((item) => ({
         ...item,
-        selected: index === 0,
+        selected: false,
       }));
       state.isCheckout = true;
     },
