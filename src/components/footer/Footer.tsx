@@ -61,7 +61,8 @@ export const Footer = () => {
                     <p>
                         © 2007 - 2025 Công ty Cổ Phần Dược Phẩm Viet Mart | Địa chỉ: 30 Xô Viết Nghệ Tĩnh, Hải Châu, Đà Nẵng
                     </p>
-                 
+                    <a href="/privacy-policy">Chính sách quyền riêng tư</a>
+
                 </div>
             </div>
         </footer>
