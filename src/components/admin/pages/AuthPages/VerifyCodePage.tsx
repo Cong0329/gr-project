@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AppDispatch, RootState } from "../../../../redux/store";
-import { vefifyEmailAPI } from "../../../../redux/userAsyncThunk";
+import { resendVerifyEmailAPI, vefifyEmailAPI } from "../../../../redux/userAsyncThunk";
 
 export const VerifyCodePage = () => {
   const location = useLocation();
-  const dispatch:AppDispatch = useDispatch();
+  const dispatch: AppDispatch = useDispatch();
   const { status, isAuthenticated, verify, mail } = useSelector(
     (state: RootState) => state.auth
   );
@@ -113,35 +113,14 @@ export const VerifyCodePage = () => {
 
   // Handle code resend
   const handleResendCode = async () => {
-    if (timeLeft > 0) return;
+
+    // if (timeLeft > 0) return;
 
     setIsResending(true);
     setError("");
 
     try {
-      // Include role information for resend
-      const role = isAdmin ? "ROLE_ADMIN" : "ROLE_DOCTOR";
-      const response = await fetch(
-        `${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/resend-code`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: mail || "",
-            role,
-          }),
-          credentials: "include",
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to resend code");
-      }
-
+      await dispatch(resendVerifyEmailAPI({ email: mail })).unwrap();
       // Reset timer
       setTimeLeft(120);
       // Reset input fields
@@ -190,11 +169,10 @@ export const VerifyCodePage = () => {
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || verificationCode.join("").length !== 6}
-            className={`w-full py-3 rounded-full font-semibold ${
-              isSubmitting || verificationCode.join("").length !== 6
+            className={`w-full py-3 rounded-full font-semibold ${isSubmitting || verificationCode.join("").length !== 6
                 ? "bg-gray-300 text-gray-500"
                 : "bg-blue-600 text-white hover:bg-blue-700"
-            } transition-colors duration-200 mb-4`}
+              } transition-colors duration-200 mb-4`}
           >
             {isSubmitting ? "Verifying..." : "Verify Code"}
           </button>
@@ -206,12 +184,11 @@ export const VerifyCodePage = () => {
             </p>
             <button
               onClick={handleResendCode}
-              disabled={timeLeft > 0 || isResending}
-              className={`font-semibold ${
-                timeLeft > 0 || isResending
-                  ? "text-gray-400"
+              // disabled={timeLeft > 0 || isResending}
+              className={`font-semibold ${timeLeft > 0 || isResending
+                  ? "text-gray-400 hover:text-blue-500"
                   : "text-blue-600 hover:text-blue-800"
-              } transition-colors duration-200`}
+                } transition-colors duration-200`}
             >
               {isResending ? "Sending..." : "Resend Code"}
             </button>

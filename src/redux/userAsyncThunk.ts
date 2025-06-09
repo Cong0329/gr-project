@@ -84,6 +84,22 @@ export const vefifyEmailAPI = createAsyncThunk(
   }
 );
 
+export const resendVerifyEmailAPI = createAsyncThunk(
+  "verify/resend-verify-email",
+  async ({email}: {email: string}, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_NODEJS_BACKEND_URL}/auth/resend-code`, { email },
+        {
+          withCredentials: true
+        }
+      )
+      return response.data;
+    } catch (error : any) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+)
+
 export const fetchUsersAPI = createAsyncThunk(
   "user/fetchUsers",
   async (_, { rejectWithValue }) => {

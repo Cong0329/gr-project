@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { adminLoginAPI, fetchUsersAPI, updateProfileAdminAPI, updateProfileAPI, vefifyEmailAPI, doctorLoginAPI, deleteUserAPI, createUserAPI, } from "./userAsyncThunk";
+import { adminLoginAPI, fetchUsersAPI, updateProfileAdminAPI, updateProfileAPI, vefifyEmailAPI, doctorLoginAPI, deleteUserAPI, createUserAPI, resendVerifyEmailAPI, } from "./userAsyncThunk";
 
 
 const getSafeErrorMessage = (payload: any) => {
@@ -149,6 +149,15 @@ const authSlice = createSlice({
           state.status = "loading";
         })
         .addCase(vefifyEmailAPI.rejected, (state, action) => {
+          state.status = "failed";
+          state.message = getSafeErrorMessage(action.payload);
+        }).addCase(resendVerifyEmailAPI.fulfilled, (state) => {
+          state.status = "succeeded";
+        })
+        .addCase(resendVerifyEmailAPI.pending, (state) => {
+          state.status = "loading";
+        })
+        .addCase(resendVerifyEmailAPI.rejected, (state, action) => {
           state.status = "failed";
           state.message = getSafeErrorMessage(action.payload);
         })

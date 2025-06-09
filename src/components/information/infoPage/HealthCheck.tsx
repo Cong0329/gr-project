@@ -343,8 +343,8 @@ export const HealthCheckPage: React.FC = () => {
             <button
               onClick={() => setActiveTab("upcoming")}
               className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${activeTab === "upcoming"
-                  ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                 }`}
             >
               <div className="flex items-center justify-center space-x-2">
@@ -372,8 +372,8 @@ export const HealthCheckPage: React.FC = () => {
             <button
               onClick={() => setActiveTab("past")}
               className={`flex-1 py-4 px-6 text-center font-medium transition-all duration-200 ${activeTab === "past"
-                  ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
-                  : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
                 }`}
             >
               <div className="flex items-center justify-center space-x-2">
@@ -491,7 +491,12 @@ export const HealthCheckPage: React.FC = () => {
                                   d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
                                 />
                               </svg>
-                              {appointment.price.toLocaleString("vi-VN")}đ
+                              {typeof appointment.price === "number"
+                                ? `${appointment.price.toLocaleString("vi-VN")} VND`
+                                : String(appointment.price).includes("VND")
+                                  ? appointment.price
+                                  : `${appointment.price} VND`}
+
                             </span>
                           )}
                         </div>
@@ -683,9 +688,9 @@ export const HealthCheckPage: React.FC = () => {
                             setIsModalOpen(true);
                           }}
                         >
-                          
-                            <img src={chat} alt="" />
-                       
+
+                          <img src={chat} alt="" />
+
                         </button>
                       </div>
 
