@@ -268,8 +268,12 @@ export const DoctorScheduleComponent = () => {
       `${schedule.date}T${schedule.start_time}`
     );
     const now = new Date();
-    // Có thể chỉnh sửa nếu lịch chưa qua hoặc đang trong quá trình diễn ra
-    return scheduleDateTime >= now || schedule.status === "available";
+
+    if (scheduleDateTime >= now) {
+      return true;
+    }
+
+    return schedule.status === "booked" || schedule.status === "completed";
   };
 
   // Render form chỉnh sửa
@@ -598,17 +602,6 @@ export const DoctorScheduleComponent = () => {
                     </span>
                   </div>
                 )}
-              </div>
-            )}
-            {/* Cảnh báo nếu không thể chỉnh sửa */}
-            {!canEdit && !isEditing && (
-              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <AlertCircle className="w-4 h-4 text-amber-600" />
-                  <span className="text-sm text-amber-700">
-                    Lịch này đã qua không thể chỉnh sửa
-                  </span>
-                </div>
               </div>
             )}
           </div>
