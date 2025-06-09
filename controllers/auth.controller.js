@@ -7,7 +7,6 @@ const { User, Role, RefreshToken, Doctor } = require('../models');
 exports.googleCallback = async (req, res) => {
   try {
     const user = req.user;
-
     // Tìm và gán role mặc định cho người dùng
     const roleUser = await Role.findOne({ where: { code: 'ROLE_USER' } });
     if (!roleUser) {
@@ -190,7 +189,8 @@ exports.resendCode = async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    res.json(email, { message: 'Verification code resent successfully' });
+    res.status(200).json({ email, message: 'Verification code resent successfully' });
+
 
   } catch (err) {
     console.error(err);
@@ -461,7 +461,7 @@ exports.logout = async (req, res) => {
       // secure: false, // nếu dùng HTTPS thì để true
       secure: true,
       // sameSite: 'lax'
-      sameSite: 'None'   
+      sameSite: 'None'
     });
 
     res.clearCookie('refreshToken', {
@@ -469,7 +469,7 @@ exports.logout = async (req, res) => {
       // secure: false,
       secure: true,
       // sameSite: 'lax'
-      sameSite: 'None'   
+      sameSite: 'None'
     });
     await RefreshToken.destroy({
       where: {

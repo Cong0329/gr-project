@@ -5,7 +5,7 @@ const {authenticateToken} = require('../middlewares/auth.middleware');
 const authController = require('../controllers/auth.controller');
 
 // Google Authentication
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'],  prompt: 'select_account' }));
 
 // Google Callback
 router.get(
@@ -21,6 +21,10 @@ router.post('/login', authController.login);
 
 // Verify email
 router.post('/verify-email', authController.verifyCode);
+
+
+// Resend code
+router.post('/resend-code', authController.resendCode);
 
 // Register
 router.post('/register', authController.register);

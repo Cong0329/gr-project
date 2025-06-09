@@ -19,7 +19,7 @@ exports.createAppointment = async (req, res) => {
     }
 
     const { doctor_id, date, start_time, end_time, type, service_id, payment_method } = req.body;
-
+    console.log(payment_method);
 
     // Validate payment method
     const paymentMethod = await PaymentMethod.findOne({ where: { method: payment_method } });
@@ -86,7 +86,7 @@ exports.createAppointment = async (req, res) => {
     if (payment_method === 'cash') {
       paymentStatus = 'confirmed';
     } else if (payment_method === 'vnpay') {
-      paymentStatus = 'pending_payment';
+      paymentStatus = 'pending';
     }
 
     // Update schedule status
