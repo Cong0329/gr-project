@@ -75,7 +75,7 @@ export const store = configureStore({
     packages: packageBookingReducer,
     revenue: revenueReducer,
     doctorAssignment: doctorAssignmentReducer,
-    medicalRecord:medicalRecordReducer
+    medicalRecord: medicalRecordReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -83,6 +83,7 @@ export const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
+  devTools: import.meta.env.MODE !== 'production',
 });
 
 export type AppDispatch = typeof store.dispatch;
